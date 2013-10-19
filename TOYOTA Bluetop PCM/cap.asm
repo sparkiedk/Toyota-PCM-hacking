@@ -1,43 +1,49 @@
 
+
+; Processor:	    6303 []
+; Target assembler: Motorola FreeWare Assembler
+
+; ===========================================================================
+
 ; Segment type:	Pure code
 		; segment ROM
 		org $F000
 ; START	OF FUNCTION CHUNK FOR sub_FD41
 
-loc_F000:				; CODE XREF: sub_FD41:loc_FE99J
+reset:					; CODE XREF: sub_FD41:loc_FE99J
 		sei
 		sei
-		lds	#$FF
-		ldaa	#$C0
-		staa	$14
-		ldaa	#3
-		staa	8
-		staa	$18
-		std	9
+		lds	#$FF		; init stackptr
+		ldaa	#$C0 ; '¿'
+		staa	$14		; ram control register $14
+		ldaa	#3		; leading edges, but no	interrupts
+		staa	8		; timer	control	and status regiser $8
+		staa	$18		; $18 is reserved...
+		std	9		; $9 is	counter	high byte, $A is counter low byte
 		ldd	#$BFFF
-		std	6
+		std	6		; $6 is	port 3 data $7 is port 4 data
 		ldd	#$9FFF
-		std	2
-		ldx	#$6081
-		stx	4
+		std	2		; $2 is	port 1 data $3 is port 2 data
+		ldx	#$6081		; because they're worried they'll wear out accD?
+		stx	4		; $4 is	direction 3 $5 is direction 4
 		ldx	#$EE12
-		stx	0
-		jsr	sub_FC6E
+		stx	0		; $0 is	direction 1 $1 is direction 2
+		jsr	sub_FC6E	; would	tweak p2b2 is constants	prevented branch.
 		ldx	#$B4 ; '¥'
 
 loc_F02B:				; CODE XREF: sub_FD41-D13j
-		clr	$4B,x
+		clr	$4B,x		; $4b is 75dec,	$b4 is 180dec, so clear	memory starting	from $ff to $4C	inclusive, which is all	ram
 		dex
-		bne	loc_F02B
-		ldd	$11
-		ldaa	#2
+		bne	loc_F02B	; $4b is 75dec,	$b4 is 180dec, so clear	memory starting	from $ff to $4C	inclusive, which is all	ram
+		ldd	$11		; $11 is txrx control and stat reg, $12	is rxdata reg
+		ldaa	#2		; tx enable, no	interrupts
 		staa	$11
 		ldx	#$FFAE
 
 loc_F039:				; CODE XREF: sub_FD41-D00j
 		inx
 		ldab	0,x
-		beq	loc_F04E
+		beq	loc_F04E	; FFAF=$4d, so initially doesn't branch, but this is the only way out!
 
 loc_F03E:				; CODE XREF: sub_FD41-CF5j
 		inx
@@ -66,18 +72,18 @@ loc_F051:				; CODE XREF: sub_FD41-CEAj
 		stab	$5E
 		ldaa	#$1B
 		sei
-		staa	8
-		staa	$18
+		staa	8		; timer	control	$1b enables inp	cap int, enables out comp int, rising edge inp trigger,	compare	triggers leading edge.
+		staa	$18		; $18 is reserved
 
 loc_F064:				; CODE XREF: sub_FD41:loc_F116J
-		lds	#$FF
+		lds	#$FF		; re-init stack	ptr
 		ldd	#$EE12
-		std	0
-		ldx	#$6081
+		std	0		; re init ddr1 and ddr2
+		ldx	#$6081		; re init ddr3 and ddr4
 		stx	4
 		cli
 		ldd	$4C
-		eorb	7
+		eorb	7		; port 4
 		andb	#$40 ; '@'
 		beq	loc_F083
 		inc	$61
@@ -188,7 +194,7 @@ loc_F10D:				; CODE XREF: sub_FD41-C40j
 
 loc_F116:				; CODE XREF: sub_FD41-C36j
 					; sub_FD41-C30j
-		jmp	loc_F064
+		jmp	loc_F064	; re-init stack	ptr
 ; END OF FUNCTION CHUNK	FOR sub_FD41
 
 ; =============== S U B	R O U T	I N E =======================================
@@ -367,6 +373,8 @@ locret_F1B0:				; CODE XREF: sub_F17A+2j sub_F17A+27j
 		rts
 ; END OF FUNCTION CHUNK	FOR sub_F17A
 ; ---------------------------------------------------------------------------
+
+IRQinpcap:
 		ldaa	8
 		bita	$18
 		bmi	loc_F1BA
@@ -492,7 +500,7 @@ loc_F242:				; CODE XREF: ROM:F1BEJ
 		staa	8
 		ldx	9
 		abx
-		stx	$B
+		stx	$B		; output compare register
 
 loc_F262:				; CODE XREF: ROM:F250j	ROM:F254j
 		ldd	$B
@@ -517,7 +525,7 @@ loc_F27B:				; CODE XREF: ROM:F26Bj
 		staa	$18
 		andb	$4E
 		stab	$4E
-		rti
+		rti			; total	end of input capture interrupt
 
 ; =============== S U B	R O U T	I N E =======================================
 
@@ -691,6 +699,8 @@ loc_F367:				; CODE XREF: ROM:F363j
 		staa	7
 		rti
 ; ---------------------------------------------------------------------------
+
+IRQoutcmp:
 		ldaa	$18
 		asla
 		bmi	loc_F3D5
@@ -769,12 +779,14 @@ loc_F3D5:				; CODE XREF: ROM:F373j
 		jsr	sub_F17A
 		rti
 ; ---------------------------------------------------------------------------
+
+IRQSerial:				; sort of like ldaa $11	ldab $12
 		ldd	$11
-		bpl	locret_F3E7
+		bpl	locret_F3E7	; branch if bit	15=0, means there's no receive data (why are we interrupting?)
 		cli
-		anda	#$40 ; '@'
-		beq	loc_F3E8
-		jsr	loc_FB18
+		anda	#$40 ; '@'      ; test for overrun or framing error
+		beq	loc_F3E8	; no error
+		jsr	loc_FB18	; error
 
 locret_F3E7:				; CODE XREF: ROM:F3DDj
 		rti
@@ -783,11 +795,11 @@ locret_F3E7:				; CODE XREF: ROM:F3DDj
 loc_F3E8:				; CODE XREF: ROM:F3E2j
 		ldaa	$4F
 		rora
-		ldaa	6
-		bita	#$40 ; '@'
-		bne	loc_F40D
-		stab	$50
-		bcc	loc_F3FE
+		ldaa	6		; port 3 data reg
+		bita	#$40 ; '@'      ; test to see if /CS to the ADC is set
+		bne	loc_F40D	; branch if ADC	was not	selected
+		stab	$50		; b has	rx data
+		bcc	loc_F3FE	; branch if lsb	of $4f when loaded was 0
 		ldab	$53
 		rorb
 		bcs	loc_F3FE
@@ -801,8 +813,8 @@ loc_F3FE:				; CODE XREF: ROM:F3F3j	ROM:F3F8j
 
 loc_F404:				; CODE XREF: ROM:F41Ej
 		sei
-		ldd	9
-		addd	#$140
+		ldd	9		; load counter into d
+		addd	#$140		; add 320 counts
 		std	$51
 		rti
 ; ---------------------------------------------------------------------------
@@ -812,12 +824,12 @@ loc_F40D:				; CODE XREF: ROM:F3EFj
 		abx
 		ldd	0,x
 		sei
-		staa	$13
+		staa	$13		; tx data
 		ldaa	#$20 ; ' '
 
 loc_F418:				; CODE XREF: ROM:F41Aj
 		bita	$11
-		beq	loc_F418
+		beq	loc_F418	; tx wait loop
 		stab	$13
 		bra	loc_F404
 
@@ -2122,7 +2134,7 @@ sub_FA9B:				; CODE XREF: sub_FD41-CEFP
 		ldab	$53
 		andb	#6
 		ldx	#$FD39
-		abx
+		abx			; x can	only be	$FD39, $FD3B, $FD3D or $FD3F
 		ldx	0,x
 		jsr	0,x
 ; End of function sub_FA9B
@@ -2214,20 +2226,20 @@ loc_FB04:				; CODE XREF: ROM:FAEDj
 sub_FB07:				; CODE XREF: ROM:FAABj	ROM:FAC1p
 		ldaa	6
 		bita	#$40 ; '@'
-		beq	loc_FB15
+		beq	loc_FB15	; test to see if we're talking to the ADC (p3-6 low)
 		pshx
 
 loc_FB0E:				; CODE XREF: sub_FB07+Bj
-		ldx	9
-		cpx	$51
-		bmi	loc_FB0E
+		ldx	9		; load timer
+		cpx	$51		; $51:$52 is a word from serial	interrupt, probably schedules the next receive
+		bmi	loc_FB0E	; loop while time haas not expired yet
 		pulx
 
 loc_FB15:				; CODE XREF: sub_FB07+4j
 		inc	$53
 
 loc_FB18:				; CODE XREF: ROM:F3E4P
-		bsr	sub_FB2F
+		bsr	sub_FB2F	; called from serial interrupt when receive error was detected
 		ldaa	#$C
 		staa	$10
 		ldaa	#$1A
@@ -2236,7 +2248,7 @@ loc_FB18:				; CODE XREF: ROM:F3E4P
 		ldaa	#$BF ; 'ø'
 		sei
 		anda	6
-		staa	6
+		staa	6		; safely clear p3-6 without clobbering other pins
 		stab	$13
 		cli
 		rts
@@ -2272,7 +2284,7 @@ loc_FB40:				; CODE XREF: sub_FB2F+Cj
 ; =============== S U B	R O U T	I N E =======================================
 
 
-sub_FB43:				; CODE XREF: sub_F420+93P ROM:F830P
+sub_FB43:				; CODE XREF: sub_F420+93P ROM:F830P ...
 		bcc	sub_FB46
 		clra
 ; End of function sub_FB43
@@ -2303,96 +2315,67 @@ loc_FB56:				; CODE XREF: sub_FB46+Bj
 ; End of function sub_FB46
 
 ; ---------------------------------------------------------------------------
-		fcb $96	; ñ
-		fcb $54	; T
-		fcb $8D	; ç
-		fcb $EA	; Í
-		fcb $FA	; ˙
-		fcb   5
-		fcb $36	; 6
-		fcb $86	; Ü
-		fcb $20
-		fcb $BD	; Ω
-		fcb $FD	; ˝
-		fcb   2
-		fcb $32	; 2
-		fcb $24	; $
-		fcb   7
-		fcb $CC	; Ã
-		fcb $FF
-		fcb $73	; s
-		fcb $D7	; ◊
-		fcb $5D	; ]
-		fcb $20
-		fcb $66	; f
-		fcb $D6	; ÷
-		fcb $CC	; Ã
-		fcb $C5	; ≈
-		fcb $20
-		fcb $26	; &
-		fcb $5E	; ^
-		fcb $D6	; ÷
-		fcb $95	; ï
-		fcb $2B	; +
-		fcb   4
-		fcb $96	; ñ
-		fcb $5B	; [
-		fcb $20
-		fcb $13
-		fcb $9B	; õ
-		fcb $5B	; [
-		fcb $46	; F
-		fcb $9B	; õ
-		fcb $5B	; [
-		fcb $46	; F
-		fcb $C1	; ¡
-		fcb $83	; É
-		fcb $22	; "
-		fcb   3
-		fcb $7C	; |
-		fcb   0
-		fcb $5B	; [
-		fcb $D6	; ÷
-		fcb $5B	; [
-		fcb $11
-		fcb $25	; %
-		fcb   1
-		fcb $17
-		fcb $8D	; ç
-		fcb $B5	; µ
-		fcb $29	; )
-		fcb   5
-		fcb $24	; $
-		fcb   2
-		fcb $86	; Ü
-		fcb $26	; &
-		fcb $97	; ó
-		fcb $5B	; [
-		fcb $96	; ñ
-		fcb $54	; T
-		fcb $90	; ê
-		fcb $5B	; [
-		fcb $24	; $
-		fcb   1
-		fcb $4F	; O
-		fcb $97	; ó
-		fcb $5D	; ]
-		fcb $96	; ñ
-		fcb $95	; ï
-		fcb $2B	; +
-		fcb $2C	; ,
-		fcb $96	; ñ
-		fcb $5D	; ]
-		fcb $90	; ê
-		fcb $5A	; Z
-		fcb $25	; %
-		fcb $26	; &
-		fcb $81	; Å
-		fcb   4
-		fcb $25	; %
-		fcb $22	; "
-		fcb $8D	; ç
-		fcb $91	; ë
+		ldaa	$54
+		bsr	sub_FB46
+		orab	$536
+		ldaa	#$20 ; ' '
+		jsr	sub_FD02
+		pula
+		bcc	loc_FB6E
+		ldd	#$FF73
+		stab	$5D
+		bra	loc_FBD4
+; ---------------------------------------------------------------------------
+
+loc_FB6E:				; CODE XREF: ROM:FB65j
+		ldab	$CC
+		bitb	#$20 ; ' '
+		bne	loc_FBD2
+		ldab	$95
+		bmi	loc_FB7C
+		ldaa	$5B
+		bra	loc_FB8F
+; ---------------------------------------------------------------------------
+
+loc_FB7C:				; CODE XREF: ROM:FB76j
+		adda	$5B
+		rora
+		adda	$5B
+		rora
+		cmpb	#$83 ; 'É'
+		bhi	loc_FB89
+		inc	$5B
+
+loc_FB89:				; CODE XREF: ROM:FB84j
+		ldab	$5B
+		cba
+		bcs	loc_FB8F
+		tba
+
+loc_FB8F:				; CODE XREF: ROM:FB7Aj	ROM:FB8Cj
+		bsr	sub_FB46
+		bvs	loc_FB97+1
+		bcc	loc_FB97
+		ldaa	#$26 ; '&'
+
+loc_FB97:				; CODE XREF: ROM:FB93j	ROM:FB91j
+		staa	$5B
+		ldaa	$54
+		suba	$5B
+		bcc	loc_FBA0
+		clra
+
+loc_FBA0:				; CODE XREF: ROM:FB9Dj
+		staa	$5D
+		ldaa	$95
+		bmi	loc_FBD2
+		ldaa	$5D
+		suba	$5A
+		bcs	loc_FBD2
+		cmpa	#4
+		bcs	loc_FBD2
+		bsr	sub_FB43
+; ---------------------------------------------------------------------------
 		fcb $1C
 		fcb   0
 		fcb $CE	; Œ
@@ -2425,62 +2408,44 @@ loc_FB56:				; CODE XREF: sub_FB46+Bj
 		fcb  $E
 		fcb $21	; !
 		fcb $31	; 1
-		fcb $96	; ñ
-		fcb $5D	; ]
-		fcb $97	; ó
-		fcb $5A	; Z
-		fcb $39	; 9
-		fcb $CE	; Œ
-		fcb $FE	; ˛
-		fcb $E2	; ‚
-		fcb $AD	; ≠
-		fcb $39	; 9
-		fcb $D6	; ÷
-		fcb $D2	; “
-		fcb $C1	; ¡
-		fcb $4C	; L
-		fcb $22	; "
-		fcb   2
-		fcb $8B	; ã
-		fcb $10
-		fcb $D6	; ÷
-		fcb   7
-		fcb $C5	; ≈
-		fcb   8
-		fcb $27	; '
-		fcb   5
-		fcb $BD	; Ω
-		fcb $FB	; ˚
-		fcb $46	; F
-		fcb $FF
-		fcb $3C	; <
-		fcb $97	; ó
-		fcb $9E	; û
-		fcb $96	; ñ
-		fcb $56	; V
-		fcb $CE	; Œ
-		fcb $FE	; ˛
-		fcb $D9	; Ÿ
-		fcb $AD	; ≠
-		fcb $4C	; L
-		fcb $97	; ó
-		fcb $8A	; ä
-		fcb $CE	; Œ
-		fcb $FF
-		fcb  $A
-		fcb $AD	; ≠
-		fcb $11
-		fcb $D6	; ÷
-		fcb $57	; W
-		fcb $C0	; ¿
-		fcb $DA	; ⁄
-		fcb $25	; %
-		fcb $19
-		fcb $17
-		fcb $BD	; Ω
-		fcb $FB	; ˚
-		fcb $46	; F
-		fcb  $F
+; ---------------------------------------------------------------------------
+
+loc_FBD2:				; CODE XREF: ROM:FB72j	ROM:FBA4j ...
+		ldaa	$5D
+
+loc_FBD4:				; CODE XREF: ROM:FB6Cj
+		staa	$5A
+		rts
+; ---------------------------------------------------------------------------
+		ldx	#$FEE2
+		jsr	$39,x
+		ldab	$D2
+		cmpb	#$4C ; 'L'
+		bhi	loc_FBE4
+		adda	#$10
+
+loc_FBE4:				; CODE XREF: ROM:FBE0j
+		ldab	7
+		bitb	#8
+		beq	loc_FBED+2
+		jsr	sub_FB46
+
+loc_FBED:				; CODE XREF: ROM:FBE8j
+		stx	$3C97
+		lds	$96
+		rorb
+		ldx	#$FED9
+		jsr	$4C,x
+		staa	$8A
+		ldx	#$FF0A
+		jsr	$11,x
+		ldab	$57
+		subb	#$DA ; '⁄'
+		bcs	loc_FC1E
+		tba
+		jsr	sub_FB46
+		sei
+; ---------------------------------------------------------------------------
 		fcb   0
 		fcb $CE	; Œ
 		fcb $FF
@@ -2501,86 +2466,66 @@ loc_FB56:				; CODE XREF: sub_FB46+Bj
 		fcb   2
 		fcb $86	; Ü
 		fcb $1C
-		fcb $97	; ó
-		fcb $A4	; §
-		fcb $96	; ñ
-		fcb $4A	; J
-		fcb $81	; Å
-		fcb $5A	; Z
-		fcb $26	; &
-		fcb  $D
-		fcb $CE	; Œ
-		fcb   0
-		fcb  $C
-		fcb   9
-		fcb   9
-		fcb $27	; '
-		fcb $1A
-		fcb $EC	; Ï
-		fcb $3E	; >
-		fcb $1B
-		fcb $4C	; L
-		fcb $27	; '
-		fcb $F6	; ˆ
-		fcb $CE	; Œ
-		fcb $80	; Ä
-		fcb $7F	; 
-		fcb $DF	; ﬂ
-		fcb $42	; B
-		fcb $DF	; ﬂ
-		fcb $40	; @
-		fcb $CE	; Œ
-		fcb   0
-		fcb $FF
-		fcb $DF	; ﬂ
-		fcb $46	; F
-		fcb $DF	; ﬂ
-		fcb $48	; H
-		fcb $DF	; ﬂ
-		fcb $44	; D
-		fcb $86	; Ü
-		fcb $5A	; Z
-		fcb $97	; ó
-		fcb $4A	; J
-		fcb $D6	; ÷
-		fcb $65	; e
-		fcb $96	; ñ
-		fcb   2
-		fcb $84	; Ñ
-		fcb $BF	; ø
-		fcb $C1	; ¡
-		fcb $9E	; û
-		fcb $25	; %
-		fcb   6
-		fcb $C1	; ¡
-		fcb $AE	; Æ
-		fcb $25	; %
-		fcb   4
-		fcb $8A	; ä
-		fcb $40	; @
-		fcb $97	; ó
-		fcb   2
-		fcb $96	; ñ
-		fcb $99	; ô
-		fcb $D6	; ÷
-		fcb   2
-		fcb $58	; X
-		fcb $2B	; +
-		fcb   7
-		fcb $4A	; J
-		fcb $2A	; *
-		fcb   9
-		fcb $86	; Ü
-		fcb $F4	; Ù
-		fcb $20
-		fcb   5
-		fcb $4C	; L
-		fcb $2B	; +
-		fcb   2
-		fcb $86	; Ü
-		fcb   2
-		fcb $97	; ó
-		fcb $99	; ô
+; ---------------------------------------------------------------------------
+
+loc_FC1E:				; CODE XREF: ROM:FC03j
+		staa	$A4
+		ldaa	$4A
+		cmpa	#$5A ; 'Z'
+		bne	loc_FC33
+		ldx	#$C
+
+loc_FC29:				; CODE XREF: ROM:FC31j
+		dex
+		dex
+		beq	loc_FC47
+		ldd	$3E,x
+		aba
+		inca
+		beq	loc_FC29
+
+loc_FC33:				; CODE XREF: ROM:FC24j
+		ldx	#$807F
+		stx	$42
+		stx	$40
+		ldx	#$FF
+		stx	$46
+		stx	$48
+		stx	$44
+		ldaa	#$5A ; 'Z'
+		staa	$4A
+
+loc_FC47:				; CODE XREF: ROM:FC2Bj
+		ldab	$65
+		ldaa	2
+		anda	#$BF ; 'ø'
+		cmpb	#$9E ; 'û'
+		bcs	loc_FC57
+		cmpb	#$AE ; 'Æ'
+		bcs	loc_FC59
+		oraa	#$40 ; '@'
+
+loc_FC57:				; CODE XREF: ROM:FC4Fj
+		staa	2
+
+loc_FC59:				; CODE XREF: ROM:FC53j
+		ldaa	$99
+		ldab	2
+		aslb
+		bmi	loc_FC67
+		deca
+		bpl	loc_FC6C
+		ldaa	#$F4 ; 'Ù'
+		bra	loc_FC6C
+; ---------------------------------------------------------------------------
+
+loc_FC67:				; CODE XREF: ROM:FC5Ej
+		inca
+		bmi	loc_FC6C
+		ldaa	#2
+
+loc_FC6C:				; CODE XREF: ROM:FC61j	ROM:FC65j ...
+		staa	$99
 
 ; =============== S U B	R O U T	I N E =======================================
 
@@ -2602,7 +2547,7 @@ locret_FC7B:				; CODE XREF: sub_FC6E+7j
 ; =============== S U B	R O U T	I N E =======================================
 
 
-sub_FC7C:				; CODE XREF: ROM:F589P
+sub_FC7C:				; CODE XREF: ROM:F589P	ROM:FC99p
 		lsrd
 ; End of function sub_FC7C
 
@@ -2619,162 +2564,122 @@ sub_FC7D:				; CODE XREF: sub_F420+39P ROM:F8F5P
 ; End of function sub_FC7D
 
 ; ---------------------------------------------------------------------------
-		fcb $96	; ñ
-		fcb   6
-		fcb $84	; Ñ
-		fcb $10
-		fcb $80	; Ä
-		fcb $10
-		fcb $86	; Ü
-		fcb   1
-		fcb $BD	; Ω
-		fcb $FD	; ˝
-		fcb   2
-		fcb $96	; ñ
-		fcb $55	; U
-		fcb $80	; Ä
-		fcb $53	; S
-		fcb $24	; $
-		fcb   1
-		fcb $4F	; O
-		fcb $CE	; Œ
-		fcb $FE	; ˛
-		fcb $E9	; È
-		fcb $AD	; ≠
-		fcb $3C	; <
-		fcb $8D	; ç
-		fcb $E1	; ·
-		fcb $C3	; √
-		fcb   1
-		fcb $D0	; –
-		fcb $DD	; ›
-		fcb $81	; Å
-		fcb $96	; ñ
-		fcb $55	; U
-		fcb $CE	; Œ
-		fcb $FF
-		fcb $12
-		fcb $AD	; ≠
-		fcb $13
-		fcb   4
-		fcb   4
-		fcb   4
-		fcb $D3	; ”
-		fcb $BF	; ø
-		fcb   4
-		fcb $DD	; ›
-		fcb $BF	; ø
-		fcb $D6	; ÷
-		fcb $55	; U
-		fcb $4F	; O
-		fcb   5
-		fcb   5
-		fcb $C3	; √
-		fcb   1
-		fcb $80	; Ä
-		fcb $DD	; ›
-		fcb $B5	; µ
-		fcb $20
-		fcb $1B
-		fcb $96	; ñ
-		fcb $95	; ï
-		fcb $2A	; *
-		fcb  $A
-		fcb $D6	; ÷
-		fcb $42	; B
-		fcb $C1	; ¡
-		fcb $42	; B
-		fcb $24	; $
-		fcb   4
-		fcb $96	; ñ
-		fcb   2
-		fcb $20
-		fcb   9
-		fcb $CC	; Ã
-		fcb $DF	; ﬂ
-		fcb $4C	; L
-		fcb $94	; î
-		fcb   2
-		fcb $D1	; —
-		fcb $D2	; “
-		fcb $25	; %
-		fcb   2
-		fcb $8A	; ä
-		fcb $20
-		fcb $97	; ó
-		fcb   2
-		fcb $CE	; Œ
-		fcb $FF
-		fcb $D0	; –
-		fcb $AD	; ≠
-		fcb $11
-		fcb $D6	; ÷
-		fcb   7
-		fcb $C5	; ≈
-		fcb $10
-		fcb $26	; &
-		fcb  $D
-		fcb $D6	; ÷
-		fcb $CF	; œ
-		fcb $7F	; 
-		fcb   0
-		fcb $CF	; œ
-		fcb $C1	; ¡
-		fcb $F3	; Û
-		fcb $25	; %
-		fcb   4
-		fcb $81	; Å
-		fcb $F3	; Û
-		fcb $24	; $
-		fcb $10
-		fcb $81	; Å
-		fcb $25	; %
-		fcb $25	; %
-		fcb   6
-		fcb $96	; ñ
-		fcb $65	; e
-		fcb $81	; Å
-		fcb $28	; (
-		fcb $24	; $
-		fcb   6
-		fcb $D6	; ÷
-		fcb $D1	; —
-		fcb $C1	; ¡
-		fcb   9
-		fcb $25	; %
-		fcb $2E	; .
-		fcb $86	; Ü
-		fcb $10
-		fcb $20
-		fcb  $F
-		fcb $24	; $
-		fcb $29	; )
-		fcb $95	; ï
-		fcb $CC	; Ã
-		fcb $26	; &
-		fcb   4
-		fcb $9A	; ö
-		fcb $CC	; Ã
-		fcb $20
-		fcb $29	; )
-		fcb  $D
-		fcb $85	; Ö
-		fcb $1F
-		fcb $27	; '
-		fcb  $A
+		ldaa	6
+		anda	#$10
+		suba	#$10
+		ldaa	#1
+		jsr	sub_FD02
+		ldaa	$55
+		suba	#$53 ; 'S'
+		bcc	loc_FC94
+		clra
+
+loc_FC94:				; CODE XREF: ROM:FC91j
+		ldx	#$FEE9
+		jsr	$3C,x
+		bsr	sub_FC7C
+		addd	#$1D0
+		std	$81
+		ldaa	$55
+		ldx	#$FF12
+		jsr	$13,x
+		lsrd
+		lsrd
+		lsrd
+		addd	$BF
+		lsrd
+		std	$BF
+		ldab	$55
+		clra
+		lsld
+		lsld
+		addd	#$180
+		std	$B5
+		bra	loc_FCD6
+; ---------------------------------------------------------------------------
+		ldaa	$95
+		bpl	loc_FCC9
+		ldab	$42
+		cmpb	#$42 ; 'B'
+		bcc	loc_FCC9
+		ldaa	2
+		bra	loc_FCD2
+; ---------------------------------------------------------------------------
+
+loc_FCC9:				; CODE XREF: ROM:FCBDj	ROM:FCC3j
+		ldd	#$DF4C
+		anda	2
+		cmpb	$D2
+		bcs	loc_FCD4
+
+loc_FCD2:				; CODE XREF: ROM:FCC7j
+		oraa	#$20 ; ' '
+
+loc_FCD4:				; CODE XREF: ROM:FCD0j
+		staa	2
+
+loc_FCD6:				; CODE XREF: ROM:FCB9j
+		ldx	#$FFD0
+		jsr	$11,x
+		ldab	7
+		bitb	#$10
+		bne	loc_FCEE
+		ldab	$CF
+		clr	$CF
+		cmpb	#$F3 ; 'Û'
+		bcs	loc_FCEE
+		cmpa	#$F3 ; 'Û'
+		bcc	loc_FCFE
+
+loc_FCEE:				; CODE XREF: ROM:FCDFj	ROM:FCE8j
+		cmpa	#$25 ; '%'
+		bcs	loc_FCF8
+		ldaa	$65
+		cmpa	#$28 ; '('
+		bcc	loc_FCFE
+
+loc_FCF8:				; CODE XREF: ROM:FCF0j
+		ldab	$D1
+		cmpb	#9
+		bcs	locret_FD2C
+
+loc_FCFE:				; CODE XREF: ROM:FCECj	ROM:FCF6j
+		ldaa	#$10
+		bra	sub_FD11
+
+; =============== S U B	R O U T	I N E =======================================
+
+
+sub_FD02:				; CODE XREF: ROM:FB61P	ROM:FC8AP
+
+; FUNCTION CHUNK AT FD2D SIZE 0000000C BYTES
+
+		bcc	loc_FD2D
+		bita	$CC
+		bne	loc_FD0C
+		oraa	$CC
+		bra	loc_FD35
+; ---------------------------------------------------------------------------
+
+loc_FD0C:				; CODE XREF: sub_FD02+4j
+		sec
+		bita	#$1F
+		beq	loc_FD1B
+; End of function sub_FD02
+
 
 ; =============== S U B	R O U T	I N E =======================================
 
 
 sub_FD11:				; CODE XREF: sub_FD41-C73P
-					; sub_F420+23P
+					; sub_F420+23P	...
 		ldab	7
 		bitb	#$20 ; ' '
 		beq	loc_FD1B
 		ldab	#$DA ; '⁄'
 		stab	$C8
 
-loc_FD1B:				; CODE XREF: sub_FD11+4j
+loc_FD1B:				; CODE XREF: sub_FD02+Dj sub_FD11+4j
 		tab
 		orab	$CD
 		stab	$CD
@@ -2786,31 +2691,30 @@ loc_FD1B:				; CODE XREF: sub_FD11+4j
 		comb
 		std	$48
 
-locret_FD2C:				; CODE XREF: sub_FD11+13j
+locret_FD2C:				; CODE XREF: ROM:FCFCj	sub_FD11+13j
 		rts
 ; End of function sub_FD11
 
 ; ---------------------------------------------------------------------------
-		fcb $43	; C
-		fcb $16
-		fcb $D4	; ‘
-		fcb $CD	; Õ
-		fcb $D7	; ◊
-		fcb $CD	; Õ
-		fcb $94	; î
-		fcb $CC	; Ã
-		fcb $97	; ó
-		fcb $CC	; Ã
-		fcb  $C
-		fcb $39	; 9
-		fcb $FC	; ¸
-		fcb $BB	; ª
-		fcb $FB	; ˚
-		fcb $58	; X
-		fcb $FC	; ¸
-		fcb $82	; Ç
-		fcb $FB	; ˚
-		fcb $D7	; ◊
+; START	OF FUNCTION CHUNK FOR sub_FD02
+
+loc_FD2D:				; CODE XREF: sub_FD02j
+		coma
+		tab
+		andb	$CD
+		stab	$CD
+		anda	$CC
+
+loc_FD35:				; CODE XREF: sub_FD02+8j
+		staa	$CC
+		clc
+		rts
+; END OF FUNCTION CHUNK	FOR sub_FD02
+; ---------------------------------------------------------------------------
+		fdb $FCBB		; jump table 4 evctors
+		fdb $FB58
+		fdb $FC82
+		fdb $FBD7
 
 ; =============== S U B	R O U T	I N E =======================================
 
@@ -3071,7 +2975,7 @@ loc_FE8D:				; CODE XREF: sub_FD41+14Dj
 		beq	loc_FE8D
 
 loc_FE99:				; CODE XREF: sub_FD41+146j
-		jmp	loc_F000
+		jmp	reset
 ; End of function sub_FD41
 
 ; ---------------------------------------------------------------------------
@@ -3395,7 +3299,7 @@ loc_FF3C:				; CODE XREF: sub_FF35j	sub_FF35+4j
 		fcb   1
 		fcb   2
 		fcb   0
-		fcb $95	; ï
+		fcb $95	; ï		; data for function below
 		fcb $60	; `
 		fcb $34	; 4
 		fcb $7A	; z
@@ -3412,24 +3316,23 @@ loc_FF3C:				; CODE XREF: sub_FF35j	sub_FF35+4j
 		fcb $5E	; ^
 		fcb   0
 		fcb   0
-		fcb $8D	; ç
-		fcb   0
-		fcb $A6	; ¶
-		fcb $FF
-		fcb $4C	; L
-		fcb $27	; '
-		fcb   2
-		fcb $6C	; l
-		fcb $FF
-		fcb   8
-		fcb $A6	; ¶
-		fcb $FE	; ˛
-		fcb $39	; 9
-		fdb $C7BE		; illegal opcode trap? c7be is out of rom...
+; ---------------------------------------------------------------------------
+		bsr	*+2		; yay recursion?
+		ldaa	$FF,x
+		inca
+		beq	loc_FFEA
+		inc	$FF,x
+
+loc_FFEA:				; CODE XREF: ROM:FFE6j
+		inx
+		ldaa	$FE,x
+		rts
+; ---------------------------------------------------------------------------
+		fdb $C7BE		; illegal opcode trap? c7be is out of rom... this could	be data	or even	code for all i know
 		fdb $F3DB		; serial interrupt rdrf	/ orfe / tore
 		fdb $F000		; timer	overflow
 		fdb $F370		; timer	output compare
-		fdb $F1B1		; timer	input capture
+		fdb $F1B1		; timer	input capture NE related
 		fdb $F000		; /irq or /S3
 		fdb $F000		; swi
 		fdb $F000		; /NMI
