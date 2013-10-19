@@ -1,0 +1,11 @@
+This repo is dedicated to hacking toyota powertrain control modules.The specific focus is
+going to be 4A-GE related PCMs, then perhaps the 1UZ PCM and anything else anyone requests.
+
+Notes: 
+
+The Bluetop PCM uses a nippondenso specific issue of the hitachi HD6301v1 processor.
+Subsequent PCMs (open exceptions of course ;) use the toshiba 8x processor.
+
+A copy of dasm got lumped in here because it was what I used to assemble the reader code 
+for the D151801 bluetop microprocessor. Nobody associated with this repo is responsible 
+for dasm.
