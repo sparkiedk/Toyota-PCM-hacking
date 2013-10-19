@@ -1,0 +1,17 @@
+http://kaele.com/~kashima/car/toyota-r.html
+http://www.supramania.com/forums/showthread.php?73379-3P-s-TCCS-Disassembly-Analysis
+http://toyota.kgbconsulting.ca/wiki/Pinout_64_pin
+http://forum.pgmfi.org/viewtopic.php?f=2&t=67
+http://forums.toymods.org.au/index.php?t=msg&th=14310&&pl_view=&start=0#msg_117002
+https://www.assembla.com/spaces/7M_TCCS/documents
+http://planetsoarer.com/ecu/ecu.htm
+http://www.kgbconsulting.ca/~gregk/
+http://www.wheelsjamaica.com/wheels_forum/index.php?topic=78078.0
+start searching alldatasheet for TMP80 http://www.alldatasheet.com/view.jsp?Searchword=TMP87PH
+
+get these just in case (knock control processor), probably wrong now?
+http://www.supramania.com/forums/attachment.php?attachmentid=29681&d=1245296020
+http://www.supramania.com/forums/attachment.php?attachmentid=29682&d=1245296118
+
+fujitsu 42 pin processor
+http://www.supramania.com/forums/attachment.php?attachmentid=29683&d=1245322200
