@@ -1,4 +1,5 @@
 
+
 ; Processor:	    6303 []
 ; Target assembler: Motorola FreeWare Assembler
 
@@ -12,7 +13,8 @@ Port1:		rmb 1
 Port2:		rmb 1
 Port3DDR:	rmb 1
 Port4DDR:	rmb 1
-Port3:		rmb 1
+Port3:		rmb 1			; DATA XREF: sub_FD41-D2Dw
+					; sub_FD41-CB0r ...
 Port4:		rmb 1
 TmrCntStat:	rmb 1
 Timer:		rmb 2
@@ -33,6 +35,7 @@ unk_18:		rmb 1
 word_1B:	rmb 2			; used by an injector control sub
 unk_1D:		rmb 1
 		rmb 1
+		rmb 1			; top of SFR space inclusive
 		rmb 1
 		rmb 1
 		rmb 1
@@ -65,31 +68,24 @@ unk_1D:		rmb 1
 		rmb 1
 		rmb 1
 		rmb 1
-		rmb 1
-unk_40:		rmb 1
-		rmb 1
-unk_42:		rmb 1
-		rmb 1
-unk_44:		rmb 1
-		rmb 1
-unk_46:		rmb 1
-		rmb 1
-unk_48:		rmb 1
-		rmb 1
+word_40:	rmb 2			; if we	call this the start of user ram, it's exactly 192 bytes (inclusive)
+word_42:	rmb 2
+word_44:	rmb 2
+word_46:	rmb 2
+word_48:	rmb 2
 unk_4A:		rmb 1
 unk_4B:		rmb 1
 unk_4C:		rmb 1
 unk_4D:		rmb 1
 unk_4E:		rmb 1
 unk_4F:		rmb 1
-unk_50:		rmb 1
-unk_51:		rmb 1
-		rmb 1
-unk_53:		rmb 1
+ADCRxData:	rmb 1
+EndTxByteTime:	rmb 2			; caches timer values from serial interrupt
+unk_53:		rmb 1			; controls a jump table	at fa9b, also deselects	ADC with LSB
 unk_54:		rmb 1
-unk_55:		rmb 1
+byte_55:	rmb 1			; DATA XREF: ROM:FC8Dr	ROM:FCA0r ...
 		rmb 1
-unk_57:		rmb 1
+byte_57:	rmb 1			; DATA XREF: ROM:F351r	sub_F420+D1r ...
 byte_58:	rmb 1			; DATA XREF: ROM:loc_FFA4r
 unk_59:		rmb 1
 unk_5A:		rmb 1
@@ -100,19 +96,15 @@ unk_5E:		rmb 1
 unk_5F:		rmb 1
 unk_60:		rmb 1
 unk_61:		rmb 1
-unk_62:		rmb 1
-		rmb 1
+word_62:	rmb 2
 unk_64:		rmb 1
 unk_65:		rmb 1
 word_66:	rmb 2
 unk_68:		rmb 1
 unk_69:		rmb 1
-unk_6A:		rmb 1
-		rmb 1
-unk_6C:		rmb 1
-		rmb 1
-unk_6E:		rmb 1
-		rmb 1
+word_6A:	rmb 2
+word_6C:	rmb 2
+word_6E:	rmb 2
 unk_70:		rmb 1
 		rmb 1
 unk_72:		rmb 1
@@ -121,15 +113,16 @@ unk_74:		rmb 1
 unk_75:		rmb 1
 unk_76:		rmb 1
 		rmb 1
-unk_78:		rmb 1
+byte_78:	rmb 1
 Inj10OffTime:	rmb 2
 unk_7B:		rmb 1
 		rmb 1
 unk_7D:		rmb 1
 		rmb 1
-unk_7F:		rmb 1
-		rmb 1
-word_81:	rmb 2			; injector related
+word_7F:	rmb 2
+word_81:	rmb 2			; DATA XREF: sub_F168:loc_F16Er
+					; ROM:FC9Ew
+					; injector related
 unk_83:		rmb 1
 unk_84:		rmb 1
 		rmb 1
@@ -141,10 +134,8 @@ unk_8A:		rmb 1
 unk_8B:		rmb 1
 unk_8C:		rmb 1
 		rmb 1
-unk_8E:		rmb 1
-		rmb 1
-unk_90:		rmb 1
-		rmb 1
+word_8E:	rmb 2
+word_90:	rmb 2
 unk_92:		rmb 1
 unk_93:		rmb 1
 unk_94:		rmb 1
@@ -164,38 +155,28 @@ unk_A3:		rmb 1
 unk_A4:		rmb 1
 unk_A5:		rmb 1
 unk_A6:		rmb 1
-unk_A7:		rmb 1
-		rmb 1
-unk_A9:		rmb 1
-		rmb 1
-unk_AB:		rmb 1
-		rmb 1
-unk_AD:		rmb 1
-		rmb 1
-unk_AF:		rmb 1
-		rmb 1
-unk_B1:		rmb 1
-		rmb 1
+word_A7:	rmb 2
+word_A9:	rmb 2
+word_AB:	rmb 2
+word_AD:	rmb 2
+word_AF:	rmb 2
+word_B1:	rmb 2
 unk_B3:		rmb 1
 		rmb 1
-word_B5:	rmb 2
-unk_B7:		rmb 1
-		rmb 1
+word_B5:	rmb 2			; DATA XREF: ROM:F391r	ROM:F397r ...
+word_B7:	rmb 2
 word_B9:	rmb 2
 word_BB:	rmb 2
 word_BD:	rmb 2
-unk_BF:		rmb 1
+byte_BF:	rmb 1			; DATA XREF: ROM:F911r	ROM:FCAAr ...
 		rmb 1
-unk_C1:		rmb 1
-		rmb 1
+word_C1:	rmb 2
 unk_C3:		rmb 1
-unk_C4:		rmb 1
-		rmb 1
+word_C4:	rmb 2
 unk_C6:		rmb 1
 		rmb 1
 unk_C8:		rmb 1
-unk_C9:		rmb 1
-		rmb 1
+word_C9:	rmb 2
 unk_CB:		rmb 1
 unk_CC:		rmb 1
 unk_CD:		rmb 1
@@ -204,8 +185,7 @@ unk_CF:		rmb 1
 unk_D0:		rmb 1
 unk_D1:		rmb 1
 unk_D2:		rmb 1
-unk_D3:		rmb 1
-		rmb 1
+word_D3:	rmb 2
 unk_D5:		rmb 1
 unk_D6:		rmb 1
 unk_D7:		rmb 1
@@ -356,11 +336,11 @@ loc_F083:				; CODE XREF: sub_FD41-CC9j
 		staa	Port3
 		cli
 		ldd	#$1FE
-		andb	unk_53
-		stab	unk_53
+		andb	unk_53		; clear	bit0
+		stab	unk_53		; clear	bit0
 		sei
-		oraa	unk_4F
-		staa	unk_4F
+		oraa	unk_4F		; set bit 0
+		staa	unk_4F		; set bit 0
 		cli
 		jsr	loc_FAA7
 		ldaa	unk_5F
@@ -657,33 +637,33 @@ loc_F1C1:				; CODE XREF: ROM:loc_F1BCj
 		staa	unk_4E
 		cli
 		inx
-		cpx	unk_6E
+		cpx	word_6E
 		bcc	loc_F1DA
-		ldx	unk_6E
+		ldx	word_6E
 
 loc_F1DA:				; CODE XREF: ROM:F1D6j
-		cpx	unk_6C
+		cpx	word_6C
 		bcs	loc_F1E0
-		ldx	unk_6C
+		ldx	word_6C
 
 loc_F1E0:				; CODE XREF: ROM:F1DCj
 		ldaa	unk_CD
 		bita	#1
 		beq	loc_F1F0
-		ldx	#$320
+		ldx	#800
 		ldaa	unk_95
 		bmi	loc_F1F0
-		ldx	#$640
+		ldx	#1600
 
 loc_F1F0:				; CODE XREF: ROM:F1E4j	ROM:F1EBj
-		stx	unk_6A
+		stx	word_6A
 		ldaa	unk_97
 		oraa	unk_4C
 		oraa	unk_98
 		bmi	locret_F23D
 		ldaa	unk_75
 		psha
-		ldd	unk_6A
+		ldd	word_6A
 		jsr	sub_F6E9
 		pshb
 		ldx	#0
@@ -693,7 +673,7 @@ loc_F1F0:				; CODE XREF: ROM:F1E4j	ROM:F1EBj
 		beq	loc_F211
 
 loc_F20C:				; CODE XREF: ROM:F20Fj
-		addd	unk_6A
+		addd	word_6A
 		dex
 		bne	loc_F20C
 
@@ -723,7 +703,7 @@ loc_F22C:				; CODE XREF: ROM:F21Cj
 
 loc_F232:				; CODE XREF: ROM:F22Aj	ROM:F22Dj
 		psha
-		ldaa	unk_78
+		ldaa	byte_78
 		bita	#2
 		pula
 		beq	loc_F23E
@@ -743,7 +723,7 @@ loc_F242:				; CODE XREF: ROM:F1BEJ
 		ldx	unk_1D
 		bita	#2
 		beq	loc_F2AC
-		stx	unk_B7
+		stx	word_B7
 		ldaa	Port2
 		bita	#2
 		beq	loc_F262
@@ -763,8 +743,8 @@ loc_F262:				; CODE XREF: ROM:F250j	ROM:F254j
 		ldaa	word_A1
 		inca
 		bmi	loc_F27B
-		ldd	unk_B7
-		addd	unk_A7
+		ldd	word_B7
+		addd	word_A7
 		subd	word_A1
 		cmpa	word_9F		; injector related
 		bpl	loc_F279
@@ -879,41 +859,41 @@ loc_F2F0:				; CODE XREF: ROM:F2EBj
 loc_F2FB:				; CODE XREF: ROM:F2F3j
 		ldd	word_9F		; injector related
 		std	word_B9
-		subd	unk_B7
-		std	unk_A7
-		subd	unk_B1
-		addd	unk_A9
+		subd	word_B7
+		std	word_A7
+		subd	word_B1
+		addd	word_A9
 		asra
 		rorb
-		ldx	unk_AB
-		stx	unk_A9
-		ldx	unk_AD
-		stx	unk_AB
-		ldx	unk_AF
-		stx	unk_AD
+		ldx	word_AB
+		stx	word_A9
+		ldx	word_AD
+		stx	word_AB
+		ldx	word_AF
+		stx	word_AD
 		tst	unk_C6
 		ble	loc_F31C
 		clra
 		clrb
 
 loc_F31C:				; CODE XREF: ROM:F318j
-		std	unk_AF
-		ldd	unk_B1
-		addd	unk_A7
+		std	word_AF
+		ldd	word_B1
+		addd	word_A7
 		rora
 		rorb
-		std	unk_B1
-		addd	unk_A9
-		std	unk_A7
+		std	word_B1
+		addd	word_A9
+		std	word_A7
 		ldd	#$1A1A
 		orab	TmrCntStat
 		stab	TmrCntStat
 		oraa	unk_18
 		staa	unk_18
 		ldab	unk_4E
-		ldaa	unk_78
+		ldaa	byte_78
 		inca
-		staa	unk_78
+		staa	byte_78
 		cmpa	#3
 		bls	loc_F359
 		tba
@@ -924,9 +904,9 @@ loc_F31C:				; CODE XREF: ROM:F318j
 		anda	Port4
 		staa	Port4
 		clra
-		staa	unk_78
+		staa	byte_78
 		staa	unk_D1
-		ldaa	unk_57
+		ldaa	byte_57
 		cmpa	#$50 ; 'P'
 		bls	loc_F359
 		orab	#$20 ; ' '
@@ -1036,53 +1016,53 @@ IRQSerial:				; sort of like ldaa $11	ldab $12
 		bpl	locret_F3E7	; branch if bit	15=0, means there's no receive data (why are we interrupting?)
 		cli
 		anda	#$40 ; '@'      ; test for overrun or framing error
-		beq	loc_F3E8	; no error
-		jsr	loc_FB18	; error
+		beq	SerialMain	; no error
+		jsr	loc_FB18	; error, rx reg	gets written to	tx reg after re-init, and the adc gets selected...
 
 locret_F3E7:				; CODE XREF: ROM:F3DDj
 		rti
 ; ---------------------------------------------------------------------------
 
-loc_F3E8:				; CODE XREF: ROM:F3E2j
+SerialMain:				; CODE XREF: ROM:F3E2j
 		ldaa	unk_4F
 		rora
 		ldaa	Port3		; port 3 data reg
 		bita	#$40 ; '@'      ; test to see if /CS to the ADC is set
-		bne	loc_F40D	; branch if ADC	was not	selected
-		stab	unk_50		; b has	rx data
+		bne	SerialDebug	; branch if ADC	was not	selected (to serial debug routine)
+		stab	ADCRxData	; b has	rx data
 		bcc	loc_F3FE	; branch if lsb	of $4f when loaded was 0
-		ldab	unk_53
+		ldab	unk_53		; controls a jump table	at fa9b, also deselects	ADC with LSB
 		rorb
-		bcs	loc_F3FE
+		bcs	loc_F3FE	; branch if unk_53 lsb was set
 		oraa	#$40 ; '@'
-		staa	Port3
+		staa	Port3		; de select adc	p3-6
 
 loc_F3FE:				; CODE XREF: ROM:F3F3j	ROM:F3F8j
 		ldab	#$80 ; '€'
-		orab	unk_4F
-		stab	unk_4F
+		orab	unk_4F		; set bit 7
+		stab	unk_4F		; set bit 7
 
-loc_F404:				; CODE XREF: ROM:F41Ej
-		sei
+SerMainRet:				; CODE XREF: ROM:F41Ej
+		sei			; disable interrupts?
 		ldd	Timer		; load counter into d
-		addd	#$140		; add 320 counts
-		std	unk_51
+		addd	#320		; add 320us, exactly 10	bits (serial byte!) from now
+		std	EndTxByteTime	; caches timer values from serial interrupt
 		rti
 ; ---------------------------------------------------------------------------
 
-loc_F40D:				; CODE XREF: ROM:F3EFj
+SerialDebug:				; CODE XREF: ROM:F3EFj
 		ldx	#0
-		abx
-		ldd	0,x
+		abx			; add rx byte to index reg
+		ldd	0,x		; grab byte pointed to by rx byte
 		sei
-		staa	TxReg		; tx data
+		staa	TxReg		; tx byte pointed to by	rx byte
 		ldaa	#$20 ; ' '
 
-loc_F418:				; CODE XREF: ROM:F41Aj
-		bita	TxRxCntStat
-		beq	loc_F418	; tx wait loop
+txwaitloop1:				; CODE XREF: ROM:F41Aj
+		bita	TxRxCntStat	; test if tx reg empty
+		beq	txwaitloop1	; tx wait loop
 		stab	TxReg
-		bra	loc_F404
+		bra	SerMainRet	; disable interrupts?
 
 ; =============== S U B	R O U T	I N E =======================================
 
@@ -1128,7 +1108,7 @@ loc_F453:				; CODE XREF: sub_F420+2Dj
 		pshx
 		ldx	#$FEF9
 		jsr	$34,x
-		jsr	sub_FC7D
+		jsr	DivDby16
 		adda	#8
 		pulx
 		jsr	0,x
@@ -1137,22 +1117,22 @@ loc_F453:				; CODE XREF: sub_F420+2Dj
 		ldd	#$9FF
 
 loc_F468:				; CODE XREF: sub_F420+43j
-		std	unk_D3
+		std	word_D3
 		subd	#$90 ; ''
 		jsr	sub_F5E3
 		stab	unk_C3
 		clra
-		subb	unk_C1
+		subb	word_C1
 		sbca	#0
 		lsld
 		lsld
 		lsld
-		addd	unk_C1
-		std	unk_C1
-		ldd	unk_C4
-		ldx	unk_62
-		stx	unk_C4
-		subd	unk_D3
+		addd	word_C1
+		std	word_C1
+		ldd	word_C4
+		ldx	word_62
+		stx	word_C4
+		subd	word_D3
 		bcc	loc_F48A
 		clra
 		clrb
@@ -1166,16 +1146,16 @@ loc_F48A:				; CODE XREF: sub_F420+66j
 
 loc_F494:				; CODE XREF: sub_F420+6Fj
 		stab	unk_D5
-		ldd	unk_D3
-		std	unk_62
+		ldd	word_D3
+		std	word_62
 		lsrd
 		lsrd
 		lsrd
-		std	unk_D3
+		std	word_D3
 		jsr	sub_F5E3
 		stab	unk_65
-		ldx	unk_D3
-		ldd	unk_D3
+		ldx	word_D3
+		ldd	word_D3
 		cpx	#$C0 ; 'À'
 		bls	loc_F4B0
 		lsrd
@@ -1222,7 +1202,7 @@ loc_F4E2:				; CODE XREF: sub_F420+ABj
 loc_F4EB:				; CODE XREF: sub_F420+BBj
 		ldx	#$E6 ; 'æ'
 		ldd	#$5002
-		cmpa	unk_57
+		cmpa	byte_57
 		bhi	loc_F506
 		cmpb	unk_60
 		bhi	loc_F506
@@ -1234,7 +1214,7 @@ loc_F4EB:				; CODE XREF: sub_F420+BBj
 		ldx	#$1CC
 
 loc_F506:				; CODE XREF: sub_F420+D3j sub_F420+D7j ...
-		stx	unk_6E
+		stx	word_6E
 
 loc_F508:				; CODE XREF: sub_F420+E1j
 		ldab	unk_9E
@@ -1277,7 +1257,7 @@ loc_F531:				; CODE XREF: sub_F420+FCj
 loc_F534:				; CODE XREF: sub_FD41-C2EP
 					; sub_F420+10Ep
 		jsr	sub_F119
-		ldaa	unk_57
+		ldaa	byte_57
 		cmpa	#$48 ; 'H'
 		bhi	loc_F542
 		ldaa	#$DF ; 'ß'
@@ -1295,14 +1275,14 @@ loc_F54E:				; CODE XREF: ROM:F547j
 		stab	unk_69
 
 loc_F550:				; CODE XREF: ROM:F54Bj
-		ldd	unk_6A
+		ldd	word_6A
 		jsr	sub_F6FC
-		std	unk_7F
+		std	word_7F
 		ldaa	unk_4D
 		rora
 		bcc	loc_F571
 		ldd	#$FDC
-		cmpb	unk_57
+		cmpb	byte_57
 		bls	loc_F568
 		ldx	#$FEB6
 		jsr	$65,x
@@ -1324,12 +1304,12 @@ loc_F571:				; CODE XREF: ROM:F55Aj
 loc_F57E:				; CODE XREF: ROM:F575j
 		brn	sub_F5CE+1
 		staa	unk_86
-		ldd	unk_62
+		ldd	word_62
 		ldx	#$FE9C
 		jsr	$91,x
 		jsr	sub_FC7C
 		adda	#8
-		std	unk_6C
+		std	word_6C
 		ldd	#$800
 		jsr	sub_F6FC
 		std	unk_72
@@ -1339,7 +1319,7 @@ loc_F57E:				; CODE XREF: ROM:F575j
 		jsr	sub_F6E3
 		std	unk_70
 		ldd	#$6666
-		cmpb	unk_42
+		cmpb	word_42
 		bls	loc_F5AC
 		ldaa	#$B3 ; '³'
 
@@ -1370,9 +1350,9 @@ loc_F5C3:				; CODE XREF: ROM:F5B5j	ROM:F5B9j ...
 
 
 sub_F5CE:				; CODE XREF: ROM:F577p	ROM:F5C9p ...
-		ldd	unk_7F
-		std	unk_90
-		std	unk_8E
+		ldd	word_7F
+		std	word_90
+		std	word_8E
 		clra
 		staa	unk_89
 		rts
@@ -1448,8 +1428,8 @@ loc_F5F7:				; CODE XREF: sub_F5E3+11j
 
 loc_F600:				; CODE XREF: sub_F5E3+1Aj
 		stab	unk_87
-		ldd	unk_90
-		subd	unk_7F
+		ldd	word_90
+		subd	word_7F
 		bcs	loc_F61A
 		deca
 		bmi	loc_F61A
@@ -1457,7 +1437,7 @@ loc_F600:				; CODE XREF: sub_F5E3+1Aj
 		ldaa	#$CC ; 'Ì'
 		mul
 		ldab	#$B0 ; '°'
-		cmpb	unk_57
+		cmpb	byte_57
 		bhi	loc_F61A
 		ldab	unk_88
 		beq	loc_F61B
@@ -1467,18 +1447,18 @@ loc_F61A:				; CODE XREF: sub_F5E3+23j sub_F5E3+26j ...
 
 loc_F61B:				; CODE XREF: sub_F5E3+35j
 		staa	unk_89
-		ldd	unk_90
-		addd	unk_7F
+		ldd	word_90
+		addd	word_7F
 		lsrd
-		addd	unk_90
+		addd	word_90
 		lsrd
-		std	unk_90
-		ldx	unk_8E
-		ldd	unk_7F
-		subd	unk_8E
+		std	word_90
+		ldx	word_8E
+		ldd	word_7F
+		subd	word_8E
 		bsr	sub_F5D8
 		pshb
-		stx	unk_8E
+		stx	word_8E
 		ldx	#6
 		ldaa	unk_60
 		ldab	unk_4C
@@ -1500,20 +1480,20 @@ loc_F649:				; CODE XREF: sub_F5E3:loc_F5E8j
 					; sub_F5E3+60j
 		bitb	#8
 		bne	loc_F654
-		ldaa	unk_57
+		ldaa	byte_57
 		cmpa	#$60 ; '`'
 		bcc	loc_F654
 		dex
 
 loc_F654:				; CODE XREF: sub_F5E3+68j sub_F5E3+6Ej
-		ldd	unk_7F
+		ldd	word_7F
 
 loc_F656:				; CODE XREF: sub_F5E3+77j
-		addd	unk_8E
+		addd	word_8E
 		lsrd
 		dex
 		bne	loc_F656
-		std	unk_8E
+		std	word_8E
 		ldd	unk_8C
 		subd	#$10
 		bcc	loc_F666
@@ -1560,7 +1540,7 @@ loc_F67B:				; CODE XREF: sub_F5E3+95j
 		pshx
 		pula
 		inca
-		staa	unk_D3
+		staa	word_D3
 		ldaa	unk_83
 		psha
 		bsr	loc_F6E6+1
@@ -1573,7 +1553,7 @@ loc_F67B:				; CODE XREF: sub_F5E3+95j
 		bsr	sub_F6E9
 
 loc_F6A8:				; CODE XREF: sub_F5E3+CCj
-		dec	unk_D3
+		dec	word_D3
 		beq	loc_F6B1
 		addd	unk_72
 		bra	loc_F6A8
@@ -1691,11 +1671,11 @@ sub_F70A:				; CODE XREF: sub_F5E3+BDp
 		ldab	#$CA ; 'Ê'
 		mul
 		psha
-		ldd	unk_7F
+		ldd	word_7F
 		bsr	sub_F6E9
 		jsr	sub_F5E1
 		stab	unk_92
-		ldab	unk_44
+		ldab	word_44
 		bpl	loc_F71E
 		negb
 
@@ -1729,7 +1709,7 @@ loc_F731:				; CODE XREF: sub_F70A+22j
 
 loc_F73B:				; CODE XREF: sub_F70A+2Dj
 		lsrb
-		ldaa	unk_44
+		ldaa	word_44
 		bpl	loc_F741
 		negb
 
@@ -1738,7 +1718,7 @@ loc_F741:				; CODE XREF: sub_F70A+34j
 		tba
 		jsr	sub_FB46
 		adca	unk_5C
-		adda	unk_42
+		adda	word_42
 		suba	#$80 ; '€'
 		staa	unk_D6
 		bra	sub_F700
@@ -1749,15 +1729,15 @@ loc_F741:				; CODE XREF: sub_F70A+34j
 
 
 sub_F751:				; CODE XREF: sub_F96A+75P
-		ldaa	unk_42
-		ldab	unk_40
+		ldaa	word_42
+		ldab	word_40		; if we	call this the start of user ram, it's exactly 192 bytes (inclusive)
 		ldx	unk_95
 		bpl	loc_F768
 		cba
 		rora
 		eora	unk_93
 		bmi	loc_F766
-		ldaa	unk_42
+		ldaa	word_42
 		aba
 		rora
 		aba
@@ -1765,7 +1745,7 @@ sub_F751:				; CODE XREF: sub_F96A+75P
 		tab
 
 loc_F766:				; CODE XREF: sub_F751+Cj
-		ldaa	unk_42
+		ldaa	word_42
 
 loc_F768:				; CODE XREF: sub_F751+6j
 		pshb
@@ -1823,13 +1803,13 @@ loc_F771:				; CODE XREF: sub_F751+1Dj
 		fcb $DD	; Ý
 		fcb $40	; @
 		fcb $39	; 9
-		fcb $19
+		fcb $19			; data (f7f1 entry)
 		fcb $96	; –
 		fcb   7
 		fcb $AD	; ­
-		fcb   0
+		fcb   0			; word data
 		fcb $EB	; ë
-		fcb   0
+		fcb   0			; word data
 		fcb $4E	; N
 ; ---------------------------------------------------------------------------
 ; START	OF FUNCTION CHUNK FOR sub_F7BE
@@ -1878,7 +1858,7 @@ loc_F7C4:				; CODE XREF: sub_F7BE+2j
 		stab	unk_4D
 		ldd	#$6C6F
 		ldx	#$400
-		cpx	unk_7F
+		cpx	word_7F
 		bhi	loc_F7E7
 		tba
 
@@ -1887,11 +1867,11 @@ loc_F7E7:				; CODE XREF: sub_F7BE+26j
 		jsr	8,x
 		staa	unk_9B
 		ldx	#$F7A6
-		ldab	Port4
+		ldab	Port4		; an entry point
 		bitb	#4		; p4-2 is IDL, active high
 		beq	loc_F7F9
 		inx
-		inx
+		inx			; x would then be F7A8,	different for other entry points
 
 loc_F7F9:				; CODE XREF: sub_F7BE+37j
 		ldaa	unk_9A
@@ -1940,7 +1920,7 @@ loc_F829:				; CODE XREF: ROM:F819j	ROM:F81Dj
 ; ---------------------------------------------------------------------------
 
 loc_F82C:				; CODE XREF: ROM:F827j
-		ldaa	unk_C1
+		ldaa	word_C1
 		suba	unk_C3
 		jsr	sub_FB43
 		sba
@@ -1996,7 +1976,7 @@ loc_F859:				; CODE XREF: ROM:F821j
 ; ---------------------------------------------------------------------------
 
 loc_F86C:				; CODE XREF: ROM:F863j
-		ldd	unk_7F
+		ldd	word_7F
 		cmpa	#$B
 		bls	loc_F875
 		ldd	#$BFF
@@ -2018,11 +1998,11 @@ loc_F87B:				; CODE XREF: ROM:F877j
 		pshx
 		ldab	#$E
 		abx
-		jsr	sub_FF28
+		jsr	loc_FF28	; another entry	point
 		pulx
 		psha
 		ldaa	unk_64
-		jsr	sub_FF28
+		jsr	loc_FF28	; another entry	point
 		psha
 		tsx
 		ldd	1,x
@@ -2042,9 +2022,9 @@ loc_F8A5:				; CODE XREF: ROM:F8A1j
 
 loc_F8AD:				; CODE XREF: ROM:F8AAj
 		staa	unk_A3
-		ldaa	unk_57
+		ldaa	byte_57
 		jsr	sub_FB46
-		eora	unk_50
+		eora	ADCRxData
 		bcs	loc_F8CD+1
 		ldx	#$5AA
 		ldaa	unk_A5
@@ -2052,7 +2032,7 @@ loc_F8AD:				; CODE XREF: ROM:F8AAj
 		ldx	#$60E
 
 loc_F8C2:				; CODE XREF: ROM:F8BDj
-		cpx	unk_7F
+		cpx	word_7F
 		bcs	loc_F8CD+1
 		ldaa	unk_95
 		bmi	loc_F8CD+1
@@ -2085,39 +2065,39 @@ loc_F8F0:				; CODE XREF: ROM:F869J
 		addb	#1
 		pshb
 		ldd	word_66
-		jsr	sub_FC7D
-		std	unk_D3
+		jsr	DivDby16
+		std	word_D3
 		ldd	word_66
 		jsr	sub_F6E9
 		lsrd
 		inca
-		subd	unk_D3
+		subd	word_D3
 		bcs	loc_F90D
-		subd	unk_A7
+		subd	word_A7
 		bcs	loc_F90B
 		clra
 		clrb
 
 loc_F90B:				; CODE XREF: ROM:F907j
-		addd	unk_A7
+		addd	word_A7
 
 loc_F90D:				; CODE XREF: ROM:F903j
 		std	word_A1
-		ldd	unk_D3
-		addd	unk_BF
+		ldd	word_D3
+		addd	byte_BF
 		std	word_BB
 		lsrd
-		std	unk_D3
+		std	word_D3
 		ldd	word_66
 		subd	word_B5
 		subd	#$64 ; 'd'
-		subd	unk_D3
+		subd	word_D3
 		bcs	loc_F925
 		clra
 		clrb
 
 loc_F925:				; CODE XREF: ROM:F921j
-		addd	unk_D3
+		addd	word_D3
 		std	unk_B3
 		ldaa	#1
 		ldab	unk_C6
@@ -2130,14 +2110,14 @@ loc_F925:				; CODE XREF: ROM:F921j
 
 loc_F936:				; CODE XREF: ROM:F92Dj
 		bsr	OutCmpSub1	; called from output compare ISR
-		std	unk_D3
+		std	word_D3
 		ldd	#$C02
 		eora	unk_4E
 		bita	#$E
 		bne	loc_F950
 		bitb	Port2
 		beq	loc_F950
-		ldd	unk_D3
+		ldd	word_D3
 		std	OutCmp
 		ldx	TmrCntStat
 		jsr	OutCmpSub2	; called from output compare ISR
@@ -2235,9 +2215,9 @@ loc_F9BD:				; CODE XREF: sub_F96A+4Fj
 
 loc_F9BF:				; CODE XREF: sub_F96A+49j
 		ldd	#$B020
-		cmpa	unk_57
+		cmpa	byte_57
 		bhi	loc_F9E2
-		ldx	unk_7F
+		ldx	word_7F
 		cpx	#$190
 		bitb	Port4		; like ANDB Port4
 		bls	loc_F9E2
@@ -2383,7 +2363,7 @@ loc_FA92:				; CODE XREF: sub_F96A+11Bj
 
 sub_FA9B:				; CODE XREF: sub_FD41-CEFP
 					; sub_F96A+12Cj
-		ldab	unk_53
+		ldab	unk_53		; controls a jump table	at fa9b, also deselects	ADC with LSB
 		andb	#6
 		ldx	#$FD39
 		abx			; x can	only be	$FD39, $FD3B, $FD3D or $FD3F
@@ -2397,7 +2377,7 @@ loc_FAA7:				; CODE XREF: sub_FD41-C9EP
 
 loc_FAAA:				; CODE XREF: ROM:FAB1j
 		dex
-		beq	sub_FB07
+		beq	sub_FB07	; re-inits serial port,	selects	adc and	pumps AccB out the tx port
 		ldd	unk_4F
 		anda	#$80 ; '€'
 		beq	loc_FAAA
@@ -2410,7 +2390,7 @@ loc_FAAA:				; CODE XREF: ROM:FAB1j
 		bsr	sub_FB2F
 		ldx	#$54 ; 'T'
 		abx
-		bsr	sub_FB07
+		bsr	sub_FB07	; re-inits serial port,	selects	adc and	pumps AccB out the tx port
 		pulb
 		ldaa	#1
 
@@ -2474,6 +2454,7 @@ loc_FB04:				; CODE XREF: ROM:FAEDj
 
 ; =============== S U B	R O U T	I N E =======================================
 
+; re-inits serial port,	selects	adc and	pumps AccB out the tx port
 
 sub_FB07:				; CODE XREF: ROM:FAABj	ROM:FAC1p
 		ldaa	Port3
@@ -2483,20 +2464,20 @@ sub_FB07:				; CODE XREF: ROM:FAABj	ROM:FAC1p
 
 loc_FB0E:				; CODE XREF: sub_FB07+Bj
 		ldx	Timer		; load timer
-		cpx	unk_51		; $51:$52 is a word from serial	interrupt, probably schedules the next receive
-		bmi	loc_FB0E	; loop while time haas not expired yet
+		cpx	EndTxByteTime	; word_51 is 320us greater than	the termination	of the last serial interrupt
+		bmi	loc_FB0E	; loop while time haas not expired yet,	while presumably tx is busy
 		pulx
 
 loc_FB15:				; CODE XREF: sub_FB07+4j
-		inc	unk_53
+		inc	unk_53		; controls a jump table	at fa9b, also deselects	ADC with LSB
 
 loc_FB18:				; CODE XREF: ROM:F3E4P
 		bsr	sub_FB2F	; called from serial interrupt when receive error was detected
-		ldaa	#$C
+		ldaa	#$C		; external clock, 62500	baud (not that thats relevant i	guess)
 		staa	UARTRateMode
-		ldaa	#$1A
+		ldaa	#$1A		; Rx int enable, rx enable, tx enable
 		staa	TxRxCntStat
-		ldaa	TxRxCntStat
+		ldaa	TxRxCntStat	; read from reg	to clear any pending error bits
 		ldaa	#$BF ; '¿'
 		sei
 		anda	Port3
@@ -2512,7 +2493,7 @@ loc_FB18:				; CODE XREF: ROM:F3E4P
 
 sub_FB2F:				; CODE XREF: ROM:FABBp
 					; sub_FB07:loc_FB18p
-		ldab	unk_53
+		ldab	unk_53		; controls a jump table	at fa9b, also deselects	ADC with LSB
 		lsrb
 		bcs	loc_FB37
 		ldab	#5
@@ -2679,11 +2660,11 @@ loc_FBD4:				; CODE XREF: ROM:FB6Cj
 loc_FBE4:				; CODE XREF: ROM:FBE0j
 		ldab	Port4		; p4-3 is ac input, active high
 		bitb	#8
-		beq	loc_FBED+2
+		beq	loc_FBED+2	; illegal address
 		jsr	sub_FB46
 
 loc_FBED:				; CODE XREF: ROM:FBE8j
-		stx	$3C97
+		stx	$3C97		; illegal address
 		lds	unk_96
 		rorb
 		ldx	#$FED9
@@ -2691,7 +2672,7 @@ loc_FBED:				; CODE XREF: ROM:FBE8j
 		staa	unk_8A
 		ldx	#$FF0A
 		jsr	$11,x
-		ldab	unk_57
+		ldab	byte_57
 		subb	#$DA ; 'Ú'
 		bcs	loc_FC1E
 		tba
@@ -2738,12 +2719,12 @@ loc_FC29:				; CODE XREF: ROM:FC31j
 
 loc_FC33:				; CODE XREF: ROM:FC24j
 		ldx	#$807F
-		stx	unk_42
-		stx	unk_40
+		stx	word_42
+		stx	word_40		; if we	call this the start of user ram, it's exactly 192 bytes (inclusive)
 		ldx	#$FF
-		stx	unk_46
-		stx	unk_48
-		stx	unk_44
+		stx	word_46
+		stx	word_48
+		stx	word_44
 		ldaa	#$5A ; 'Z'
 		staa	unk_4A
 
@@ -2807,13 +2788,13 @@ sub_FC7C:				; CODE XREF: ROM:F589P	ROM:FC99p
 ; =============== S U B	R O U T	I N E =======================================
 
 
-sub_FC7D:				; CODE XREF: sub_F420+39P ROM:F8F5P
+DivDby16:				; CODE XREF: sub_F420+39P ROM:F8F5P
 		lsrd
 		lsrd
 		lsrd
 		lsrd
 		rts
-; End of function sub_FC7D
+; End of function DivDby16
 
 ; ---------------------------------------------------------------------------
 		ldaa	Port3
@@ -2821,7 +2802,7 @@ sub_FC7D:				; CODE XREF: sub_F420+39P ROM:F8F5P
 		suba	#$10
 		ldaa	#1
 		jsr	sub_FD02
-		ldaa	unk_55
+		ldaa	byte_55
 		suba	#$53 ; 'S'
 		bcc	loc_FC94
 		clra
@@ -2832,16 +2813,16 @@ loc_FC94:				; CODE XREF: ROM:FC91j
 		bsr	sub_FC7C
 		addd	#$1D0
 		std	word_81		; injector related
-		ldaa	unk_55
+		ldaa	byte_55
 		ldx	#$FF12
 		jsr	$13,x
 		lsrd
 		lsrd
 		lsrd
-		addd	unk_BF
+		addd	byte_BF
 		lsrd
-		std	unk_BF
-		ldab	unk_55
+		std	byte_BF
+		ldab	byte_55
 		clra
 		lsld
 		lsld
@@ -2851,7 +2832,7 @@ loc_FC94:				; CODE XREF: ROM:FC91j
 ; ---------------------------------------------------------------------------
 		ldaa	unk_95
 		bpl	loc_FCC9
-		ldab	unk_42
+		ldab	word_42
 		cmpb	#$42 ; 'B'
 		bcc	loc_FCC9
 		ldaa	Port1
@@ -2938,10 +2919,10 @@ loc_FD1B:				; CODE XREF: sub_FD02+Dj sub_FD11+4j
 		ldab	Port4		; p4-4 is ac input, active high
 		bitb	#$10
 		bne	locret_FD2C
-		oraa	unk_48
+		oraa	word_48
 		tab
 		comb
-		std	unk_48
+		std	word_48
 
 locret_FD2C:				; CODE XREF: ROM:FCFCj	sub_FD11+13j
 		rts
@@ -2982,7 +2963,7 @@ sub_FD41:				; CODE XREF: sub_FD41:loc_F0F7P
 		jsr	$5E,x
 		staa	unk_8B
 		ldd	#$B020
-		cmpa	unk_57
+		cmpa	byte_57
 		bhi	loc_FD5A
 		cmpb	unk_92
 		bls	loc_FD5D
@@ -3001,10 +2982,10 @@ loc_FD5D:				; CODE XREF: sub_FD41+17j
 		ldaa	unk_C6
 		bpl	loc_FD79	; p4-5,	test input active low
 		andb	unk_4C
-		orab	unk_46
+		orab	word_46
 		tba
 		comb
-		std	unk_46
+		std	word_46
 
 loc_FD79:				; CODE XREF: sub_FD41+23j sub_FD41+2Aj ...
 		ldab	Port4		; p4-5,	test input active low
@@ -3031,7 +3012,7 @@ loc_FD9D:				; CODE XREF: sub_FD41+42j
 		stab	unk_D7
 		clra
 		clrb
-		std	unk_C9
+		std	word_C9
 		coma
 		staa	unk_CB
 		ldab	unk_4D
@@ -3052,8 +3033,8 @@ loc_FDB8:				; CODE XREF: sub_FD41+6Fj
 		ldaa	Port4		; p4-2 is IDL, p4-3 is AC, so idling and ac perhaps?
 		eora	#4
 		anda	#$C
-		oraa	unk_46
-		oraa	unk_48
+		oraa	word_46
+		oraa	word_48
 		bne	loc_FDC6
 
 loc_FDC4:				; CODE XREF: sub_FD41+75j
@@ -3072,10 +3053,10 @@ loc_FDCE:				; CODE XREF: sub_FD41+6Bj
 		bcs	loc_FE19
 		subb	#$11
 		bcc	loc_FE01
-		ldd	unk_C9
+		ldd	word_C9
 		bne	loc_FDF3
 		staa	unk_CB
-		ldaa	unk_46
+		ldaa	word_46
 		anda	#1
 		ldab	Port4		; another IDL+AC test
 		eorb	#4
@@ -3084,15 +3065,15 @@ loc_FDCE:				; CODE XREF: sub_FD41+6Bj
 		oraa	#2
 
 loc_FDED:				; CODE XREF: sub_FD41+A8j
-		ldab	unk_48
-		std	unk_C9
+		ldab	word_48
+		std	word_C9
 		beq	loc_FE11
 
 loc_FDF3:				; CODE XREF: sub_FD41+9Aj sub_FD41+B6j
 		inc	unk_CB
 		lsrd
 		bcc	loc_FDF3
-		std	unk_C9
+		std	word_C9
 		ldaa	#$11
 		ldab	unk_CB
 		mul
@@ -3116,7 +3097,7 @@ loc_FE0B:				; CODE XREF: sub_FD41+90j
 
 loc_FE11:				; CODE XREF: sub_FD41+B0j sub_FD41+C6j
 		ldaa	#$6D ; 'm'
-		ldx	unk_C9
+		ldx	word_C9
 		bne	loc_FE19
 		ldaa	#$5E ; '^'
 
@@ -3133,7 +3114,7 @@ loc_FE1B:				; CODE XREF: sub_FD41+69j
 
 loc_FE24:				; CODE XREF: sub_FD41+DFj
 		stab	Port1
-		ldab	Port4		; p4-5,	test mode, activ elow
+		ldab	Port4		; p4-5,	test mode, active low
 		bitb	#$20 ; ' '
 		beq	loc_FE33
 		ldaa	unk_4C
@@ -3168,14 +3149,14 @@ loc_FE48:				; CODE XREF: sub_FD41+144j
 		clrb
 		ldx	#$F000
 
-loc_FE50:				; CODE XREF: sub_FD41+113j
+ChkSumLoop:				; CODE XREF: sub_FD41+113j
 		addd	0,x
 		inx
 		inx
-		bne	loc_FE50
+		bne	ChkSumLoop	; loop until x overflows
 		subd	#$AA55
-		beq	loc_FE5F
-		ldaa	#$C8 ; 'È'
+		beq	loc_FE5F	; branch if checksum equals aa55
+		ldaa	#%11001000
 		bra	loc_FE8B
 ; ---------------------------------------------------------------------------
 
@@ -3195,10 +3176,10 @@ loc_FE68:				; CODE XREF: sub_FD41+12Bj
 loc_FE6E:				; CODE XREF: sub_FD41+13Aj
 		inx
 		cmpa	$3F,x
-		bne	loc_FE89
+		bne	loc_FE89	; watchdog and p1-7 (???)
 		inx
 		cmpb	$3F,x
-		bne	loc_FE89
+		bne	loc_FE89	; watchdog and p1-7 (???)
 		cpx	#$C0 ; 'À'
 		bne	loc_FE6E
 		comb
@@ -3212,7 +3193,7 @@ loc_FE6E:				; CODE XREF: sub_FD41+13Aj
 
 loc_FE89:				; CODE XREF: sub_FD41+130j
 					; sub_FD41+135j
-		ldaa	#$48 ; 'H'
+		ldaa	#$48 ; 'H'      ; watchdog and p1-7 (???)
 
 loc_FE8B:				; CODE XREF: sub_FD41+11Cj
 		staa	Port1
@@ -3231,7 +3212,7 @@ loc_FE99:				; CODE XREF: sub_FD41+146j
 ; End of function sub_FD41
 
 ; ---------------------------------------------------------------------------
-		fcb $1F
+		fcb $1F			; data (ff2d entry)
 		fcb $1F
 		fcb $23	; #
 		fcb $3E	; >
@@ -3250,49 +3231,49 @@ loc_FE99:				; CODE XREF: sub_FD41+146j
 		fcb $C2	; Â
 		fcb $D9	; Ù
 		fcb $E6	; æ
-		fcb $F3	; ó
+		fcb $F3	; ó		; data (ff1b entry)
 		fcb $80	; €
 		fcb $45	; E
 		fcb $1E
 		fcb   0
 		fcb   0
 		fcb   0
-		fcb $98	; ˜
+		fcb $98	; ˜		; data (ff1b entry)
 		fcb $53	; S
 		fcb $28	; (
 		fcb $19
 		fcb  $F
 		fcb   6
 		fcb   6
-		fcb $66	; f
+		fcb $66	; f		; data (ff1b entry)
 		fcb $58	; X
 		fcb $47	; G
 		fcb $2E	; .
 		fcb $17
 		fcb   8
 		fcb   0
-		fcb $6C	; l
+		fcb $6C	; l		; data (ff1b entry)
 		fcb $57	; W
 		fcb $45	; E
 		fcb $33	; 3
 		fcb $23	; #
 		fcb $11
 		fcb   0
-		fcb $F3	; ó
+		fcb $F3	; ó		; data (ff1b entry)
 		fcb $80	; €
 		fcb $1E
 		fcb   5
 		fcb   0
 		fcb   0
 		fcb   0
-		fcb $FF
+		fcb $FF			; data (ff1b entry)
 		fcb $D8	; Ø
 		fcb $90	; 
 		fcb $68	; h
 		fcb $49	; I
 		fcb $43	; C
-		fcb $40	; @
-		fcb $66	; f
+		fcb $40	; @		; 6
+		fcb $66	; f		; data (ff25 entry)
 		fcb $66	; f
 		fcb $6A	; j
 		fcb $77	; w
@@ -3301,21 +3282,21 @@ loc_FE99:				; CODE XREF: sub_FD41+146j
 		fcb $99	; ™
 		fcb $AA	; ª
 		fcb $B9	; ¹
-		fcb $6C	; l
+		fcb $6C	; l		; data (ff1b entry)
 		fcb $6C	; l
 		fcb $68	; h
 		fcb $60	; `
 		fcb $50	; P
 		fcb $40	; @
-		fcb $30	; 0
-		fcb $FF
+		fcb $30	; 0		; 6
+		fcb $FF			; data (ff25 entry)
 		fcb $C2	; Â
 		fcb $4B	; K
 		fcb $18
 		fcb   0
 		fcb   0
 		fcb   0
-		fcb $FF
+		fcb $FF			; data (ff28 entry)
 		fcb $DC	; Ü
 		fcb $B2	; ²
 		fcb $9B	; ›
@@ -3324,7 +3305,7 @@ loc_FE99:				; CODE XREF: sub_FD41+146j
 		fcb $70	; p
 		fcb $66	; f
 		fcb $5D	; ]
-		fcb $53	; S
+		fcb $53	; S		; data (ff2d entry)
 		fcb $49	; I
 		fcb $40	; @
 		fcb $36	; 6
@@ -3341,15 +3322,15 @@ loc_FE99:				; CODE XREF: sub_FD41+146j
 		fcb $27	; '
 		fcb $1C
 		fcb $13
-		fcb $38	; 8
+		fcb $38	; 8		; data (ff1b entry)
 		fcb $38	; 8
 		fcb $37	; 7
 		fcb $32	; 2
 		fcb $2D	; -
 		fcb $1C
+		fcb $1C			; 6
 		fcb $1C
-		fcb $1C
-		fcb   6
+		fcb   6			; data (ff25 entry)
 		fcb   6
 		fcb $FF
 		fcb $FF
@@ -3358,56 +3339,55 @@ loc_FE99:				; CODE XREF: sub_FD41+146j
 		fcb $77	; w
 		fcb $5E	; ^
 		fcb $51	; Q
-		fcb $96	; –
-		fcb $57	; W
-		fcb $5F	; _
-		fcb $81	; 
-		fcb $C0	; À
-		fcb $23	; #
-		fcb   4
-		fcb $A6	; ¦
-		fcb   6
-		fcb $39	; 9
-		fcb $5F	; _
-		fcb   4
-		fcb $21	; !
+; ---------------------------------------------------------------------------
 
-; =============== S U B	R O U T	I N E =======================================
-
-
-sub_FF28:				; CODE XREF: ROM:F88AP	ROM:F891P
+ProcData1:				; entry	point
+		ldaa	byte_57
 		clrb
+		cmpa	#$C0 ; 'À'      ; 192
+		bls	loc_FF26	; branch if lower or same
+		ldaa	6,x		; if byte_57 > #$C0, automatically load	the last value of all ff1b entry tables	and return
+		rts
+; ---------------------------------------------------------------------------
+		clrb			; an entry point
+
+loc_FF26:				; CODE XREF: ROM:FF20j
+		lsrd			; next instruction is like a 3 byte nop
+; ---------------------------------------------------------------------------
+		fcb $21	; !		; branch never,	I've heard this is an old trick, hiding code in brn vector
+; ---------------------------------------------------------------------------
+
+loc_FF28:				; CODE XREF: ROM:F88AP	ROM:F891P
+		clrb			; another entry	point
+		lsrd
+		lsrd			; next executed	instruction after ff26 entry
 		lsrd
 		lsrd
-		lsrd
-		lsrd
-		pshb
+		pshb			; lower	nibble of what was initially in	a gets pushed, or another entry	point and push b
 		tab
 		abx
-		ldaa	1,x
+		ldaa	1,x		; for ff1b tables b={0,1,2,3}
 		suba	0,x
 		pulb
-; End of function sub_FF28
-
 
 ; =============== S U B	R O U T	I N E =======================================
 
 
 sub_FF35:				; CODE XREF: ROM:F89AP
-		bcc	loc_FF3C
+		bcc	loc_FF3C	; with A containing negative difference	of table points	(there's only 6), b containing lower nibble, this may interpolate
 		nega
 		negb
-		beq	loc_FF3C
+		beq	loc_FF3C	; with A containing negative difference	of table points	(there's only 6), b containing lower nibble, this may interpolate
 		inx
 
 loc_FF3C:				; CODE XREF: sub_FF35j	sub_FF35+4j
-		mul
+		mul			; with A containing negative difference	of table points	(there's only 6), b containing lower nibble, this may interpolate
 		adda	0,x
-		rts
+		rts			; returns data from tables in AccA
 ; End of function sub_FF35
 
 ; ---------------------------------------------------------------------------
-		fcb $58	; X
+		fcb $58	; X		; data used by F880
 		fcb $63	; c
 		fcb $71	; q
 		fcb $7E	; ~
@@ -3448,7 +3428,7 @@ loc_FF3C:				; CODE XREF: sub_FF35j	sub_FF35+4j
 		fcb $62	; b
 		fcb $62	; b
 		fcb $63	; c
-		fcb $64	; d
+		fcb $64	; d		; data (ffe3 entry)
 		fcb $13
 		fcb $1D
 		fcb $28	; (
@@ -3491,16 +3471,16 @@ loc_FF3C:				; CODE XREF: sub_FF35j	sub_FF35+4j
 		fcb $4E	; N
 		fcb $55	; U
 		fcb $56	; V
-		fcb   0
+		fcb   0			; data (ffa4 entry)
 		fcb   0
 		fcb   0
 		fcb  $B
-		fcb   5
+		fcb   5			; data (ffe1 entry)
 		fcb   5
 		fcb   5
 		fcb   0
-		fcb   7
-		fcb   0
+		fcb   7			; data (ffa4 entry)
+		fcb   0			; data (ffe3 entry)
 		fcb $FB	; û
 		fcb   0
 		fcb   0
@@ -3520,7 +3500,7 @@ loc_FFA4:
 		suba	0,x
 		rts
 ; ---------------------------------------------------------------------------
-		fcb $4D	; M
+		fcb $4D	; M		; data used by F036
 		fcb   5
 		fcb $43	; C
 		fcb   0
@@ -3545,18 +3525,18 @@ loc_FFA4:
 		fcb $8A	; Š
 		fcb $11
 		fcb $94	; ”
-		fcb   1
+		fcb   1			; data (ffe3 entry)
 		fcb $CC	; Ì
 		fcb $7F	; 
 		fcb $FF
 		fcb   2
 		fcb   1
 		fcb   2
-		fcb   0
-		fcb $95	; •		; data for function below
+		fcb   0			; data (ffe3 entry)
+		fcb $95	; •		; data (ffe1 entry)
 		fcb $60	; `
-		fcb $34	; 4
-		fcb $7A	; z
+		fcb $34	; 4		; data (ffe3 entry)
+		fcb $7A	; z		; data (ffe3 entry)
 		fcb $7C	; |
 		fcb $F4	; ô
 		fcb $71	; q
@@ -3572,9 +3552,11 @@ loc_FFA4:
 		fcb   0
 ; ---------------------------------------------------------------------------
 
-loc_FFE1:				; X=FFD0 on entry, this	sub is executed	twice
+loc_FFE1:				; this sub is executed twice from this entry point
 		bsr	*+2
-		ldaa	$FF,x		; could	wrap around to $00CF
+
+loc_FFE3:				; another entry	point
+		ldaa	$FF,x
 		inca
 		beq	loc_FFEA
 		inc	$FF,x
