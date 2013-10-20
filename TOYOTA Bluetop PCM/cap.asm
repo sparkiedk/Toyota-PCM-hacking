@@ -1,5 +1,4 @@
 
-
 ; Processor:	    6303 []
 ; Target assembler: Motorola FreeWare Assembler
 
@@ -91,7 +90,7 @@ unk_54:		rmb 1
 unk_55:		rmb 1
 		rmb 1
 unk_57:		rmb 1
-		rmb 1
+byte_58:	rmb 1			; DATA XREF: ROM:loc_FFA4r
 unk_59:		rmb 1
 unk_5A:		rmb 1
 unk_5B:		rmb 1
@@ -281,7 +280,7 @@ reset:					; CODE XREF: sub_FD41:loc_FE99J
 		stx	Port3DDR	; $4 is	direction 3 $5 is direction 4
 		ldx	#$EE12
 		stx	Port1DDR	; $0 is	direction 1 $1 is direction 2
-		jsr	CPUModeTst	; would	tweak p2b2 is constants	prevented branch.
+		jsr	CPUModeTst	; does a mode test and toggles watchdog	pin
 		ldx	#$B4 ; '´'
 
 loc_F02B:				; CODE XREF: sub_FD41-D13j
@@ -337,7 +336,7 @@ loc_F064:				; CODE XREF: sub_FD41:loc_F116J
 		cli
 		ldd	unk_4C
 		eorb	Port4		; port 4
-		andb	#$40 ; '@'
+		andb	#$40 ; '@'      ; p4-6 is SPD input
 		beq	loc_F083
 		inc	unk_61
 		eorb	unk_4D
@@ -533,7 +532,7 @@ sub_F154:				; CODE XREF: sub_F129+Cp sub_F194p
 ; FUNCTION CHUNK AT F191 SIZE 00000003 BYTES
 
 		std	word_9F		; injector related
-		ldaa	Port4
+		ldaa	Port4		; p4-7 is injections #10
 		rola
 		ldd	Inj10OffTime
 		bsr	sub_F168	; carry	set, injector was off
@@ -921,7 +920,7 @@ loc_F31C:				; CODE XREF: ROM:F318j
 		asla
 		oraa	Port3
 		bmi	loc_F359
-		ldaa	#$FE ; 'þ'
+		ldaa	#$FE ; 'þ'      ; p4-0 is output to SE056 mixed signal ic, here we apply a low level
 		anda	Port4
 		staa	Port4
 		clra
@@ -946,7 +945,7 @@ loc_F365:				; CODE XREF: ROM:F35Fj
 loc_F367:				; CODE XREF: ROM:F363j
 		stab	unk_4E
 		ldaa	#1
-		oraa	Port4
+		oraa	Port4		; p4-0 is output to SE056 mixed	signal ic, here	we apply a high	level
 		staa	Port4
 		rti
 ; ---------------------------------------------------------------------------
@@ -1889,7 +1888,7 @@ loc_F7E7:				; CODE XREF: sub_F7BE+26j
 		staa	unk_9B
 		ldx	#$F7A6
 		ldab	Port4
-		bitb	#4
+		bitb	#4		; p4-2 is IDL, active high
 		beq	loc_F7F9
 		inx
 		inx
@@ -1933,7 +1932,7 @@ loc_F814:				; CODE XREF: sub_FD41-C39P
 		ldaa	unk_95
 		bpl	loc_F859
 		ldaa	Port4
-		anda	#$20 ; ' '
+		anda	#$20 ; ' '      ; p4-5 is T input to pcm, test mode is active low
 		bne	loc_F82C
 
 loc_F829:				; CODE XREF: ROM:F819j	ROM:F81Dj
@@ -2240,7 +2239,7 @@ loc_F9BF:				; CODE XREF: sub_F96A+49j
 		bhi	loc_F9E2
 		ldx	unk_7F
 		cpx	#$190
-		bitb	Port4
+		bitb	Port4		; like ANDB Port4
 		bls	loc_F9E2
 		ldaa	unk_CD
 		bita	#1
@@ -2268,7 +2267,7 @@ loc_F9E5:				; CODE XREF: sub_F96A+73j
 
 loc_F9F7:				; CODE XREF: sub_F96A+31j sub_F96A+39j
 		ldaa	unk_95
-		ldab	Port4
+		ldab	Port4		; p4-2 is IDL input, active low
 		andb	#4
 		beq	loc_FA0E
 		tsta
@@ -2318,7 +2317,7 @@ loc_FA39:				; CODE XREF: sub_F96A+A0j
 
 loc_FA3B:				; CODE XREF: sub_F96A+9Dj sub_F96A+A2j
 		ldd	#$10FE
-		anda	Port4
+		anda	Port4		; p4-4 is start	signal
 		beq	loc_FA60
 		andb	unk_4C
 		stab	unk_4C
@@ -2674,11 +2673,11 @@ loc_FBD4:				; CODE XREF: ROM:FB6Cj
 		jsr	$39,x
 		ldab	unk_D2
 		cmpb	#$4C ; 'L'
-		bhi	loc_FBE4
+		bhi	loc_FBE4	; p4-3 is ac input, active high
 		adda	#$10
 
 loc_FBE4:				; CODE XREF: ROM:FBE0j
-		ldab	Port4
+		ldab	Port4		; p4-3 is ac input, active high
 		bitb	#8
 		beq	loc_FBED+2
 		jsr	sub_FB46
@@ -2856,17 +2855,17 @@ loc_FC94:				; CODE XREF: ROM:FC91j
 		cmpb	#$42 ; 'B'
 		bcc	loc_FCC9
 		ldaa	Port1
-		bra	loc_FCD2
+		bra	loc_FCD2	; bit 5	($20) goes to port buffer, is output
 ; ---------------------------------------------------------------------------
 
 loc_FCC9:				; CODE XREF: ROM:FCBDj	ROM:FCC3j
 		ldd	#$DF4C
-		anda	Port1
+		anda	Port1		; and $DF with port1 avoids touching #20
 		cmpb	unk_D2
 		bcs	loc_FCD4
 
 loc_FCD2:				; CODE XREF: ROM:FCC7j
-		oraa	#$20 ; ' '
+		oraa	#$20 ; ' '      ; bit 5 ($20) goes to port buffer, is output
 
 loc_FCD4:				; CODE XREF: ROM:FCD0j
 		staa	Port1
@@ -2874,8 +2873,8 @@ loc_FCD4:				; CODE XREF: ROM:FCD0j
 loc_FCD6:				; CODE XREF: ROM:FCB9j
 		ldx	#$FFD0
 		jsr	$11,x
-		ldab	Port4
-		bitb	#$10
+		ldab	Port4		; P4-4,	STA input to pcm, high when starting i think
+		bitb	#$10		; test P4-4, STA input to pcm, high when starting i think
 		bne	loc_FCEE
 		ldab	unk_CF
 		clr	unk_CF
@@ -2927,7 +2926,7 @@ loc_FD0C:				; CODE XREF: sub_FD02+4j
 sub_FD11:				; CODE XREF: sub_FD41-C73P
 					; sub_F420+23P	...
 		ldab	Port4
-		bitb	#$20 ; ' '
+		bitb	#$20 ; ' '      ; p4-5 is Timing check input. low is check mode
 		beq	loc_FD1B
 		ldab	#$DA ; 'Ú'
 		stab	unk_C8
@@ -2936,7 +2935,7 @@ loc_FD1B:				; CODE XREF: sub_FD02+Dj sub_FD11+4j
 		tab
 		orab	unk_CD
 		stab	unk_CD
-		ldab	Port4
+		ldab	Port4		; p4-4 is ac input, active high
 		bitb	#$10
 		bne	locret_FD2C
 		oraa	unk_48
@@ -2995,12 +2994,12 @@ loc_FD5D:				; CODE XREF: sub_FD41+17j
 		ldx	#$FFD3
 		jsr	$10,x
 		ldaa	unk_60
-		bne	loc_FD79
+		bne	loc_FD79	; p4-5,	test input active low
 		ldd	#$2001
 		cmpa	unk_65
-		bhi	loc_FD79
+		bhi	loc_FD79	; p4-5,	test input active low
 		ldaa	unk_C6
-		bpl	loc_FD79
+		bpl	loc_FD79	; p4-5,	test input active low
 		andb	unk_4C
 		orab	unk_46
 		tba
@@ -3008,7 +3007,7 @@ loc_FD5D:				; CODE XREF: sub_FD41+17j
 		std	unk_46
 
 loc_FD79:				; CODE XREF: sub_FD41+23j sub_FD41+2Aj ...
-		ldab	Port4
+		ldab	Port4		; p4-5,	test input active low
 		andb	#$20 ; ' '
 		beq	loc_FDAE
 		ldab	unk_4D
@@ -3043,14 +3042,14 @@ loc_FD9D:				; CODE XREF: sub_FD41+42j
 
 loc_FDAE:				; CODE XREF: sub_FD41+3Cj
 		ldaa	unk_95
-		bmi	loc_FDB8
+		bmi	loc_FDB8	; p4-2 is IDL, p4-3 is AC, so idling and ac perhaps?
 		ldaa	unk_9A
 		bpl	loc_FDC6
 		bra	loc_FDC4
 ; ---------------------------------------------------------------------------
 
 loc_FDB8:				; CODE XREF: sub_FD41+6Fj
-		ldaa	Port4
+		ldaa	Port4		; p4-2 is IDL, p4-3 is AC, so idling and ac perhaps?
 		eora	#4
 		anda	#$C
 		oraa	unk_46
@@ -3078,7 +3077,7 @@ loc_FDCE:				; CODE XREF: sub_FD41+6Bj
 		staa	unk_CB
 		ldaa	unk_46
 		anda	#1
-		ldab	Port4
+		ldab	Port4		; another IDL+AC test
 		eorb	#4
 		bitb	#$C
 		beq	loc_FDED
@@ -3134,7 +3133,7 @@ loc_FE1B:				; CODE XREF: sub_FD41+69j
 
 loc_FE24:				; CODE XREF: sub_FD41+DFj
 		stab	Port1
-		ldab	Port4
+		ldab	Port4		; p4-5,	test mode, activ elow
 		bitb	#$20 ; ' '
 		beq	loc_FE33
 		ldaa	unk_4C
@@ -3205,7 +3204,7 @@ loc_FE6E:				; CODE XREF: sub_FD41+13Aj
 		comb
 		coma
 		bmi	loc_FE65
-		ldaa	Port4
+		ldaa	Port4		; p4-5,	test mode, active low
 		anda	#$20 ; ' '
 		beq	loc_FE48
 		bra	loc_FE99
@@ -3223,7 +3222,7 @@ loc_FE8D:				; CODE XREF: sub_FD41+14Dj
 		decb
 		bne	loc_FE8D
 		jsr	CPUModeTst
-		ldaa	Port4
+		ldaa	Port4		; p4-5,	test mode, active low
 		anda	#$20 ; ' '
 		beq	loc_FE8D
 
@@ -3508,17 +3507,19 @@ loc_FF3C:				; CODE XREF: sub_FF35j	sub_FF35+4j
 		fcb   7
 		fcb $FB	; û
 		fcb $FE	; þ
-		fcb $D6	; Ö
-		fcb $58	; X
-		fcb $54	; T
-		fcb $54	; T
-		fcb $54	; T
-		fcb $54	; T
-		fcb $54	; T
-		fcb $3A	; :
-		fcb $A0	;  
-		fcb   0
-		fcb $39	; 9
+; ---------------------------------------------------------------------------
+
+loc_FFA4:
+		ldab	byte_58
+		lsrb
+		lsrb
+		lsrb
+		lsrb
+		lsrb
+		abx
+		suba	0,x
+		rts
+; ---------------------------------------------------------------------------
 		fcb $4D	; M
 		fcb   5
 		fcb $43	; C
@@ -3570,8 +3571,10 @@ loc_FF3C:				; CODE XREF: sub_FF35j	sub_FF35+4j
 		fcb   0
 		fcb   0
 ; ---------------------------------------------------------------------------
-		bsr	*+2		; yay recursion?
-		ldaa	$FF,x
+
+loc_FFE1:				; X=FFD0 on entry, this	sub is executed	twice
+		bsr	*+2
+		ldaa	$FF,x		; could	wrap around to $00CF
 		inca
 		beq	loc_FFEA
 		inc	$FF,x
