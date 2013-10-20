@@ -1,4 +1,5 @@
 
+
 ; Processor:	    6303 []
 ; Target assembler: Motorola FreeWare Assembler
 
@@ -30,7 +31,8 @@ RAMCnt:		rmb 1
 unk_18:		rmb 1
 		rmb 1
 		rmb 1
-unk_1B:		rmb 1
+word_1B:	rmb 2			; used by an injector control sub
+unk_1D:		rmb 1
 		rmb 1
 		rmb 1
 		rmb 1
@@ -65,20 +67,18 @@ unk_1B:		rmb 1
 		rmb 1
 		rmb 1
 		rmb 1
+unk_40:		rmb 1
 		rmb 1
+unk_42:		rmb 1
 		rmb 1
-		rmb 1
-		rmb 1
-		rmb 1
-		rmb 1
-		rmb 1
+unk_44:		rmb 1
 		rmb 1
 unk_46:		rmb 1
 		rmb 1
 unk_48:		rmb 1
 		rmb 1
-		rmb 1
-		rmb 1
+unk_4A:		rmb 1
+unk_4B:		rmb 1
 unk_4C:		rmb 1
 unk_4D:		rmb 1
 unk_4E:		rmb 1
@@ -87,69 +87,67 @@ unk_50:		rmb 1
 unk_51:		rmb 1
 		rmb 1
 unk_53:		rmb 1
-		rmb 1
-		rmb 1
+unk_54:		rmb 1
+unk_55:		rmb 1
 		rmb 1
 unk_57:		rmb 1
 		rmb 1
-		rmb 1
-		rmb 1
-		rmb 1
-		rmb 1
+unk_59:		rmb 1
+unk_5A:		rmb 1
+unk_5B:		rmb 1
+unk_5C:		rmb 1
 unk_5D:		rmb 1
 unk_5E:		rmb 1
-		rmb 1
+unk_5F:		rmb 1
 unk_60:		rmb 1
 unk_61:		rmb 1
-		rmb 1
+unk_62:		rmb 1
 		rmb 1
 unk_64:		rmb 1
 unk_65:		rmb 1
 word_66:	rmb 2
-		rmb 1
+unk_68:		rmb 1
 unk_69:		rmb 1
 unk_6A:		rmb 1
 		rmb 1
+unk_6C:		rmb 1
 		rmb 1
+unk_6E:		rmb 1
 		rmb 1
+unk_70:		rmb 1
 		rmb 1
+unk_72:		rmb 1
 		rmb 1
-		rmb 1
-		rmb 1
-		rmb 1
-		rmb 1
-		rmb 1
-		rmb 1
+unk_74:		rmb 1
+unk_75:		rmb 1
 unk_76:		rmb 1
 		rmb 1
-		rmb 1
-		rmb 1
-		rmb 1
+unk_78:		rmb 1
+Inj10OffTime:	rmb 2
 unk_7B:		rmb 1
 		rmb 1
-		rmb 1
+unk_7D:		rmb 1
 		rmb 1
 unk_7F:		rmb 1
 		rmb 1
-		rmb 1
-		rmb 1
+word_81:	rmb 2			; injector related
 unk_83:		rmb 1
 unk_84:		rmb 1
 		rmb 1
-		rmb 1
+unk_86:		rmb 1
 unk_87:		rmb 1
-		rmb 1
-		rmb 1
-		rmb 1
-		rmb 1
+unk_88:		rmb 1
+unk_89:		rmb 1
+unk_8A:		rmb 1
+unk_8B:		rmb 1
 unk_8C:		rmb 1
 		rmb 1
+unk_8E:		rmb 1
 		rmb 1
+unk_90:		rmb 1
 		rmb 1
-		rmb 1
-		rmb 1
-		rmb 1
-		rmb 1
+unk_92:		rmb 1
+unk_93:		rmb 1
 unk_94:		rmb 1
 unk_95:		rmb 1
 unk_96:		rmb 1
@@ -160,42 +158,39 @@ unk_9A:		rmb 1
 unk_9B:		rmb 1
 unk_9C:		rmb 1
 unk_9D:		rmb 1
-		rmb 1
-		rmb 1
-		rmb 1
-		rmb 1
-		rmb 1
+unk_9E:		rmb 1
+word_9F:	rmb 2			; injector related
+word_A1:	rmb 2
 unk_A3:		rmb 1
-		rmb 1
+unk_A4:		rmb 1
 unk_A5:		rmb 1
+unk_A6:		rmb 1
+unk_A7:		rmb 1
 		rmb 1
+unk_A9:		rmb 1
 		rmb 1
+unk_AB:		rmb 1
 		rmb 1
+unk_AD:		rmb 1
 		rmb 1
+unk_AF:		rmb 1
 		rmb 1
+unk_B1:		rmb 1
 		rmb 1
-		rmb 1
-		rmb 1
-		rmb 1
-		rmb 1
-		rmb 1
-		rmb 1
-		rmb 1
-		rmb 1
+unk_B3:		rmb 1
 		rmb 1
 word_B5:	rmb 2
+unk_B7:		rmb 1
 		rmb 1
-		rmb 1
-		rmb 1
-		rmb 1
+word_B9:	rmb 2
 word_BB:	rmb 2
 word_BD:	rmb 2
+unk_BF:		rmb 1
 		rmb 1
+unk_C1:		rmb 1
 		rmb 1
-		rmb 1
-		rmb 1
-		rmb 1
-		rmb 1
+unk_C3:		rmb 1
+unk_C4:		rmb 1
 		rmb 1
 unk_C6:		rmb 1
 		rmb 1
@@ -203,18 +198,19 @@ unk_C8:		rmb 1
 unk_C9:		rmb 1
 		rmb 1
 unk_CB:		rmb 1
-		rmb 1
-		rmb 1
+unk_CC:		rmb 1
+unk_CD:		rmb 1
 unk_CE:		rmb 1
-		rmb 1
-		rmb 1
-		rmb 1
+unk_CF:		rmb 1
+unk_D0:		rmb 1
+unk_D1:		rmb 1
 unk_D2:		rmb 1
+unk_D3:		rmb 1
 		rmb 1
-		rmb 1
-		rmb 1
-		rmb 1
+unk_D5:		rmb 1
+unk_D6:		rmb 1
 unk_D7:		rmb 1
+unk_D8:		rmb 1
 		rmb 1
 		rmb 1
 		rmb 1
@@ -253,7 +249,7 @@ unk_D7:		rmb 1
 		rmb 1
 		rmb 1
 		rmb 1
-		rmb 1
+TopStack:	rmb 1
 ; end of 'RegRAM'
 
 ; ---------------------------------------------------------------------------
@@ -285,13 +281,13 @@ reset:					; CODE XREF: sub_FD41:loc_FE99J
 		stx	Port3DDR	; $4 is	direction 3 $5 is direction 4
 		ldx	#$EE12
 		stx	Port1DDR	; $0 is	direction 1 $1 is direction 2
-		jsr	sub_FC6E	; would	tweak p2b2 is constants	prevented branch.
+		jsr	CPUModeTst	; would	tweak p2b2 is constants	prevented branch.
 		ldx	#$B4 ; '´'
 
 loc_F02B:				; CODE XREF: sub_FD41-D13j
-		clr	$4B,x		; $4b is 75dec,	$b4 is 180dec, so clear	memory starting	from $ff to $4C	inclusive, which is all	ram
+		clr	$4B,x		; $4b is 75dec,	$b4 is 180dec, so clear	memory starting	from $ff to $4C	inclusive
 		dex
-		bne	loc_F02B	; $4b is 75dec,	$b4 is 180dec, so clear	memory starting	from $ff to $4C	inclusive, which is all	ram
+		bne	loc_F02B	; $4b is 75dec,	$b4 is 180dec, so clear	memory starting	from $ff to $4C	inclusive
 		ldd	TxRxCntStat	; $11 is txrx control and stat reg, $12	is rxdata reg
 		ldaa	#2		; tx enable, no	interrupts
 		staa	TxRxCntStat
@@ -514,9 +510,9 @@ loc_F137:				; CODE XREF: ROM:loc_F23EP
 		ldx	#$DD9F
 		ldaa	Port1
 		rora
-		rora
+		rora			; injector 20 bit in carry
 		ldd	unk_7B
-		bsr	sub_F168
+		bsr	sub_F168	; carry	set, injector was off
 		addd	#$1E
 		std	unk_7B
 		ldd	#$FE0C
@@ -524,7 +520,7 @@ loc_F137:				; CODE XREF: ROM:loc_F23EP
 		staa	unk_18
 		ldx	Timer
 		abx
-		stx	unk_1B
+		stx	word_1B		; used by an injector control sub
 		rts
 ; End of function sub_F129
 
@@ -536,21 +532,22 @@ sub_F154:				; CODE XREF: sub_F129+Cp sub_F194p
 
 ; FUNCTION CHUNK AT F191 SIZE 00000003 BYTES
 
-		std	unk_9F
+		std	word_9F		; injector related
 		ldaa	Port4
 		rola
-		ldd	unk_79
-		bsr	sub_F168
+		ldd	Inj10OffTime
+		bsr	sub_F168	; carry	set, injector was off
 		subd	#0
-		std	unk_79
+		std	Inj10OffTime
 		ldaa	#$7F ; ''
-		anda	Port4
+		anda	Port4		; turn on injector #10
 		bra	loc_F191
 ; End of function sub_F154
 
 
 ; =============== S U B	R O U T	I N E =======================================
 
+; carry	set, injector was off
 
 sub_F168:				; CODE XREF: sub_F129+17p sub_F154+7p
 		bcs	loc_F16E
@@ -558,10 +555,10 @@ sub_F168:				; CODE XREF: sub_F129+17p sub_F154+7p
 		bpl	loc_F170
 
 loc_F16E:				; CODE XREF: sub_F168j
-		ldd	unk_81
+		ldd	word_81		; injector related
 
 loc_F170:				; CODE XREF: sub_F168+4j
-		addd	unk_9F
+		addd	word_9F		; injector related
 		bpl	loc_F177
 		ldd	#$7FFF
 
@@ -574,24 +571,24 @@ loc_F177:				; CODE XREF: sub_F168+Aj
 ; =============== S U B	R O U T	I N E =======================================
 
 
-sub_F17A:				; CODE XREF: ROM:F2F8P	ROM:F3D7P
+injector1:				; CODE XREF: ROM:F2F8P	ROM:F3D7P
 
 ; FUNCTION CHUNK AT F196 SIZE 0000001B BYTES
 
 		ldaa	Port4
-		bmi	locret_F1B0
-		ldd	unk_79
-		subd	#$140
+		bmi	locret_F1B0	; exit is injector #10 is not on
+		ldd	Inj10OffTime
+		subd	#320
 		subd	Timer
-		bpl	loc_F196
-		ldx	unk_79
+		bpl	loc_F196	; branch if not	within 320us of	inj off	time
+		ldx	Inj10OffTime
 
-loc_F189:				; CODE XREF: sub_F17A+11j
+loc_F189:				; CODE XREF: injector1+11j
 		cpx	Timer
-		bpl	loc_F189
+		bpl	loc_F189	; spin waiting for timer
 		ldaa	#$80 ; '€'
-		oraa	Port4
-; End of function sub_F17A
+		oraa	Port4		; turn off injector #10
+; End of function injector1
 
 ; START	OF FUNCTION CHUNK FOR sub_F154
 
@@ -607,28 +604,29 @@ sub_F194:				; CODE XREF: ROM:F23AP
 		bsr	sub_F154
 ; End of function sub_F194
 
-; START	OF FUNCTION CHUNK FOR sub_F17A
+; START	OF FUNCTION CHUNK FOR injector1
 
-loc_F196:				; CODE XREF: sub_F17A+Bj
+loc_F196:				; CODE XREF: injector1+Bj
 		ldd	#$2FE
 		anda	Port1
-		bne	loc_F1A3
-		ldx	unk_1B
-		cpx	unk_79
+		bne	loc_F1A3	; branch is injector #20 is not	on
+		ldx	word_1B		; used by an injector control sub
+		cpx	Inj10OffTime
 		bmi	locret_F1B0
 
-loc_F1A3:				; CODE XREF: sub_F17A+21j
+loc_F1A3:				; CODE XREF: injector1+21j
 		lsra
 		andb	unk_18
 		aba
 		staa	unk_18
-		ldd	unk_79
-		subd	#$FA ; 'ú'
-		std	unk_1B
+		ldd	Inj10OffTime
+		subd	#250
+		std	word_1B		; used by an injector control sub
 
-locret_F1B0:				; CODE XREF: sub_F17A+2j sub_F17A+27j
+locret_F1B0:				; CODE XREF: injector1+2j
+					; injector1+27j
 		rts
-; END OF FUNCTION CHUNK	FOR sub_F17A
+; END OF FUNCTION CHUNK	FOR injector1
 ; ---------------------------------------------------------------------------
 
 IRQinpcap:
@@ -649,7 +647,7 @@ loc_F1BC:				; CODE XREF: ROM:F1B8j
 
 loc_F1C1:				; CODE XREF: ROM:loc_F1BCj
 		ldd	InpCap
-		subd	unk_B9
+		subd	word_B9
 		pshb
 		psha
 		pulx
@@ -762,16 +760,16 @@ loc_F242:				; CODE XREF: ROM:F1BEJ
 loc_F262:				; CODE XREF: ROM:F250j	ROM:F254j
 		ldd	OutCmp
 		addd	unk_B3
-		std	unk_9F
-		ldaa	unk_A1
+		std	word_9F		; injector related
+		ldaa	word_A1
 		inca
 		bmi	loc_F27B
 		ldd	unk_B7
 		addd	unk_A7
-		subd	unk_A1
-		cmpa	unk_9F
+		subd	word_A1
+		cmpa	word_9F		; injector related
 		bpl	loc_F279
-		ldd	unk_9F
+		ldd	word_9F		; injector related
 
 loc_F279:				; CODE XREF: ROM:F275j
 		bsr	sub_F287
@@ -798,8 +796,9 @@ sub_F287:				; CODE XREF: ROM:loc_F279p ROM:F2BCp
 
 ; =============== S U B	R O U T	I N E =======================================
 
+; called from output compare ISR
 
-sub_F28F:				; CODE XREF: ROM:loc_F3ACP ROM:F94DP
+OutCmpSub2:				; CODE XREF: ROM:loc_F3ACP ROM:F94DP
 		std	OutCmp
 		subd	Timer
 		cmpa	#$F0 ; 'ð'
@@ -810,9 +809,9 @@ loc_F297:				; CODE XREF: ROM:F2AAj
 		addd	Timer
 		std	OutCmp
 
-locret_F29E:				; CODE XREF: sub_F28F+6j ROM:F2A4j
+locret_F29E:				; CODE XREF: OutCmpSub2+6j ROM:F2A4j
 		rts
-; End of function sub_F28F
+; End of function OutCmpSub2
 
 ; ---------------------------------------------------------------------------
 		ldd	#$219
@@ -824,22 +823,22 @@ locret_F29E:				; CODE XREF: sub_F28F+6j ROM:F2A4j
 ; ---------------------------------------------------------------------------
 
 loc_F2AC:				; CODE XREF: ROM:F248j
-		stx	unk_9F
+		stx	word_9F		; injector related
 		ldaa	unk_4E
 		bita	#8
 		bne	loc_F2C1
-		ldaa	unk_A1
+		ldaa	word_A1
 		bpl	loc_F2BE+1
-		ldd	unk_9F
-		subd	unk_A1
+		ldd	word_9F		; injector related
+		subd	word_A1
 		bsr	sub_F287
 
 loc_F2BE:				; CODE XREF: ROM:F2B6j
 		cpx	#$8DDE
 
 loc_F2C1:				; CODE XREF: ROM:F2B2j
-		ldd	unk_9F
-		subd	unk_B9
+		ldd	word_9F		; injector related
+		subd	word_B9
 		std	word_66
 		ldab	unk_68
 		clr	unk_68
@@ -875,12 +874,12 @@ loc_F2F0:				; CODE XREF: ROM:F2EBj
 		ldaa	unk_18
 		asla
 		bpl	loc_F2FB
-		jsr	sub_F3B9
-		jsr	sub_F17A
+		jsr	watchdog1
+		jsr	injector1
 
 loc_F2FB:				; CODE XREF: ROM:F2F3j
-		ldd	unk_9F
-		std	unk_B9
+		ldd	word_9F		; injector related
+		std	word_B9
 		subd	unk_B7
 		std	unk_A7
 		subd	unk_B1
@@ -952,15 +951,15 @@ loc_F367:				; CODE XREF: ROM:F363j
 		rti
 ; ---------------------------------------------------------------------------
 
-IRQoutcmp:
+IRQoutcmp:				; output compare pin p2-1 eventually becomes the signal	/IGT, or in other words	a high IGT pulse (normal operation I believe) is created by a low pulse	from the output	compare	module.
 		ldaa	unk_18
 		asla
-		bmi	loc_F3D5
+		bmi	OutCmpFrg1
 		ldaa	TmrCntStat
 		tab
 		comb
 		bitb	#$41 ; 'A'
-		bne	loc_F3B0
+		bne	loc_F3B0	; if bit 6 or 1	was low	in tmrcntstat branch: if we're here for no reason (ocf flag was NOT set??) or we're here because a compare forced P2-1 low, branch
 		ldab	unk_4E
 		bitb	#8
 		bne	loc_F3B0
@@ -985,12 +984,12 @@ loc_F39F:				; CODE XREF: ROM:F39Bj
 		psha
 		ldaa	unk_4E
 		bita	#4
-		pula
+		pula			; pulls	dont touch cond	codes
 		beq	loc_F3AC
-		jsr	sub_F952
+		jsr	OutCmpSub1	; called from output compare ISR
 
 loc_F3AC:				; CODE XREF: ROM:F3A7j
-		jsr	sub_F28F
+		jsr	OutCmpSub2	; called from output compare ISR
 		rti
 ; ---------------------------------------------------------------------------
 
@@ -1004,31 +1003,32 @@ loc_F3B0:				; CODE XREF: ROM:F37Bj	ROM:F381j ...
 ; =============== S U B	R O U T	I N E =======================================
 
 
-sub_F3B9:				; CODE XREF: ROM:F2F5P	sub_F3B9+19j ...
+watchdog1:				; CODE XREF: ROM:F2F5P	watchdog1+19j ...
 		ldaa	unk_18
 		oraa	#1
 		staa	unk_18
 		ldx	unk_7B
-		stx	unk_1B
+		stx	word_1B		; used by an injector control sub
 		cpx	Timer
 		bpl	locret_F3D4
 		ldd	#$209
 		anda	Port1
 		bne	locret_F3D4
 		addd	Timer
-		std	unk_1B
-		bra	sub_F3B9
+		std	word_1B		; used by an injector control sub
+		bra	watchdog1
 ; ---------------------------------------------------------------------------
 
-locret_F3D4:				; CODE XREF: sub_F3B9+Cj sub_F3B9+13j
+locret_F3D4:				; CODE XREF: watchdog1+Cj
+					; watchdog1+13j
 		rts
-; End of function sub_F3B9
+; End of function watchdog1
 
 ; ---------------------------------------------------------------------------
 
-loc_F3D5:				; CODE XREF: ROM:F373j
-		bsr	sub_F3B9
-		jsr	sub_F17A
+OutCmpFrg1:				; CODE XREF: ROM:F373j
+		bsr	watchdog1
+		jsr	injector1
 		rti
 ; ---------------------------------------------------------------------------
 
@@ -2103,7 +2103,7 @@ loc_F90B:				; CODE XREF: ROM:F907j
 		addd	unk_A7
 
 loc_F90D:				; CODE XREF: ROM:F903j
-		std	unk_A1
+		std	word_A1
 		ldd	unk_D3
 		addd	unk_BF
 		std	word_BB
@@ -2130,7 +2130,7 @@ loc_F925:				; CODE XREF: ROM:F921j
 ; ---------------------------------------------------------------------------
 
 loc_F936:				; CODE XREF: ROM:F92Dj
-		bsr	sub_F952
+		bsr	OutCmpSub1	; called from output compare ISR
 		std	unk_D3
 		ldd	#$C02
 		eora	unk_4E
@@ -2141,7 +2141,7 @@ loc_F936:				; CODE XREF: ROM:F92Dj
 		ldd	unk_D3
 		std	OutCmp
 		ldx	TmrCntStat
-		jsr	sub_F28F
+		jsr	OutCmpSub2	; called from output compare ISR
 
 loc_F950:				; CODE XREF: ROM:F934j	ROM:F941j ...
 		cli
@@ -2149,17 +2149,18 @@ loc_F950:				; CODE XREF: ROM:F934j	ROM:F941j ...
 
 ; =============== S U B	R O U T	I N E =======================================
 
+; called from output compare ISR
 
-sub_F952:				; CODE XREF: ROM:F3A9P	ROM:loc_F936p
+OutCmpSub1:				; CODE XREF: ROM:F3A9P	ROM:loc_F936p
 		ldd	word_66
-		subd	unk_A1
+		subd	word_A1
 		subd	word_BB
 		bcc	loc_F95C
 		clra
 		clrb
 
-loc_F95C:				; CODE XREF: sub_F952+6j
-		addd	unk_B9
+loc_F95C:				; CODE XREF: OutCmpSub1+6j
+		addd	word_B9
 		sei
 		subd	word_BD
 		cmpa	#$E8 ; 'è'
@@ -2167,10 +2168,10 @@ loc_F95C:				; CODE XREF: sub_F952+6j
 		clra
 		clrb
 
-loc_F967:				; CODE XREF: sub_F952+11j
+loc_F967:				; CODE XREF: OutCmpSub1+11j
 		addd	word_BD
 		rts
-; End of function sub_F952
+; End of function OutCmpSub1
 
 
 ; =============== S U B	R O U T	I N E =======================================
@@ -2782,18 +2783,18 @@ loc_FC6C:				; CODE XREF: ROM:FC61j	ROM:FC65j ...
 ; =============== S U B	R O U T	I N E =======================================
 
 
-sub_FC6E:				; CODE XREF: sub_FD41-D1CP
+CPUModeTst:				; CODE XREF: sub_FD41-D1CP
 					; sub_FD41:loc_FE48P ...
 		ldd	#$E004
 		anda	Port2
 		cmpa	#$E0 ; 'à'
-		bne	locret_FC7B
-		eorb	Port1
+		bne	locret_FC7B	; branch if not	mode7 =	internal
+		eorb	Port1		; toggle the watchdog
 		stab	Port1
 
-locret_FC7B:				; CODE XREF: sub_FC6E+7j
+locret_FC7B:				; CODE XREF: CPUModeTst+7j
 		rts
-; End of function sub_FC6E
+; End of function CPUModeTst
 
 
 ; =============== S U B	R O U T	I N E =======================================
@@ -2831,7 +2832,7 @@ loc_FC94:				; CODE XREF: ROM:FC91j
 		jsr	$3C,x
 		bsr	sub_FC7C
 		addd	#$1D0
-		std	unk_81
+		std	word_81		; injector related
 		ldaa	unk_55
 		ldx	#$FF12
 		jsr	$13,x
@@ -3163,7 +3164,7 @@ loc_FE43:				; CODE XREF: sub_FD41+FAj
 		stab	Port1
 
 loc_FE48:				; CODE XREF: sub_FD41+144j
-		jsr	sub_FC6E
+		jsr	CPUModeTst
 		clra
 		clrb
 		ldx	#$F000
@@ -3180,7 +3181,7 @@ loc_FE50:				; CODE XREF: sub_FD41+113j
 ; ---------------------------------------------------------------------------
 
 loc_FE5F:				; CODE XREF: sub_FD41+118j
-		jsr	sub_FC6E
+		jsr	CPUModeTst
 		ldd	#$55AA
 
 loc_FE65:				; CODE XREF: sub_FD41+13Ej
@@ -3221,7 +3222,7 @@ loc_FE8D:				; CODE XREF: sub_FD41+14Dj
 					; sub_FD41+156j
 		decb
 		bne	loc_FE8D
-		jsr	sub_FC6E
+		jsr	CPUModeTst
 		ldaa	Port4
 		anda	#$20 ; ' '
 		beq	loc_FE8D
