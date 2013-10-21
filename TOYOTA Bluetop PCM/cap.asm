@@ -1,5 +1,4 @@
 
-
 ; Processor:	    6303 []
 ; Target assembler: Motorola FreeWare Assembler
 
@@ -20,7 +19,7 @@ TmrCntStat:	rmb 1
 Timer:		rmb 2
 OutCmp:		rmb 2
 InpCap:		rmb 2
-Port3CntStat:	rmb 1
+Port3CntStat:	rmb 1			; 7- /IS3 flag	6- /IS3	/IRQ enable 5x 4- output strobe	select 3 latch enable 210x
 UARTRateMode:	rmb 1
 TxRxCntStat:	rmb 1
 RxReg:		rmb 1
@@ -143,7 +142,7 @@ unk_95:		rmb 1
 unk_96:		rmb 1
 unk_97:		rmb 1
 unk_98:		rmb 1
-unk_99:		rmb 1
+unk_99:		rmb 1			; TVIS related
 unk_9A:		rmb 1
 unk_9B:		rmb 1
 unk_9C:		rmb 1
@@ -253,9 +252,9 @@ reset:					; CODE XREF: sub_FD41:loc_FE99J
 		staa	unk_18		; $18 is reserved...
 		std	Timer		; $9 is	counter	high byte, $A is counter low byte
 		ldd	#$BFFF
-		std	Port3		; $6 is	port 3 data $7 is port 4 data
+		std	Port3		; $port	3 all outputs high except 6, select ADC	- Port4	all bits high
 		ldd	#$9FFF
-		std	Port1		; $2 is	port 1 data $3 is port 2 data
+		std	Port1		; port1	bits 7,4,3,2,1 high port 2 all bits high
 		ldx	#$6081		; because they're worried they'll wear out accD?
 		stx	Port3DDR	; $4 is	direction 3 $5 is direction 4
 		ldx	#$EE12
@@ -332,8 +331,8 @@ loc_F083:				; CODE XREF: sub_FD41-CC9j
 		std	unk_5E
 		ldaa	#$DF ; 'ß'
 		sei
-		anda	Port3
-		staa	Port3
+		anda	Port3		; clear	bit5 (mixed signal se056)
+		staa	Port3		; clear	bit5 (mixed signal se056)
 		cli
 		ldd	#$1FE
 		andb	unk_53		; clear	bit0
@@ -487,7 +486,7 @@ loc_F131:				; CODE XREF: ROM:F21EP
 
 loc_F137:				; CODE XREF: ROM:loc_F23EP
 		ldx	#$DD9F
-		ldaa	Port1
+		ldaa	Port1		; test injector	#20 (bit 1)
 		rora
 		rora			; injector 20 bit in carry
 		ldd	unk_7B
@@ -587,7 +586,7 @@ sub_F194:				; CODE XREF: ROM:F23AP
 
 loc_F196:				; CODE XREF: injector1+Bj
 		ldd	#$2FE
-		anda	Port1
+		anda	Port1		; test bit 1 (injector #20)
 		bne	loc_F1A3	; branch is injector #20 is not	on
 		ldx	word_1B		; used by an injector control sub
 		cpx	Inj10OffTime
@@ -898,11 +897,11 @@ loc_F31C:				; CODE XREF: ROM:F318j
 		bls	loc_F359
 		tba
 		asla
-		oraa	Port3
+		oraa	Port3		; inputs to port3 are 7	-G+, 4,3,2,1,0
 		bmi	loc_F359
-		ldaa	#$FE ; 'þ'      ; p4-0 is output to SE056 mixed signal ic, here we apply a low level
-		anda	Port4
-		staa	Port4
+		ldaa	#$FE ; 'þ'
+		anda	Port4		; p4-0 is output to SE056 mixed	signal ic, here	we apply a low level
+		staa	Port4		; p4-0 is output to SE056 mixed	signal ic, here	we apply a low level
 		clra
 		staa	byte_78
 		staa	unk_D1
@@ -991,7 +990,7 @@ watchdog1:				; CODE XREF: ROM:F2F5P	watchdog1+19j ...
 		cpx	Timer
 		bpl	locret_F3D4
 		ldd	#$209
-		anda	Port1
+		anda	Port1		; test status of bit 1 (injector #20)
 		bne	locret_F3D4
 		addd	Timer
 		std	word_1B		; used by an injector control sub
@@ -1026,8 +1025,8 @@ locret_F3E7:				; CODE XREF: ROM:F3DDj
 SerialMain:				; CODE XREF: ROM:F3E2j
 		ldaa	unk_4F
 		rora
-		ldaa	Port3		; port 3 data reg
-		bita	#$40 ; '@'      ; test to see if /CS to the ADC is set
+		ldaa	Port3		; test to see if /CS to	the ADC	is set
+		bita	#$40 ; '@'
 		bne	SerialDebug	; branch if ADC	was not	selected (to serial debug routine)
 		stab	ADCRxData	; b has	rx data
 		bcc	loc_F3FE	; branch if lsb	of $4f when loaded was 0
@@ -1069,11 +1068,11 @@ txwaitloop1:				; CODE XREF: ROM:F41Aj
 
 sub_F420:				; CODE XREF: sub_FD41-C3CP
 		sei
-		ldaa	Port3CntStat
-		ldab	Port3
+		ldaa	Port3CntStat	; operation clears is3 flag
+		ldab	Port3		; operation clears is3 flag
 		cli
 		clrb
-		stab	Port3CntStat
+		stab	Port3CntStat	; nuke all special features of port3
 		rola
 		ldd	#$7B79
 		bcc	loc_F431
@@ -1176,8 +1175,8 @@ loc_F4B0:				; CODE XREF: sub_F420+8Bj
 		jsr	sub_FB46
 		suba	$14,x
 		bcs	loc_F4E2
-		ldaa	Port3
-		bpl	loc_F4D6
+		ldaa	Port3		; test MSB of port3 (G+	related)
+		bpl	loc_F4D6	; branch if G+ related is clear
 		ldaa	#$40 ; '@'
 		jsr	sub_F119
 
@@ -2010,7 +2009,7 @@ loc_F87B:				; CODE XREF: ROM:F877j
 		jsr	sub_FF35
 		ins
 		pulx
-		ldab	unk_99
+		ldab	unk_99		; TVIS related
 		bmi	loc_F8A5
 		adda	#8
 
@@ -2161,13 +2160,13 @@ sub_F96A:				; CODE XREF: sub_FD41:loc_F0FAP
 		jsr	$7A,x
 		ldd	#$77F
 		anda	unk_5F
-		andb	Port1
+		andb	Port1		; anding with 7f=0b0111111
 		cmpa	unk_D7
-		bcs	loc_F97C
+		bcs	loc_F97C	; has potential	to toggle bit 7	- /VF ouput generation
 		orab	#$80 ; '€'
 
 loc_F97C:				; CODE XREF: sub_F96A+Ej
-		stab	Port1
+		stab	Port1		; has potential	to toggle bit 7	- /VF ouput generation
 		ldaa	unk_59
 		cmpa	#$17
 		ldaa	unk_9A
@@ -2480,7 +2479,7 @@ loc_FB18:				; CODE XREF: ROM:F3E4P
 		ldaa	TxRxCntStat	; read from reg	to clear any pending error bits
 		ldaa	#$BF ; '¿'
 		sei
-		anda	Port3
+		anda	Port3		; safely clear p3-6 without clobbering other pins
 		staa	Port3		; safely clear p3-6 without clobbering other pins
 		stab	TxReg
 		cli
@@ -2730,20 +2729,20 @@ loc_FC33:				; CODE XREF: ROM:FC24j
 
 loc_FC47:				; CODE XREF: ROM:FC2Bj
 		ldab	unk_65
-		ldaa	Port1
+		ldaa	Port1		; interested in	 bit 6 /TVIS
 		anda	#$BF ; '¿'
 		cmpb	#$9E ; 'ž'
-		bcs	loc_FC57
+		bcs	loc_FC57	; has toggles bit 6 - /TVIS
 		cmpb	#$AE ; '®'
 		bcs	loc_FC59
 		oraa	#$40 ; '@'
 
 loc_FC57:				; CODE XREF: ROM:FC4Fj
-		staa	Port1
+		staa	Port1		; has toggles bit 6 - /TVIS
 
 loc_FC59:				; CODE XREF: ROM:FC53j
-		ldaa	unk_99
-		ldab	Port1
+		ldaa	unk_99		; TVIS related
+		ldab	Port1		; interested in	bit 6 /TVIS
 		aslb
 		bmi	loc_FC67
 		deca
@@ -2758,7 +2757,7 @@ loc_FC67:				; CODE XREF: ROM:FC5Ej
 		ldaa	#2
 
 loc_FC6C:				; CODE XREF: ROM:FC61j	ROM:FC65j ...
-		staa	unk_99
+		staa	unk_99		; TVIS related
 
 ; =============== S U B	R O U T	I N E =======================================
 
@@ -2766,11 +2765,11 @@ loc_FC6C:				; CODE XREF: ROM:FC61j	ROM:FC65j ...
 CPUModeTst:				; CODE XREF: sub_FD41-D1CP
 					; sub_FD41:loc_FE48P ...
 		ldd	#$E004
-		anda	Port2
+		anda	Port2		; interested in	mode bits
 		cmpa	#$E0 ; 'à'
 		bne	locret_FC7B	; branch if not	mode7 =	internal
 		eorb	Port1		; toggle the watchdog
-		stab	Port1
+		stab	Port1		; toggle watchdog bit 2
 
 locret_FC7B:				; CODE XREF: CPUModeTst+7j
 		rts
@@ -2797,9 +2796,9 @@ DivDby16:				; CODE XREF: sub_F420+39P ROM:F8F5P
 ; End of function DivDby16
 
 ; ---------------------------------------------------------------------------
-		ldaa	Port3
+		ldaa	Port3		; test level of	bit4 (input from mixed signal se056)
 		anda	#$10
-		suba	#$10
+		suba	#$10		; bit4 status is hidden	in carry
 		ldaa	#1
 		jsr	sub_FD02
 		ldaa	byte_55
@@ -2835,21 +2834,21 @@ loc_FC94:				; CODE XREF: ROM:FC91j
 		ldab	word_42
 		cmpb	#$42 ; 'B'
 		bcc	loc_FCC9
-		ldaa	Port1
+		ldaa	Port1		; interested in	bit 5, output to port buffer
 		bra	loc_FCD2	; bit 5	($20) goes to port buffer, is output
 ; ---------------------------------------------------------------------------
 
 loc_FCC9:				; CODE XREF: ROM:FCBDj	ROM:FCC3j
 		ldd	#$DF4C
-		anda	Port1		; and $DF with port1 avoids touching #20
+		anda	Port1		; ignoring bit 4
 		cmpb	unk_D2
-		bcs	loc_FCD4
+		bcs	loc_FCD4	; can set bit 5	(buffer)
 
 loc_FCD2:				; CODE XREF: ROM:FCC7j
 		oraa	#$20 ; ' '      ; bit 5 ($20) goes to port buffer, is output
 
 loc_FCD4:				; CODE XREF: ROM:FCD0j
-		staa	Port1
+		staa	Port1		; can set bit 5	(buffer)
 
 loc_FCD6:				; CODE XREF: ROM:FCB9j
 		ldx	#$FFD0
@@ -3017,7 +3016,7 @@ loc_FD9D:				; CODE XREF: sub_FD41+42j
 		staa	unk_CB
 		ldab	unk_4D
 		bitb	#1
-		bne	loc_FE1B
+		bne	loc_FE1B	; may set bit 3	- Idle up solenoid active high
 		bra	loc_FDCE
 ; ---------------------------------------------------------------------------
 
@@ -3106,7 +3105,7 @@ loc_FE19:				; CODE XREF: sub_FD41+92j
 		staa	unk_C8
 
 loc_FE1B:				; CODE XREF: sub_FD41+69j
-		ldab	Port1
+		ldab	Port1		; may set bit 3	- Idle up solenoid active high
 		andb	#$F7 ; '÷'
 		tsta
 		bpl	loc_FE24
