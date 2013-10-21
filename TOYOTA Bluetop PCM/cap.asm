@@ -1,4 +1,6 @@
 
+
+
 ; Processor:	    6303 []
 ; Target assembler: Motorola FreeWare Assembler
 
@@ -114,10 +116,8 @@ unk_76:		rmb 1
 		rmb 1
 byte_78:	rmb 1
 Inj10OffTime:	rmb 2
-unk_7B:		rmb 1
-		rmb 1
-unk_7D:		rmb 1
-		rmb 1
+word_7B:	rmb 2
+word_7D:	rmb 2
 word_7F:	rmb 2
 word_81:	rmb 2			; DATA XREF: sub_F168:loc_F16Er
 					; ROM:FC9Ew
@@ -160,15 +160,13 @@ word_AB:	rmb 2
 word_AD:	rmb 2
 word_AF:	rmb 2
 word_B1:	rmb 2
-unk_B3:		rmb 1
-		rmb 1
+word_B3:	rmb 2
 word_B5:	rmb 2			; DATA XREF: ROM:F391r	ROM:F397r ...
 word_B7:	rmb 2
 word_B9:	rmb 2
 word_BB:	rmb 2
-word_BD:	rmb 2
-byte_BF:	rmb 1			; DATA XREF: ROM:F911r	ROM:FCAAr ...
-		rmb 1
+word_BD:	rmb 2			; output compare routine only
+word_BF:	rmb 2			; DATA XREF: ROM:F911r	ROM:FCAAr ...
 word_C1:	rmb 2
 unk_C3:		rmb 1
 word_C4:	rmb 2
@@ -489,16 +487,16 @@ loc_F137:				; CODE XREF: ROM:loc_F23EP
 		ldaa	Port1		; test injector	#20 (bit 1)
 		rora
 		rora			; injector 20 bit in carry
-		ldd	unk_7B
+		ldd	word_7B
 		bsr	sub_F168	; carry	set, injector was off
 		addd	#$1E
-		std	unk_7B
+		std	word_7B
 		ldd	#$FE0C
-		anda	unk_18
-		staa	unk_18
+		anda	unk_18		; set lsb low
+		staa	unk_18		; set lsb low
 		ldx	Timer
 		abx
-		stx	word_1B		; used by an injector control sub
+		stx	word_1B		; =timer+0c=12us from now
 		rts
 ; End of function sub_F129
 
@@ -633,7 +631,7 @@ loc_F1C1:				; CODE XREF: ROM:loc_F1BCj
 		bpl	locret_F23D
 		oraa	#1
 		anda	#$7F ; ''
-		staa	unk_4E
+		staa	unk_4E		; set bit 0, clear bit 7
 		cli
 		inx
 		cpx	word_6E
@@ -648,14 +646,14 @@ loc_F1DA:				; CODE XREF: ROM:F1D6j
 loc_F1E0:				; CODE XREF: ROM:F1DCj
 		ldaa	unk_CD
 		bita	#1
-		beq	loc_F1F0
+		beq	loc_F1F0	; either 800 or	1600
 		ldx	#800
 		ldaa	unk_95
-		bmi	loc_F1F0
+		bmi	loc_F1F0	; either 800 or	1600
 		ldx	#1600
 
 loc_F1F0:				; CODE XREF: ROM:F1E4j	ROM:F1EBj
-		stx	word_6A
+		stx	word_6A		; either 800 or	1600
 		ldaa	unk_97
 		oraa	unk_4C
 		oraa	unk_98
@@ -682,7 +680,7 @@ loc_F211:				; CODE XREF: ROM:F20Aj
 		ldd	#$7FFF
 
 loc_F217:				; CODE XREF: ROM:F212j
-		std	unk_7D
+		std	word_7D
 		sei
 		ldx	unk_69
 		bmi	loc_F22C
@@ -691,7 +689,7 @@ loc_F217:				; CODE XREF: ROM:F212j
 		bne	locret_F23D
 		deca
 		staa	unk_69
-		ldd	unk_7D
+		ldd	word_7D
 		bra	loc_F232
 ; ---------------------------------------------------------------------------
 
@@ -729,15 +727,15 @@ loc_F242:				; CODE XREF: ROM:F1BEJ
 		ldaa	unk_C6
 		bgt	loc_F262
 		ldd	#$FA0D
-		anda	TmrCntStat
-		staa	TmrCntStat
+		anda	TmrCntStat	; disable timer	overflow interrupt, output on cmp set low
+		staa	TmrCntStat	; disable timer	overflow interrupt, output on cmp set low
 		ldx	Timer
 		abx
-		stx	OutCmp		; output compare register
+		stx	OutCmp		; outcmp=timer+0D, which is 13us from now...
 
 loc_F262:				; CODE XREF: ROM:F250j	ROM:F254j
 		ldd	OutCmp
-		addd	unk_B3
+		addd	word_B3
 		std	word_9F		; injector related
 		ldaa	word_A1
 		inca
@@ -774,7 +772,7 @@ sub_F287:				; CODE XREF: ROM:loc_F279p ROM:F2BCp
 
 ; =============== S U B	R O U T	I N E =======================================
 
-; called from output compare ISR
+; write	d to outcmp
 
 OutCmpSub2:				; CODE XREF: ROM:loc_F3ACP ROM:F94DP
 		std	OutCmp
@@ -785,7 +783,7 @@ OutCmpSub2:				; CODE XREF: ROM:loc_F3ACP ROM:F94DP
 loc_F297:				; CODE XREF: ROM:F2AAj
 		ldd	#$F
 		addd	Timer
-		std	OutCmp
+		std	OutCmp		; set outcmp to	timer +	F, which is 15us from now
 
 locret_F29E:				; CODE XREF: OutCmpSub2+6j ROM:F2A4j
 		rts
@@ -925,7 +923,7 @@ loc_F367:				; CODE XREF: ROM:F363j
 		stab	unk_4E
 		ldaa	#1
 		oraa	Port4		; p4-0 is output to SE056 mixed	signal ic, here	we apply a high	level
-		staa	Port4
+		staa	Port4		; p4-0 is output to SE056 mixed	signal ic, here	we apply a high	level
 		rti
 ; ---------------------------------------------------------------------------
 
@@ -937,17 +935,17 @@ IRQoutcmp:				; output compare pin p2-1 eventually becomes the signal	/IGT, or i
 		tab
 		comb
 		bitb	#$41 ; 'A'
-		bne	loc_F3B0	; if bit 6 or 1	was low	in tmrcntstat branch: if we're here for no reason (ocf flag was NOT set??) or we're here because a compare forced P2-1 low, branch
-		ldab	unk_4E
+		bne	loc_F3B0	; if bit 6 or 1	was low	in tmrcntstat branch: if we're here for no reason (ocf flag was NOT set??) or we're here because a compare forced /IGT low, branch
+		ldab	unk_4E		; test bit 3, if high leave interrupt without doing much
 		bitb	#8
 		bne	loc_F3B0
 		orab	#8
-		stab	unk_4E
-		ldab	unk_C6
+		stab	unk_4E		; set bit 3 high
+		ldab	unk_C6		; bail out of interrupt	if >0
 		bgt	loc_F3B0
-		anda	#$FA ; 'ú'
-		staa	TmrCntStat
-		ldd	OutCmp		; timer	compare	register
+		anda	#$FA ; 'ú'      ; a still contains tmrcntstat
+		staa	TmrCntStat	; next compare forces /IGT low (active)
+		ldd	OutCmp		; load last compare time, which	should have initiated this interrupt
 		addd	word_B5		; $b5:b6 contains a duration
 		std	word_BD		; $bd:be contains next compare time?
 		ldd	word_66
@@ -958,7 +956,7 @@ IRQoutcmp:				; output compare pin p2-1 eventually becomes the signal	/IGT, or i
 		clrb
 
 loc_F39F:				; CODE XREF: ROM:F39Bj
-		addd	word_BD
+		addd	word_BD		; output compare routine only
 		psha
 		ldaa	unk_4E
 		bita	#4
@@ -967,15 +965,15 @@ loc_F39F:				; CODE XREF: ROM:F39Bj
 		jsr	OutCmpSub1	; called from output compare ISR
 
 loc_F3AC:				; CODE XREF: ROM:F3A7j
-		jsr	OutCmpSub2	; called from output compare ISR
+		jsr	OutCmpSub2	; write	d to outcmp
 		rti
 ; ---------------------------------------------------------------------------
 
 loc_F3B0:				; CODE XREF: ROM:F37Bj	ROM:F381j ...
 		oraa	#1
-		staa	TmrCntStat
-		ldd	OutCmp
-		std	OutCmp
+		staa	TmrCntStat	; set output high on cmp
+		ldd	OutCmp		; do nothing
+		std	OutCmp		; do nothign, could we be waiting for the NEXT compare after overflow?
 		rti			; final	end to output compare interrupt
 
 ; =============== S U B	R O U T	I N E =======================================
@@ -985,7 +983,7 @@ watchdog1:				; CODE XREF: ROM:F2F5P	watchdog1+19j ...
 		ldaa	unk_18
 		oraa	#1
 		staa	unk_18
-		ldx	unk_7B
+		ldx	word_7B
 		stx	word_1B		; used by an injector control sub
 		cpx	Timer
 		bpl	locret_F3D4
@@ -2083,7 +2081,7 @@ loc_F90B:				; CODE XREF: ROM:F907j
 loc_F90D:				; CODE XREF: ROM:F903j
 		std	word_A1
 		ldd	word_D3
-		addd	byte_BF
+		addd	word_BF
 		std	word_BB
 		lsrd
 		std	word_D3
@@ -2097,7 +2095,7 @@ loc_F90D:				; CODE XREF: ROM:F903j
 
 loc_F925:				; CODE XREF: ROM:F921j
 		addd	word_D3
-		std	unk_B3
+		std	word_B3
 		ldaa	#1
 		ldab	unk_C6
 		bmi	loc_F936
@@ -2119,7 +2117,7 @@ loc_F936:				; CODE XREF: ROM:F92Dj
 		ldd	word_D3
 		std	OutCmp
 		ldx	TmrCntStat
-		jsr	OutCmpSub2	; called from output compare ISR
+		jsr	OutCmpSub2	; write	d to outcmp
 
 loc_F950:				; CODE XREF: ROM:F934j	ROM:F941j ...
 		cli
@@ -2140,14 +2138,14 @@ OutCmpSub1:				; CODE XREF: ROM:F3A9P	ROM:loc_F936p
 loc_F95C:				; CODE XREF: OutCmpSub1+6j
 		addd	word_B9
 		sei
-		subd	word_BD
+		subd	word_BD		; output compare routine only
 		cmpa	#$E8 ; 'è'
 		bcs	loc_F967
 		clra
 		clrb
 
 loc_F967:				; CODE XREF: OutCmpSub1+11j
-		addd	word_BD
+		addd	word_BD		; output compare routine only
 		rts
 ; End of function OutCmpSub1
 
@@ -2818,9 +2816,9 @@ loc_FC94:				; CODE XREF: ROM:FC91j
 		lsrd
 		lsrd
 		lsrd
-		addd	byte_BF
+		addd	word_BF
 		lsrd
-		std	byte_BF
+		std	word_BF
 		ldab	byte_55
 		clra
 		lsld
@@ -3108,11 +3106,11 @@ loc_FE1B:				; CODE XREF: sub_FD41+69j
 		ldab	Port1		; may set bit 3	- Idle up solenoid active high
 		andb	#$F7 ; '÷'
 		tsta
-		bpl	loc_FE24
+		bpl	loc_FE24	; toggle VISC signal (idle up)
 		orab	#8
 
 loc_FE24:				; CODE XREF: sub_FD41+DFj
-		stab	Port1
+		stab	Port1		; toggle VISC signal (idle up)
 		ldab	Port4		; p4-5,	test mode, active low
 		bitb	#$20 ; ' '
 		beq	loc_FE33
@@ -3140,7 +3138,7 @@ loc_FE33:				; CODE XREF: sub_FD41+E9j
 loc_FE43:				; CODE XREF: sub_FD41+FAj
 		ldab	#$C0 ; 'À'
 		sei
-		stab	Port1
+		stab	Port1		; /#20 low, watchdog low, VISC low, bit5 low, /TVIS high /VF high
 
 loc_FE48:				; CODE XREF: sub_FD41+144j
 		jsr	CPUModeTst
@@ -3156,7 +3154,7 @@ ChkSumLoop:				; CODE XREF: sub_FD41+113j
 		subd	#$AA55
 		beq	loc_FE5F	; branch if checksum equals aa55
 		ldaa	#%11001000
-		bra	loc_FE8B
+		bra	loc_FE8B	; /VF high,/TVIS can toggle, bit5 low, VISC high, watchdog low,	/#20 low
 ; ---------------------------------------------------------------------------
 
 loc_FE5F:				; CODE XREF: sub_FD41+118j
@@ -3192,10 +3190,10 @@ loc_FE6E:				; CODE XREF: sub_FD41+13Aj
 
 loc_FE89:				; CODE XREF: sub_FD41+130j
 					; sub_FD41+135j
-		ldaa	#$48 ; 'H'      ; watchdog and p1-7 (???)
+		ldaa	#%1001000	; watchdog and p1-7 (???)
 
 loc_FE8B:				; CODE XREF: sub_FD41+11Cj
-		staa	Port1
+		staa	Port1		; /VF high,/TVIS can toggle, bit5 low, VISC high, watchdog low,	/#20 low
 
 loc_FE8D:				; CODE XREF: sub_FD41+14Dj
 					; sub_FD41+156j

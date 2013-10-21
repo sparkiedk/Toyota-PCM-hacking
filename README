@@ -13,3 +13,6 @@ Subsequent PCMs (open exceptions of course ;) use the toshiba 8x processor.
 A copy of dasm got lumped in here because it was what I used to assemble the reader code 
 for the D151801 bluetop microprocessor. Nobody associated with this repo is responsible 
 for dasm.
+
+SCHEMATICS are done with ExpressPCB custom software, available free from their website. I 
+know it sucks... and I apologize.
