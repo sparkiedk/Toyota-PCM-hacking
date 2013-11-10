@@ -10,6 +10,10 @@ Notes:
 The Bluetop PCM uses a nippondenso specific issue of the hitachi HD6301v1 processor.
 Subsequent PCMs (open exceptions of course ;) use the toshiba 8x processor.
 
+CRUCIALLY IMPORTANT: The d151801 REQUIRES the power rails to come up BEFORE being released from /STBY.
+Failure to do so will cause unpredictible behaviour on the bus ports, including but not limited to
+bus contention during the latter half of the positive E-clk cycle.
+
 A copy of dasm got lumped in here because it was what I used to assemble the reader code 
 for the D151801 bluetop microprocessor. Nobody associated with this repo is responsible 
 for dasm.
