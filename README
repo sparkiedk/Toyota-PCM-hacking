@@ -20,3 +20,7 @@ for dasm.
 
 SCHEMATICS are done with ExpressPCB custom software, available free from their website. I 
 know it sucks... and I apologize.
+
+cap.bin is the same as cap1-151801-0642.bin, literally pulled from the same chip two different
+times. apologies that the main disassembly is cap.asm, and not the more appropriately named 
+cap1-151801-0642.asm
