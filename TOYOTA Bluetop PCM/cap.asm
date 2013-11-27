@@ -1,5 +1,4 @@
 
-
 ; Processor:	    6303 []
 ; Target assembler: Motorola FreeWare Assembler
 
@@ -15,7 +14,7 @@ Port3DDR:	rmb 1
 Port4DDR:	rmb 1
 Port3:		rmb 1			; DATA XREF: sub_FD41-D2Dw
 					; sub_FD41-CB0r ...
-Port4:		rmb 1
+Port4:		rmb 1			; DATA XREF: sub_FD41-CCDr sub_F154+2r ...
 TmrCntStat:	rmb 1
 Timer:		rmb 2
 OutCmp:		rmb 2
@@ -78,16 +77,16 @@ unk_4B:		rmb 1
 unk_4C:		rmb 1
 byte_4D:	rmb 1			; DATA XREF: sub_FD41-CC4r sub_F121+1r ...
 unk_4E:		rmb 1			; used for flags in outcmp
-unk_4F:		rmb 1
+ADCflags:	rmb 1			; flag which can be modified in	an interrupt, msb could	be adc related
 ADCRxData:	rmb 1
 EndTxByteTime:	rmb 2			; caches timer values from serial interrupt
-ADCcontrol:	rmb 1			; controls a jump table	at fa9b, also deselects	ADC with LSB
-byte_54:	rmb 1			; DATA XREF: ROM:jmptable2r ROM:FB99r
-byte_55:	rmb 1			; DATA XREF: ROM:FC8Dr	ROM:FCA0r ...
-byte_56:	rmb 1			; DATA XREF: ROM:FAF6r	ROM:FBF1r
-byte_57:	rmb 1			; DATA XREF: ROM:F351r	sub_F420+D1r ...
-byte_58:	rmb 1			; DATA XREF: ROM:loc_FFA4r
-unk_59:		rmb 1
+ADCcontrol:	rmb 1			; controls a jump table	at fa9b, also deselects	ADC with LSB, also controls which channel to select
+ADC_TPS:	rmb 1			; DATA XREF: ROM:jmptable2r ROM:FB99r
+ADC_AFMr:	rmb 1			; DATA XREF: ROM:FC8Dr	ROM:FCA0r ...
+ADC_ThA:	rmb 1			; DATA XREF: ROM:FAF6r	ROM:FBF1r
+ADC_ThW:	rmb 1			; DATA XREF: ROM:F351r	sub_F420+D1r ...
+ADC_PWRr:	rmb 1			; DATA XREF: ROM:loc_FFA4r
+ADC_Oxy:	rmb 1
 byte_5A:	rmb 1			; DATA XREF: ROM:FBA8r	ROM:loc_FBD4w
 byte_5B:	rmb 1			; DATA XREF: ROM:FB78r	ROM:loc_FB7Cr ...
 byte_5C:	rmb 1			; DATA XREF: ROM:F77Dr	ROM:F794w ...
@@ -155,7 +154,8 @@ word_A1:	rmb 2
 byte_A3:	rmb 1			; DATA XREF: ROM:loc_F8ADw ROM:F8D6r
 byte_A4:	rmb 1			; DATA XREF: ROM:F867r	ROM:F8D2r ...
 byte_A5:	rmb 1			; DATA XREF: ROM:F8BBr	ROM:F8D0w
-byte_A6:	rmb 1			; DATA XREF: ROM:loc_F859w ROM:F8DAr
+byte_A6:	rmb 1			; DATA XREF: ROM:loc_F847w
+					; ROM:loc_F859w ...
 word_A7:	rmb 2
 word_A9:	rmb 2
 word_AB:	rmb 2
@@ -174,7 +174,7 @@ word_C1:	rmb 2
 unk_C3:		rmb 1
 word_C4:	rmb 2
 unk_C6:		rmb 1
-		rmb 1
+byte_C7:	rmb 1			; DATA XREF: ROM:F84Dw
 unk_C8:		rmb 1
 word_C9:	rmb 2
 unk_CB:		rmb 1
@@ -340,8 +340,8 @@ loc_F083:				; CODE XREF: sub_FD41-CC9j
 		andb	ADCcontrol	; clear	bit0
 		stab	ADCcontrol	; clear	bit0
 		sei
-		oraa	unk_4F		; set bit 0
-		staa	unk_4F		; set bit 0
+		oraa	ADCflags	; set bit 0
+		staa	ADCflags	; set bit 0
 		cli
 		jsr	loc_FAA7
 		ldaa	unk_5F
@@ -380,7 +380,9 @@ loc_F0D1:				; CODE XREF: sub_FD41:loc_F0CAj
 		bpl	loc_F0F0
 		ldaa	unk_9D
 		suba	#1
-		jsr	sub_FB46	; at the end, it will return 3 bytes after calling instruction
+		jsr	boundData	; Limits AccA to bounds	set by two bytes after call
+					; Carry	bit is only set	if data	has been clipped at either level
+					;
 ; ---------------------------------------------------------------------------
 		fcb $E6	; Ê
 		fcb $8F	; è
@@ -910,7 +912,7 @@ loc_F31C:				; CODE XREF: ROM:F318j
 		clra
 		staa	byte_78
 		staa	unk_D1
-		ldaa	byte_57
+		ldaa	ADC_ThW
 		cmpa	#$50 ; 'P'
 		bls	loc_F359
 		orab	#$20 ; ' '
@@ -1020,31 +1022,31 @@ IRQSerial:				; sort of like ldaa $11	ldab $12
 		bpl	SerBombOut	; branch if bit	15=0, means there's no receive data (why are we interrupting?)
 		cli
 		anda	#$40 ; '@'      ; test for overrun or framing error
-		beq	SerialMain	; no error
-		jsr	loc_FB18	; error, after re-init the adc gets selected and ___ gets written to txreg
+		beq	SerIRQMain	; no error
+		jsr	loc_FB18	; error, after re-init the adc gets selected and output	from adcchanselect gets	written	to txreg
 
 SerBombOut:				; CODE XREF: ROM:F3DDj
 		rti
 ; ---------------------------------------------------------------------------
 
-SerialMain:				; CODE XREF: ROM:F3E2j
-		ldaa	unk_4F
+SerIRQMain:				; CODE XREF: ROM:F3E2j
+		ldaa	ADCflags	; flag which can be modified in	an interrupt, msb could	be adc related
 		rora
 		ldaa	Port3		; test to see if /CS to	the ADC	is set
 		bita	#$40 ; '@'
 		bne	SerialDebug	; branch if ADC	was not	selected (to serial debug routine)
 		stab	ADCRxData	; b has	rx data
-		bcc	loc_F3FE	; branch if lsb	of $4f when loaded was 0
-		ldab	ADCcontrol	; controls a jump table	at fa9b, also deselects	ADC with LSB
+		bcc	SerIRQflag	; branch if lsb	of $4f when loaded was 0
+		ldab	ADCcontrol	; controls a jump table	at fa9b, also deselects	ADC with LSB, also controls which channel to select
 		rorb
-		bcs	loc_F3FE	; branch if unk_53 lsb was set
+		bcs	SerIRQflag	; branch if ADCcontrol was odd
 		oraa	#$40 ; '@'
-		staa	Port3		; de select adc	p3-6
+		staa	Port3		; de select adc	p3-6 if	ADCcontrol was even
 
-loc_F3FE:				; CODE XREF: ROM:F3F3j	ROM:F3F8j
+SerIRQflag:				; CODE XREF: ROM:F3F3j	ROM:F3F8j
 		ldab	#$80 ; 'Ä'
-		orab	unk_4F		; set bit 7
-		stab	unk_4F		; set bit 7
+		orab	ADCflags	; set bit 7
+		stab	ADCflags	; set bit 7
 
 SerMainRet:				; CODE XREF: ROM:F41Ej
 		sei			; disable interrupts?
@@ -1168,7 +1170,7 @@ loc_F494:				; CODE XREF: sub_F420+6Fj
 loc_F4B0:				; CODE XREF: sub_F420+8Bj
 		tba
 		suba	#32
-		jsr	sub_FB43	; returns 3 bytes after	calling	instruction
+		jsr	boundDataneg	; Limits AccA to bounds	set by two bytes after call
 ; ---------------------------------------------------------------------------
 		fcb $D0	; –
 		fcb   0
@@ -1180,7 +1182,9 @@ loc_F4B0:				; CODE XREF: sub_F420+8Bj
 		bita	byte_4D
 		bne	loc_F4DD
 		ldaa	byte_65
-		jsr	sub_FB46	; at the end, it will return 3 bytes after calling instruction
+		jsr	boundData	; Limits AccA to bounds	set by two bytes after call
+					; Carry	bit is only set	if data	has been clipped at either level
+					;
 		suba	$14,x
 		bcs	loc_F4E2
 		ldaa	Port3
@@ -1209,7 +1213,7 @@ loc_F4E2:				; CODE XREF: sub_F420+ABj
 loc_F4EB:				; CODE XREF: sub_F420+BBj
 		ldx	#$E6 ; 'Ê'
 		ldd	#$5002
-		cmpa	byte_57
+		cmpa	ADC_ThW
 		bhi	loc_F506
 		cmpb	unk_60
 		bhi	loc_F506
@@ -1264,7 +1268,7 @@ loc_F531:				; CODE XREF: sub_F420+FCj
 loc_F534:				; CODE XREF: sub_FD41-C2EP
 					; sub_F420+10Ep
 		jsr	sub_F119
-		ldaa	byte_57
+		ldaa	ADC_ThW
 		cmpa	#$48 ; 'H'
 		bhi	loc_F542
 		ldaa	#$DF ; 'ﬂ'
@@ -1289,7 +1293,7 @@ loc_F550:				; CODE XREF: ROM:F54Bj
 		rora
 		bcc	loc_F571
 		ldd	#$FDC
-		cmpb	byte_57
+		cmpb	ADC_ThW
 		bls	loc_F568
 		ldx	#$FEB6
 		jsr	$65,x		; ff1b
@@ -1444,7 +1448,7 @@ loc_F600:				; CODE XREF: sub_F5E3+1Aj
 		ldaa	#$CC ; 'Ã'
 		mul
 		ldab	#$B0 ; '∞'
-		cmpb	byte_57
+		cmpb	ADC_ThW
 		bhi	loc_F61A
 		ldab	unk_88
 		beq	loc_F61B
@@ -1487,7 +1491,7 @@ loc_F649:				; CODE XREF: sub_F5E3:loc_F5E8j
 					; sub_F5E3+60j
 		bitb	#8
 		bne	loc_F654
-		ldaa	byte_57
+		ldaa	ADC_ThW
 		cmpa	#$60 ; '`'
 		bcc	loc_F654
 		dex
@@ -1723,9 +1727,9 @@ loc_F73B:				; CODE XREF: sub_F70A+2Dj
 loc_F741:				; CODE XREF: sub_F70A+34j
 		addb	#$80 ; 'Ä'
 		tba
-		jsr	sub_FB46	; at the end, it will return 3 bytes after calling instruction
-; End of function sub_F70A
-
+		jsr	boundData	; Limits AccA to bounds	set by two bytes after call
+; End of function sub_F70A		; Carry	bit is only set	if data	has been clipped at either level
+					;
 ; ---------------------------------------------------------------------------
 		fcb $99	; ô
 		fcb $5C	; \
@@ -1766,9 +1770,9 @@ loc_F768:				; CODE XREF: sub_F751+6j
 		tba
 
 loc_F771:				; CODE XREF: sub_F751+1Dj
-		jsr	sub_FB46	; at the end, it will return 3 bytes after calling instruction
-; End of function sub_F751
-
+		jsr	boundData	; Limits AccA to bounds	set by two bytes after call
+; End of function sub_F751		; Carry	bit is only set	if data	has been clipped at either level
+					;
 ; ---------------------------------------------------------------------------
 		fcb $B3	; ≥
 		fcb $24	; $
@@ -1778,7 +1782,9 @@ loc_F771:				; CODE XREF: sub_F751+1Dj
 		ldaa	byte_95
 		bpl	loc_F797
 		ldaa	byte_5C
-		jsr	sub_FB46	; at the end, it will return 3 bytes after calling instruction
+		jsr	boundData	; Limits AccA to bounds	set by two bytes after call
+					; Carry	bit is only set	if data	has been clipped at either level
+					;
 ; ---------------------------------------------------------------------------
 		fcb $8A	; ä
 		fcb $76	; v
@@ -1926,46 +1932,40 @@ loc_F829:				; CODE XREF: ROM:F819j	ROM:F81Dj
 loc_F82C:				; CODE XREF: ROM:F827j
 		ldaa	word_C1
 		suba	unk_C3
-		jsr	sub_FB43	; returns 3 bytes after	calling	instruction
-		sba
+		jsr	boundDataneg	; Limits AccA to bounds	set by two bytes after call
 ; ---------------------------------------------------------------------------
+		fcb $10
 		fcb   0
-		fcb $C6	; ∆
-		fcb $88	; à
-		fcb $3D	; =
-		fcb   5
-		fcb   5
-		fcb $D6	; ÷
-		fcb   7
-		fcb $C4	; ƒ
-		fcb   8
-		fcb $27	; '
-		fcb   7
-		fcb $BD	; Ω
-		fcb $FB	; ˚
-		fcb $46	; F
+; ---------------------------------------------------------------------------
+		ldab	#$88 ; 'à'
+		mul
+		lsld
+		lsld
+		ldab	Port4
+		andb	#8
+		beq	loc_F847
+		jsr	boundData	; Limits AccA to bounds	set by two bytes after call
+					; Carry	bit is only set	if data	has been clipped at either level
+					;
+; ---------------------------------------------------------------------------
 		fcb  $E
 		fcb   0
-		fcb $C6	; ∆
-		fcb  $E
-		fcb $97	; ó
-		fcb $A6	; ¶
-		fcb $86	; Ü
-		fcb $2D	; -
-		fcb $1B
-		fcb $5F	; _
-		fcb $D7	; ◊
-		fcb $C7	; «
-		fcb $D6	; ÷
-		fcb $42	; B
-		fcb $C1	; ¡
-		fcb $42	; B
-		fcb $24	; $
-		fcb   2
-		fcb $8B	; ã
-		fcb  $E
-		fcb $20
-		fcb $54	; T
+; ---------------------------------------------------------------------------
+		ldab	#$E
+
+loc_F847:				; CODE XREF: ROM:F83Ej
+		staa	byte_A6
+		ldaa	#$2D ; '-'
+		aba
+		clrb
+		stab	byte_C7
+		ldab	word_42
+		cmpb	#$42 ; 'B'
+		bcc	loc_F857
+		adda	#$E
+
+loc_F857:				; CODE XREF: ROM:F853j
+		bra	loc_F8AD
 ; ---------------------------------------------------------------------------
 
 loc_F859:				; CODE XREF: ROM:F821j
@@ -2024,15 +2024,17 @@ loc_F8A5:				; CODE XREF: ROM:F8A1j
 		bcc	loc_F8AD
 		clra
 
-loc_F8AD:				; CODE XREF: ROM:F8AAj
+loc_F8AD:				; CODE XREF: ROM:loc_F857j ROM:F8AAj
 		staa	byte_A3
-		ldaa	byte_57
-		jsr	sub_FB46	; at the end, it will return 3 bytes after calling instruction
+		ldaa	ADC_ThW
+		jsr	boundData	; Limits AccA to bounds	set by two bytes after call
+					; Carry	bit is only set	if data	has been clipped at either level
+					;
 ; ---------------------------------------------------------------------------
 		fcb $98	; ò
 		fcb $50	; P
 ; ---------------------------------------------------------------------------
-		bcs	loc_F8CD+1
+		bcs	loc_F8CD+1	; clra clrb
 		ldx	#$5AA
 		ldaa	byte_A5
 		beq	loc_F8C2
@@ -2040,13 +2042,13 @@ loc_F8AD:				; CODE XREF: ROM:F8AAj
 
 loc_F8C2:				; CODE XREF: ROM:F8BDj
 		cpx	word_7F
-		bcs	loc_F8CD+1
+		bcs	loc_F8CD+1	; clra clrb
 		ldaa	byte_95
-		bmi	loc_F8CD+1
+		bmi	loc_F8CD+1	; clra clrb
 		ldd	#$FFD6
 
 loc_F8CD:				; CODE XREF: ROM:F8B6j	ROM:F8C4j ...
-		cpx	#$4F5F
+		cpx	#$4F5F		; clra clrb
 		stab	byte_A5
 		addb	byte_A4
 		adca	#0
@@ -2061,7 +2063,9 @@ loc_F8CD:				; CODE XREF: ROM:F8B6j	ROM:F8C4j ...
 loc_F8E2:				; CODE XREF: ROM:F8DEj
 		jsr	sub_F5E3
 		tba
-		jsr	sub_FB46	; at the end, it will return 3 bytes after calling instruction
+		jsr	boundData	; Limits AccA to bounds	set by two bytes after call
+					; Carry	bit is only set	if data	has been clipped at either level
+					;
 ; ---------------------------------------------------------------------------
 		fcb $B8	; ∏
 		fcb $1F
@@ -2179,12 +2183,14 @@ sub_F96A:				; CODE XREF: sub_FD41:loc_F0FAP
 
 loc_F97C:				; CODE XREF: sub_F96A+Ej
 		stab	Port1		; has potential	to toggle bit 7	- /VF ouput generation
-		ldaa	unk_59
+		ldaa	ADC_Oxy
 		cmpa	#$17
 		ldaa	unk_9A
 		bcs	loc_F98E
 		inca
-		jsr	sub_FB46	; at the end, it will return 3 bytes after calling instruction
+		jsr	boundData	; Limits AccA to bounds	set by two bytes after call
+					; Carry	bit is only set	if data	has been clipped at either level
+					;
 ; ---------------------------------------------------------------------------
 		fcb $81	; Å
 		fcb $67	; g
@@ -2229,7 +2235,7 @@ loc_F9BD:				; CODE XREF: sub_F96A+4Fj
 
 loc_F9BF:				; CODE XREF: sub_F96A+49j
 		ldd	#$B020
-		cmpa	byte_57
+		cmpa	ADC_ThW
 		bhi	loc_F9E2
 		ldx	word_7F
 		cpx	#$190
@@ -2377,7 +2383,7 @@ loc_FA92:				; CODE XREF: sub_F96A+11Bj
 
 sub_FA9B:				; CODE XREF: sub_FD41-CEFP
 					; sub_F96A+12Cj
-		ldab	ADCcontrol	; controls a jump table	at fa9b, also deselects	ADC with LSB
+		ldab	ADCcontrol	; controls a jump table	at fa9b, also deselects	ADC with LSB, also controls which channel to select
 		andb	#6
 		ldx	#$FD39
 		abx			; x can	only be	$FD39, $FD3B, $FD3D or $FD3F
@@ -2391,74 +2397,78 @@ loc_FAA7:				; CODE XREF: sub_FD41-C9EP
 
 loc_FAAA:				; CODE XREF: ROM:FAB1j
 		dex
-		beq	sub_FB07	; interested in	ADC /cs
-		ldd	unk_4F		; accb contains	adcrxdata
+		beq	TXtoADC		; interested in	ADC /cs
+		ldd	ADCflags	; accb contains	adcrxdata
 		anda	#$80 ; 'Ä'
-		beq	loc_FAAA
+		beq	loc_FAAA	; loop while msb of unk_4f is low
 		coma
 		sei
-		anda	unk_4F
-		staa	unk_4F
+		anda	ADCflags	; flag which can be modified in	an interrupt, msb could	be adc related
+		staa	ADCflags	; flag which can be modified in	an interrupt, msb could	be adc related
 		cli
 		pshb			; adcrxdata on the stack
-		bsr	sub_FB2F
+		bsr	ADCchanSelect
 		ldx	#$54 ; 'T'
-		abx
-		bsr	sub_FB07	; interested in	ADC /cs
+		abx			; x now	contains $54+0..5
+		bsr	TXtoADC		; interested in	ADC /cs
 		pulb
 		ldaa	#1
 
-loc_FAC6:				; CODE XREF: ROM:FAC8j
-		rorb
-		rola
-		bcc	loc_FAC6
+revBitOrder:				; CODE XREF: ROM:FAC8j
+		rorb			; push new lsb into carry
+		rola			; pull old lsb out of carry
+		bcc	revBitOrder	; this loop will reverse the bit order of the value in B and leave the new value in A
 		cpx	#$57 ; 'W'
-		bne	loc_FAEA
-		pshx
+		bne	procThA		; do not jump for $57, jump for	$56
+		pshx			; process data from water temp sensor ThW
 		ldx	#$FEF0
 		jsr	$38,x		; ff28
-		bsr	sub_FB46	; at the end, it will return 3 bytes after calling instruction
+		bsr	boundData	; Limits AccA to bounds	set by two bytes after call
+					; Carry	bit is only set	if data	has been clipped at either level
+					;
 ; ---------------------------------------------------------------------------
 		fcb $F1	; Ò
 		fcb   4
 ; ---------------------------------------------------------------------------
-		bcc	loc_FADD
-		ldaa	byte_57
+		bcc	loc_FADD	; if the carry was clear the data was not clipped
+		ldaa	ADC_ThW
 
 loc_FADD:				; CODE XREF: ROM:FAD9j
 		psha
 		ldaa	#4
 		jsr	sub_FD02
 		pula
-		bcc	loc_FB03
-		ldaa	#$C0 ; '¿'
-		bra	loc_FB03
+		bcc	saveADCdata1
+		ldaa	#$C0 ; '¿'      ; default water temp?
+		bra	saveADCdata1
 ; ---------------------------------------------------------------------------
 
-loc_FAEA:				; CODE XREF: ROM:FACDj
+procThA:				; CODE XREF: ROM:FACDj
 		cpx	#$56 ; 'V'
-		bne	loc_FB04
-		pshx
-		bsr	sub_FB46	; at the end, it will return 3 bytes after calling instruction
+		bne	saveADCdata2
+		pshx			; process data from air	temp sensor ThA
+		bsr	boundData	; Limits AccA to bounds	set by two bytes after call
+					; Carry	bit is only set	if data	has been clipped at either level
+					;
 ; ---------------------------------------------------------------------------
 		fcb $FA	; ˙
 		fcb   6
 ; ---------------------------------------------------------------------------
 		bcc	loc_FAF8
-		ldaa	byte_56
+		ldaa	ADC_ThA
 
 loc_FAF8:				; CODE XREF: ROM:FAF4j
 		psha
 		ldaa	#$40 ; '@'
 		jsr	sub_FD02
 		pula
-		bcc	loc_FB03
-		ldaa	#$79 ; 'y'
+		bcc	saveADCdata1
+		ldaa	#$79 ; 'y'      ; default air temp?
 
-loc_FB03:				; CODE XREF: ROM:FAE4j	ROM:FAE8j ...
+saveADCdata1:				; CODE XREF: ROM:FAE4j	ROM:FAE8j ...
 		pulx
 
-loc_FB04:				; CODE XREF: ROM:FAEDj
+saveADCdata2:				; CODE XREF: ROM:FAEDj
 		staa	0,x
 		rts
 
@@ -2466,23 +2476,23 @@ loc_FB04:				; CODE XREF: ROM:FAEDj
 
 ; interested in	ADC /cs
 
-sub_FB07:				; CODE XREF: ROM:FAABj	ROM:FAC1p
+TXtoADC:				; CODE XREF: ROM:FAABj	ROM:FAC1p
 		ldaa	Port3
 		bita	#$40 ; '@'
 		beq	loc_FB15	; test to see if we're talking to the ADC (p3-6 low)
 		pshx
 
-loc_FB0E:				; CODE XREF: sub_FB07+Bj
+txwaitFB0E:				; CODE XREF: TXtoADC+Bj
 		ldx	Timer		; load timer
 		cpx	EndTxByteTime	; word_51 is 320us greater than	the termination	of the last serial interrupt
-		bmi	loc_FB0E	; loop while time haas not expired yet,	while presumably tx is busy
+		bmi	txwaitFB0E	; loop while time haas not expired yet,	while presumably tx is busy
 		pulx
 
-loc_FB15:				; CODE XREF: sub_FB07+4j
-		inc	ADCcontrol	; controls a jump table	at fa9b, also deselects	ADC with LSB
+loc_FB15:				; CODE XREF: TXtoADC+4j
+		inc	ADCcontrol	; controls a jump table	at fa9b, also deselects	ADC with LSB, also controls which channel to select
 
 loc_FB18:				; CODE XREF: ROM:F3E4P
-		bsr	sub_FB2F	; called here from serial interrupt when receive error was detected
+		bsr	ADCchanSelect	; called here from serial interrupt when receive error was detected
 		ldaa	#$C		; external clock, 62500	baud (not that thats relevant i	guess)
 		staa	UARTRateMode
 		ldaa	#$1A		; Rx int enable, rx enable, tx enable
@@ -2492,78 +2502,84 @@ loc_FB18:				; CODE XREF: ROM:F3E4P
 		sei
 		anda	Port3		; safely clear p3-6 without clobbering other pins
 		staa	Port3		; safely clear p3-6 without clobbering other pins
-		stab	TxReg		; tx something from unk_53, or a value based on	the value in unk_53
+		stab	TxReg		; tx a value based on the value	in ADCcontrol
 		cli
 		rts
-; End of function sub_FB07
+; End of function TXtoADC
 
 
 ; =============== S U B	R O U T	I N E =======================================
 
 
-sub_FB2F:				; CODE XREF: ROM:FABBp
-					; sub_FB07:loc_FB18p
-		ldab	ADCcontrol	; controls a jump table	at fa9b, also deselects	ADC with LSB
-		lsrb
-		bcs	loc_FB37
-		ldab	#5
+ADCchanSelect:				; CODE XREF: ROM:FABBp
+					; TXtoADC:loc_FB18p
+		ldab	ADCcontrol	; controls a jump table	at fa9b, also deselects	ADC with LSB, also controls which channel to select
+		lsrb			; lsb into carry bit
+		bcs	loc_FB37	; branch if lsb	was high
+		ldab	#5		; otherwise return 5
 		rts
 ; ---------------------------------------------------------------------------
 
-loc_FB37:				; CODE XREF: sub_FB2F+3j
+loc_FB37:				; CODE XREF: ADCchanSelect+3j
 		andb	#7
 		cmpb	#7
-		beq	loc_FB40
-		andb	#3
+		beq	loc_FB40	; if adccontrol	was initially $xF, return 4
+		andb	#3		; if adccontrol	was any	odd number NOT $xF, return values in the range of 0..3
 		rts
 ; ---------------------------------------------------------------------------
 
-loc_FB40:				; CODE XREF: sub_FB2F+Cj
-		ldab	#4
+loc_FB40:				; CODE XREF: ADCchanSelect+Cj
+		ldab	#4		; if adccontrol	was initially $xF, return 4
 		rts
-; End of function sub_FB2F
+; End of function ADCchanSelect
 
 
 ; =============== S U B	R O U T	I N E =======================================
 
-; returns 3 bytes after	calling	instruction
+; Limits AccA to bounds	set by two bytes after call
 
-sub_FB43:				; CODE XREF: sub_F420+93P ROM:F830P ...
-		bcc	sub_FB46	; at the end, it will return 3 bytes after calling instruction
+boundDataneg:				; CODE XREF: sub_F420+93P ROM:F830P ...
+		bcc	boundData	; Limits AccA to bounds	set by two bytes after call
+					; Carry	bit is only set	if data	has been clipped at either level
+					;
 		clra
-; End of function sub_FB43
+; End of function boundDataneg
 
 
 ; =============== S U B	R O U T	I N E =======================================
 
-; at the end, it will return 3 bytes after calling instruction
+; Limits AccA to bounds	set by two bytes after call
+; Carry	bit is only set	if data	has been clipped at either level
+;
 
-sub_FB46:				; CODE XREF: sub_FD41-C65P
+boundData:				; CODE XREF: sub_FD41-C65P
 					; sub_F420+A6P	...
 		pulx
 		cmpa	0,x
-		bls	loc_FB4F
+		bls	boundData2
 		ldaa	0,x
-		bra	loc_FB55
+		bra	boundData3
 ; ---------------------------------------------------------------------------
 
-loc_FB4F:				; CODE XREF: sub_FB46+3j
+boundData2:				; CODE XREF: boundData+3j
 		cmpa	1,x
-		bcc	loc_FB56
+		bcc	boundDataend
 		ldaa	1,x
 
-loc_FB55:				; CODE XREF: sub_FB46+7j
+boundData3:				; CODE XREF: boundData+7j
 		sec
 
-loc_FB56:				; CODE XREF: sub_FB46+Bj
+boundDataend:				; CODE XREF: boundData+Bj
 		jmp	2,x
-; End of function sub_FB46
+; End of function boundData
 
 ; ---------------------------------------------------------------------------
 
 jmptable2:
-		ldaa	byte_54
-		bsr	sub_FB46	; at the end, it will return 3 bytes after calling instruction
+		ldaa	ADC_TPS
+		bsr	boundData	; Limits AccA to bounds	set by two bytes after call
+					; Carry	bit is only set	if data	has been clipped at either level
+					;
 ; ---------------------------------------------------------------------------
 		fcb $FA	; ˙
 		fcb   5
@@ -2604,7 +2620,9 @@ loc_FB89:				; CODE XREF: ROM:FB84j
 		tba
 
 loc_FB8F:				; CODE XREF: ROM:FB7Aj	ROM:FB8Cj
-		bsr	sub_FB46	; at the end, it will return 3 bytes after calling instruction
+		bsr	boundData	; Limits AccA to bounds	set by two bytes after call
+					; Carry	bit is only set	if data	has been clipped at either level
+					;
 ; ---------------------------------------------------------------------------
 		fcb $29	; )
 		fcb   5
@@ -2614,7 +2632,7 @@ loc_FB8F:				; CODE XREF: ROM:FB7Aj	ROM:FB8Cj
 
 loc_FB97:				; CODE XREF: ROM:FB93j
 		staa	byte_5B
-		ldaa	byte_54
+		ldaa	ADC_TPS
 		suba	byte_5B
 		bcc	loc_FBA0
 		clra
@@ -2628,7 +2646,7 @@ loc_FBA0:				; CODE XREF: ROM:FB9Dj
 		bcs	loc_FBD2
 		cmpa	#4
 		bcs	loc_FBD2
-		bsr	sub_FB43	; returns 3 bytes after	calling	instruction
+		bsr	boundDataneg	; Limits AccA to bounds	set by two bytes after call
 ; ---------------------------------------------------------------------------
 		fcb $1C
 		fcb   0
@@ -2674,7 +2692,9 @@ loc_FBE4:				; CODE XREF: ROM:FBE0j
 		ldab	Port4		; p4-3 is ac input, active high
 		bitb	#8
 		beq	loc_FBEF
-		jsr	sub_FB46	; at the end, it will return 3 bytes after calling instruction
+		jsr	boundData	; Limits AccA to bounds	set by two bytes after call
+					; Carry	bit is only set	if data	has been clipped at either level
+					;
 ; ---------------------------------------------------------------------------
 		fcb $FF			; data for fb46
 		fcb $3C	; <
@@ -2682,19 +2702,21 @@ loc_FBE4:				; CODE XREF: ROM:FBE0j
 
 loc_FBEF:				; CODE XREF: ROM:FBE8j
 		staa	byte_9E
-		ldaa	byte_56
+		ldaa	ADC_ThA
 		ldx	#$FED9
 		jsr	$4C,x
 		staa	byte_8A
 		ldx	#$FF0A
 		jsr	$11,x
-		ldab	byte_57
+		ldab	ADC_ThW
 		subb	#$DA ; '⁄'
 
 loc_FC03:				; CODE XREF: ROM:loc_FBD0j
 		bcs	loc_FC1E
 		tba
-		jsr	sub_FB46	; at the end, it will return 3 bytes after calling instruction
+		jsr	boundData	; Limits AccA to bounds	set by two bytes after call
+					; Carry	bit is only set	if data	has been clipped at either level
+					;
 ; ---------------------------------------------------------------------------
 		fcb  $F
 		fcb   0
@@ -2814,7 +2836,7 @@ jmptable3:				; test level of	bit4 (input from mixed signal se056)
 		suba	#$10		; bit4 status is hidden	in carry
 		ldaa	#1
 		jsr	sub_FD02
-		ldaa	byte_55
+		ldaa	ADC_AFMr
 		suba	#$53 ; 'S'
 		bcc	loc_FC94
 		clra
@@ -2825,7 +2847,7 @@ loc_FC94:				; CODE XREF: ROM:FC91j
 		bsr	DivDby32
 		addd	#464
 		std	word_81		; injector related
-		ldaa	byte_55
+		ldaa	ADC_AFMr
 		ldx	#$FF12
 		jsr	$13,x		; ff25
 		lsrd
@@ -2834,7 +2856,7 @@ loc_FC94:				; CODE XREF: ROM:FC91j
 		addd	word_BF
 		lsrd
 		std	word_BF
-		ldab	byte_55
+		ldab	ADC_AFMr
 		clra
 		lsld
 		lsld
@@ -2921,7 +2943,7 @@ loc_FD0C:				; CODE XREF: sub_FD02+4j
 sub_FD11:				; CODE XREF: sub_FD41-C73P
 					; sub_F420+23P	...
 		ldab	Port4
-		bitb	#$20 ; ' '      ; p4-5 is Timing check input. low is check mode
+		bitb	#$20 ; ' '      ; p4-5 is Test mdoe input. low is check mode
 		beq	loc_FD1B
 		ldab	#$DA ; '⁄'
 		stab	unk_C8
@@ -2932,7 +2954,7 @@ loc_FD1B:				; CODE XREF: sub_FD02+Dj sub_FD11+4j
 		stab	unk_CD
 		ldab	Port4		; p4-4 is ac input, active high
 		bitb	#$10
-		bne	locret_FD2C
+		bne	locret_FD2C	; bomb out if ac is on
 		oraa	word_48
 		tab
 		comb
@@ -2958,7 +2980,7 @@ loc_FD35:				; CODE XREF: sub_FD02+8j
 		rts
 ; END OF FUNCTION CHUNK	FOR sub_FD02
 ; ---------------------------------------------------------------------------
-		fdb $FCBB		; jump table 4 evctors
+		fdb $FCBB		; jump table 4 vectors
 		fdb $FB58
 		fdb $FC82
 		fdb $FBD7
@@ -2977,7 +2999,7 @@ sub_FD41:				; CODE XREF: sub_FD41:loc_F0F7P
 		jsr	$5E,x		; ff1b
 		staa	unk_8B
 		ldd	#$B020
-		cmpa	byte_57		; compare against 176
+		cmpa	ADC_ThW		; compare against 176
 		bhi	loc_FD5A
 		cmpb	unk_92
 		bls	loc_FD5D
@@ -3356,7 +3378,7 @@ loc_FE99:				; CODE XREF: sub_FD41+146j
 ; ---------------------------------------------------------------------------
 
 ProcData1:				; entry	point
-		ldaa	byte_57
+		ldaa	ADC_ThW
 		clrb
 		cmpa	#$C0 ; '¿'      ; 192
 		bls	loc_FF26	; branch if lower or same
@@ -3504,7 +3526,7 @@ loc_FF3C:				; CODE XREF: sub_FF35j	sub_FF35+4j
 ; ---------------------------------------------------------------------------
 
 loc_FFA4:
-		ldab	byte_58
+		ldab	ADC_PWRr
 		lsrb
 		lsrb
 		lsrb
@@ -3569,7 +3591,7 @@ loc_FFA4:
 loc_FFE1:				; this sub is executed twice from this entry point
 		bsr	*+2
 
-loc_FFE3:				; another entry	point, indexed addressing ONLY adds, ignores 2s	complement, so STX #$FFFF, LDAA	1,x is equivalent to LDAA $0000
+loc_FFE3:				; Saturate count routine, increments ram value until reaching $FF
 		ldaa	$FF,x
 		inca
 		beq	loc_FFEA
