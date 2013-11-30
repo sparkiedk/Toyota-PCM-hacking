@@ -10,9 +10,14 @@ Notes:
 The Bluetop PCM uses a nippondenso specific issue of the hitachi HD6301v1 processor.
 Subsequent PCMs (open exceptions of course ;) use the toshiba 8x processor.
 
-CRUCIALLY IMPORTANT: The d151801 REQUIRES the power rails to come up BEFORE being released from /STBY.
-Failure to do so will cause unpredictible behaviour on the bus ports, including but not limited to
-bus contention during the latter half of the positive E-clk cycle.
+CRUCIALLY IMPORTANT: The d151801 REQUIRES the power rails to come up BEFORE being released from /res.
+Failure to do so will cause unpredictible behaviour.
+
+D151801 also has some special extra hardware compared to the vanilla HD6301: 192 bytes of RAM starting
+at 0x0040; and an extra input capture/output compare module, using port 1-0 and port 1-1, with
+registers at 0x18 (byte), 0x1b (word) and 0x1d (word). basically the extra timer hardware is cloned
+from the normal hardware, registers moved up 0x10 bytes and driven by the timer at 0x0009. timer
+interrupts are muxed between both set of hardware. See {cap,cmp}{1,2}test.asm
 
 A copy of dasm got lumped in here because it was what I used to assemble the reader code 
 for the D151801 bluetop microprocessor. Nobody associated with this repo is responsible 

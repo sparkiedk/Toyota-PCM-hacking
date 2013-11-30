@@ -22,12 +22,56 @@ iniwait	ldab	$11		;status/cont reg  -after enabling it should hammer out 10 1's,
 	andb	#$20		;bit 5 is the tx data reg empty flag, bitmask is 0b00100000 = $20
 	beq	iniwait		;if that bit is not set then keep askin'
 
-;test code, will output either '0' or 'A'
+;test code
 
-test	ldaa	$18
-	bsr	txdata	;transmit result, assuming result is in AccA
-	
+initest	sei
+	clr	$40
+	clr	$41
+	clr	$50
+	ldab	#$FE
+	stab	$00	;port1 ddr set 1-0 to input, 1-{7..1} to output
+	stab	$01
+	clr	$02	;output all zeros
+	clr	$03	;output all zeros
+	ldab	#$12
+	stab	$18	;config aux in/out cmp 
+	cli
+
+test	
+	ldaa	$50	;cache of $08 from interrupt
+	bsr	txdata	;Transmit AccA, blocking
+
+	ldd	$19
+	pshb
+	bsr	txdata	;Transmit AccA, blocking
+	pula
+	bsr	txdata	;Transmit AccA, blocking
+
+	ldd	$1b
+	pshb
+	bsr	txdata	;Transmit AccA, blocking
+	pula
+	bsr	txdata	;Transmit AccA, blocking
+
+	ldd	$1d
+	pshb
+	bsr	txdata	;Transmit AccA, blocking
+	pula
+	bsr	txdata	;Transmit AccA, blocking
+
+	ldd	$40
+	pshb
+	bsr	txdata	;Transmit AccA, blocking
+	pula
+	bsr	txdata	;Transmit AccA, blocking
+
+	ldaa	#10
+	bsr	txdata
+	ldaa	#13
+	bsr	txdata
+
 	bra	test
+	
 
 
 ;safe termination to code
@@ -43,10 +87,31 @@ txwait	ldab	$11		;status/cont reg
 	rts
 ;=====end tx sub
 
-;illegal opcode trap
-	org	$FFEE
-	dc.w	$8000
+;========================specific interrupt
+	org	$9000
 
-;reset entry point
-	org	$FFFE
-	dc.w	$8000
+	ldaa	$18	;required to clear ICF
+	staa	$50	;cache value for main loop
+	ldd	$1d	;required to clear ICF
+	
+	inc	$40	;increment specific interrupt counter
+	rti
+
+
+;========================generic interrupt
+	org	$A000
+	inc	$41	;increment generic interrupt counter	
+	rti
+
+
+;interrupt and reset vectors
+	org	$FFEE
+	dc.w	$8000	;illegal opcode trap
+	dc.w	$A000	;sci
+	dc.w	$A000	;tof
+	dc.w	$A000	;ocf
+	dc.w	$9000	;icf
+	dc.w	$A000	;/IRQ + /IS3
+	dc.w	$A000	;SWI
+	dc.w	$A000	;/NMI
+	dc.w	$8000	;/RES
