@@ -3,7 +3,8 @@ going to be 4A-GE related PCMs, then perhaps the 1UZ PCM and anything else anyon
 
 
 Hot items: 
-toyota bluetop pcm/cap.asm - a working disassembly of the bluetop code, slowly being understood
+toyota bluetop pcm/cap.asm - a working disassembly of the bluetop code, slowly being understood,
+This is a disassebmly of the AE86 Bluetop code, from chip denso d151801-0642
 
 Notes: 
 
@@ -29,3 +30,16 @@ know it sucks... and I apologize.
 cap.bin is the same as cap1-151801-0642.bin, literally pulled from the same chip two different
 times. apologies that the main disassembly is cap.asm, and not the more appropriately named 
 cap1-151801-0642.asm
+
+Keywords:
+
+Denso	
+AE86	
+Corolla GTS	
+4A-GE	
+Bluetop	
+D151801	
+D151801-0642
+D151801-2860
+Hitachi 6301
+HD6301
