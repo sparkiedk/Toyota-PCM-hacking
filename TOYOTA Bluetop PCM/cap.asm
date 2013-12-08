@@ -14,10 +14,10 @@ Port4DDR:	rmb 1
 Port3:		rmb 1			; DATA XREF: sub_FD41-D2Dw
 					; sub_FD41-CB0r ...
 Port4:		rmb 1			; DATA XREF: sub_FD41-CCDr inj1on+2r ...
-TmrCntStat:	rmb 1
+TmrCntStat1:	rmb 1
 Timer:		rmb 2
-OutCmp:		rmb 2
-InpCap:		rmb 2
+OutCmp1:	rmb 2
+InpCap1:	rmb 2
 Port3CntStat:	rmb 1			; 7- /IS3 flag	6- /IS3	/IRQ enable 5x 4- output strobe	select 3 latch enable 210x
 UARTRateMode:	rmb 1
 TxRxCntStat:	rmb 1
@@ -72,12 +72,13 @@ word_44:	rmb 2			; DATA XREF: sub_F70A+Fr sub_F70A+32r	...
 word_46:	rmb 2
 word_48:	rmb 2
 byte_4A:	rmb 1			; DATA XREF: ROM:FC20r	ROM:FC45w
-unk_4B:		rmb 1
+byte_4B:	rmb 1
 byte_4C:	rmb 1			; DATA XREF: sub_FD41-CCFr
 					; sub_FD41-CC0w ...
+					; msb inhibits injection
 byte_4D:	rmb 1			; DATA XREF: sub_FD41-CC4r sub_F121+1r ...
 unk_4E:		rmb 1			; used for flags in outcmp,inpcap
-ADCflags:	rmb 1			; flag which can be modified in	an interrupt, msb could	be adc related
+ADCflags:	rmb 1			; flag which can be modified in	an interrupt, msb inidicates adc data is pending in adcrxdata
 ADCRxData:	rmb 1
 EndTxByteTime:	rmb 2			; caches timer values from serial interrupt
 ADCcontrol:	rmb 1			; controls a jump table	at fa9b, also deselects	ADC with LSB, also controls which channel to select
@@ -104,20 +105,18 @@ word_62:	rmb 2			; DATA XREF: sub_F420+60r sub_F420+78w ...
 byte_64:	rmb 1			; DATA XREF: sub_F420+98w ROM:F884r ...
 byte_65:	rmb 1			; DATA XREF: sub_F129:loc_F12Ar
 					; sub_F420+82w	...
-word_66:	rmb 2			; outcomp
+deltaNE:	rmb 2			; outcomp
 SatCount_68:	rmb 1
-unk_69:		rmb 1
-word_6A:	rmb 2			; DATA XREF: ROM:loc_F1F0w ROM:F1FDr ...
-word_6C:	rmb 2			; DATA XREF: ROM:loc_F1DAr ROM:F1DEr ...
-word_6E:	rmb 2
-byte_70:	rmb 1			; DATA XREF: ROM:F5A1w
+byte_69:	rmb 1			; DATA XREF: ROM:F21Ar	ROM:F221r ...
+SE056plstime:	rmb 2			; DATA XREF: ROM:loc_F1F0w ROM:F1FDr ...
+SE056Maxtime:	rmb 2			; DATA XREF: ROM:loc_F1DAr ROM:F1DEr ...
+SE056Mintime:	rmb 2
+word_70:	rmb 2			; DATA XREF: ROM:F5A1w
 					; sub_F6D4:loc_F6D8r ...
-		rmb 1
 word_72:	rmb 2			; DATA XREF: ROM:F596w	sub_F5E3+B9r ...
 unk_74:		rmb 1
 unk_75:		rmb 1
-unk_76:		rmb 1
-		rmb 1
+word_76:	rmb 2
 IC2LowCnt:	rmb 1			; counts input capture 2 trailing edges, reset by p3 msb low (G+ related)
 Inj10OffTime:	rmb 2
 word_7B:	rmb 2
@@ -144,21 +143,21 @@ word_8E:	rmb 2			; DATA XREF: sub_F5CE+4w sub_F5E3+44r	...
 word_90:	rmb 2			; DATA XREF: sub_F5CE+2w sub_F5E3+1Fr	...
 byte_92:	rmb 1			; DATA XREF: ROM:F5BEr	sub_F70A+Dw ...
 byte_93:	rmb 1			; DATA XREF: sub_F751+Ar sub_F751+18r	...
-unk_94:		rmb 1
+byte_94:	rmb 1
 byte_95:	rmb 1			; DATA XREF: sub_FD41:loc_F0D1r
 					; ROM:F1E9r ...
 unk_96:		rmb 1
 SatCount_97:	rmb 1
 SatCount_98:	rmb 1
 unk_99:		rmb 1			; TVIS related
-unk_9A:		rmb 1
+unk_9A:		rmb 1			; oxygen sensor	related
 unk_9B:		rmb 1
 SatCount_9C:	rmb 1
 unk_9D:		rmb 1
 byte_9E:	rmb 1			; DATA XREF: sub_F420:loc_F508r
 					; sub_F5E3+87r	...
 InCp2TrEg:	rmb 2			; probably not just trailing edge
-word_A1:	rmb 2
+word_A1:	rmb 2			; OC1/igt related
 byte_A3:	rmb 1			; DATA XREF: ROM:loc_F8ADw ROM:F8D6r
 					; stores output	from 3d	lookup
 byte_A4:	rmb 1			; DATA XREF: ROM:F867r	ROM:F8D2r ...
@@ -174,8 +173,8 @@ word_B1:	rmb 2
 word_B3:	rmb 2
 word_B5:	rmb 2			; DATA XREF: ROM:F391r	ROM:F397r ...
 					; ADC_AFMr*4+384
-InCp2LeEg:	rmb 2
-word_B9:	rmb 2
+NEtrEdge:	rmb 2			; leading edge time of tinp2. corresponds to tr	edge of	NE
+LastIC2treg:	rmb 2
 word_BB:	rmb 2			; outcomp
 word_BD:	rmb 2			; output compare routine only
 word_BF:	rmb 2			; DATA XREF: ROM:F911r	ROM:FCAAr ...
@@ -260,7 +259,7 @@ reset:					; CODE XREF: sub_FD41:loc_FE99J
 		ldaa	#$C0 ; 'À'
 		staa	RAMCnt		; enable ram, set ram bit which	gets cleared by	standby	power loss
 		ldaa	#3		; leading edges, but no	interrupts
-		staa	TmrCntStat	; set input edge and output level high,	disable	all interrupts
+		staa	TmrCntStat1	; set input edge and output level high,	disable	all interrupts
 		staa	TmrCntStat2	; set input edge and output level high,	disable	all interrupts
 		std	Timer		; because why not write	to the timer?
 		ldd	#$BFFF
@@ -315,7 +314,7 @@ loc_F051:				; CODE XREF: sub_FD41-CEAj
 		stab	unk_5E		; timer	based
 		ldaa	#$1B
 		sei
-		staa	TmrCntStat	; timer	control	$1b enables inp	cap int, enables out comp int, rising edge inp trigger,	compare	triggers leading edge.
+		staa	TmrCntStat1	; timer	control	$1b enables inp	cap int, enables out comp int, rising edge inp trigger,	compare	triggers leading edge.
 		staa	TmrCntStat2	; timer	control	$1b enables inp	cap int, enables out comp int, rising edge inp trigger,	compare	triggers leading edge.
 
 Main_Loop:				; CODE XREF: sub_FD41:end_mainJ
@@ -325,14 +324,14 @@ Main_Loop:				; CODE XREF: sub_FD41:end_mainJ
 		ldx	#$6081		; re init ddr3 and ddr4
 		stx	Port3DDR
 		cli
-		ldd	byte_4C
+		ldd	byte_4C		; msb inhibits injection
 		eorb	Port4		; port 4
 		andb	#$40 ; '@'      ; p4-6 is SPD input
 		beq	loc_F083
 		inc	unk_61
 		eorb	byte_4D
 		anda	#$FE ; 'þ'
-		std	byte_4C
+		std	byte_4C		; msb inhibits injection
 
 loc_F083:				; CODE XREF: sub_FD41-CC9j
 		ldd	unk_5E		; timer	based
@@ -359,7 +358,7 @@ loc_F083:				; CODE XREF: sub_FD41-CC9j
 		beq	loc_F0BB
 		anda	#$3E ; '>'
 		beq	loc_F0F7
-		ldab	byte_4C
+		ldab	byte_4C		; msb inhibits injection
 		bitb	#4
 		beq	loc_F0B9
 		anda	#$E
@@ -373,7 +372,7 @@ loc_F0BB:				; CODE XREF: sub_FD41-C98j
 		ldx	#$FFCF
 		jsr	$14,x		; ffe3,	saturate count satcount_CE
 		cmpa	#$98 ; '˜'
-		ldab	byte_4C
+		ldab	byte_4C		; msb inhibits injection
 		bitb	#4
 		beq	loc_F0CA
 		cmpa	#4
@@ -501,7 +500,7 @@ loc_F131:				; CODE XREF: ROM:F21EP
 		sei
 		bsr	inj1on
 
-loc_F137:				; CODE XREF: ROM:loc_F23EP
+inj2on:					; CODE XREF: ROM:endIC1_2P
 		ldx	#$DD9F		; std word_9f
 		ldaa	Port1		; test injector	#20 (bit 1)
 		rora
@@ -515,7 +514,7 @@ loc_F137:				; CODE XREF: ROM:loc_F23EP
 		staa	TmrCntStat2	; set lsb low
 		ldx	Timer
 		abx
-		stx	OutCmp2		; =timer+0c=12us from now
+		stx	OutCmp2		; force	OC2 low
 		rts
 ; End of function sub_F129
 
@@ -594,6 +593,7 @@ loc_F191:				; CODE XREF: inj1on+12j
 
 ; =============== S U B	R O U T	I N E =======================================
 
+; store	d in incp2treg,	turn injector 1	on, get	another	valuve for inj10offtime
 
 sub_F194:				; CODE XREF: ROM:F23AP
 		bsr	inj1on
@@ -607,7 +607,7 @@ loc_F196:				; CODE XREF: injector1+Bj
 		bne	loc_F1A3	; branch if injector #20 is not	on
 		ldx	OutCmp2		; compare output on P1-1, injector /#20
 		cpx	Inj10OffTime
-		bmi	locret_F1B0
+		bmi	locret_F1B0	; bomb out if OC2 happens earlier than inj10offtime
 
 loc_F1A3:				; CODE XREF: injector1+21j
 		lsra
@@ -625,71 +625,71 @@ locret_F1B0:				; CODE XREF: injector1+2j
 ; ---------------------------------------------------------------------------
 
 IRQinpcap:
-		ldaa	TmrCntStat
+		ldaa	TmrCntStat1
 		bita	TmrCntStat2	; $TCSR2
-		bmi	loc_F1BA	; branch if BOTH input capture flags are set
+		bmi	IRQinpcap2	; branch if BOTH input capture flags are set
 		tsta
-		bra	loc_F1BC	; branch if only input capture 1, or MSB of $4e	is set
+		bra	IRQinpcap3	; branch if only input capture 1, or MSB of $4e	is set
 ; ---------------------------------------------------------------------------
 
-loc_F1BA:				; CODE XREF: ROM:F1B5j
+IRQinpcap2:				; CODE XREF: ROM:F1B5j
 		ldaa	unk_4E		; used for flags in outcmp,inpcap
 
-loc_F1BC:				; CODE XREF: ROM:F1B8j
+IRQinpcap3:				; CODE XREF: ROM:F1B8j
 		bmi	procInCp1	; branch if only input capture 1, or MSB of $4e	is set
-		jmp	procInCp2
+		jmp	procInCp2	; input	capture	2 is triggered by edges	from pin 7 of se056, which appears to be /NE clipped @5V levels
 ; ---------------------------------------------------------------------------
 
-procInCp1:				; CODE XREF: ROM:loc_F1BCj
-		ldd	InpCap
-		subd	word_B9
+procInCp1:				; CODE XREF: ROM:IRQinpcap3j
+		ldd	InpCap1		; IC1 is ONLY EVER triggered by	leading	edges on p2-0
+		subd	LastIC2treg
 		pshb
 		psha
 		pulx			; xgdx
 		ldaa	unk_4E		; used for flags in outcmp,inpcap
-		bpl	locret_F23D	; msb gets flagged based on input capture level
+		bpl	endIC1_1	; msb gets flagged based on input capture level
 		oraa	#1
 		anda	#$7F ; ''
 		staa	unk_4E		; set bit 0, clear bit 7
 		cli
 		inx			; input	capture	time - B9 +1
-		cpx	word_6E
+		cpx	SE056Mintime
 		bcc	loc_F1DA	; bounce if greater than or equal to
-		ldx	word_6E
+		ldx	SE056Mintime
 
 loc_F1DA:				; CODE XREF: ROM:F1D6j
-		cpx	word_6C
+		cpx	SE056Maxtime
 		bcs	loc_F1E0	; bounce if less than
-		ldx	word_6C
+		ldx	SE056Maxtime
 
 loc_F1E0:				; CODE XREF: ROM:F1DCj
-		ldaa	unk_CD
+		ldaa	unk_CD		; X is now capped between word_6e (low)	and word_6C (high)
 		bita	#1
-		beq	loc_F1F0	; either 800 or	1600 or	if we're lucky: inpcap-B9
+		beq	loc_F1F0	; bounce is lsb	of unk_cd is low
 		ldx	#800
-		ldaa	byte_95
-		bmi	loc_F1F0	; either 800 or	1600 or	if we're lucky: inpcap-B9
+		ldaa	byte_95		; bounce if MSb	of byte_95 is high
+		bmi	loc_F1F0	; either 800 or	1600 or	if we're lucky: InpCap1 - LastIC2treg
 		ldx	#1600
 
 loc_F1F0:				; CODE XREF: ROM:F1E4j	ROM:F1EBj
-		stx	word_6A		; either 800 or	1600 or	if we're lucky: inpcap-B9
+		stx	SE056plstime	; either 800 or	1600 or	if we're lucky: InpCap1 - LastIC2treg
 		ldaa	SatCount_97
-		oraa	byte_4C
+		oraa	byte_4C		; msb inhibits injection
 		oraa	SatCount_98
-		bmi	locret_F23D	; return
+		bmi	endIC1_1	; return if satcounts are $80 or greater, or msb of byte_4c is set
 		ldaa	unk_75
 		psha
-		ldd	word_6A
+		ldd	SE056plstime
 		jsr	mulDbyStack	; multiplies unk_75 by word_6a,	returns	only upper 16 bits of result
 		pshb
 		ldx	#0
 		ldab	unk_74
 		abx
 		pulb
-		beq	loc_F211
+		beq	loc_F211	; bounce if x is zero
 
 loc_F20C:				; CODE XREF: ROM:F20Fj
-		addd	word_6A
+		addd	SE056plstime
 		dex
 		bne	loc_F20C	; multiply loop
 
@@ -701,78 +701,80 @@ loc_F211:				; CODE XREF: ROM:F20Aj
 loc_F217:				; CODE XREF: ROM:F212j
 		std	word_7D		; result of multiplication of unk_75 and word_6a, clipped to $7fff
 		sei			; mask interrupts for this section
-		ldx	unk_69
-		bmi	loc_F22C
+		ldx	byte_69
+		bmi	loc_F22C	; bounce if byte_69 has	underflowed
 		jsr	loc_F131
-		ldaa	unk_69
-		bne	locret_F23D
-		deca
-		staa	unk_69
+		ldaa	byte_69
+		bne	endIC1_1	; end of IC1 interrupt
+		deca			; decrement byte_69
+		staa	byte_69		; decrement byte_69
 		ldd	word_7D
-		bra	loc_F232
+		bra	choose_bank
 ; ---------------------------------------------------------------------------
 
 loc_F22C:				; CODE XREF: ROM:F21Cj
 		lsld
-		bpl	loc_F232
+		bpl	choose_bank	; double word_7d in AccD and cap at 32767
 		ldd	#$7FFF
 
-loc_F232:				; CODE XREF: ROM:F22Aj	ROM:F22Dj
+choose_bank:				; CODE XREF: ROM:F22Aj	ROM:F22Dj
 		psha
-		ldaa	IC2LowCnt	; counts input capture 2 trailing edges, reset by p3 msb low (G+ related)
+		ldaa	IC2LowCnt	; decide which bank to fire from the looks of it
 		bita	#2
-		pula
-		beq	loc_F23E
-		jsr	sub_F194
+		pula			; AccD is either word_7d or double word_7d capped at 32767
+		beq	endIC1_2	; turns	off OC2	(turns on injector #20)
+		jsr	sub_F194	; turns	on injector #10, also sets up the next oc2 interrupt
 
-locret_F23D:				; CODE XREF: ROM:F1CAj	ROM:F1F8j ...
-		rti
+endIC1_1:				; CODE XREF: ROM:F1CAj	ROM:F1F8j ...
+		rti			; end of IC1 interrupt
 ; ---------------------------------------------------------------------------
 
-loc_F23E:				; CODE XREF: ROM:F238j
-		jsr	loc_F137+1	; std word_9f
-		rti
+endIC1_2:				; CODE XREF: ROM:F238j
+		jsr	inj2on+1	; turns	off OC2	(turns on injector #20)
+		rti			; end of IC1 interrupt sometimes
 ; ---------------------------------------------------------------------------
 
 procInCp2:				; CODE XREF: ROM:F1BEJ
-		ldaa	TmrCntStat2	; $TCSR2
+		ldaa	TmrCntStat2	; input	capture	2 is triggered by edges	from pin 7 of se056, which appears to be /NE clipped @5V levels
 		ldx	InpCap2		; captures from	port 1-0, mixed	signal se056
 		bita	#2		; test IEDG
 		beq	InCp2low	; branch if input edge that triggered capture was low
-		stx	InCp2LeEg
+
+InCp2high:				; leading edge time of tinp2. corresponds to tr	edge of	NE
+		stx	NEtrEdge
 		ldaa	Port2		; looking at /IGT
 		bita	#%10
-		beq	loc_F262	; branch if /IGT is low
+		beq	IGTisON		; branch if /IGT is low
 		ldaa	unk_C6
-		bgt	loc_F262
+		bgt	IGTisON		; IGT on
 		ldd	#$FA0D
-		anda	TmrCntStat	; disable timer	overflow interrupt, output on cmp set low
-		staa	TmrCntStat	; disable timer	overflow interrupt, output on cmp set low
+		anda	TmrCntStat1	; disable timer	overflow interrupt, output on cmp set low
+		staa	TmrCntStat1	; disable timer	overflow interrupt, output on cmp set low
 		ldx	Timer
 		abx
-		stx	OutCmp		; outcmp=timer+0D, which is 13us from now...
+		stx	OutCmp1		; outcmp=timer+0D, which is 13us from now...
 
-loc_F262:				; CODE XREF: ROM:F250j	ROM:F254j
-		ldd	OutCmp
+IGTisON:				; CODE XREF: ROM:F250j	ROM:F254j
+		ldd	OutCmp1		; IGT on
 		addd	word_B3
 		std	InCp2TrEg	; probably not just trailing edge
-		ldaa	word_A1
+		ldaa	word_A1		; OC1/igt related
 		inca
-		bmi	loc_F27B
-		ldd	InCp2LeEg
+		bmi	loc_F27B	; bounce if word_a1 is unsuitable for next oepration
+		ldd	NEtrEdge	; leading edge time of tinp2. corresponds to tr	edge of	NE
 		addd	deltaInCp2TL
-		subd	word_A1
+		subd	word_A1		; OC1/igt related
 		cmpa	InCp2TrEg	; probably not just trailing edge
 		bpl	loc_F279
-		ldd	InCp2TrEg	; has no impact
+		ldd	InCp2TrEg	; this value gets stored in outcmp1 if the result in D is significantly	smaller	(256)
 
 loc_F279:				; CODE XREF: ROM:F275j
-		bsr	NextOCmpHigh
+		bsr	OC1HighDtoOC1
 
 loc_F27B:				; CODE XREF: ROM:F26Bj
 		ldd	#$FDF3
-		anda	TmrCntStat2	; $TCSR2
-		staa	TmrCntStat2	; $TCSR2
+		anda	TmrCntStat2	; set oc2 ouput	level low on next compare
+		staa	TmrCntStat2	; set oc2 ouput	level low on next compare
 		andb	unk_4E		; used for flags in outcmp,inpcap
 		stab	unk_4E		; set bits 2,3 low
 		rti
@@ -780,102 +782,104 @@ loc_F27B:				; CODE XREF: ROM:F26Bj
 ; =============== S U B	R O U T	I N E =======================================
 
 
-NextOCmpHigh:				; CODE XREF: ROM:loc_F279p ROM:F2BCp
+OC1HighDtoOC1:				; CODE XREF: ROM:loc_F279p ROM:F2BCp
 		psha
 		ldaa	#$19
-		oraa	TmrCntStat
-		staa	TmrCntStat
+		oraa	TmrCntStat1	; set oc1 level	high
+		staa	TmrCntStat1	; set oc1 level	high
 		pula
-; End of function NextOCmpHigh
+; End of function OC1HighDtoOC1
 
 
 ; =============== S U B	R O U T	I N E =======================================
 
 ; write	d to outcmp
 
-OutCmp1Sub2:				; CODE XREF: ROM:loc_F3ACP ROM:F94DP
-		std	OutCmp
+stdOC1:					; CODE XREF: ROM:loc_F3ACP ROM:F94DP
+		std	OutCmp1
 		subd	Timer
 		cmpa	#240		; 240*256=61440us
-		bcs	locret_F29E
+		bcs	stdOC1Dgood
 
-loc_F297:				; CODE XREF: ROM:F2AAj
+stdOC1Dnogd:				; CODE XREF: ROM:F2AAj
 		ldd	#15
 		addd	Timer
-		std	OutCmp		; set outcmp to	timer +	F, which is 15us from now
+		std	OutCmp1		; set outcmp to	timer +	F, which is 15us from now
 
-locret_F29E:				; CODE XREF: OutCmp1Sub2+6j ROM:F2A4j
+stdOC1Dgood:				; CODE XREF: stdOC1+6j	ROM:F2A4j
 		rts
-; End of function OutCmp1Sub2
+; End of function stdOC1
 
 ; ---------------------------------------------------------------------------
+
+forceIGToff:
 		ldd	#$219
 		bita	Port2		; test for /IGT
-		bne	locret_F29E	; return if /IGT is off
-		orab	TmrCntStat	; set output compare level to high
-		stab	TmrCntStat	; set output compare level to high
-		bra	loc_F297
+		bne	stdOC1Dgood	; return if /IGT is off
+		orab	TmrCntStat1	; set oc1 level	to high
+		stab	TmrCntStat1	; set oc1 level	to high
+		bra	stdOC1Dnogd	; forces an OC1	shortly
 ; ---------------------------------------------------------------------------
 
 InCp2low:				; CODE XREF: ROM:F248j
 		stx	InCp2TrEg	; probably not just trailing edge
-		ldaa	unk_4E		; used for flags in outcmp,inpcap
+		ldaa	unk_4E		; checking bit 3
 		bita	#8
-		bne	loc_F2C1
-		ldaa	word_A1
-		bpl	loc_F2BE+1	; 8dde is BSR #$DE, which jumps	to f29e, which returns from sub, which is useless really
+		bne	IC2low3
+		ldaa	word_A1		; OC1/igt related
+		bpl	IC2low2+1	; force	IGT off
 		ldd	InCp2TrEg	; probably not just trailing edge
-		subd	word_A1
-		bsr	NextOCmpHigh
+		subd	word_A1		; OC1/igt related
+		bsr	OC1HighDtoOC1
 
-loc_F2BE:				; CODE XREF: ROM:F2B6j
-		cpx	#$8DDE		; 8dde is BSR #$DE, which jumps	to f29e, which returns from sub, which is useless really
+IC2low2:				; CODE XREF: ROM:F2B6j
+		cpx	#$8DDE		; 8dde is BSR forceIGToff, which jumps to f29F
 
-loc_F2C1:				; CODE XREF: ROM:F2B2j
+IC2low3:				; CODE XREF: ROM:F2B2j
 		ldd	InCp2TrEg	; probably not just trailing edge
-		subd	word_B9
-		std	word_66		; =incp2treg-word_b9
+		subd	LastIC2treg
+		std	deltaNE		; =incp2treg-word_b9
 		ldab	SatCount_68
-		clr	SatCount_68
-		cmpb	#$D
-		bcs	loc_F2DC
-		cmpb	#$16
-		bhi	loc_F2D7
+		clr	SatCount_68	; reset	satcount_68
+		cmpb	#13
+		bcs	IC2low5		; bounce if satcount_68	was lower than 13
+		cmpb	#22
+		bhi	IC2low4		; bounce if satcount_68	was higher than	22
 		tsta
-		bmi	loc_F2DC
+		bmi	IC2low5
 
-loc_F2D7:				; CODE XREF: ROM:F2D2j
-		ldd	#$FFFF
-		std	word_66		; set to FFFF
+IC2low4:				; CODE XREF: ROM:F2D2j
+		ldd	#$FFFF		; about	458 RPM
+		std	deltaNE		; set to FFFF
 
-loc_F2DC:				; CODE XREF: ROM:F2CEj	ROM:F2D5j
+IC2low5:				; CODE XREF: ROM:F2CEj	ROM:F2D5j
 		cmpa	#$EA ; 'ê'
-		bcc	loc_F2E8
+		bcc	IC2low6
 		ldaa	unk_C6
-		ldab	unk_4B
+		ldab	byte_4B
 		cmpb	#4
-		bcs	loc_F2EA
+		bcs	IC2low7
 
-loc_F2E8:				; CODE XREF: ROM:F2DEj
+IC2low6:				; CODE XREF: ROM:F2DEj
 		ldaa	#5
 
-loc_F2EA:				; CODE XREF: ROM:F2E6j
+IC2low7:				; CODE XREF: ROM:F2E6j
 		tsta
-		bmi	loc_F2F0
+		bmi	IC2low8
 		deca
 		staa	unk_C6
 
-loc_F2F0:				; CODE XREF: ROM:F2EBj
+IC2low8:				; CODE XREF: ROM:F2EBj
 		ldaa	TmrCntStat2	; $TCSR2
 		asla
-		bpl	loc_F2FB
+		bpl	IC2low9
 		jsr	injector2
 		jsr	injector1
 
-loc_F2FB:				; CODE XREF: ROM:F2F3j
+IC2low9:				; CODE XREF: ROM:F2F3j
 		ldd	InCp2TrEg	; probably not just trailing edge
-		std	word_B9		; =incp2treg
-		subd	InCp2LeEg
+		std	LastIC2treg	; =incp2treg
+		subd	NEtrEdge	; leading edge time of tinp2. corresponds to tr	edge of	NE
 		std	deltaInCp2TL
 		subd	word_B1
 		addd	word_A9		; last word_ab
@@ -888,11 +892,11 @@ loc_F2FB:				; CODE XREF: ROM:F2F3j
 		ldx	word_AF
 		stx	word_AD		; last word_af
 		tst	unk_C6
-		ble	loc_F31C
+		ble	IC2low10
 		clra
 		clrb
 
-loc_F31C:				; CODE XREF: ROM:F318j
+IC2low10:				; CODE XREF: ROM:F318j
 		std	word_AF
 		ldd	word_B1
 		addd	deltaInCp2TL
@@ -902,47 +906,47 @@ loc_F31C:				; CODE XREF: ROM:F318j
 		addd	word_A9		; last word_ab
 		std	deltaInCp2TL
 		ldd	#$1A1A
-		orab	TmrCntStat
-		stab	TmrCntStat
-		oraa	TmrCntStat2	; $TCSR2
+		orab	TmrCntStat1	; IC1 edge 1, OC1 unaffected
+		stab	TmrCntStat1
+		oraa	TmrCntStat2	; IC2 edge 1, OC2 unaffected
 		staa	TmrCntStat2	; $TCSR2
 		ldab	unk_4E		; used for flags in outcmp,inpcap
 		ldaa	IC2LowCnt	; counts input capture 2 trailing edges, reset by p3 msb low (G+ related)
 		inca
 		staa	IC2LowCnt	; counts input capture 2 trailing edges, reset by p3 msb low (G+ related)
 		cmpa	#3
-		bls	loc_F359
+		bls	IC2low11
 		tba
 		asla
 		oraa	Port3		; inputs to port3 are 7	-G+, 4,3,2,1,0
-		bmi	loc_F359
+		bmi	IC2low11	; branch if G+ related is high
 		ldaa	#$FE ; 'þ'
-		anda	Port4		; p4-0 is output to SE056 mixed	signal ic, here	we apply a low level
-		staa	Port4		; p4-0 is output to SE056 mixed	signal ic, here	we apply a low level
+		anda	Port4		; p4-0 is output to SE056 mixed	signal ic, begin generating 50us low pulse
+		staa	Port4		; p4-0 is output to SE056 mixed	signal ic, begin generating 50us low pulse
 		clra
 		staa	IC2LowCnt	; counts input capture 2 trailing edges, reset by p3 msb low (G+ related)
 		staa	SatCount_D1	; clear	unk_d1
 		ldaa	ADC_ThW		; compare to 80
 		cmpa	#80
-		bls	loc_F359	; branch if less than 80 deg F
+		bls	IC2low11	; branch if less than 80 deg F
 		orab	#$20 ; ' '
 
-loc_F359:				; CODE XREF: ROM:F33Ej	ROM:F344j ...
+IC2low11:				; CODE XREF: ROM:F33Ej	ROM:F344j ...
 		orab	#$46 ; 'F'
 		ldaa	#1
 		bita	Port2		; looking at mixed signal chip input bit 0, input capture pin
-		beq	loc_F365	; branch if inpcap pin is low
-		ldaa	TmrCntStat	; interested in	ICF bit	7
-		bpl	loc_F367	; branch if ICF	was not	set
+		beq	IC2low12	; branch if inpcap pin is low
+		ldaa	TmrCntStat1	; interested in	ICF bit	7
+		bpl	IC2low13	; branch if ICF	was not	set
 
-loc_F365:				; CODE XREF: ROM:F35Fj
+IC2low12:				; CODE XREF: ROM:F35Fj
 		orab	#$80 ; '€'
 
-loc_F367:				; CODE XREF: ROM:F363j
+IC2low13:				; CODE XREF: ROM:F363j
 		stab	unk_4E		; potential to set bits	7,6,5,2,1 high
 		ldaa	#1
-		oraa	Port4		; p4-0 is output to SE056 mixed	signal ic, here	we apply a high	level
-		staa	Port4		; p4-0 is output to SE056 mixed	signal ic, here	we apply a high	level
+		oraa	Port4		; p4-0 is output to SE056 mixed	signal ic, finish 50us low pulse
+		staa	Port4		; p4-0 is output to SE056 mixed	signal ic, finish 50us low pulse
 		rti
 ; ---------------------------------------------------------------------------
 
@@ -950,7 +954,7 @@ IRQoutcmp:				; output compare pin p2-1 eventually becomes the signal	/IGT, or i
 		ldaa	TmrCntStat2
 		asla
 		bmi	procOCmp2	; branch if ocf2 is set
-		ldaa	TmrCntStat
+		ldaa	TmrCntStat1
 		tab
 		comb
 		bitb	#$41 ; 'A'
@@ -963,11 +967,11 @@ IRQoutcmp:				; output compare pin p2-1 eventually becomes the signal	/IGT, or i
 		ldab	unk_C6		; bail out of interrupt	if >0
 		bgt	OutCmpBombout
 		anda	#$FA ; 'ú'      ; a still contains tmrcntstat
-		staa	TmrCntStat	; next compare forces /IGT low (active)
-		ldd	OutCmp		; load last compare time, which	should have initiated this interrupt
+		staa	TmrCntStat1	; next compare forces /IGT low (active)
+		ldd	OutCmp1		; load last compare time, which	should have initiated this interrupt
 		addd	word_B5		; word_b5 contains a duration
 		std	word_BD		; word_bd contains next	compare	time?
-		ldd	word_66		; outcomp
+		ldd	deltaNE		; outcomp
 		subd	word_B5		; ADC_AFMr*4+384
 		subd	word_BB		; outcomp
 		bcc	loc_F39F
@@ -984,15 +988,15 @@ loc_F39F:				; CODE XREF: ROM:F39Bj
 		jsr	OutCmp1Sub1	; called from output compare ISR
 
 loc_F3AC:				; CODE XREF: ROM:F3A7j
-		jsr	OutCmp1Sub2	; write	d to outcmp
+		jsr	stdOC1		; write	d to outcmp
 		rti
 ; ---------------------------------------------------------------------------
 
 OutCmpBombout:				; CODE XREF: ROM:F37Bj	ROM:F381j ...
 		oraa	#1
-		staa	TmrCntStat	; set output high on cmp
-		ldd	OutCmp		; do nothing
-		std	OutCmp		; do nothign, could we be waiting for the NEXT compare after overflow?
+		staa	TmrCntStat1	; set output high on cmp
+		ldd	OutCmp1		; do nothing
+		std	OutCmp1		; do nothign, could we be waiting for the NEXT compare after overflow?
 		rti			; final	end to output compare interrupt
 
 ; =============== S U B	R O U T	I N E =======================================
@@ -1040,7 +1044,7 @@ SerBombOut:				; CODE XREF: ROM:F3DDj
 ; ---------------------------------------------------------------------------
 
 SerIRQMain:				; CODE XREF: ROM:F3E2j
-		ldaa	ADCflags	; flag which can be modified in	an interrupt, msb could	be adc related
+		ldaa	ADCflags	; flag which can be modified in	an interrupt, msb inidicates adc data is pending in adcrxdata
 		rora
 		ldaa	Port3		; test to see if /CS to	the ADC	is set
 		bita	#$40 ; '@'
@@ -1096,8 +1100,8 @@ sub_F420:				; CODE XREF: sub_FD41-C3CP
 		staa	SatCount_98	; set unk_98 to	$7B
 
 loc_F431:				; CODE XREF: sub_F420+Dj
-		ldx	word_66		; outcomp
-		cpx	#4054
+		ldx	deltaNE		; outcomp
+		cpx	#4054		; exactly 7400rpm, set to 3332 for 9003	RPM
 		bcs	loc_F43A	; increment unk_97, increment unk_98
 		stab	SatCount_97	; set unk_97 to	$79
 
@@ -1110,12 +1114,12 @@ loc_F43A:				; CODE XREF: sub_F420+16j
 
 loc_F446:				; CODE XREF: sub_F420+1Fj
 		ldx	#$FC81		; rts, prior instructions are LSRD
-		ldd	word_66		; outcomp
+		ldd	deltaNE		; the next few lines of	code do	SOMETHING with deltaNE,	could calculate	an RPM variable	maybe
 
 loc_F44B:				; CODE XREF: sub_F420+31j
 		bita	#$F0 ; 'ð'
-		beq	loc_F453
-		dex
+		beq	loc_F453	; test if msN is clear
+		dex			; decrementing x to point to equivalent	lsrd instructions in DivDby16
 		lsrd
 		bra	loc_F44B
 ; ---------------------------------------------------------------------------
@@ -1235,11 +1239,11 @@ loc_F4EB:				; CODE XREF: sub_F420+BBj
 		ldx	#$1CC
 
 loc_F506:				; CODE XREF: sub_F420+D3j sub_F420+D7j ...
-		stx	word_6E
+		stx	SE056Mintime
 
 loc_F508:				; CODE XREF: sub_F420+E1j
 		ldab	byte_9E
-		ldaa	byte_4C
+		ldaa	byte_4C		; msb inhibits injection
 		bmi	loc_F510
 		addb	#$10
 
@@ -1254,7 +1258,7 @@ loc_F510:				; CODE XREF: sub_F420+ECj
 ; ---------------------------------------------------------------------------
 
 loc_F51E:				; CODE XREF: sub_F420+F4j sub_F420+F8j
-		ldab	byte_4C
+		ldab	byte_4C		; msb inhibits injection
 		bpl	loc_F531
 		psha
 		ldaa	unk_D5
@@ -1269,7 +1273,7 @@ loc_F530:				; CODE XREF: sub_F420+107j
 
 loc_F531:				; CODE XREF: sub_F420+FCj
 					; sub_F420+100j
-		staa	byte_4C
+		staa	byte_4C		; msb inhibits injection
 		rts
 ; End of function sub_F420
 
@@ -1286,23 +1290,23 @@ loc_F534:				; CODE XREF: sub_FD41-C2EP
 
 loc_F542:				; CODE XREF: ROM:F53Bj
 		ldd	#$2004
-		bita	unk_4E		; used for flags in outcmp,inpcap
-		beq	loc_F54E
-		ldab	unk_69
+		bita	unk_4E		; test bit 5
+		beq	loc_F54E	; can be set to	4, or decremented
+		ldab	byte_69
 		ble	loc_F550
 		decb
 
 loc_F54E:				; CODE XREF: ROM:F547j
-		stab	unk_69
+		stab	byte_69		; can be set to	4, or decremented
 
 loc_F550:				; CODE XREF: ROM:F54Bj
-		ldd	word_6A
+		ldd	SE056plstime
 		jsr	sub_F6FC
 		std	word_7F
 		ldaa	byte_4D
 		rora
 		bcc	loc_F571
-		ldd	#4060
+		ldd	#$FDC
 		cmpb	ADC_ThW		; compare to 220d
 		bls	loc_F568	; branch if less than 220 deg F	(ie, not overheating)
 		ldx	#$FEB6
@@ -1333,7 +1337,7 @@ loc_F57F:				; CODE XREF: ROM:F575j
 		jsr	$91,x		; ff2d
 		jsr	DivDby32
 		adda	#8
-		std	word_6C
+		std	SE056Maxtime
 		ldd	#$800
 		jsr	sub_F6FC
 		std	word_72
@@ -1341,7 +1345,7 @@ loc_F57F:				; CODE XREF: ROM:F575j
 		jsr	$49,x		; ff1b
 		psha
 		jsr	sub_F6E3
-		std	byte_70
+		std	word_70
 		ldd	#$6666
 		cmpb	word_42
 		bls	loc_F5AC
@@ -1365,7 +1369,7 @@ loc_F5BB:				; CODE XREF: ROM:F5AEj
 
 loc_F5C3:				; CODE XREF: ROM:F5B5j	ROM:F5B9j ...
 		staa	byte_88
-		ldaa	byte_4C
+		ldaa	byte_4C		; msb inhibits injection
 		bpl	loc_F5EB
 		bsr	sub_F5CE
 		jmp	loc_F673
@@ -1488,7 +1492,7 @@ loc_F61B:				; CODE XREF: sub_F5E3+35j
 		stx	word_8E
 		ldx	#6
 		ldaa	byte_60
-		ldab	byte_4C
+		ldab	byte_4C		; msb inhibits injection
 		cmpa	#$F
 		bhi	loc_F641
 		andb	#$F7 ; '÷'
@@ -1501,7 +1505,7 @@ loc_F641:				; CODE XREF: sub_F5E3+58j
 		orab	#8
 
 loc_F647:				; CODE XREF: sub_F5E3+5Cj
-		stab	byte_4C
+		stab	byte_4C		; msb inhibits injection
 
 loc_F649:				; CODE XREF: sub_F5E3+60j
 		bitb	#8
@@ -1539,7 +1543,7 @@ loc_F671:				; CODE XREF: sub_F5E3+8Bj
 
 loc_F673:				; CODE XREF: ROM:F5CBJ
 		tab
-		ldaa	byte_4C
+		ldaa	byte_4C		; msb inhibits injection
 		bita	#4
 		beq	loc_F67B
 		clrb
@@ -1617,17 +1621,17 @@ sub_F6BB:				; CODE XREF: sub_F96A+C4P
 
 
 sub_F6D4:				; CODE XREF: sub_F6BB+5j sub_F96A+8AP
-		ldaa	unk_76
-		bsr	sub_F700
+		ldaa	word_76
+		bsr	sub_F700	; word_72 multiplied by	msB of word_76 with some shifting returned in d
 
 loc_F6D8:				; CODE XREF: sub_F6BB+Bj sub_F6BB+17j
-		subd	byte_70
+		subd	word_70
 		bcs	loc_F6DE
 		clra
 		clrb
 
 loc_F6DE:				; CODE XREF: sub_F6D4+6j
-		addd	byte_70
+		addd	word_70
 		std	unk_74
 		rts
 ; End of function sub_F6D4
@@ -1681,7 +1685,7 @@ sub_F6FC:				; CODE XREF: ROM:F552P	ROM:F593P
 
 sub_F700:				; CODE XREF: sub_F6D4+2p ROM:F74Fj
 		psha
-		bsr	sub_F6E3
+		bsr	sub_F6E3	; wultiply word_72 by stack with some shifting
 		addd	word_72
 		lsrd
 		addd	word_72
@@ -1854,7 +1858,7 @@ loc_F7B3:				; CODE XREF: sub_F7BE+18j
 		andb	#$F7 ; '÷'
 		stab	byte_4D
 		ldd	#$8000
-		stab	unk_94
+		stab	byte_94
 		bra	loc_F811
 ; END OF FUNCTION CHUNK	FOR sub_F7BE
 
@@ -1874,7 +1878,7 @@ loc_F7C4:				; CODE XREF: sub_F7BE+2j
 		bne	loc_F7AA
 		ldx	byte_87
 		bne	loc_F7B0
-		ldaa	byte_4C
+		ldaa	byte_4C		; msb inhibits injection
 		bmi	loc_F7B0
 		ldaa	SatCount_97
 		bmi	loc_F7B0
@@ -1892,18 +1896,20 @@ loc_F7E7:				; CODE XREF: sub_F7BE+26j
 		ldx	#$FF9C
 		jsr	8,x		; ffa4
 		staa	unk_9B
-		ldx	#$F7A6
-		ldab	Port4		; an entry point
-		bitb	#4		; p4-2 is IDL, active high
-		beq	loc_F7F9
+		ldx	#$F7A6		; 235@offset 0,	78 at offset 2
+
+loc_F7F1:				; p4-2 is IDL, active high when	IDL switch is closed
+		ldab	Port4
+		bitb	#4		; p4-2 is IDL, active high when	IDL switch is closed
+		beq	loc_F7F9	; bounce if not	throttle closed
 		inx
 		inx			; x would then be F7A8,	different for other entry points
 
 loc_F7F9:				; CODE XREF: sub_F7BE+37j
-		ldaa	unk_9A
+		ldaa	unk_9A		; oxygen sensor	related
 		asla
-		ldd	unk_76
-		bcc	loc_F802+1	; e300 is addd 0,x
+		ldd	word_76
+		bcc	loc_F802+1	; if msb of unk_9a is low, addd	0,x
 		subd	0,x
 
 loc_F802:				; CODE XREF: sub_F7BE+40j
@@ -1923,7 +1929,7 @@ loc_F810:				; CODE XREF: sub_F7BE+4Fj
 		pulb
 
 loc_F811:				; CODE XREF: sub_F7BE-2j
-		std	unk_76
+		std	word_76
 		rts
 ; End of function sub_F7BE
 
@@ -1937,7 +1943,7 @@ loc_F814:				; CODE XREF: sub_FD41-C39P
 		bpl	loc_F829
 		ldaa	byte_95
 		bpl	loc_F859
-		ldaa	Port4
+		ldaa	Port4		; p4-5 is T input to pcm, test mode is active low
 		anda	#$20 ; ' '      ; p4-5 is T input to pcm, test mode is active low
 		bne	loc_F82C
 
@@ -1957,8 +1963,8 @@ loc_F82C:				; CODE XREF: ROM:F827j
 		mul
 		lsld
 		lsld
-		ldab	Port4
-		andb	#8
+		ldab	Port4		; p4-3 is ac input, active high
+		andb	#8		; p4-3 is ac input, active high
 		beq	loc_F847
 		jsr	boundData	; Limits AccA to bounds	set by two bytes after call
 					; Carry	bit is only set	if data	has been clipped at either level
@@ -2095,10 +2101,10 @@ loc_F8EE:				; CODE XREF: ROM:loc_F829J
 loc_F8F0:				; CODE XREF: ROM:F869J
 		addb	#1
 		pshb
-		ldd	word_66		; outcomp
+		ldd	deltaNE		; outcomp
 		jsr	DivDby16
 		std	word_D3
-		ldd	word_66		; outcomp
+		ldd	deltaNE		; outcomp
 		jsr	mulDbyStack	; returns upper	16b in d
 		lsrd
 		inca
@@ -2113,13 +2119,13 @@ loc_F90B:				; CODE XREF: ROM:F907j
 		addd	deltaInCp2TL
 
 loc_F90D:				; CODE XREF: ROM:F903j
-		std	word_A1
+		std	word_A1		; OC1/igt related
 		ldd	word_D3
 		addd	word_BF
 		std	word_BB		; outcomp
 		lsrd
 		std	word_D3
-		ldd	word_66		; outcomp
+		ldd	deltaNE		; outcomp
 		subd	word_B5		; ADC_AFMr*4+384
 		subd	#100
 		subd	word_D3
@@ -2134,8 +2140,8 @@ loc_F925:				; CODE XREF: ROM:F921j
 		ldab	unk_C6
 		bmi	loc_F936
 		sei
-		oraa	TmrCntStat	; set output compare level to high
-		staa	TmrCntStat	; set output compare level to high
+		oraa	TmrCntStat1	; set output compare level to high
+		staa	TmrCntStat1	; set output compare level to high
 		bra	loc_F950
 ; ---------------------------------------------------------------------------
 
@@ -2149,9 +2155,9 @@ loc_F936:				; CODE XREF: ROM:F92Dj
 		bitb	Port2		; looking at /IGT
 		beq	loc_F950	; branch if /IGT low
 		ldd	word_D3
-		std	OutCmp
-		ldx	TmrCntStat
-		jsr	OutCmp1Sub2	; write	d to outcmp
+		std	OutCmp1
+		ldx	TmrCntStat1
+		jsr	stdOC1		; write	d to outcmp
 
 loc_F950:				; CODE XREF: ROM:F934j	ROM:F941j ...
 		cli
@@ -2162,15 +2168,15 @@ loc_F950:				; CODE XREF: ROM:F934j	ROM:F941j ...
 ; called from output compare ISR
 
 OutCmp1Sub1:				; CODE XREF: ROM:F3A9P	ROM:loc_F936p
-		ldd	word_66		; outcomp
-		subd	word_A1
+		ldd	deltaNE		; outcomp
+		subd	word_A1		; OC1/igt related
 		subd	word_BB		; outcomp
 		bcc	loc_F95C
 		clra
 		clrb
 
 loc_F95C:				; CODE XREF: OutCmp1Sub1+6j
-		addd	word_B9
+		addd	LastIC2treg
 		sei
 		subd	word_BD		; output compare routine only
 		cmpa	#$E8 ; 'è'
@@ -2200,9 +2206,9 @@ sub_F96A:				; CODE XREF: sub_FD41:loc_F0FAP
 loc_F97C:				; CODE XREF: sub_F96A+Ej
 		stab	Port1		; has potential	to toggle bit 7	- /VF ouput generation
 		ldaa	ADC_Oxy
-		cmpa	#$17
-		ldaa	unk_9A
-		bcs	loc_F98E
+		cmpa	#23
+		ldaa	unk_9A		; oxygen sensor	related
+		bcs	oxy_low
 		inca
 		jsr	boundData	; Limits AccA to bounds	set by two bytes after call
 					; Carry	bit is only set	if data	has been clipped at either level
@@ -2214,14 +2220,14 @@ loc_F97C:				; CODE XREF: sub_F96A+Ej
 		bra	loc_F995
 ; ---------------------------------------------------------------------------
 
-loc_F98E:				; CODE XREF: sub_F96A+1Aj
+oxy_low:				; CODE XREF: sub_F96A+1Aj
 		deca
 		cmpa	unk_9B
 		bcc	loc_F995
 		ldaa	unk_9B
 
 loc_F995:				; CODE XREF: sub_F96A+22j sub_F96A+27j
-		staa	unk_9A
+		staa	unk_9A		; oxygen sensor	related
 		eora	byte_4D
 		anda	#$80 ; '€'
 		beq	loc_F9F7
@@ -2230,7 +2236,7 @@ loc_F995:				; CODE XREF: sub_F96A+22j sub_F96A+27j
 		bita	#8
 		beq	loc_F9F7
 		ldab	#1
-		ldaa	unk_76
+		ldaa	word_76
 		adda	byte_93
 		rora
 		bmi	loc_F9AF
@@ -2256,39 +2262,39 @@ loc_F9BF:				; CODE XREF: sub_F96A+49j
 		ldx	word_7F
 		cpx	#400
 		bitb	Port4		; interested in	bit 5 -	test input
-		bls	loc_F9E2
+		bls	loc_F9E2	; branch if test is pulled low or the carry was	set (word_7f-400)
 		ldaa	unk_CD
 		bita	#1
 		bne	loc_F9E2
 		ldaa	unk_96
 		bmi	loc_F9E2
-		ldaa	unk_94
+		ldaa	byte_94
 		cmpa	#5
 		bcs	loc_F9E5
 		jsr	sub_F751
 
 loc_F9E2:				; CODE XREF: sub_F96A+5Aj sub_F96A+63j ...
 		clra
-		staa	unk_94
+		staa	byte_94
 
 loc_F9E5:				; CODE XREF: sub_F96A+73j
-		inc	unk_94
-		ldaa	unk_76
+		inc	byte_94
+		ldaa	word_76
 		staa	byte_93
 		ldx	#$F7A2
-		jsr	$4F,x		; f7f1
+		jsr	$4F,x		; f7f1 - data product seems to be word_76
 		clra
-		staa	SatCount_CE
-		jsr	sub_F6D4
+		staa	SatCount_CE	; reset	satcount_ce
+		jsr	sub_F6D4	; end product seems to be word_74
 
 loc_F9F7:				; CODE XREF: sub_F96A+31j sub_F96A+39j
 		ldaa	byte_95
 		ldab	Port4		; p4-2 is IDL input, active low
 		andb	#4
-		beq	loc_FA0E
+		beq	loc_FA0E	; bounce if not	throttle closed
 		tsta
 		bmi	loc_FA05
-		clr	unk_94
+		clr	byte_94
 
 loc_FA05:				; CODE XREF: sub_F96A+96j
 		ldab	byte_5D		; =adc_tps - byte_5b, tps related
@@ -2300,7 +2306,7 @@ loc_FA05:				; CODE XREF: sub_F96A+96j
 
 loc_FA0E:				; CODE XREF: sub_F96A+93j
 		stab	byte_87
-		tsta
+		tsta			; AccA is still	byte_95
 		bmi	loc_FA19
 		cmpa	#$1C
 		bcs	loc_FA31
@@ -2323,9 +2329,9 @@ loc_FA26:				; CODE XREF: sub_F96A+ADj sub_F96A+B3j
 		jsr	sub_F6BB
 
 loc_FA31:				; CODE XREF: sub_F96A+ABj sub_F96A+C0j
-		ldab	byte_4C
-		andb	#$3F ; '?'
-		stab	byte_4C
+		ldab	byte_4C		; msb inhibits injection
+		andb	#$3F ; '?'      ; clear bits 7 and 6
+		stab	byte_4C		; msb inhibits injection
 		ldaa	#3
 
 loc_FA39:				; CODE XREF: sub_F96A+A0j
@@ -2334,26 +2340,26 @@ loc_FA39:				; CODE XREF: sub_F96A+A0j
 loc_FA3B:				; CODE XREF: sub_F96A+9Dj sub_F96A+A2j
 		ldd	#$10FE
 		anda	Port4		; p4-4 is start	signal
-		beq	loc_FA60
-		andb	byte_4C
-		stab	byte_4C
-		ldaa	unk_4B
+		beq	loc_FA60	; bounce if not	starting
+		andb	byte_4C		; msb inhibits injection
+		stab	byte_4C		; clear	lsb if starting
+		ldaa	byte_4B
 		ldab	unk_C6
 		bmi	loc_FA62
 		inca
 		beq	loc_FA75
-		staa	unk_4B
-		cmpa	#$19
-		bcs	loc_FA62
-		bhi	loc_FA75
-		ldd	#$2328
+		staa	byte_4B		; increment unk_4b
+		cmpa	#25
+		bcs	loc_FA62	; less than 25
+		bhi	loc_FA75	; more than 25
+		ldd	#9000		; exactly 25
 		jsr	sub_F129
 		cli
 		bra	loc_FA75
 ; ---------------------------------------------------------------------------
 
 loc_FA60:				; CODE XREF: sub_F96A+D6j
-		staa	unk_4B
+		staa	byte_4B
 
 loc_FA62:				; CODE XREF: sub_F96A+E0j sub_F96A+E9j
 		ldab	#$4B ; 'K'
@@ -2364,15 +2370,15 @@ loc_FA62:				; CODE XREF: sub_F96A+E0j sub_F96A+E9j
 		tsta
 		bne	loc_FA75
 		ldaa	#1
-		oraa	byte_4C
-		staa	byte_4C
+		oraa	byte_4C		; msb inhibits injection
+		staa	byte_4C		; msb inhibits injection
 
 loc_FA75:				; CODE XREF: sub_F96A+E3j sub_F96A+EBj ...
 		ldd	#$405
 		orab	byte_4D
 		stab	byte_4D
 		staa	unk_C6
-		staa	unk_69
+		staa	byte_69
 		clra
 		staa	SatCount_CE
 
@@ -2411,22 +2417,22 @@ procJmpTable:				; CODE XREF: sub_FD41-CEFP
 loc_FAA7:				; CODE XREF: sub_FD41-C9EP
 		ldx	#36
 
-loc_FAAA:				; CODE XREF: ROM:FAB1j
+waitADCdata:				; CODE XREF: ROM:FAB1j
 		dex
-		beq	TXtoADC		; interested in	ADC /cs
+		beq	TXtoADC		; Transmist adc	channel	selection to ADC
 		ldd	ADCflags	; accb contains	adcrxdata
 		anda	#$80 ; '€'
-		beq	loc_FAAA	; loop while msb of unk_4f is low
+		beq	waitADCdata	; loop while msb of adcflags is	low
 		coma
 		sei
-		anda	ADCflags	; flag which can be modified in	an interrupt, msb could	be adc related
-		staa	ADCflags	; flag which can be modified in	an interrupt, msb could	be adc related
+		anda	ADCflags	; flag which can be modified in	an interrupt, msb inidicates adc data is pending in adcrxdata
+		staa	ADCflags	; ack the msb by clearing it, and possibly everthing else too.
 		cli
 		pshb			; adcrxdata on the stack
 		bsr	ADCchanSelect
 		ldx	#$54 ; 'T'
 		abx			; x now	contains $54+0..5
-		bsr	TXtoADC		; interested in	ADC /cs
+		bsr	TXtoADC		; Transmist adc	channel	selection to ADC
 		pulb
 		ldaa	#1
 
@@ -2490,7 +2496,7 @@ saveADCdata2:				; CODE XREF: ROM:FAEDj
 
 ; =============== S U B	R O U T	I N E =======================================
 
-; interested in	ADC /cs
+; Transmist adc	channel	selection to ADC
 
 TXtoADC:				; CODE XREF: ROM:FAABj	ROM:FAC1p
 		ldaa	Port3
@@ -2516,8 +2522,8 @@ loc_FB18:				; CODE XREF: ROM:F3E4P
 		ldaa	TxRxCntStat	; read from reg	to clear any pending error bits
 		ldaa	#$BF ; '¿'
 		sei
-		anda	Port3		; safely clear p3-6 without clobbering other pins
-		staa	Port3		; safely clear p3-6 without clobbering other pins
+		anda	Port3		; safely clear ADC /CS without clobbering other	pins
+		staa	Port3		; safely clear ADC /CS without clobbering other	pins
 		stab	TxReg		; tx a value based on the value	in ADCcontrol
 		cli
 		rts
@@ -2677,8 +2683,8 @@ loc_FBA0:				; CODE XREF: ROM:FB9Dj
 
 loc_FBC1:				; CODE XREF: ROM:FBBEj
 		psha
-		ldd	word_6C
-		subd	word_6A
+		ldd	SE056Maxtime
+		subd	SE056plstime
 		bls	loc_FBD1	; increment the	stack pointer
 		jsr	mulDbyStack	; returns upper	16b in d
 		lsld
@@ -3035,7 +3041,7 @@ loc_FD5D:				; CODE XREF: sub_FD41+17j
 		bhi	loc_FD79	; p4-5,	test input active low
 		ldaa	unk_C6
 		bpl	loc_FD79	; p4-5,	test input active low
-		andb	byte_4C
+		andb	byte_4C		; msb inhibits injection
 		orab	word_46
 		tba
 		comb
@@ -3048,7 +3054,7 @@ loc_FD79:				; CODE XREF: sub_FD41+23j sub_FD41+2Aj ...
 		ldab	byte_4D
 		andb	#8
 		beq	loc_FD9D
-		ldaa	unk_76
+		ldaa	word_76
 		adda	byte_D6
 		rora
 		ldab	#4
@@ -3078,7 +3084,7 @@ loc_FD9D:				; CODE XREF: sub_FD41+42j
 loc_FDAE:				; CODE XREF: sub_FD41+3Cj
 		ldaa	byte_95
 		bmi	loc_FDB8	; p4-2 is IDL, p4-3 is AC, so idling and ac perhaps?
-		ldaa	unk_9A
+		ldaa	unk_9A		; oxygen sensor	related
 		bpl	loc_FDC6
 		bra	loc_FDC4
 ; ---------------------------------------------------------------------------
@@ -3171,11 +3177,11 @@ loc_FE24:				; CODE XREF: sub_FD41+DFj
 		ldab	Port4		; p4-5,	test mode, active low
 		bitb	#$20 ; ' '
 		beq	loc_FE33
-		ldaa	byte_4C
+		ldaa	byte_4C		; msb inhibits injection
 		anda	#$FB ; 'û'
 
 loc_FE30:				; CODE XREF: sub_FD41+100j
-		staa	byte_4C
+		staa	byte_4C		; msb inhibits injection
 
 locret_FE32:				; CODE XREF: sub_FD41+F6j
 		rts
@@ -3187,7 +3193,7 @@ loc_FE33:				; CODE XREF: sub_FD41+E9j
 		bpl	locret_FE32
 		bitb	#$10
 		bne	loc_FE43
-		ldaa	byte_4C
+		ldaa	byte_4C		; msb inhibits injection
 		oraa	#4
 		bra	loc_FE30
 ; ---------------------------------------------------------------------------
@@ -3580,10 +3586,8 @@ loc_FFA4:
 		fcb   4			; 69
 		fcb   2			; 6a
 		fcb $8A	; Š		; 6b
-		fcb $11			; 6c
-		fcb $94	; ”		; 6d
-		fcb   1			; 6e
-		fcb $CC	; Ì		; 6f
+		fdb 4500		; 6c
+		fdb 460			; 6e
 		fcb $7F	; 		; 70
 		fcb $FF			; 71
 		fcb   2			; 72
