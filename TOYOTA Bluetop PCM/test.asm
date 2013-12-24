@@ -36,7 +36,7 @@ initest
 	
 test	
 	ldaa	2
-	eora	2
+	eora	#$24
 	staa	2
 	ldaa	$0F
 	bsr	txdata	;Transmit AccA, blocking

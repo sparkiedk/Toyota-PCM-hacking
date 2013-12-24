@@ -1,2 +1,3 @@
-bne reaplced with brn (0x26 -> 0x21) @ FC75 (0C75)
-beq replaced with bra (0x27 -> 0x20) @ FE59 (0E59)
+bne reaplced with brn (0x26 -> 0x21) @ FC75 (0C75) (watchdog mode test)
+beq replaced with bra (0x27 -> 0x20) @ FE59 (0E59) (code checksum test)
+0FD6 replaced with 0D04 @ F434 (0434) (Rev limiter test)

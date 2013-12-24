@@ -388,7 +388,7 @@ loc_F0BB:				; CODE XREF: sub_FD41-C98j
 loc_F0CA:				; CODE XREF: sub_FD41-C7Bj
 		bcs	loc_F0D1
 		ldaa	#8
-		jsr	sub_FD11
+		jsr	sub_FD11	; p4-5
 
 loc_F0D1:				; CODE XREF: sub_FD41:loc_F0CAj
 		ldd	byte_95
@@ -575,6 +575,7 @@ loc_F177:				; CODE XREF: CalcInjOffTime+Aj
 
 ; =============== S U B	R O U T	I N E =======================================
 
+; injector /#10
 
 injector1:				; CODE XREF: ROM:F2F8P	ROM:F3D7P
 
@@ -885,7 +886,7 @@ IC2low8:				; CODE XREF: ROM:F2EBj
 		asla
 		bpl	IC2low9
 		jsr	injector2
-		jsr	injector1
+		jsr	injector1	; injector /#10
 
 IC2low9:				; CODE XREF: ROM:F2F3j
 		ldd	InCp2TrEg	; probably not just trailing edge
@@ -1038,7 +1039,7 @@ injector2ret:				; CODE XREF: injector2+Cj
 
 procOCmp2:				; CODE XREF: ROM:F373j
 		bsr	injector2
-		jsr	injector1
+		jsr	injector1	; injector /#10
 		rti
 ; ---------------------------------------------------------------------------
 
@@ -1121,7 +1122,7 @@ loc_F43A:				; CODE XREF: sub_F420+16j
 		jsr	$49,x		; FFE1,	saturate count satcount_97 and satcount_98
 		bpl	loc_F446	; rts, prior instructions are LSRD
 		ldaa	#2
-		jsr	sub_FD11
+		jsr	sub_FD11	; p4-5
 
 loc_F446:				; CODE XREF: sub_F420+1Fj
 		ldx	#$FC81		; rts, prior instructions are LSRD
@@ -2948,7 +2949,7 @@ loc_FCF8:				; CODE XREF: ROM:FCF0j
 
 loc_FCFE:				; CODE XREF: ROM:FCECj	ROM:FCF6j
 		ldaa	#$10
-		bra	sub_FD11
+		bra	sub_FD11	; p4-5
 
 ; =============== S U B	R O U T	I N E =======================================
 
@@ -2973,6 +2974,7 @@ loc_FD0C:				; CODE XREF: sub_FD02+4j
 
 ; =============== S U B	R O U T	I N E =======================================
 
+; p4-5
 
 sub_FD11:				; CODE XREF: sub_FD41-C73P
 					; sub_F420+23P	...
@@ -3088,7 +3090,7 @@ loc_FD9D:				; CODE XREF: sub_FD41+42j
 		staa	unk_CB
 		ldab	byte_4D
 		bitb	#1
-		bne	loc_FE1B	; may set bit 3	- Idle up solenoid active high
+		bne	loc_FE1B	; may set bit 3	- MIL
 		bra	loc_FDCE
 ; ---------------------------------------------------------------------------
 
@@ -3177,14 +3179,14 @@ loc_FE19:				; CODE XREF: sub_FD41+92j
 		staa	unk_C8
 
 loc_FE1B:				; CODE XREF: sub_FD41+69j
-		ldab	Port1		; may set bit 3	- Idle up solenoid active high
+		ldab	Port1		; may set bit 3	- MIL
 		andb	#$F7 ; '÷'
 		tsta
-		bpl	loc_FE24	; toggle VISC signal (idle up)
+		bpl	loc_FE24	; toggle MIL
 		orb	#8
 
 loc_FE24:				; CODE XREF: sub_FD41+DFj
-		stab	Port1		; toggle VISC signal (idle up)
+		stab	Port1		; toggle MIL
 		ldab	Port4		; p4-5,	test mode, active low
 		bitb	#$20 ; ' '
 		beq	loc_FE33
@@ -3212,7 +3214,7 @@ loc_FE33:				; CODE XREF: sub_FD41+E9j
 loc_FE43:				; CODE XREF: sub_FD41+FAj
 		ldab	#$C0 ; 'À'
 		sei
-		stab	Port1		; /#20 low, watchdog low, VISC low, bit5 low, /TVIS high /VF high
+		stab	Port1		; /#20 low, watchdog low, MIL low, bit5	low, /TVIS high	/VF high
 
 loc_FE48:				; CODE XREF: sub_FD41+144j
 		jsr	CPUModeTst
@@ -3228,7 +3230,7 @@ ChkSumLoop:				; CODE XREF: sub_FD41+113j
 		subd	#$AA55		; this is ACTUALLY the checksum! like the sum of your test scores equalling pi or something.
 		beq	nukeram1	; branch if checksum equals aa55
 		ldaa	#%11001000
-		bra	loc_FE8B	; /VF high,/TVIS can toggle, bit5 low, VISC high, watchdog low,	/#20 low
+		bra	loc_FE8B	; /VF high,/TVIS can toggle, VISC low, MIL high, watchdog low, /#20 low
 ; ---------------------------------------------------------------------------
 
 nukeram1:				; CODE XREF: sub_FD41+118j
@@ -3267,7 +3269,7 @@ loc_FE89:				; CODE XREF: sub_FD41+130j
 		ldaa	#%1001000	; watchdog and /VF
 
 loc_FE8B:				; CODE XREF: sub_FD41+11Cj
-		staa	Port1		; /VF high,/TVIS can toggle, bit5 low, VISC high, watchdog low,	/#20 low
+		staa	Port1		; /VF high,/TVIS can toggle, VISC low, MIL high, watchdog low, /#20 low
 
 loc_FE8D:				; CODE XREF: sub_FD41+14Dj
 					; sub_FD41+156j
