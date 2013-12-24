@@ -12,12 +12,6 @@
 	processor	HD6303
 	org	$8000		;origin here
 
-	ldaa	#$ff
-	staa	0	;port1ddr
-	staa	2
-	clr	2	
-
-
 	lds	#$FF		;kind of need a stack for subroutines.... oops.
 ;setup serial port for SCIENCE!
 init	ldaa	#5		;0b00000101 - 7812.5 baud, internal clock, no clock output pg.21
@@ -30,15 +24,24 @@ iniwait	ldab	$11		;status/cont reg  -after enabling it should hammer out 10 1's,
 
 ;test code
 
-initest	
-	sei
+initest	sei
+	clra
+	staa	$04	;port 3 ddr
+	ldaa	$ff
+	staa	$05	;port 4 ddr
 
-	
 test	
-	ldaa	2
-	eora	2
-	staa	2
-	ldaa	$0F
+	inc	$06	;increment port3
+	inc	$07	;increment port4
+
+	inc	$4004
+	inc	$4005
+	inc	$4006
+	inc	$4007
+
+	ldaa	$06
+	bsr	txdata	;Transmit AccA, blocking
+	ldaa	$07
 	bsr	txdata	;Transmit AccA, blocking
 
 

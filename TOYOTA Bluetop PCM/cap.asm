@@ -1,251 +1,252 @@
+
 ; Processor:	    6303 []
-; Target assembler: Motorola FreeWare Assembler
+; Target assembler: 68HC11 Macro Assembler v1.2	(c) Copyright 2000 Tech	Edge Pty. Ltd.
 
 ; ===========================================================================
 
 ; Segment type:	Regular
-		; segment RegRAM
-Port1DDR:	rmb 1
-Port2DDR:	rmb 1
-Port1:		rmb 1			; DATA XREF: sub_FD41-D28w ROM:F13Ar ...
-Port2:		rmb 1
-Port3DDR:	rmb 1
-Port4DDR:	rmb 1
-Port3:		rmb 1			; DATA XREF: sub_FD41-D2Dw
+		code ; RegRAM
+Port1DDR:	ds 1
+Port2DDR:	ds 1
+Port1:		ds 1			; DATA XREF: sub_FD41-D28w ROM:F13Ar ...
+Port2:		ds 1
+Port3DDR:	ds 1
+Port4DDR:	ds 1
+Port3:		ds 1			; DATA XREF: sub_FD41-D2Dw
 					; sub_FD41-CB0r ...
-Port4:		rmb 1			; DATA XREF: sub_FD41-CCDr inj1on+2r ...
-TmrCntStat1:	rmb 1
-Timer:		rmb 2			; DATA XREF: sub_FD41-D32w
+Port4:		ds 1			; DATA XREF: sub_FD41-CCDr inj1on+2r ...
+TmrCntStat1:	ds 1
+Timer:		ds 2			; DATA XREF: sub_FD41-D32w
 					; sub_FD41-CE8r ...
-OutCmp1:	rmb 2
-InpCap1:	rmb 2
-Port3CntStat:	rmb 1			; 7- /IS3 flag	6- /IS3	/IRQ enable 5x 4- output strobe	select 3 latch enable 210x
-UARTRateMode:	rmb 1
-TxRxCntStat:	rmb 1
-RxReg:		rmb 1
-TxReg:		rmb 1
-RAMCnt:		rmb 1
-		rmb 1
-		rmb 1
-		rmb 1
-TmrCntStat2:	rmb 1			; DATA XREF: sub_FD41-D34w
+OutCmp1:	ds 2
+InpCap1:	ds 2
+Port3CntStat:	ds 1			; 7- /IS3 flag	6- /IS3	/IRQ enable 5x 4- output strobe	select 3 latch enable 210x
+UARTRateMode:	ds 1
+TxRxCntStat:	ds 1
+RxReg:		ds 1
+TxReg:		ds 1
+RAMCnt:		ds 1
+		ds 1
+		ds 1
+		ds 1
+TmrCntStat2:	ds 1			; DATA XREF: sub_FD41-D34w
 					; sub_FD41-CDFw ...
 					; $TCSR2
-		rmb 1
-		rmb 1
-OutCmp2:	rmb 2			; DATA XREF: ROM:F151w	injector1+23r ...
+		ds 1
+		ds 1
+OutCmp2:	ds 2			; DATA XREF: ROM:F151w	injector1+23r ...
 					; compare output on P1-1, injector /#20
-InpCap2:	rmb 2			; captures from	port 1-0, mixed	signal se056
-		rmb 1			; top of sfr space
-		rmb 1
-		rmb 1
-		rmb 1
-		rmb 1
-		rmb 1
-		rmb 1
-		rmb 1
-		rmb 1
-		rmb 1
-		rmb 1
-		rmb 1
-		rmb 1
-		rmb 1
-		rmb 1
-		rmb 1
-		rmb 1
-		rmb 1
-		rmb 1
-		rmb 1
-		rmb 1
-		rmb 1
-		rmb 1
-		rmb 1
-		rmb 1
-		rmb 1
-		rmb 1
-		rmb 1
-		rmb 1
-		rmb 1
-		rmb 1
-		rmb 1
-		rmb 1
-word_40:	rmb 2			; DATA XREF: sub_F751+2r ROM:F79Fw ...
+InpCap2:	ds 2			; captures from	port 1-0, mixed	signal se056
+		ds 1			; top of sfr space
+		ds 1
+		ds 1
+		ds 1
+		ds 1
+		ds 1
+		ds 1
+		ds 1
+		ds 1
+		ds 1
+		ds 1
+		ds 1
+		ds 1
+		ds 1
+		ds 1
+		ds 1
+		ds 1
+		ds 1
+		ds 1
+		ds 1
+		ds 1
+		ds 1
+		ds 1
+		ds 1
+		ds 1
+		ds 1
+		ds 1
+		ds 1
+		ds 1
+		ds 1
+		ds 1
+		ds 1
+		ds 1
+word_40:	ds 2			; DATA XREF: sub_F751+2r ROM:F79Fw ...
 					; if we	call this the start of user ram, it's exactly 192 bytes (inclusive)
-word_42:	rmb 2			; DATA XREF: ROM:F5A6r	ROM:F749r ...
-word_44:	rmb 2			; DATA XREF: sub_F70A+Fr sub_F70A+32r	...
-word_46:	rmb 2
-word_48:	rmb 2
-byte_4A:	rmb 1			; DATA XREF: ROM:FC20r	ROM:FC45w
-byte_4B:	rmb 1
-byte_4C:	rmb 1			; DATA XREF: sub_FD41-CCFr
+word_42:	ds 2			; DATA XREF: ROM:F5A6r	ROM:F749r ...
+word_44:	ds 2			; DATA XREF: sub_F70A+Fr sub_F70A+32r	...
+word_46:	ds 2
+word_48:	ds 2
+byte_4A:	ds 1			; DATA XREF: ROM:FC20r	ROM:FC45w
+byte_4B:	ds 1
+byte_4C:	ds 1			; DATA XREF: sub_FD41-CCFr
 					; sub_FD41-CC0w ...
 					; msb inhibits injection
-byte_4D:	rmb 1			; DATA XREF: sub_FD41-CC4r sub_F121+1r ...
-unk_4E:		rmb 1			; used for flags in outcmp,inpcap
-ADCflags:	rmb 1			; flag which can be modified in	an interrupt, msb inidicates adc data is pending in adcrxdata
-ADCRxData:	rmb 1
-EndTxByteTime:	rmb 2			; caches timer values from serial interrupt
-ADCcontrol:	rmb 1			; controls a jump table	at fa9b, also deselects	ADC with LSB, also controls which channel to select
-ADC_TPS:	rmb 1			; DATA XREF: ROM:jmptable2r ROM:FB99r
-ADC_AFMr:	rmb 1			; DATA XREF: ROM:FC8Dr	ROM:FCA0r ...
-ADC_ThA:	rmb 1			; DATA XREF: ROM:FAF6r	ROM:FBF1r
-ADC_ThW:	rmb 1			; DATA XREF: ROM:F351r	sub_F420+D1r ...
+byte_4D:	ds 1			; DATA XREF: sub_FD41-CC4r sub_F121+1r ...
+unk_4E:		ds 1			; used for flags in outcmp,inpcap
+ADCflags:	ds 1			; flag which can be modified in	an interrupt, msb inidicates adc data is pending in adcrxdata
+ADCRxData:	ds 1
+EndTxByteTime:	ds 2			; caches timer values from serial interrupt
+ADCcontrol:	ds 1			; controls a jump table	at fa9b, also deselects	ADC with LSB, also controls which channel to select
+ADC_TPS:	ds 1			; DATA XREF: ROM:jmptable2r ROM:FB99r
+ADC_AFMr:	ds 1			; DATA XREF: ROM:FC8Dr	ROM:FCA0r ...
+ADC_ThA:	ds 1			; DATA XREF: ROM:FAF6r	ROM:FBF1r
+ADC_ThW:	ds 1			; DATA XREF: ROM:F351r	sub_F420+D1r ...
 					; water	temp in	farenheit
-ADC_PWRr:	rmb 1			; DATA XREF: ROM:loc_FFA4r
-ADC_Oxy:	rmb 1
-byte_5A:	rmb 1			; DATA XREF: ROM:FBA8r	ROM:loc_FBD4w
-byte_5B:	rmb 1			; DATA XREF: ROM:FB78r	ROM:loc_FB7Cr ...
+ADC_PWRr:	ds 1			; DATA XREF: ROM:loc_FFA4r
+ADC_Oxy:	ds 1
+byte_5A:	ds 1			; DATA XREF: ROM:FBA8r	ROM:loc_FBD4w
+byte_5B:	ds 1			; DATA XREF: ROM:FB78r	ROM:loc_FB7Cr ...
 					; TPS related
-byte_5C:	rmb 1			; DATA XREF: ROM:F77Dr	ROM:F794w ...
-byte_5D:	rmb 1			; DATA XREF: ROM:loc_F5ACr
+byte_5C:	ds 1			; DATA XREF: ROM:F77Dr	ROM:F794w ...
+byte_5D:	ds 1			; DATA XREF: ROM:loc_F5ACr
 					; sub_F96A:loc_FA05r ...
 					; =adc_tps - byte_5b, tps related
-unk_5E:		rmb 1			; timer	based
-unk_5F:		rmb 1
-byte_60:	rmb 1			; DATA XREF: sub_FD41-C4Cw
+unk_5E:		ds 1			; timer	based
+unk_5F:		ds 1
+byte_60:	ds 1			; DATA XREF: sub_FD41-C4Cw
 					; sub_F420+D5r	...
-unk_61:		rmb 1
-word_62:	rmb 2			; DATA XREF: sub_F420+60r sub_F420+78w ...
-byte_64:	rmb 1			; DATA XREF: sub_F420+98w ROM:F884r ...
-byte_65:	rmb 1			; DATA XREF: sub_F129:loc_F12Ar
+unk_61:		ds 1
+word_62:	ds 2			; DATA XREF: sub_F420+60r sub_F420+78w ...
+byte_64:	ds 1			; DATA XREF: sub_F420+98w ROM:F884r ...
+byte_65:	ds 1			; DATA XREF: sub_F129:loc_F12Ar
 					; sub_F420+82w	...
-deltaNE:	rmb 2			; outcomp
-SatCount_68:	rmb 1
-byte_69:	rmb 1			; DATA XREF: ROM:F21Ar	ROM:F221r ...
-SE056plstime:	rmb 2			; DATA XREF: ROM:loc_F1F0w ROM:F1FDr ...
-SE056Maxtime:	rmb 2			; DATA XREF: ROM:loc_F1DAr ROM:F1DEr ...
-SE056Mintime:	rmb 2
-word_70:	rmb 2			; DATA XREF: ROM:F5A1w
+deltaNE:	ds 2			; outcomp
+SatCount_68:	ds 1
+byte_69:	ds 1			; DATA XREF: ROM:F21Ar	ROM:F221r ...
+SE056plstime:	ds 2			; DATA XREF: ROM:loc_F1F0w ROM:F1FDr ...
+SE056Maxtime:	ds 2			; DATA XREF: ROM:loc_F1DAr ROM:F1DEr ...
+SE056Mintime:	ds 2
+word_70:	ds 2			; DATA XREF: ROM:F5A1w
 					; sub_F6D4:loc_F6D8r ...
-word_72:	rmb 2			; DATA XREF: ROM:F596w	sub_F5E3+B9r ...
-unk_74:		rmb 1			; written as a word @ F6E0
-unk_75:		rmb 1			; lsb of word_74
-word_76:	rmb 2
-IC2LowCnt:	rmb 1			; counts input capture 2 trailing edges, reset by p3 msb low (G+ related)
-Inj10OffTime:	rmb 2
-Inj20OffTime:	rmb 2			; DATA XREF: ROM:F13Er	ROM:F145w ...
-word_7D:	rmb 2
-word_7F:	rmb 2			; DATA XREF: ROM:F555w	sub_F5CEr ...
+word_72:	ds 2			; DATA XREF: ROM:F596w	sub_F5E3+B9r ...
+unk_74:		ds 1			; written as a word @ F6E0
+unk_75:		ds 1			; lsb of word_74
+word_76:	ds 2
+IC2LowCnt:	ds 1			; counts input capture 2 trailing edges, reset by p3 msb low (G+ related)
+Inj10OffTime:	ds 2
+Inj20OffTime:	ds 2			; DATA XREF: ROM:F13Er	ROM:F145w ...
+word_7D:	ds 2
+word_7F:	ds 2			; DATA XREF: ROM:F555w	sub_F5CEr ...
 					; could	be load	from se056 calculation
-word_81:	rmb 2			; DATA XREF: CalcInjOffTime:loc_F16Er
+word_81:	ds 2			; DATA XREF: CalcInjOffTime:loc_F16Er
 					; ROM:FC9Ew
 					; injector related, ADC_AFMr table output
-unk_83:		rmb 1			; TableTHW output (FEAF	decreasing)
-byte_84:	rmb 1			; DATA XREF: ROM:loc_F568w sub_F5E3+Cr ...
-		rmb 1
-byte_86:	rmb 1			; DATA XREF: ROM:F580w	sub_F5E3+A6r
-byte_87:	rmb 1			; DATA XREF: sub_F420+72w
+unk_83:		ds 1			; TableTHW output (FEAF	decreasing)
+byte_84:	ds 1			; DATA XREF: ROM:loc_F568w sub_F5E3+Cr ...
+		ds 1
+byte_86:	ds 1			; DATA XREF: ROM:F580w	sub_F5E3+A6r
+byte_87:	ds 1			; DATA XREF: sub_F420+72w
 					; sub_F420+10Cw ...
-byte_88:	rmb 1			; DATA XREF: ROM:loc_F5C3w
+byte_88:	ds 1			; DATA XREF: ROM:loc_F5C3w
 					; sub_F5E3+33r	...
-byte_89:	rmb 1			; DATA XREF: sub_F5CE+7w
+byte_89:	ds 1			; DATA XREF: sub_F5CE+7w
 					; sub_F5E3:loc_F61Bw
-byte_8A:	rmb 1			; DATA XREF: sub_F6FC+2r ROM:FBF8w
-unk_8B:		rmb 1			; tableTHW output (FEBD	decreasing)
-unk_8C:		rmb 1
-		rmb 1
-word_8E:	rmb 2			; DATA XREF: sub_F5CE+4w sub_F5E3+44r	...
-word_90:	rmb 2			; DATA XREF: sub_F5CE+2w sub_F5E3+1Fr	...
-byte_92:	rmb 1			; DATA XREF: ROM:F5BEr	sub_F70A+Dw ...
-byte_93:	rmb 1			; DATA XREF: sub_F751+Ar sub_F751+18r	...
-byte_94:	rmb 1
-byte_95:	rmb 1			; DATA XREF: sub_FD41:loc_F0D1r
+byte_8A:	ds 1			; DATA XREF: sub_F6FC+2r ROM:FBF8w
+unk_8B:		ds 1			; tableTHW output (FEBD	decreasing)
+unk_8C:		ds 1
+		ds 1
+word_8E:	ds 2			; DATA XREF: sub_F5CE+4w sub_F5E3+44r	...
+word_90:	ds 2			; DATA XREF: sub_F5CE+2w sub_F5E3+1Fr	...
+byte_92:	ds 1			; DATA XREF: ROM:F5BEr	sub_F70A+Dw ...
+byte_93:	ds 1			; DATA XREF: sub_F751+Ar sub_F751+18r	...
+byte_94:	ds 1
+byte_95:	ds 1			; DATA XREF: sub_FD41:loc_F0D1r
 					; ROM:F1E9r ...
-unk_96:		rmb 1
-SatCount_97:	rmb 1
-SatCount_98:	rmb 1
-unk_99:		rmb 1			; TVIS related
-unk_9A:		rmb 1			; oxygen sensor	related
-unk_9B:		rmb 1
-SatCount_9C:	rmb 1
-unk_9D:		rmb 1
-byte_9E:	rmb 1			; DATA XREF: sub_F420:loc_F508r
+unk_96:		ds 1
+SatCount_97:	ds 1
+SatCount_98:	ds 1
+unk_99:		ds 1			; TVIS related
+unk_9A:		ds 1			; oxygen sensor	related
+unk_9B:		ds 1
+SatCount_9C:	ds 1
+unk_9D:		ds 1
+byte_9E:	ds 1			; DATA XREF: sub_F420:loc_F508r
 					; sub_F5E3+87r	...
-InCp2TrEg:	rmb 2			; DATA XREF: ROM:loc_F138w inj1onw ...
+InCp2TrEg:	ds 2			; DATA XREF: ROM:loc_F138w inj1onw ...
 					; probably not just trailing edge
-AdvanceinUS:	rmb 2			; OC1/igt related
-byte_A3:	rmb 1			; DATA XREF: ROM:loc_F8ADw ROM:F8D6r
+AdvanceinUS:	ds 2			; OC1/igt related
+byte_A3:	ds 1			; DATA XREF: ROM:loc_F8ADw ROM:F8D6r
 					; stores output	from 3d	lookup
-byte_A4:	rmb 1			; DATA XREF: ROM:F867r	ROM:F8D2r ...
-byte_A5:	rmb 1			; DATA XREF: ROM:F8BBr	ROM:F8D0w
-byte_A6:	rmb 1			; DATA XREF: ROM:loc_F847w
+byte_A4:	ds 1			; DATA XREF: ROM:F867r	ROM:F8D2r ...
+byte_A5:	ds 1			; DATA XREF: ROM:F8BBr	ROM:F8D0w
+byte_A6:	ds 1			; DATA XREF: ROM:loc_F847w
 					; ROM:loc_F859w ...
-NEhighWidth:	rmb 2
-word_A9:	rmb 2			; last word_ab
-word_AB:	rmb 2			; last word_ad
-word_AD:	rmb 2			; last word_af
-word_AF:	rmb 2
-word_B1:	rmb 2
-word_B3:	rmb 2
-word_B5:	rmb 2			; DATA XREF: ROM:F391r	ROM:F397r ...
+NEhighWidth:	ds 2
+word_A9:	ds 2			; last word_ab
+word_AB:	ds 2			; last word_ad
+word_AD:	ds 2			; last word_af
+word_AF:	ds 2
+word_B1:	ds 2
+word_B3:	ds 2
+word_B5:	ds 2			; DATA XREF: ROM:F391r	ROM:F397r ...
 					; ADC_AFMr*4+384
-NEtrEdge:	rmb 2			; leading edge time of tinp2. corresponds to tr	edge of	NE
-NEleEdge:	rmb 2			; set during IC1 low handler
-word_BB:	rmb 2			; outcomp
-word_BD:	rmb 2			; output compare routine only
-word_BF:	rmb 2			; DATA XREF: ROM:F911r	ROM:FCAAr ...
+NEtrEdge:	ds 2			; leading edge time of tinp2. corresponds to tr	edge of	NE
+NEleEdge:	ds 2			; set during IC1 low handler
+word_BB:	ds 2			; outcomp
+word_BD:	ds 2			; output compare routine only
+word_BF:	ds 2			; DATA XREF: ROM:F911r	ROM:FCAAr ...
 					; ADC_AFMr related (table output)
-word_C1:	rmb 2
-unk_C3:		rmb 1
-word_C4:	rmb 2
-unk_C6:		rmb 1
-SatCount_C7:	rmb 1			; DATA XREF: ROM:F84Dw
-unk_C8:		rmb 1
-word_C9:	rmb 2
-unk_CB:		rmb 1
-byte_CC:	rmb 1			; DATA XREF: ROM:loc_FB6Er sub_FD02+2r ...
+word_C1:	ds 2
+unk_C3:		ds 1
+word_C4:	ds 2
+unk_C6:		ds 1
+SatCount_C7:	ds 1			; DATA XREF: ROM:F84Dw
+unk_C8:		ds 1
+word_C9:	ds 2
+unk_CB:		ds 1
+byte_CC:	ds 1			; DATA XREF: ROM:loc_FB6Er sub_FD02+2r ...
 					; used for flagging bad	sensors	probably, bits:	6-ThA, 5-TPS, 2-ThW, 0-afm(not from adc)
-unk_CD:		rmb 1
-SatCount_CE:	rmb 1			; DATA XREF: sub_FD41-C60w
+unk_CD:		ds 1
+SatCount_CE:	ds 1			; DATA XREF: sub_FD41-C60w
 					; sub_F7BE:loc_F7B0w ...
-SatCount_CF:	rmb 1
-SatCount_D0:	rmb 1			; DATA XREF: sub_F420+9Bw
-SatCount_D1:	rmb 1
-SatCount_D2:	rmb 1
-word_D3:	rmb 2
-unk_D5:		rmb 1
-byte_D6:	rmb 1			; DATA XREF: ROM:F74Dw	sub_FD41+46r
-unk_D7:		rmb 1
-unk_D8:		rmb 1
-		rmb 1
-		rmb 1
-		rmb 1
-		rmb 1
-		rmb 1
-		rmb 1
-		rmb 1
-		rmb 1
-		rmb 1
-		rmb 1
-		rmb 1
-		rmb 1
-		rmb 1
-		rmb 1
-		rmb 1
-		rmb 1
-		rmb 1
-		rmb 1
-		rmb 1
-		rmb 1
-		rmb 1
-		rmb 1
-		rmb 1
-		rmb 1
-		rmb 1
-		rmb 1
-		rmb 1
-		rmb 1
-		rmb 1
-		rmb 1
-		rmb 1
-		rmb 1
-		rmb 1
-		rmb 1
-		rmb 1
-		rmb 1
-		rmb 1
-		rmb 1
-TopStack:	rmb 1
+SatCount_CF:	ds 1
+SatCount_D0:	ds 1			; DATA XREF: sub_F420+9Bw
+SatCount_D1:	ds 1
+SatCount_D2:	ds 1
+word_D3:	ds 2
+unk_D5:		ds 1
+byte_D6:	ds 1			; DATA XREF: ROM:F74Dw	sub_FD41+46r
+unk_D7:		ds 1
+unk_D8:		ds 1
+		ds 1
+		ds 1
+		ds 1
+		ds 1
+		ds 1
+		ds 1
+		ds 1
+		ds 1
+		ds 1
+		ds 1
+		ds 1
+		ds 1
+		ds 1
+		ds 1
+		ds 1
+		ds 1
+		ds 1
+		ds 1
+		ds 1
+		ds 1
+		ds 1
+		ds 1
+		ds 1
+		ds 1
+		ds 1
+		ds 1
+		ds 1
+		ds 1
+		ds 1
+		ds 1
+		ds 1
+		ds 1
+		ds 1
+		ds 1
+		ds 1
+		ds 1
+		ds 1
+		ds 1
+TopStack:	ds 1
 ; end of 'RegRAM'
 
 ; ---------------------------------------------------------------------------
@@ -255,7 +256,7 @@ TopStack:	rmb 1
 ; ===========================================================================
 
 ; Segment type:	Pure code
-		; segment ROM
+		code ; ROM
 		org $F000
 ; START	OF FUNCTION CHUNK FOR sub_FD41
 
@@ -356,7 +357,7 @@ loc_F083:				; CODE XREF: sub_FD41-CC9j
 		andb	ADCcontrol	; clear	bit0
 		stab	ADCcontrol	; clear	bit0
 		sei
-		oraa	ADCflags	; set bit 0
+		ora	ADCflags	; set bit 0
 		staa	ADCflags	; set bit 0
 		cli
 		jsr	loc_FAA7
@@ -400,8 +401,8 @@ loc_F0D1:				; CODE XREF: sub_FD41:loc_F0CAj
 					; Carry	bit is only set	if data	has been clipped at either level
 					;
 ; ---------------------------------------------------------------------------
-		fcb $E6	; Ê
-		fcb $8F	; è
+		db $E6 ; Ê
+		db $8F ; è
 ; ---------------------------------------------------------------------------
 		clr	SatCount_CE
 		ldab	#$89 ; 'â'
@@ -509,7 +510,7 @@ loc_F131:				; CODE XREF: ROM:F21EP
 ; End of function sub_F129
 
 ; ---------------------------------------------------------------------------
-inj2on:		fcb $CE	; Œ
+inj2on:		db $CE ; Œ
 ; ---------------------------------------------------------------------------
 
 loc_F138:				; CODE XREF: ROM:endIC1_2P
@@ -591,7 +592,7 @@ loc_F189:				; CODE XREF: injector1+11j
 		cpx	Timer
 		bpl	loc_F189	; spin waiting for timer
 		ldaa	#$80 ; 'Ä'
-		oraa	Port4		; turn off injector #10
+		ora	Port4		; turn off injector #10
 ; End of function injector1
 
 ; START	OF FUNCTION CHUNK FOR inj1on
@@ -658,7 +659,7 @@ procInCp1:				; CODE XREF: ROM:IRQinpcap3j
 		pulx			; xgdx
 		ldaa	unk_4E		; used for flags in outcmp,inpcap
 		bpl	endIC1_1	; msb gets flagged based on input capture level
-		oraa	#1
+		ora	#1
 		anda	#$7F ; ''
 		staa	unk_4E		; set bit 0, clear bit 7
 		cli
@@ -684,8 +685,8 @@ loc_F1E0:				; CODE XREF: ROM:F1DCj
 loc_F1F0:				; CODE XREF: ROM:F1E4j	ROM:F1EBj
 		stx	SE056plstime	; either 800 or	1600 or	if we're lucky: InpCap1 - LastIC2treg
 		ldaa	SatCount_97
-		oraa	byte_4C		; msb inhibits injection
-		oraa	SatCount_98
+		ora	byte_4C		; msb inhibits injection
+		ora	SatCount_98
 		bmi	endIC1_1	; return if satcounts are $80 or greater, or msb of byte_4c is set
 		ldaa	unk_75		; lsb of word_74
 		psha
@@ -753,7 +754,7 @@ procInCp2:				; CODE XREF: ROM:F1BEJ
 InCp2high:				; leading edge time of tinp2. corresponds to tr	edge of	NE
 		stx	NEtrEdge
 		ldaa	Port2		; looking at /IGT
-		bita	#%10
+		bita	#2
 		beq	IGTisON		; branch if /IGT is low
 		ldaa	unk_C6
 		bgt	IGTisON		; IGT on
@@ -795,7 +796,7 @@ loc_F27B:				; CODE XREF: ROM:F26Bj
 OC1HighDtoOC1:				; CODE XREF: ROM:loc_F279p ROM:F2BCp
 		psha
 		ldaa	#$19
-		oraa	TmrCntStat1	; set oc1 level	high
+		ora	TmrCntStat1	; set oc1 level	high
 		staa	TmrCntStat1	; set oc1 level	high
 		pula
 ; End of function OC1HighDtoOC1
@@ -826,7 +827,7 @@ forceIGToff:
 		ldd	#$219
 		bita	Port2		; test for /IGT
 		bne	stdOC1Dgood	; return if /IGT is off
-		orab	TmrCntStat1	; set oc1 level	to high
+		orb	TmrCntStat1	; set oc1 level	to high
 		stab	TmrCntStat1	; set oc1 level	to high
 		bra	stdOC1Dnogd	; forces an OC1	shortly
 ; ---------------------------------------------------------------------------
@@ -916,9 +917,9 @@ IC2low10:				; CODE XREF: ROM:F318j
 		addd	word_A9		; last word_ab
 		std	NEhighWidth
 		ldd	#$1A1A
-		orab	TmrCntStat1	; IC1 edge 1, OC1 unaffected
+		orb	TmrCntStat1	; IC1 edge 1, OC1 unaffected
 		stab	TmrCntStat1	; IC1 edge 1, OC1 unaffected
-		oraa	TmrCntStat2	; IC2 edge 1, OC2 unaffected
+		ora	TmrCntStat2	; IC2 edge 1, OC2 unaffected
 		staa	TmrCntStat2	; IC2 edge 1, OC2 unaffected
 		ldab	unk_4E		; used for flags in outcmp,inpcap
 		ldaa	IC2LowCnt	; counts input capture 2 trailing edges, reset by p3 msb low (G+ related)
@@ -928,7 +929,7 @@ IC2low10:				; CODE XREF: ROM:F318j
 		bls	IC2low11
 		tba
 		asla
-		oraa	Port3		; inputs to port3 are 7	-G+, 4,3,2,1,0
+		ora	Port3		; inputs to port3 are 7	-G+, 4,3,2,1,0
 		bmi	IC2low11	; branch if G+ related is high
 		ldaa	#$FE ; '˛'
 		anda	Port4		; p4-0 is output to SE056 mixed	signal ic, begin generating 50us low pulse
@@ -939,10 +940,10 @@ IC2low10:				; CODE XREF: ROM:F318j
 		ldaa	ADC_ThW		; compare to 80
 		cmpa	#80
 		bls	IC2low11	; branch if less than 80 deg F
-		orab	#$20 ; ' '
+		orb	#$20 ; ' '
 
 IC2low11:				; CODE XREF: ROM:F33Ej	ROM:F344j ...
-		orab	#$46 ; 'F'
+		orb	#$46 ; 'F'
 		ldaa	#1
 		bita	Port2		; looking at mixed signal chip input bit 0, input capture pin
 		beq	IC2low12	; branch if inpcap pin is low
@@ -950,12 +951,12 @@ IC2low11:				; CODE XREF: ROM:F33Ej	ROM:F344j ...
 		bpl	IC2low13	; branch if ICF	was not	set
 
 IC2low12:				; CODE XREF: ROM:F35Fj
-		orab	#$80 ; 'Ä'
+		orb	#$80 ; 'Ä'
 
 IC2low13:				; CODE XREF: ROM:F363j
 		stab	unk_4E		; potential to set bits	7,6,5,2,1 high
 		ldaa	#1
-		oraa	Port4		; p4-0 is output to SE056 mixed	signal ic, finish 50us low pulse
+		ora	Port4		; p4-0 is output to SE056 mixed	signal ic, finish 50us low pulse
 		staa	Port4		; p4-0 is output to SE056 mixed	signal ic, finish 50us low pulse
 		rti
 ; ---------------------------------------------------------------------------
@@ -972,7 +973,7 @@ IRQoutcmp:				; output compare pin p2-1 eventually becomes the signal	/IGT, or i
 		ldab	unk_4E		; test bit 3, if high leave interrupt without doing much
 		bitb	#8
 		bne	OutCmpBombout
-		orab	#8
+		orb	#8
 		stab	unk_4E		; set bit 3 high
 		ldab	unk_C6		; bail out of interrupt	if >0
 		bgt	OutCmpBombout
@@ -1003,7 +1004,7 @@ loc_F3AC:				; CODE XREF: ROM:F3A7j
 ; ---------------------------------------------------------------------------
 
 OutCmpBombout:				; CODE XREF: ROM:F37Bj	ROM:F381j ...
-		oraa	#1
+		ora	#1
 		staa	TmrCntStat1	; set output high on cmp
 		ldd	OutCmp1		; will clear OCF flag
 		std	OutCmp1		; Will clear OCF1 flag
@@ -1014,7 +1015,7 @@ OutCmpBombout:				; CODE XREF: ROM:F37Bj	ROM:F381j ...
 
 injector2:				; CODE XREF: ROM:F2F5P	injector2+19j ...
 		ldaa	TmrCntStat2	; $TCSR2
-		oraa	#1
+		ora	#1
 		staa	TmrCntStat2	; next OC2 will	set /#20 high
 		ldx	Inj20OffTime
 		stx	OutCmp2		; compare output on P1-1, injector /#20
@@ -1064,16 +1065,16 @@ SerIRQMain:				; CODE XREF: ROM:F3E2j
 		ldab	ADCcontrol	; controls a jump table	at fa9b, also deselects	ADC with LSB, also controls which channel to select
 		rorb
 		bcs	SerIRQflag	; branch if ADCcontrol was odd
-		oraa	#$40 ; '@'
+		ora	#$40 ; '@'
 		staa	Port3		; de select adc	p3-6 if	ADCcontrol was even
 
 SerIRQflag:				; CODE XREF: ROM:F3F3j	ROM:F3F8j
 		ldab	#$80 ; 'Ä'
-		orab	ADCflags	; set bit 7
+		orb	ADCflags	; set bit 7
 		stab	ADCflags	; set bit 7
 
 SerMainRet:				; CODE XREF: ROM:F41Ej
-		sei			; disable interrupts?
+		sei			; disable interrupts
 		ldd	Timer		; load counter into d
 		addd	#320		; add 320us, exactly 10	bits (serial byte!) from now
 		std	EndTxByteTime	; caches timer values from serial interrupt
@@ -1092,7 +1093,7 @@ txwaitloop1:				; CODE XREF: ROM:F41Aj
 		bita	TxRxCntStat	; test if tx reg empty
 		beq	txwaitloop1	; tx wait loop
 		stab	TxReg
-		bra	SerMainRet	; disable interrupts?
+		bra	SerMainRet	; disable interrupts
 
 ; =============== S U B	R O U T	I N E =======================================
 
@@ -1104,7 +1105,7 @@ sub_F420:				; CODE XREF: sub_FD41-C3CP
 		cli
 		clrb
 		stab	Port3CntStat	; nuke all special features of port3
-		rola
+		rola			; put /IS3 bit into carry, relace with SEC for emulated	port, because fuck the IGF functionality
 		ldd	#$7B79
 		bcc	loc_F431	; carry	bit will be set	from trailing edge on /IS3 pin (IGF)
 		staa	SatCount_98	; set unk_98 to	$7B
@@ -1196,8 +1197,8 @@ loc_F4B0:				; CODE XREF: sub_F420+8Bj
 		suba	#32
 		jsr	boundDataneg	; Limits AccA to bounds	set by two bytes after call
 ; ---------------------------------------------------------------------------
-		fcb $D0	; –		; 208
-		fcb   0
+		db $D0 ; –		; 208
+		db   0
 ; ---------------------------------------------------------------------------
 		staa	byte_64		; the only place this variable is written
 		clra
@@ -1228,7 +1229,7 @@ loc_F4DD:				; CODE XREF: sub_F420+A2j
 
 loc_F4E2:				; CODE XREF: sub_F420+ABj
 		sei
-		orab	unk_4E		; used for flags in outcmp,inpcap
+		orb	unk_4E		; used for flags in outcmp,inpcap
 		stab	unk_4E		; potential to set bit 6 high
 		clra
 		staa	SatCount_D1	; clear	unk_d1
@@ -1263,7 +1264,7 @@ loc_F510:				; CODE XREF: sub_F420+ECj
 		bhi	loc_F51E
 		ldab	byte_95
 		bpl	loc_F51E
-		oraa	#$C0 ; '¿'
+		ora	#$C0 ; '¿'
 		bra	loc_F531
 ; ---------------------------------------------------------------------------
 
@@ -1336,7 +1337,7 @@ loc_F571:				; CODE XREF: ROM:F55Aj
 		ldx	#$FECB
 		jsr	$50,x		; ff1b
 ; ---------------------------------------------------------------------------
-		fcb $21	; !		; brn
+		db $21 ; !		; brn
 ; ---------------------------------------------------------------------------
 
 loc_F57F:				; CODE XREF: ROM:F575j
@@ -1440,7 +1441,7 @@ sub_F5E3:				; CODE XREF: sub_F420+4DP sub_F420+7FP ...
 		beq	locret_F5EA
 		ldab	#$FF
 ; ---------------------------------------------------------------------------
-		fcb $21	; !		; brn
+		db $21 ; !		; brn
 ; ---------------------------------------------------------------------------
 
 loc_F5E9:				; CODE XREF: sub_F5D8j	sub_F5D8+6j
@@ -1512,7 +1513,7 @@ loc_F61B:				; CODE XREF: sub_F5E3+35j
 loc_F641:				; CODE XREF: sub_F5E3+58j
 		cmpa	#$13
 		bcs	loc_F649
-		orab	#8
+		orb	#8
 
 loc_F647:				; CODE XREF: sub_F5E3+5Cj
 		stab	byte_4C		; msb inhibits injection
@@ -1761,8 +1762,8 @@ loc_F741:				; CODE XREF: sub_F70A+34j
 ; End of function sub_F70A		; Carry	bit is only set	if data	has been clipped at either level
 					;
 ; ---------------------------------------------------------------------------
-		fcb $99	; ô
-		fcb $5C	; \
+		db $99 ; ô
+		db $5C ; \
 ; ---------------------------------------------------------------------------
 		adda	word_42
 		suba	#$80 ; 'Ä'
@@ -1804,8 +1805,8 @@ loc_F771:				; CODE XREF: sub_F751+1Dj
 ; End of function sub_F751		; Carry	bit is only set	if data	has been clipped at either level
 					;
 ; ---------------------------------------------------------------------------
-		fcb $B3	; ≥
-		fcb $24	; $
+		db $B3 ; ≥
+		db $24 ; $
 ; ---------------------------------------------------------------------------
 		bcs	loc_F798
 		psha
@@ -1816,8 +1817,8 @@ loc_F771:				; CODE XREF: sub_F751+1Dj
 					; Carry	bit is only set	if data	has been clipped at either level
 					;
 ; ---------------------------------------------------------------------------
-		fcb $8A	; ä
-		fcb $76	; v
+		db $8A ; ä
+		db $76 ; v
 ; ---------------------------------------------------------------------------
 		bcs	loc_F797
 		ldaa	word_44
@@ -1843,19 +1844,19 @@ loc_F798:				; CODE XREF: ROM:F776j
 		std	word_40		; if we	call this the start of user ram, it's exactly 192 bytes (inclusive)
 		rts
 ; ---------------------------------------------------------------------------
-		fcb $19			; data (f7f1 entry)
-		fcb $96	; ñ
-		fcb   7
-		fcb $AD	; ≠
-		fcb   0			; word data
-		fcb $EB	; Î
-		fcb   0			; word data
-		fcb $4E	; N
+		db $19			; data (f7f1 entry)
+		db $96 ; ñ
+		db   7
+		db $AD ; ≠
+		db   0			; word data
+		db $EB ; Î
+		db   0			; word data
+		db $4E ; N
 ; ---------------------------------------------------------------------------
 ; START	OF FUNCTION CHUNK FOR sub_F7BE
 
 loc_F7AA:				; CODE XREF: sub_F7BE+8j
-		orab	#4
+		orb	#4
 		ldaa	#$71 ; 'q'
 
 loc_F7AE:
@@ -1894,7 +1895,7 @@ loc_F7C4:				; CODE XREF: sub_F7BE+2j
 		bmi	loc_F7B0
 		bitb	#4
 		bne	loc_F7B3
-		orab	#8
+		orb	#8
 		stab	byte_4D
 		ldd	#$6C6F
 		ldx	#1024
@@ -1966,8 +1967,8 @@ loc_F82C:				; CODE XREF: ROM:F827j
 		suba	unk_C3
 		jsr	boundDataneg	; Limits AccA to bounds	set by two bytes after call
 ; ---------------------------------------------------------------------------
-		fcb $10
-		fcb   0
+		db $10
+		db   0
 ; ---------------------------------------------------------------------------
 		ldab	#136
 		mul
@@ -1980,8 +1981,8 @@ loc_F82C:				; CODE XREF: ROM:F827j
 					; Carry	bit is only set	if data	has been clipped at either level
 					;
 ; ---------------------------------------------------------------------------
-		fcb  $E
-		fcb   0
+		db  $E
+		db   0
 ; ---------------------------------------------------------------------------
 		ldab	#$E
 
@@ -2063,8 +2064,8 @@ loc_F8AD:				; CODE XREF: ROM:loc_F857j ROM:F8AAj
 					; Carry	bit is only set	if data	has been clipped at either level
 					;
 ; ---------------------------------------------------------------------------
-		fcb $98	; ò		; 152 farenheit
-		fcb $50	; P		; 80 farenheit
+		db $98 ; ò		; 152 farenheit
+		db $50 ; P		; 80 farenheit
 ; ---------------------------------------------------------------------------
 		bcs	loc_F8CD+1	; clear	d is bound data	clipped	temp input
 		ldx	#1450
@@ -2099,8 +2100,8 @@ loc_F8E2:				; CODE XREF: ROM:F8DEj
 					; Carry	bit is only set	if data	has been clipped at either level
 					;
 ; ---------------------------------------------------------------------------
-		fcb $B8	; ∏		; 184
-		fcb $1F			; 31
+		db $B8 ; ∏		; 184
+		db $1F			; 31
 ; ---------------------------------------------------------------------------
 		tab
 		subb	#28
@@ -2150,7 +2151,7 @@ loc_F925:				; CODE XREF: ROM:F921j
 		ldab	unk_C6
 		bmi	loc_F936
 		sei
-		oraa	TmrCntStat1	; set output compare level to high
+		ora	TmrCntStat1	; set output compare level to high
 		staa	TmrCntStat1	; set output compare level to high
 		bra	loc_F950
 ; ---------------------------------------------------------------------------
@@ -2211,7 +2212,7 @@ sub_F96A:				; CODE XREF: sub_FD41:loc_F0FAP
 		andb	Port1		; anding with 7f=0b0111111
 		cmpa	unk_D7
 		bcs	loc_F97C	; has potential	to toggle bit 7	- /VF ouput generation
-		orab	#$80 ; 'Ä'
+		orb	#$80 ; 'Ä'
 
 loc_F97C:				; CODE XREF: sub_F96A+Ej
 		stab	Port1		; has potential	to toggle bit 7	- /VF ouput generation
@@ -2224,8 +2225,8 @@ loc_F97C:				; CODE XREF: sub_F96A+Ej
 					; Carry	bit is only set	if data	has been clipped at either level
 					;
 ; ---------------------------------------------------------------------------
-		fcb $81	; Å
-		fcb $67	; g
+		db $81 ; Å
+		db $67 ; g
 ; ---------------------------------------------------------------------------
 		bra	loc_F995
 ; ---------------------------------------------------------------------------
@@ -2380,12 +2381,12 @@ loc_FA62:				; CODE XREF: sub_F96A+E0j sub_F96A+E9j
 		tsta
 		bne	loc_FA75
 		ldaa	#1
-		oraa	byte_4C		; msb inhibits injection
+		ora	byte_4C		; msb inhibits injection
 		staa	byte_4C		; msb inhibits injection
 
 loc_FA75:				; CODE XREF: sub_F96A+E3j sub_F96A+EBj ...
 		ldd	#$405
-		orab	byte_4D
+		orb	byte_4D
 		stab	byte_4D
 		staa	unk_C6
 		staa	byte_69
@@ -2459,8 +2460,8 @@ revBitOrder:				; CODE XREF: ROM:FAC8j
 					; Carry	bit is only set	if data	has been clipped at either level
 					;
 ; ---------------------------------------------------------------------------
-		fcb $F1	; Ò		; 241 deg F
-		fcb   4			; 4 deg	F
+		db $F1 ; Ò		; 241 deg F
+		db   4			; 4 deg	F
 ; ---------------------------------------------------------------------------
 		bcc	loc_FADD	; if the carry was clear the data was not clipped
 		ldaa	ADC_ThW		; water	temp in	farenheit
@@ -2483,8 +2484,8 @@ procThA:				; CODE XREF: ROM:FACDj
 					; Carry	bit is only set	if data	has been clipped at either level
 					;
 ; ---------------------------------------------------------------------------
-		fcb $FA	; ˙
-		fcb   6
+		db $FA ; ˙
+		db   6
 ; ---------------------------------------------------------------------------
 		bcc	loc_FAF8
 		ldaa	ADC_ThA
@@ -2613,8 +2614,8 @@ jmptable2:				; DATA XREF: ROM:FD3Bo
 					; Carry	bit is only set	if data	has been clipped at either level
 					;
 ; ---------------------------------------------------------------------------
-		fcb $FA	; ˙
-		fcb   5
+		db $FA ; ˙
+		db   5
 ; ---------------------------------------------------------------------------
 		psha
 		ldaa	#$20 ; ' '
@@ -2656,8 +2657,8 @@ loc_FB8F:				; CODE XREF: ROM:FB7Aj	ROM:FB8Cj
 					; Carry	bit is only set	if data	has been clipped at either level
 					;
 ; ---------------------------------------------------------------------------
-		fcb $29	; )
-		fcb   5
+		db $29 ; )
+		db   5
 ; ---------------------------------------------------------------------------
 		bcc	loc_FB97
 		ldaa	#$26 ; '&'
@@ -2680,8 +2681,8 @@ loc_FBA0:				; CODE XREF: ROM:FB9Dj
 		bcs	loc_FBD2
 		bsr	boundDataneg	; Limits AccA to bounds	set by two bytes after call
 ; ---------------------------------------------------------------------------
-		fcb $1C
-		fcb   0
+		db $1C
+		db   0
 ; ---------------------------------------------------------------------------
 		ldx	#$FEA7
 		clrb
@@ -2701,7 +2702,7 @@ loc_FBC1:				; CODE XREF: ROM:FBBEj
 		jsr	sub_F121
 		cli
 ; ---------------------------------------------------------------------------
-		fcb $21	; !		; branch never,	next byte is ignored when falling through
+		db $21 ; !		; branch never,	next byte is ignored when falling through
 ; ---------------------------------------------------------------------------
 
 loc_FBD1:				; CODE XREF: ROM:FBC6j
@@ -2719,7 +2720,7 @@ jmptable4:				; DATA XREF: ROM:FD3Fo
 		ldx	#$FEE2
 		jsr	$39,x		; ff1b
 		ldab	SatCount_D2
-		cmpb	#$4C ; 'L'
+		cmpb	#76
 		bhi	loc_FBE4	; p4-3 is ac input, active high
 		adda	#$10
 
@@ -2731,8 +2732,8 @@ loc_FBE4:				; CODE XREF: ROM:FBE0j
 					; Carry	bit is only set	if data	has been clipped at either level
 					;
 ; ---------------------------------------------------------------------------
-		fcb $FF			; data for fb46
-		fcb $3C	; <
+		db $FF			; data for fb46
+		db $3C ; <
 ; ---------------------------------------------------------------------------
 
 loc_FBEF:				; CODE XREF: ROM:FBE8j
@@ -2751,8 +2752,8 @@ loc_FBEF:				; CODE XREF: ROM:FBE8j
 					; Carry	bit is only set	if data	has been clipped at either level
 					;
 ; ---------------------------------------------------------------------------
-		fcb  $F
-		fcb   0
+		db  $F
+		db   0
 ; ---------------------------------------------------------------------------
 		ldx	#$FF11
 		clrb
@@ -2801,7 +2802,7 @@ loc_FC47:				; CODE XREF: ROM:FC2Bj
 		bcs	loc_FC57	; branch if mem	$65 less than $9e
 		cmpb	#$AE ; 'Æ'      ; 174
 		bcs	loc_FC59	; branch if mem	$65 less than $ae - causes no change to	tvis bit
-		oraa	#$40 ; '@'      ; tvis off
+		ora	#$40 ; '@'      ; tvis off
 
 loc_FC57:				; CODE XREF: ROM:FC4Fj
 		staa	Port1		; has capability to toggle bit 6 - /TVIS
@@ -2910,12 +2911,12 @@ jmptable1:				; DATA XREF: ROM:JumpTableo
 
 loc_FCC9:				; CODE XREF: ROM:FCBDj	ROM:FCC3j
 		ldd	#$DF4C
-		anda	Port1		; ignoring bit 4
+		anda	Port1		; Zero-ing bit 5
 		cmpb	SatCount_D2	; 76-satcount_d2
 		bcs	loc_FCD4	; buffer off
 
 loc_FCD2:				; CODE XREF: ROM:FCC7j
-		oraa	#$20 ; ' '      ; bit 5 ($20) goes to port buffer, is output
+		ora	#$20 ; ' '      ; bit 5 ($20) goes to port buffer, is output
 
 loc_FCD4:				; CODE XREF: ROM:FCD0j
 		staa	Port1		; can set or clear bit 5 (buffer)
@@ -2959,7 +2960,7 @@ sub_FD02:				; CODE XREF: ROM:FAE0P	ROM:FAFBP ...
 		bcc	loc_FD2D
 		bita	byte_CC		; used for flagging bad	sensors	probably, bits:	6-ThA, 5-TPS, 2-ThW, 0-afm(not from adc)
 		bne	loc_FD0C
-		oraa	byte_CC		; used for flagging bad	sensors	probably, bits:	6-ThA, 5-TPS, 2-ThW, 0-afm(not from adc)
+		ora	byte_CC		; used for flagging bad	sensors	probably, bits:	6-ThA, 5-TPS, 2-ThW, 0-afm(not from adc)
 		bra	loc_FD35
 ; ---------------------------------------------------------------------------
 
@@ -2983,12 +2984,12 @@ sub_FD11:				; CODE XREF: sub_FD41-C73P
 
 loc_FD1B:				; CODE XREF: sub_FD02+Dj sub_FD11+4j
 		tab
-		orab	unk_CD
+		orb	unk_CD
 		stab	unk_CD
 		ldab	Port4		; p4-4 is STA input, active high
 		bitb	#$10
 		bne	locret_FD2C	; bomb out if STA starting
-		oraa	word_48
+		ora	word_48
 		tab
 		comb
 		std	word_48
@@ -3013,11 +3014,11 @@ loc_FD35:				; CODE XREF: sub_FD02+8j
 		rts
 ; END OF FUNCTION CHUNK	FOR sub_FD02
 ; ---------------------------------------------------------------------------
-JumpTable:	fdb jmptable1		; DATA XREF: procJmpTable+4o
+JumpTable:	dw jmptable1		; DATA XREF: procJmpTable+4o
 					; jump table 4 vectors
-		fdb jmptable2
-		fdb jmptable3		; test level of	bit4 (input from mixed signal se056)
-		fdb jmptable4
+		dw jmptable2
+		dw jmptable3		; test level of	bit4 (input from mixed signal se056)
+		dw jmptable4
 
 ; =============== S U B	R O U T	I N E =======================================
 
@@ -3052,7 +3053,7 @@ loc_FD5D:				; CODE XREF: sub_FD41+17j
 		ldaa	unk_C6
 		bpl	loc_FD79	; p4-5,	test input active low
 		andb	byte_4C		; msb inhibits injection
-		orab	word_46
+		orb	word_46
 		tba
 		comb
 		std	word_46
@@ -3103,8 +3104,8 @@ loc_FDB8:				; CODE XREF: sub_FD41+6Fj
 		ldaa	Port4		; p4-2 is IDL, p4-3 is AC, so idling and ac perhaps?
 		eora	#4
 		anda	#$C
-		oraa	word_46
-		oraa	word_48
+		ora	word_46
+		ora	word_48
 		bne	loc_FDC6
 
 loc_FDC4:				; CODE XREF: sub_FD41+75j
@@ -3132,7 +3133,7 @@ loc_FDCE:				; CODE XREF: sub_FD41+6Bj
 		eorb	#4
 		bitb	#$C
 		beq	loc_FDED
-		oraa	#2
+		ora	#2
 
 loc_FDED:				; CODE XREF: sub_FD41+A8j
 		ldab	word_48
@@ -3180,7 +3181,7 @@ loc_FE1B:				; CODE XREF: sub_FD41+69j
 		andb	#$F7 ; '˜'
 		tsta
 		bpl	loc_FE24	; toggle VISC signal (idle up)
-		orab	#8
+		orb	#8
 
 loc_FE24:				; CODE XREF: sub_FD41+DFj
 		stab	Port1		; toggle VISC signal (idle up)
@@ -3204,7 +3205,7 @@ loc_FE33:				; CODE XREF: sub_FD41+E9j
 		bitb	#$10
 		bne	loc_FE43
 		ldaa	byte_4C		; msb inhibits injection
-		oraa	#4
+		ora	#4
 		bra	loc_FE30
 ; ---------------------------------------------------------------------------
 
@@ -3224,7 +3225,7 @@ ChkSumLoop:				; CODE XREF: sub_FD41+113j
 		inx
 		inx
 		bne	ChkSumLoop	; loop until x overflows
-		subd	#$AA55
+		subd	#$AA55		; this is ACTUALLY the checksum! like the sum of your test scores equalling pi or something.
 		beq	nukeram1	; branch if checksum equals aa55
 		ldaa	#%11001000
 		bra	loc_FE8B	; /VF high,/TVIS can toggle, bit5 low, VISC high, watchdog low,	/#20 low
@@ -3282,133 +3283,133 @@ loc_FE99:				; CODE XREF: sub_FD41+146j
 ; End of function sub_FD41
 
 ; ---------------------------------------------------------------------------
-		fcb $1F			; data (ff2d entry)
-		fcb $1F
-		fcb $23	; #
-		fcb $3E	; >
-		fcb $3E	; >
-		fcb $57	; W
-		fcb $64	; d
-		fcb $64	; d
-		fcb $68	; h
-		fcb $5C	; \
-		fcb $4F	; O
-		fcb   0			; data (ff2b entry)
-		fcb $23	; #
-		fcb $57	; W
-		fcb $80	; Ä
-		fcb $A8	; ®
-		fcb $C2	; ¬
-		fcb $D9	; Ÿ
-		fcb $E6	; Ê
-		fcb $F3	; Û		; data (ff1b entry)
-		fcb $80	; Ä
-		fcb $45	; E
-		fcb $1E
-		fcb   0
-		fcb   0
-		fcb   0
-		fcb $98	; ò		; data (ff1b entry)
-		fcb $53	; S
-		fcb $28	; (
-		fcb $19
-		fcb  $F
-		fcb   6
-		fcb   6
-		fcb $66	; f		; data (ff1b entry)
-		fcb $58	; X
-		fcb $47	; G
-		fcb $2E	; .
-		fcb $17
-		fcb   8
-		fcb   0
-		fcb $6C	; l		; data (ff1b entry)
-		fcb $57	; W
-		fcb $45	; E
-		fcb $33	; 3
-		fcb $23	; #
-		fcb $11
-		fcb   0
-		fcb $F3	; Û		; data (ff1b entry)
-		fcb $80	; Ä
-		fcb $1E
-		fcb   5
-		fcb   0
-		fcb   0
-		fcb   0			; 6
-		fcb $FF			; data (ff1b entry)
-		fcb $D8	; ÿ
-		fcb $90	; ê
-		fcb $68	; h
-		fcb $49	; I
-		fcb $43	; C
-		fcb $40	; @		; 6
-		fcb $66	; f		; data (ff25 entry)
-		fcb $66	; f
-		fcb $6A	; j
-		fcb $77	; w
-		fcb $83	; É
-		fcb $8C	; å
-		fcb $99	; ô
-		fcb $AA	; ™
-		fcb $B9	; π		; 8
-		fcb $6C	; l		; data (ff1b entry)
-		fcb $6C	; l
-		fcb $68	; h
-		fcb $60	; `
-		fcb $50	; P
-		fcb $40	; @
-		fcb $30	; 0		; 6
-		fcb $FF			; data (ff25 entry), offset by -83d for	ADC_AFMr
-		fcb $C2	; ¬
-		fcb $4B	; K
-		fcb $18
-		fcb   0
-		fcb   0
-		fcb   0
-		fcb $FF			; data for converting raw ThW measurement from ADC (ff28 entry)
-		fcb $DC	; ‹
-		fcb $B2	; ≤
-		fcb $9B	; õ
-		fcb $8A	; ä
-		fcb $7C	; |
-		fcb $70	; p
-		fcb $66	; f
-		fcb $5D	; ]		; 8
-		fcb $53	; S		; data (ff2d entry)
-		fcb $49	; I
-		fcb $40	; @
-		fcb $36	; 6
-		fcb $2A	; *
-		fcb $1D
-		fcb  $A
-		fcb   0
-		fcb $A5	; •
-		fcb $84	; Ñ
-		fcb $6A	; j
-		fcb $55	; U
-		fcb $43	; C
-		fcb $34	; 4
-		fcb $27	; '
-		fcb $1C			; 15
-		fcb $13
-		fcb $38	; 8		; data (ff1b entry)
-		fcb $38	; 8
-		fcb $37	; 7
-		fcb $32	; 2
-		fcb $2D	; -
-		fcb $1C
-		fcb $1C			; 6
-		fcb $1C			; data (ff2a entry)
-		fcb   6			; data (ff25 entry) for	ADC_AFMr
-		fcb   6
-		fcb $FF
-		fcb $FF
-		fcb $D8	; ÿ
-		fcb $96	; ñ
-		fcb $77	; w
-		fcb $5E	; ^
-		fcb $51	; Q
+		db $1F			; data (ff2d entry)
+		db $1F
+		db $23 ; #
+		db $3E ; >
+		db $3E ; >
+		db $57 ; W
+		db $64 ; d
+		db $64 ; d
+		db $68 ; h
+		db $5C ; \
+		db $4F ; O
+		db   0			; data (ff2b entry)
+		db $23 ; #
+		db $57 ; W
+		db $80 ; Ä
+		db $A8 ; ®
+		db $C2 ; ¬
+		db $D9 ; Ÿ
+		db $E6 ; Ê
+		db $F3 ; Û		; data (ff1b entry)
+		db $80 ; Ä
+		db $45 ; E
+		db $1E
+		db   0
+		db   0
+		db   0
+		db $98 ; ò		; data (ff1b entry)
+		db $53 ; S
+		db $28 ; (
+		db $19
+		db  $F
+		db   6
+		db   6
+		db $66 ; f		; data (ff1b entry)
+		db $58 ; X
+		db $47 ; G
+		db $2E ; .
+		db $17
+		db   8
+		db   0
+		db $6C ; l		; data (ff1b entry)
+		db $57 ; W
+		db $45 ; E
+		db $33 ; 3
+		db $23 ; #
+		db $11
+		db   0
+		db $F3 ; Û		; data (ff1b entry)
+		db $80 ; Ä
+		db $1E
+		db   5
+		db   0
+		db   0
+		db   0			; 6
+		db $FF			; data (ff1b entry)
+		db $D8 ; ÿ
+		db $90 ; ê
+		db $68 ; h
+		db $49 ; I
+		db $43 ; C
+		db $40 ; @		; 6
+		db $66 ; f		; data (ff25 entry)
+		db $66 ; f
+		db $6A ; j
+		db $77 ; w
+		db $83 ; É
+		db $8C ; å
+		db $99 ; ô
+		db $AA ; ™
+		db $B9 ; π		; 8
+		db $6C ; l		; data (ff1b entry)
+		db $6C ; l
+		db $68 ; h
+		db $60 ; `
+		db $50 ; P
+		db $40 ; @
+		db $30 ; 0		; 6
+		db $FF			; data (ff25 entry), offset by -83d for	ADC_AFMr
+		db $C2 ; ¬
+		db $4B ; K
+		db $18
+		db   0
+		db   0
+		db   0
+		db $FF			; data for converting raw ThW measurement from ADC (ff28 entry)
+		db $DC ; ‹
+		db $B2 ; ≤
+		db $9B ; õ
+		db $8A ; ä
+		db $7C ; |
+		db $70 ; p
+		db $66 ; f
+		db $5D ; ]		; 8
+		db $53 ; S		; data (ff2d entry)
+		db $49 ; I
+		db $40 ; @
+		db $36 ; 6
+		db $2A ; *
+		db $1D
+		db  $A
+		db   0
+		db $A5 ; •
+		db $84 ; Ñ
+		db $6A ; j
+		db $55 ; U
+		db $43 ; C
+		db $34 ; 4
+		db $27 ; '
+		db $1C			; 15
+		db $13
+		db $38 ; 8		; data (ff1b entry)
+		db $38 ; 8
+		db $37 ; 7
+		db $32 ; 2
+		db $2D ; -
+		db $1C
+		db $1C			; 6
+		db $1C			; data (ff2a entry)
+		db   6			; data (ff25 entry) for	ADC_AFMr
+		db   6
+		db $FF
+		db $FF
+		db $D8 ; ÿ
+		db $96 ; ñ
+		db $77 ; w
+		db $5E ; ^
+		db $51 ; Q
 ; ---------------------------------------------------------------------------
 
 TableThW:				; entry	point, ff1b
@@ -3426,7 +3427,7 @@ TableAFMr:				; an entry point, possibly reserved for	ADC_AFMr, ff25
 Tab1:					; CODE XREF: ROM:FF20j
 		lsrd			; next instruction is like a 2 byte nop
 ; ---------------------------------------------------------------------------
-		fcb $21	; !		; brn, skips the clrb if e fall	through	this line
+		db $21 ; !		; brn, skips the clrb if e fall	through	this line
 ; ---------------------------------------------------------------------------
 
 loc_FF28:				; CODE XREF: ROM:F88AP	ROM:F891P
@@ -3460,106 +3461,106 @@ loc_FF3C:				; CODE XREF: sub_FF35j	sub_FF35+4j
 ; End of function sub_FF35
 
 ; ---------------------------------------------------------------------------
-		fcb $58	; X		; 3d table, x input is byte_64,	y input	is processed word_7f
-		fcb $63	; c
-		fcb $71	; q
-		fcb $7E	; ~
-		fcb $8A	; ä
-		fcb $96	; ñ
-		fcb $96	; ñ
-		fcb $97	; ó
-		fcb $97	; ó
-		fcb $8F	; è
-		fcb $8E	; é
-		fcb $8F	; è
-		fcb $8D	; ç
-		fcb $8F	; è
-		fcb $44	; D		; new table 1
-		fcb $59	; Y
-		fcb $66	; f
-		fcb $72	; r
-		fcb $7E	; ~
-		fcb $7E	; ~
-		fcb $7E	; ~
-		fcb $7F	; 
-		fcb $7F	; 
-		fcb $77	; w
-		fcb $76	; v
-		fcb $72	; r
-		fcb $71	; q
-		fcb $72	; r
-		fcb $21	; !		; new table 2
-		fcb $3E	; >
-		fcb $53	; S
-		fcb $57	; W
-		fcb $5C	; \
-		fcb $5D	; ]
-		fcb $5E	; ^
-		fcb $5D	; ]
-		fcb $5D	; ]
-		fcb $61	; a
-		fcb $62	; b
-		fcb $62	; b
-		fcb $63	; c
-		fcb $64	; d
-		fcb $13			; possible new table for f880 3
-		fcb $1D
-		fcb $28	; (
-		fcb $35	; 5
-		fcb $3B	; ;
-		fcb $43	; C
-		fcb $46	; F
-		fcb $47	; G
-		fcb $47	; G
-		fcb $56	; V
-		fcb $5B	; [
-		fcb $5B	; [
-		fcb $5C	; \
-		fcb $5D	; ]
-		fcb  $B			; new table 4
-		fcb $10
-		fcb $13
-		fcb $22	; "
-		fcb $27	; '
-		fcb $28	; (
-		fcb $2B	; +
-		fcb $34	; 4
-		fcb $36	; 6
-		fcb $48	; H
-		fcb $54	; T
-		fcb $56	; V
-		fcb $55	; U
-		fcb $56	; V
-		fcb  $B			; new table 5
-		fcb $10
-		fcb $13
-		fcb $22	; "
-		fcb $27	; '
-		fcb $28	; (
-		fcb $2B	; +
-		fcb $2E	; .
-		fcb $2E	; .
-		fcb $39	; 9
-		fcb $49	; I
-		fcb $4E	; N
-		fcb $55	; U
-		fcb $56	; V		; end 3d table
-		fcb   0			; data (ffa4 entry)
-		fcb   0
-		fcb   0
-		fcb  $B
-		fcb   5			; data (ffe1 entry)
-		fcb   5
-		fcb   5
-		fcb   0
-		fcb   7			; data (ffa4 entry)
-		fcb   0
-		fcb $FB	; ˚
-		fcb   0
-		fcb   0
-		fcb   7
-		fcb $FB	; ˚
-		fcb $FE	; ˛
+		db $58 ; X		; 3d table, x input is byte_64,	y input	is processed word_7f
+		db $63 ; c
+		db $71 ; q
+		db $7E ; ~
+		db $8A ; ä
+		db $96 ; ñ
+		db $96 ; ñ
+		db $97 ; ó
+		db $97 ; ó
+		db $8F ; è
+		db $8E ; é
+		db $8F ; è
+		db $8D ; ç
+		db $8F ; è
+		db $44 ; D		; new table 1
+		db $59 ; Y
+		db $66 ; f
+		db $72 ; r
+		db $7E ; ~
+		db $7E ; ~
+		db $7E ; ~
+		db $7F ; 
+		db $7F ; 
+		db $77 ; w
+		db $76 ; v
+		db $72 ; r
+		db $71 ; q
+		db $72 ; r
+		db $21 ; !		; new table 2
+		db $3E ; >
+		db $53 ; S
+		db $57 ; W
+		db $5C ; \
+		db $5D ; ]
+		db $5E ; ^
+		db $5D ; ]
+		db $5D ; ]
+		db $61 ; a
+		db $62 ; b
+		db $62 ; b
+		db $63 ; c
+		db $64 ; d
+		db $13			; possible new table for f880 3
+		db $1D
+		db $28 ; (
+		db $35 ; 5
+		db $3B ; ;
+		db $43 ; C
+		db $46 ; F
+		db $47 ; G
+		db $47 ; G
+		db $56 ; V
+		db $5B ; [
+		db $5B ; [
+		db $5C ; \
+		db $5D ; ]
+		db  $B			; new table 4
+		db $10
+		db $13
+		db $22 ; "
+		db $27 ; '
+		db $28 ; (
+		db $2B ; +
+		db $34 ; 4
+		db $36 ; 6
+		db $48 ; H
+		db $54 ; T
+		db $56 ; V
+		db $55 ; U
+		db $56 ; V
+		db  $B			; new table 5
+		db $10
+		db $13
+		db $22 ; "
+		db $27 ; '
+		db $28 ; (
+		db $2B ; +
+		db $2E ; .
+		db $2E ; .
+		db $39 ; 9
+		db $49 ; I
+		db $4E ; N
+		db $55 ; U
+		db $56 ; V		; end 3d table
+		db   0			; data (ffa4 entry)
+		db   0
+		db   0
+		db  $B
+		db   5			; data (ffe1 entry)
+		db   5
+		db   5
+		db   0
+		db   7			; data (ffa4 entry)
+		db   0
+		db $FB ; ˚
+		db   0
+		db   0
+		db   7
+		db $FB ; ˚
+		db $FE ; ˛
 ; ---------------------------------------------------------------------------
 
 loc_FFA4:
@@ -3573,58 +3574,58 @@ loc_FFA4:
 		suba	0,x
 		rts
 ; ---------------------------------------------------------------------------
-		fcb $4D	; M		; Data used to initialize RAM (address,	data0,data1,...dataN,$00)
-		fcb   5			; word data for	4d = $0543
-		fcb $43	; C
-		fcb   0
-		fcb $5B	; [		; new address
-		fcb $26	; &		; data for word	5b = $2680
-		fcb $80	; Ä
-		fcb   0			; stop RLE
-		fcb $54	; T		; new address
-		fcb $73	; s		; $54 =	73
-		fcb $B3	; ≥		; $55 =	B3
-		fcb $79	; y		; 56
-		fcb $C0	; ¿		; 57
-		fcb $20			; 58
-		fcb   0			; stop RLE
-		fcb $65	; e		; new address
-		fcb $12			; 65
-		fcb $FF			; 66
-		fcb $FF			; 67
-		fcb $10			; 68
-		fcb   4			; 69
-		fcb   2			; 6a
-		fcb $8A	; ä		; 6b
-		fdb 4500		; 6c
-		fdb 460			; 6e
-		fcb $7F	; 		; 70
-		fcb $FF			; 71
-		fcb   2			; 72
-		fcb   1			; 73
-		fcb   2			; 74
-		fcb   0			; stop RLE
-		fcb $95	; ï		; new address
-		fcb $60	; `		; 95
-		fcb $34	; 4		; 96
-		fcb $7A	; z		; 97
-		fcb $7C	; |		; 98
-		fcb $F4	; Ù		; 99
-		fcb $71	; q		; 9a
-		fcb $71	; q		; 9b
-		fcb $FF			; 9c
-		fcb $E6	; Ê		; 9d
-		fcb   0			; stop RLE
-		fcb $C6	; ∆		; new address
-		fcb   4			; c6
-		fcb $FF			; c7
-		fcb $5E	; ^		; c8
-		fcb   0			; termination of init data
-		fcb   0
+		db $4D ; M		; Data used to initialize RAM (address,	data0,data1,...dataN,$00)
+		db   5			; word data for	4d = $0543
+		db $43 ; C
+		db   0
+		db $5B ; [		; new address
+		db $26 ; &		; data for word	5b = $2680
+		db $80 ; Ä
+		db   0			; stop RLE
+		db $54 ; T		; new address
+		db $73 ; s		; $54 =	73
+		db $B3 ; ≥		; $55 =	B3
+		db $79 ; y		; 56
+		db $C0 ; ¿		; 57
+		db $20			; 58
+		db   0			; stop RLE
+		db $65 ; e		; new address
+		db $12			; 65
+		db $FF			; 66
+		db $FF			; 67
+		db $10			; 68
+		db   4			; 69
+		db   2			; 6a
+		db $8A ; ä		; 6b
+		dw 4500			; 6c
+		dw 460			; 6e
+		db $7F ; 		; 70
+		db $FF			; 71
+		db   2			; 72
+		db   1			; 73
+		db   2			; 74
+		db   0			; stop RLE
+		db $95 ; ï		; new address
+		db $60 ; `		; 95
+		db $34 ; 4		; 96
+		db $7A ; z		; 97
+		db $7C ; |		; 98
+		db $F4 ; Ù		; 99
+		db $71 ; q		; 9a
+		db $71 ; q		; 9b
+		db $FF			; 9c
+		db $E6 ; Ê		; 9d
+		db   0			; stop RLE
+		db $C6 ; ∆		; new address
+		db   4			; c6
+		db $FF			; c7
+		db $5E ; ^		; c8
+		db   0			; termination of init data
+		db   0
 ; ---------------------------------------------------------------------------
 
 loc_FFE1:				; this sub is executed twice from this entry point
-		bsr	*+2
+		bsr	.+2
 
 loc_FFE3:				; Saturate count routine, increments ram value until reaching $FF, increments X, returns counter value
 		ldaa	$FF,x
@@ -3637,15 +3638,15 @@ loc_FFEA:				; CODE XREF: ROM:FFE6j
 		ldaa	$FE,x
 		rts
 ; ---------------------------------------------------------------------------
-		fdb $C7BE		; illegal opcode trap? c7be is out of rom... this could	be data	or even	code for all i know
-		fdb $F3DB		; serial interrupt rdrf	/ orfe / tore
-		fdb $F000		; timer	overflow
-		fdb $F370		; timer	output compare
-		fdb $F1B1		; timer	input capture from mixed signal	SE056
-		fdb $F000		; /irq or /S3
-		fdb $F000		; swi
-		fdb $F000		; /NMI
-		fdb $F000		; reset	entry vector
+		dw $C7BE		; illegal opcode trap? c7be is out of rom... this could	be data	or even	code for all i know
+		dw $F3DB		; serial interrupt rdrf	/ orfe / tore
+		dw $F000		; timer	overflow
+		dw $F370		; timer	output compare
+		dw $F1B1		; timer	input capture from mixed signal	SE056
+		dw $F000		; /irq or /S3
+		dw $F000		; swi
+		dw $F000		; /NMI
+		dw $F000		; reset	entry vector
 ; end of 'ROM'
 
 
