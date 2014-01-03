@@ -1,4 +1,5 @@
 
+
 ; Processor:	    6303 []
 ; Target assembler: 68HC11 Macro Assembler v1.2	(c) Copyright 2000 Tech	Edge Pty. Ltd.
 
@@ -37,7 +38,7 @@ TmrCntStat2:	ds 1			; DATA XREF: sub_FD41-D34w
 OutCmp2:	ds 2			; DATA XREF: ROM:F151w	injector1+23r ...
 					; compare output on P1-1, injector /#20
 InpCap2:	ds 2			; captures from	port 1-0, mixed	signal se056
-		ds 1			; top of sfr space
+unk_1F:		ds 1			; top of sfr space
 		ds 1
 		ds 1
 		ds 1
@@ -51,18 +52,18 @@ InpCap2:	ds 2			; captures from	port 1-0, mixed	signal se056
 		ds 1
 		ds 1
 		ds 1
+unk_2D:		ds 1
 		ds 1
 		ds 1
 		ds 1
 		ds 1
+unk_32:		ds 1
 		ds 1
 		ds 1
 		ds 1
 		ds 1
-		ds 1
-		ds 1
-		ds 1
-		ds 1
+unk_37:		ds 1
+unk_38:		ds 1
 		ds 1
 		ds 1
 		ds 1
@@ -106,12 +107,15 @@ unk_5F:		ds 1
 byte_60:	ds 1			; DATA XREF: sub_FD41-C4Cw
 					; sub_F420+D5r	...
 unk_61:		ds 1
-word_62:	ds 2			; DATA XREF: sub_F420+60r sub_F420+78w ...
-byte_64:	ds 1			; DATA XREF: sub_F420+98w ROM:F884r ...
-byte_65:	ds 1			; DATA XREF: sub_F129:loc_F12Ar
+FullRPM:	ds 2			; DATA XREF: sub_F420+60r sub_F420+78w ...
+					; full range first dervitive continuous	RPM variable, rpms: 600, 8000 values: 192, 2560
+RPMish:		ds 1			; DATA XREF: sub_F420+98w ROM:F884r ...
+					; rpms:	[600, 4800, 7200] RPMish value:	[24, 192, 208] - linear	interpolate between points
+lilRPM:		ds 1			; DATA XREF: sub_F129:loc_F12Ar
 					; sub_F420+82w	...
+					; 24 = 600 rpm 255 = 6375 RPM
 deltaNE:	ds 2			; outcomp
-SatCount_68:	ds 1
+SatCount_68:	ds 1			; seems	to count main loops between incp2 trailing edges
 byte_69:	ds 1			; DATA XREF: ROM:F21Ar	ROM:F221r ...
 SE056plstime:	ds 2			; DATA XREF: ROM:loc_F1F0w ROM:F1FDr ...
 SE056Maxtime:	ds 2			; DATA XREF: ROM:loc_F1DAr ROM:F1DEr ...
@@ -126,8 +130,8 @@ IC2LowCnt:	ds 1			; counts input capture 2 trailing edges, reset by p3 msb low (
 Inj10OffTime:	ds 2
 Inj20OffTime:	ds 2			; DATA XREF: ROM:F13Er	ROM:F145w ...
 word_7D:	ds 2
-word_7F:	ds 2			; DATA XREF: ROM:F555w	sub_F5CEr ...
-					; could	be load	from se056 calculation
+Load:		ds 2			; DATA XREF: ROM:F555w	reinitLoadsr ...
+					; roughly equal	to se056 pulse time * air temp table * fuzz factor
 word_81:	ds 2			; DATA XREF: CalcInjOffTime:loc_F16Er
 					; ROM:FC9Ew
 					; injector related, ADC_AFMr table output
@@ -139,19 +143,24 @@ byte_87:	ds 1			; DATA XREF: sub_F420+72w
 					; sub_F420+10Cw ...
 byte_88:	ds 1			; DATA XREF: ROM:loc_F5C3w
 					; sub_F5E3+33r	...
-byte_89:	ds 1			; DATA XREF: sub_F5CE+7w
+byte_89:	ds 1			; DATA XREF: reinitLoads+7w
 					; sub_F5E3:loc_F61Bw
-byte_8A:	ds 1			; DATA XREF: sub_F6FC+2r ROM:FBF8w
+					; load related?
+ThAcorr:	ds 1			; DATA XREF: sub_F6FC+2r ROM:FBF8w
 unk_8B:		ds 1			; tableTHW output (FEBD	decreasing)
 unk_8C:		ds 1
 		ds 1
-word_8E:	ds 2			; DATA XREF: sub_F5CE+4w sub_F5E3+44r	...
-word_90:	ds 2			; DATA XREF: sub_F5CE+2w sub_F5E3+1Fr	...
+Loadfilt1:	ds 2			; DATA XREF: reinitLoads+4w
+					; sub_F5E3+44r	...
+Loadfilt2:	ds 2			; DATA XREF: reinitLoads+2w
+					; sub_F5E3+1Fr	...
 byte_92:	ds 1			; DATA XREF: ROM:F5BEr	sub_F70A+Dw ...
+					; comes	about by load *	byte_65
 byte_93:	ds 1			; DATA XREF: sub_F751+Ar sub_F751+18r	...
 byte_94:	ds 1
 byte_95:	ds 1			; DATA XREF: sub_FD41:loc_F0D1r
 					; ROM:F1E9r ...
+					; MSB may be IDL/throttle closed condition
 unk_96:		ds 1
 SatCount_97:	ds 1
 SatCount_98:	ds 1
@@ -162,21 +171,23 @@ SatCount_9C:	ds 1
 unk_9D:		ds 1
 byte_9E:	ds 1			; DATA XREF: sub_F420:loc_F508r
 					; sub_F5E3+87r	...
+					; lilRPM related
 InCp2TrEg:	ds 2			; DATA XREF: ROM:loc_F138w inj1onw ...
 					; probably not just trailing edge
 AdvanceinUS:	ds 2			; OC1/igt related
-byte_A3:	ds 1			; DATA XREF: ROM:loc_F8ADw ROM:F8D6r
+BaseAdvance:	ds 1			; DATA XREF: ROM:temploadADVw
+					; ROM:F8D6r
 					; stores output	from 3d	lookup
-byte_A4:	ds 1			; DATA XREF: ROM:F867r	ROM:F8D2r ...
+ThW_tADV:	ds 1			; DATA XREF: ROM:F867r	ROM:F8D2r ...
 byte_A5:	ds 1			; DATA XREF: ROM:F8BBr	ROM:F8D0w
-byte_A6:	ds 1			; DATA XREF: ROM:loc_F847w
-					; ROM:loc_F859w ...
+					; timing, either 0 or d6
+IDLcompADV:	ds 1			; DATA XREF: ROM:notest2w ROM:Pre3dw ...
 NEhighWidth:	ds 2
-word_A9:	ds 2			; last word_ab
-word_AB:	ds 2			; last word_ad
-word_AD:	ds 2			; last word_af
-word_AF:	ds 2
-word_B1:	ds 2
+NEhiDERV_3:	ds 2			; last word_ab
+NEhiDERV_2:	ds 2			; last word_ad
+NEhiDERV_1:	ds 2			; last word_af
+NEhiDERV:	ds 2
+NEhiwidfilt:	ds 2
 word_B3:	ds 2
 word_B5:	ds 2			; DATA XREF: ROM:F391r	ROM:F397r ...
 					; ADC_AFMr*4+384
@@ -186,8 +197,8 @@ word_BB:	ds 2			; outcomp
 word_BD:	ds 2			; output compare routine only
 word_BF:	ds 2			; DATA XREF: ROM:F911r	ROM:FCAAr ...
 					; ADC_AFMr related (table output)
-word_C1:	ds 2
-unk_C3:		ds 1
+IdleRPMfilt:	ds 2
+IdleRPMs:	ds 1			; precision RPM	counter	for idle control, saturates at 1246 RPM
 word_C4:	ds 2
 unk_C6:		ds 1
 SatCount_C7:	ds 1			; DATA XREF: ROM:F84Dw
@@ -203,7 +214,7 @@ SatCount_CF:	ds 1
 SatCount_D0:	ds 1			; DATA XREF: sub_F420+9Bw
 SatCount_D1:	ds 1
 SatCount_D2:	ds 1
-word_D3:	ds 2
+word_D3:	ds 2			; looks	like a temp variable for subs
 unk_D5:		ds 1
 byte_D6:	ds 1			; DATA XREF: ROM:F74Dw	sub_FD41+46r
 unk_D7:		ds 1
@@ -391,7 +402,7 @@ loc_F0CA:				; CODE XREF: sub_FD41-C7Bj
 		jsr	sub_FD11	; p4-5
 
 loc_F0D1:				; CODE XREF: sub_FD41:loc_F0CAj
-		ldd	byte_95
+		ldd	byte_95		; MSB may be IDL/throttle closed condition
 		bpl	loc_F0E8
 		incb
 		bpl	loc_F0F0
@@ -437,7 +448,7 @@ loc_F0FD:				; CODE XREF: sub_FD41-CBAj
 		beq	loc_F10D
 		bsr	sub_F119
 		jsr	sub_F420	; clears IGf bit from port3cntstat
-		jsr	loc_F814	; calculates ignition among other things
+		jsr	BeginCalcADV	; calculates ignition among other things
 		bra	end_main
 ; ---------------------------------------------------------------------------
 
@@ -497,8 +508,8 @@ sub_F129:				; CODE XREF: sub_F96A+F0P
 		psha
 
 loc_F12A:				; CODE XREF: sub_F121+4j
-		ldaa	byte_65
-		cmpa	#$8C ; 'Œ'
+		ldaa	lilRPM		; 24 = 600 rpm 255 = 6375 RPM
+		cmpa	#140		; compare to 3500 RPM
 		bcc	loc_F127
 		pula
 
@@ -851,22 +862,22 @@ IC2low3:				; CODE XREF: ROM:F2B2j
 		ldd	InCp2TrEg	; probably not just trailing edge
 		subd	NEleEdge	; set during IC1 low handler
 		std	deltaNE		; =incp2treg-word_b9
-		ldab	SatCount_68
+		ldab	SatCount_68	; seems	to count main loops between incp2 trailing edges
 		clr	SatCount_68	; reset	satcount_68
 		cmpb	#13
-		bcs	IC2low5		; bounce if satcount_68	was lower than 13
+		bcs	IC2low5		; bounce if satcount_68	was lower than 13, engine spinning fast
 		cmpb	#22
-		bhi	IC2low4		; bounce if satcount_68	was higher than	22
+		bhi	IC2low4		; engine spinning slow
 		tsta
-		bmi	IC2low5
+		bmi	IC2low5		; branch if 916RPM or slower, if we're already here.
 
 IC2low4:				; CODE XREF: ROM:F2D2j
 		ldd	#$FFFF		; about	458 RPM
 		std	deltaNE		; set to FFFF
 
 IC2low5:				; CODE XREF: ROM:F2CEj	ROM:F2D5j
-		cmpa	#$EA ; 'ê'
-		bcc	IC2low6
+		cmpa	#$EA ; 'ê'      ; msbyte of delta NE, compare to 204 (which is 59904 - 60159)
+		bcc	IC2low6		; branch if 498	RPM or lower
 		ldaa	unk_C6
 		ldab	byte_4B
 		cmpb	#4
@@ -884,7 +895,7 @@ IC2low7:				; CODE XREF: ROM:F2E6j
 IC2low8:				; CODE XREF: ROM:F2EBj
 		ldaa	TmrCntStat2	; $TCSR2
 		asla
-		bpl	IC2low9
+		bpl	IC2low9		; branch if OC2	flag low
 		jsr	injector2
 		jsr	injector1	; injector /#10
 
@@ -893,29 +904,29 @@ IC2low9:				; CODE XREF: ROM:F2F3j
 		std	NEleEdge	; =incp2treg
 		subd	NEtrEdge	; leading edge time of tinp2. corresponds to tr	edge of	NE
 		std	NEhighWidth
-		subd	word_B1
-		addd	word_A9		; last word_ab
+		subd	NEhiwidfilt	; d now	contains the derivative	of NEhighwidth
+		addd	NEhiDERV_3	; last filtered	NE high	width derivative
 		asra			; equivalent to	an arithmetic shift right D (preserves sign of value in	d)
 		rorb
-		ldx	word_AB		; begin	the shuffle of buffles,	this is	a delay	by 4 routine...	for a 4	cylinder motor nonetheless
-		stx	word_A9		; last word_ab
-		ldx	word_AD		; last word_af
-		stx	word_AB		; last word_ad
-		ldx	word_AF
-		stx	word_AD		; last word_af
+		ldx	NEhiDERV_2	; begin	the shuffle of buffles,	this is	a delay	by 4 routine...	for a 4	cylinder motor nonetheless
+		stx	NEhiDERV_3	; last word_ab
+		ldx	NEhiDERV_1	; last word_af
+		stx	NEhiDERV_2	; last word_ad
+		ldx	NEhiDERV
+		stx	NEhiDERV_1	; last word_af
 		tst	unk_C6
-		ble	IC2low10
+		ble	IC2low10	; avoid	nuking filtered	derivative if unk_c6 <=	zero
 		clra
 		clrb
 
 IC2low10:				; CODE XREF: ROM:F318j
-		std	word_AF
-		ldd	word_B1
+		std	NEhiDERV
+		ldd	NEhiwidfilt
 		addd	NEhighWidth
 		rora
 		rorb
-		std	word_B1
-		addd	word_A9		; last word_ab
+		std	NEhiwidfilt
+		addd	NEhiDERV_3	; last word_ab
 		std	NEhighWidth
 		ldd	#$1A1A
 		orb	TmrCntStat1	; IC1 edge 1, OC1 unaffected
@@ -947,7 +958,7 @@ IC2low11:				; CODE XREF: ROM:F33Ej	ROM:F344j ...
 		orb	#$46 ; 'F'
 		ldaa	#1
 		bita	Port2		; looking at mixed signal chip input bit 0, input capture pin
-		beq	IC2low12	; branch if inpcap pin is low
+		beq	IC2low12	; branch if IC1	pin is low
 		ldaa	TmrCntStat1	; interested in	ICF bit	7
 		bpl	IC2low13	; branch if ICF	was not	set
 
@@ -1130,13 +1141,13 @@ loc_F446:				; CODE XREF: sub_F420+1Fj
 
 loc_F44B:				; CODE XREF: sub_F420+31j
 		bita	#$F0 ; 'ð'
-		beq	loc_F453	; test if msN is clear
+		beq	CalcRPMvars	; test if msN is clear
 		dex			; decrementing x to point to equivalent	lsrd instructions in DivDby16
 		lsrd
 		bra	loc_F44B
 ; ---------------------------------------------------------------------------
 
-loc_F453:				; CODE XREF: sub_F420+2Dj
+CalcRPMvars:				; CODE XREF: sub_F420+2Dj
 		pshx
 		ldx	#$FEF9
 		jsr	$34,x		; ff2d
@@ -1146,25 +1157,25 @@ loc_F453:				; CODE XREF: sub_F420+2Dj
 		jsr	0,x
 		cmpa	#9
 		bls	loc_F468	; table	output,	suitably divided, capped to $9ff (2559d)
-		ldd	#2559
+		ldd	#$9FF
 
 loc_F468:				; CODE XREF: sub_F420+43j
 		std	word_D3		; table	output,	suitably divided, capped to $9ff (2559d)
 		subd	#144
-		jsr	sub_F5E3
-		stab	unk_C3
+		jsr	sub_F5E3	; saturates after 1246 RPM
+		stab	IdleRPMs	; precision RPM	counter	for idle control, saturates at 1246 RPM
 		clra
-		subb	word_C1
+		subb	IdleRPMfilt
 		sbca	#0
 		lsld
 		lsld
 		lsld
-		addd	word_C1
-		std	word_C1
+		addd	IdleRPMfilt
+		std	IdleRPMfilt
 		ldd	word_C4
-		ldx	word_62
+		ldx	FullRPM		; full range first dervitive continuous	RPM variable, rpms: 600, 8000 values: 192, 2560
 		stx	word_C4
-		subd	word_D3
+		subd	word_D3		; looks	like a temp variable for subs
 		bcc	loc_F48A
 		clra
 		clrb
@@ -1178,20 +1189,20 @@ loc_F48A:				; CODE XREF: sub_F420+66j
 
 loc_F494:				; CODE XREF: sub_F420+6Fj
 		stab	unk_D5
-		ldd	word_D3
-		std	word_62
+		ldd	word_D3		; looks	like a temp variable for subs
+		std	FullRPM		; full range first dervitive continuous	RPM variable, rpms: 600, 8000 values: 192, 2560
 		lsrd
 		lsrd
 		lsrd
-		std	word_D3
-		jsr	sub_F5E3	; if a==0, b is	unmolested; otherwise b=$FF
-		stab	byte_65
-		ldx	word_D3
-		ldd	word_D3
-		cpx	#192
+		std	word_D3		; looks	like a temp variable for subs
+		jsr	sub_F5E3	; saturates at 6375 rpm
+		stab	lilRPM		; 24 = 600 rpm 255 = 6375 RPM
+		ldx	word_D3		; looks	like a temp variable for subs
+		ldd	word_D3		; looks	like a temp variable for subs
+		cpx	#192		; reduced resolution past 192 (4800 RPM)
 		bls	loc_F4B0
 		lsrd
-		addb	#96
+		addb	#96		; absolute max is 255/2	+ 96 = 223
 
 loc_F4B0:				; CODE XREF: sub_F420+8Bj
 		tba
@@ -1201,17 +1212,17 @@ loc_F4B0:				; CODE XREF: sub_F420+8Bj
 		db $D0 ; Ð		; 208
 		db   0
 ; ---------------------------------------------------------------------------
-		staa	byte_64		; the only place this variable is written
+		staa	RPMish		; the only place this variable is written
 		clra
 		staa	SatCount_D0
 		ldd	#$140
 		bita	byte_4D
 		bne	loc_F4DD
-		ldaa	byte_65
+		ldaa	lilRPM		; 24 = 600 rpm 255 = 6375 RPM
 		jsr	boundData	; Limits AccA to bounds	set by two bytes after call
 					; Carry	bit is only set	if data	has been clipped at either level
 					;
-		suba	$14,x
+		suba	$14,x		; bounds are CB	(203) and 60 (96) which	are 5075 RPM and 2400 RPM
 		bcs	loc_F4E2
 		ldaa	Port3
 		bpl	loc_F4D6
@@ -1237,41 +1248,41 @@ loc_F4E2:				; CODE XREF: sub_F420+ABj
 		cli
 
 loc_F4EB:				; CODE XREF: sub_F420+BBj
-		ldx	#$E6 ; 'æ'
+		ldx	#230
 		ldd	#$5002
 		cmpa	ADC_ThW		; compare to 80d
-		bhi	loc_F506	; branch if over 80 deg	F
+		bhi	set56mintime	; branch if over 80 deg	F
 		cmpb	byte_60
-		bhi	loc_F506
-		ldaa	byte_65
-		cmpa	#$50 ; 'P'
-		bcc	loc_F506
-		cmpa	#$40 ; '@'
+		bhi	set56mintime
+		ldaa	lilRPM		; 24 = 600 rpm 255 = 6375 RPM
+		cmpa	#80		; 2000 RPM
+		bcc	set56mintime
+		cmpa	#64		; 1600 RPM
 		bcc	loc_F508
-		ldx	#$1CC
+		ldx	#460
 
-loc_F506:				; CODE XREF: sub_F420+D3j sub_F420+D7j ...
+set56mintime:				; CODE XREF: sub_F420+D3j sub_F420+D7j ...
 		stx	SE056Mintime
 
 loc_F508:				; CODE XREF: sub_F420+E1j
-		ldab	byte_9E
+		ldab	byte_9E		; lilRPM related
 		ldaa	byte_4C		; msb inhibits injection
 		bmi	loc_F510
-		addb	#$10
+		addb	#16		; 400 RPM incremental
 
 loc_F510:				; CODE XREF: sub_F420+ECj
 		anda	#$3F ; '?'
-		cmpb	byte_65
+		cmpb	lilRPM		; 24 = 600 rpm 255 = 6375 RPM
 		bhi	loc_F51E
-		ldab	byte_95
+		ldab	byte_95		; MSB may be IDL/throttle closed condition
 		bpl	loc_F51E
 		ora	#$C0 ; 'À'
-		bra	loc_F531
+		bra	Exitsubf420
 ; ---------------------------------------------------------------------------
 
 loc_F51E:				; CODE XREF: sub_F420+F4j sub_F420+F8j
 		ldab	byte_4C		; msb inhibits injection
-		bpl	loc_F531
+		bpl	Exitsubf420
 		psha
 		ldaa	unk_D5
 		cmpa	#6
@@ -1283,7 +1294,7 @@ loc_F51E:				; CODE XREF: sub_F420+F4j sub_F420+F8j
 loc_F530:				; CODE XREF: sub_F420+107j
 		pula
 
-loc_F531:				; CODE XREF: sub_F420+FCj
+Exitsubf420:				; CODE XREF: sub_F420+FCj
 					; sub_F420+100j
 		staa	byte_4C		; msb inhibits injection
 		rts
@@ -1314,7 +1325,7 @@ loc_F54E:				; CODE XREF: ROM:F547j
 loc_F550:				; CODE XREF: ROM:F54Bj
 		ldd	SE056plstime
 		jsr	sub_F6FC
-		std	word_7F		; could	be load	from se056 calculation
+		std	Load		; roughly equal	to se056 pulse time * air temp table * fuzz factor
 		ldaa	byte_4D
 		rora
 		bcc	loc_F571
@@ -1334,7 +1345,7 @@ loc_F571:				; CODE XREF: ROM:F55Aj
 		ldaa	SatCount_D2
 		cmpa	#2
 		bhi	loc_F57F
-		bsr	sub_F5CE
+		bsr	reinitLoads
 		ldx	#$FECB
 		jsr	$50,x		; ff1b
 ; ---------------------------------------------------------------------------
@@ -1344,7 +1355,7 @@ loc_F571:				; CODE XREF: ROM:F55Aj
 loc_F57F:				; CODE XREF: ROM:F575j
 		clra
 		staa	byte_86
-		ldd	word_62
+		ldd	FullRPM		; full range first dervitive continuous	RPM variable, rpms: 600, 8000 values: 192, 2560
 		ldx	#$FE9C
 		jsr	$91,x		; ff2d
 		jsr	DivDby32
@@ -1366,8 +1377,8 @@ loc_F57F:				; CODE XREF: ROM:F575j
 loc_F5AC:				; CODE XREF: ROM:F5A8j
 		cmpa	byte_5D		; =adc_tps - byte_5b, tps related
 		bhi	loc_F5BB
-		ldd	#$26F0
-		cmpb	byte_65
+		ldd	#$26F0		; b is 6000 RPM
+		cmpb	lilRPM		; 24 = 600 rpm 255 = 6375 RPM
 		bhi	loc_F5C3
 		ldaa	#$33 ; '3'
 		bra	loc_F5C3
@@ -1375,7 +1386,7 @@ loc_F5AC:				; CODE XREF: ROM:F5A8j
 
 loc_F5BB:				; CODE XREF: ROM:F5AEj
 		ldd	#$19C8
-		cmpb	byte_92
+		cmpb	byte_92		; comes	about by load *	byte_65
 		bls	loc_F5C3
 		clra
 
@@ -1383,20 +1394,20 @@ loc_F5C3:				; CODE XREF: ROM:F5B5j	ROM:F5B9j ...
 		staa	byte_88
 		ldaa	byte_4C		; msb inhibits injection
 		bpl	loc_F5EB
-		bsr	sub_F5CE
+		bsr	reinitLoads
 		jmp	loc_F673
 
 ; =============== S U B	R O U T	I N E =======================================
 
 
-sub_F5CE:				; CODE XREF: ROM:F577p	ROM:F5C9p
-		ldd	word_7F		; could	be load	from se056 calculation
-		std	word_90
-		std	word_8E
+reinitLoads:				; CODE XREF: ROM:F577p	ROM:F5C9p
+		ldd	Load		; roughly equal	to se056 pulse time * air temp table * fuzz factor
+		std	Loadfilt2
+		std	Loadfilt1
 		clra
-		staa	byte_89
+		staa	byte_89		; load related?
 		rts
-; End of function sub_F5CE
+; End of function reinitLoads
 
 
 ; =============== S U B	R O U T	I N E =======================================
@@ -1471,13 +1482,13 @@ loc_F5F7:				; CODE XREF: sub_F5E3+11j
 
 loc_F600:				; CODE XREF: sub_F5E3+1Aj
 		stab	byte_87
-		ldd	word_90
-		subd	word_7F		; could	be load	from se056 calculation
+		ldd	Loadfilt2
+		subd	Load		; roughly equal	to se056 pulse time * air temp table * fuzz factor
 		bcs	loc_F61A
 		deca
 		bmi	loc_F61A
 		bsr	sub_F5E0
-		ldaa	#$CC ; 'Ì'
+		ldaa	#204
 		mul
 		ldab	#176
 		cmpb	ADC_ThW		; water	temp in	farenheit
@@ -1489,19 +1500,19 @@ loc_F61A:				; CODE XREF: sub_F5E3+23j sub_F5E3+26j ...
 		clra
 
 loc_F61B:				; CODE XREF: sub_F5E3+35j
-		staa	byte_89
-		ldd	word_90
-		addd	word_7F		; could	be load	from se056 calculation
+		staa	byte_89		; load related?
+		ldd	Loadfilt2
+		addd	Load		; roughly equal	to se056 pulse time * air temp table * fuzz factor
 		lsrd
-		addd	word_90
+		addd	Loadfilt2
 		lsrd
-		std	word_90
-		ldx	word_8E
-		ldd	word_7F		; could	be load	from se056 calculation
-		subd	word_8E
-		bsr	sub_F5D8
+		std	Loadfilt2
+		ldx	Loadfilt1
+		ldd	Load		; roughly equal	to se056 pulse time * air temp table * fuzz factor
+		subd	Loadfilt1
+		bsr	sub_F5D8	; can increment	x
 		pshb
-		stx	word_8E
+		stx	Loadfilt1
 		ldx	#6
 		ldaa	byte_60
 		ldab	byte_4C		; msb inhibits injection
@@ -1523,29 +1534,29 @@ loc_F649:				; CODE XREF: sub_F5E3+60j
 		bitb	#8
 		bne	loc_F654
 		ldaa	ADC_ThW		; water	temp in	farenheit
-		cmpa	#$60 ; '`'
+		cmpa	#96
 		bcc	loc_F654
-		dex
+		dex			; less filtering of load
 
 loc_F654:				; CODE XREF: sub_F5E3+68j sub_F5E3+6Ej
-		ldd	word_7F		; could	be load	from se056 calculation
+		ldd	Load		; roughly equal	to se056 pulse time * air temp table * fuzz factor
 
-loc_F656:				; CODE XREF: sub_F5E3+77j
-		addd	word_8E
+loadfiltloop:				; CODE XREF: sub_F5E3+77j
+		addd	Loadfilt1
 		lsrd
-		dex
-		bne	loc_F656
-		std	word_8E
+		dex			; x can	contain	6 ($f632), or less depending on	previous code
+		bne	loadfiltloop
+		std	Loadfilt1
 		ldd	unk_8C
-		subd	#$10
+		subd	#16
 		bcc	loc_F666
 		clra
 
 loc_F666:				; CODE XREF: sub_F5E3+80j
 		std	unk_8C
 		adda	unk_8B		; tableTHW output (FEBD	decreasing)
-		ldab	byte_9E
-		cmpb	byte_65
+		ldab	byte_9E		; lilRPM related
+		cmpb	lilRPM		; 24 = 600 rpm 255 = 6375 RPM
 		bhi	loc_F671
 		lsra
 
@@ -1582,7 +1593,7 @@ loc_F67B:				; CODE XREF: sub_F5E3+95j
 		pshx
 		pula
 		inca
-		staa	word_D3
+		staa	word_D3		; looks	like a temp variable for subs
 		ldaa	unk_83		; TableTHW output (FEAF	decreasing)
 		psha
 		bsr	loc_F6E6+1	; DC72 is LDD $72
@@ -1595,7 +1606,7 @@ loc_F67B:				; CODE XREF: sub_F5E3+95j
 		bsr	mulDbyStack	; returns upper	16b in d
 
 loc_F6A8:				; CODE XREF: sub_F5E3+CCj
-		dec	word_D3
+		dec	word_D3		; looks	like a temp variable for subs
 		beq	loc_F6B1
 		addd	word_72
 		bra	loc_F6A8
@@ -1688,7 +1699,7 @@ mulDbyStack:				; CODE XREF: ROM:F1FFP	sub_F5E3+C3p ...
 
 sub_F6FC:				; CODE XREF: ROM:F552P	ROM:F593P
 		std	word_72
-		ldaa	byte_8A
+		ldaa	ThAcorr
 ; End of function sub_F6FC
 
 
@@ -1697,10 +1708,10 @@ sub_F6FC:				; CODE XREF: ROM:F552P	ROM:F593P
 
 sub_F700:				; CODE XREF: sub_F6D4+2p ROM:F74Fj
 		psha
-		bsr	sub_F6E3	; wultiply word_72 by stack with some shifting
+		bsr	sub_F6E3	; multiply word_72 by 2	then by	stack, returns upper 16	bits
 		addd	word_72
 		lsrd
-		addd	word_72
+		addd	word_72		; smoothing it with the	last word_72
 		lsrd
 		rts
 ; End of function sub_F700
@@ -1710,14 +1721,14 @@ sub_F700:				; CODE XREF: sub_F6D4+2p ROM:F74Fj
 
 
 sub_F70A:				; CODE XREF: sub_F5E3+BDp
-		ldaa	byte_65
+		ldaa	lilRPM		; 24 = 600 rpm 255 = 6375 RPM
 		ldab	#202
 		mul
 		psha
-		ldd	word_7F		; could	be load	from se056 calculation
+		ldd	Load		; roughly equal	to se056 pulse time * air temp table * fuzz factor
 		bsr	mulDbyStack	; returns upper	16b in d
 		jsr	sub_F5E1
-		stab	byte_92
+		stab	byte_92		; comes	about by load *	byte_65
 		ldab	word_44
 		bpl	loc_F71E
 		negb
@@ -1730,7 +1741,7 @@ loc_F71E:				; CODE XREF: sub_F70A+11j
 
 loc_F725:				; CODE XREF: sub_F70A+2Aj
 		bcs	loc_F72E
-		cmpa	byte_92
+		cmpa	byte_92		; comes	about by load *	byte_65
 		bcc	loc_F72E
 		clc
 		bra	loc_F731
@@ -1738,7 +1749,7 @@ loc_F725:				; CODE XREF: sub_F70A+2Aj
 
 loc_F72E:				; CODE XREF: sub_F70A:loc_F725j
 					; sub_F70A+1Fj
-		suba	byte_92
+		suba	byte_92		; comes	about by load *	byte_65
 		sec
 
 loc_F731:				; CODE XREF: sub_F70A+22j
@@ -1777,7 +1788,7 @@ loc_F741:				; CODE XREF: sub_F70A+34j
 sub_F751:				; CODE XREF: sub_F96A+75P
 		ldaa	word_42
 		ldab	word_40		; if we	call this the start of user ram, it's exactly 192 bytes (inclusive)
-		ldx	byte_95
+		ldx	byte_95		; MSB may be IDL/throttle closed condition
 		bpl	loc_F768
 		cba
 		rora
@@ -1811,7 +1822,7 @@ loc_F771:				; CODE XREF: sub_F751+1Dj
 ; ---------------------------------------------------------------------------
 		bcs	loc_F798
 		psha
-		ldaa	byte_95
+		ldaa	byte_95		; MSB may be IDL/throttle closed condition
 		bpl	loc_F797
 		ldaa	byte_5C
 		jsr	boundData	; Limits AccA to bounds	set by two bytes after call
@@ -1900,7 +1911,7 @@ loc_F7C4:				; CODE XREF: sub_F7BE+2j
 		stab	byte_4D
 		ldd	#$6C6F
 		ldx	#1024
-		cpx	word_7F		; could	be load	from se056 calculation
+		cpx	Load		; roughly equal	to se056 pulse time * air temp table * fuzz factor
 		bhi	loc_F7E7	; bounce
 		tba
 
@@ -1947,29 +1958,29 @@ loc_F811:				; CODE XREF: sub_F7BE-2j
 
 ; ---------------------------------------------------------------------------
 
-loc_F814:				; CODE XREF: sub_FD41-C39P
-		ldd	#$11C		; called from main loop
+BeginCalcADV:				; CODE XREF: sub_FD41-C39P
+		ldd	#$11C		; B contains default timing value, 28/255*90 = 10 degrees
 		anda	unk_CD
-		bne	No3dtablework	; jump past table lookup because we're in test mode
+		bne	No3dtablework	; jump past table lookup because we're in test mode, or other conditions forced -10deg btdc
 		ldaa	unk_C6
-		bpl	No3dtablework	; jump past table lookup because we're in test mode
-		ldaa	byte_95
-		bpl	loc_F859	; this is the only way we're getting to the 3d table
+		bpl	No3dtablework	; jump past table lookup because we're in test mode, or other conditions forced -10deg btdc
+		ldaa	byte_95		; msb could signify IDL/throttle closed	condition.
+		bpl	Pre3d		; this is the only way we're getting to the 3d table
 		ldaa	Port4		; p4-5 is T input to pcm, test mode is active low
 		anda	#$20 ; ' '      ; p4-5 is T input to pcm, test mode is active low
-		bne	loc_F82C
+		bne	IdleADVcomp
 
 No3dtablework:				; CODE XREF: ROM:F819j	ROM:F81Dj
-		jmp	loc_F8EE	; jump past table lookup because we're in test mode
+		jmp	loc_F8EE	; jump past table lookup because we're in test mode, or other conditions forced -10deg btdc
 ; ---------------------------------------------------------------------------
 
-loc_F82C:				; CODE XREF: ROM:F827j
-		ldaa	word_C1
-		suba	unk_C3
+IdleADVcomp:				; CODE XREF: ROM:F827j
+		ldaa	IdleRPMfilt
+		suba	IdleRPMs	; precision RPM	counter	for idle control, saturates at 1246 RPM
 		jsr	boundDataneg	; Limits AccA to bounds	set by two bytes after call
 ; ---------------------------------------------------------------------------
-		db $10
-		db   0
+		db 16
+		db 0
 ; ---------------------------------------------------------------------------
 		ldab	#136
 		mul
@@ -1977,69 +1988,69 @@ loc_F82C:				; CODE XREF: ROM:F827j
 		lsld
 		ldab	Port4		; p4-3 is ac input, active high
 		andb	#8		; p4-3 is ac input, active high
-		beq	loc_F847
+		beq	notest2		; bounce if ac is off
 		jsr	boundData	; Limits AccA to bounds	set by two bytes after call
 					; Carry	bit is only set	if data	has been clipped at either level
 					;
 ; ---------------------------------------------------------------------------
-		db  $E
-		db   0
+		db 14
+		db 0
 ; ---------------------------------------------------------------------------
-		ldab	#$E
+		ldab	#14		; 14 is	about 5	deg advance
 
-loc_F847:				; CODE XREF: ROM:F83Ej
-		staa	byte_A6
-		ldaa	#$2D ; '-'
-		aba
+notest2:				; CODE XREF: ROM:F83Ej
+		staa	IDLcompADV
+		ldaa	#45
+		aba			; b is either 8	from ac	AND check fail,	or 14 from ac code
 		clrb
 		stab	SatCount_C7	; clear	SatCount_C7
 		ldab	word_42
-		cmpb	#$42 ; 'B'
-		bcc	loc_F857	; bypasses 3d table lookup
-		adda	#$E
+		cmpb	#$42 ; 'B'      ; 16896 minimum fr word_42
+		bcc	notestexit	; bypasses 3d table lookup
+		adda	#14		; so from here Acca can	be [45,	59, 73]	which is [16, 21, 26] deg advance
 
-loc_F857:				; CODE XREF: ROM:F853j
-		bra	loc_F8AD	; bypasses 3d table lookup
+notestexit:				; CODE XREF: ROM:F853j
+		bra	temploadADV	; bypasses 3d table lookup
 ; ---------------------------------------------------------------------------
 
-loc_F859:				; CODE XREF: ROM:F821j
-		clr	byte_A6
+Pre3d:					; CODE XREF: ROM:F821j
+		clr	IDLcompADV
 		ldx	#$FFC8
 		jsr	$1B,x		; ffe3,	saturate count satcount_C7
 		cmpa	#5
 		bcc	lookup3dTable	; if SatCount_C7>=5, use the 3d	table
-		ldab	#$11
-		addb	byte_A4
-		jmp	loc_F8F0	; bypass 3d table
+		ldab	#17
+		addb	ThW_tADV
+		jmp	SetAdvfromB	; bypass 3d table
 ; ---------------------------------------------------------------------------
 
 lookup3dTable:				; CODE XREF: ROM:F863j
-		ldd	word_7F		; could	be load	from se056 calculation
+		ldd	Load		; roughly equal	to se056 pulse time * air temp table * fuzz factor
 		cmpa	#$B
-		bls	loc_F875	; now maximum value can	only be	$9FF, this is basically	subtracting 512
+		bls	lookup3d2	; now maximum value can	only be	$9FF, this is basically	subtracting 512
 		ldd	#$BFF		; saturate word_7f to $0BFF
 
-loc_F875:				; CODE XREF: ROM:F870j
+lookup3d2:				; CODE XREF: ROM:F870j
 		suba	#2		; now maximum value can	only be	$9FF, this is basically	subtracting 512
-		bcc	loc_F87B	; bounce if good, otherwise null out
+		bcc	lookup3d3	; bounce if good, otherwise null out
 		clra
 		clrb
 
-loc_F87B:				; CODE XREF: ROM:F877j
+lookup3d3:				; CODE XREF: ROM:F877j
 		lsrd			; divide by 2, maximum range is	now 4FF
 		pshb
 		ldab	#$E		; suggests table size is 14 bytes
 		mul			; output can range from	0,E,1c,2a,38
 		ldx	#$FF40
 		abx
-		ldaa	byte_64
+		ldaa	RPMish		; rpms:	[600, 4800, 7200] RPMish value:	[24, 192, 208] - linear	interpolate between points
 		pshx
 		ldab	#$E
 		abx
 		jsr	loc_FF28	; another entry	point
 		pulx
 		psha
-		ldaa	byte_64
+		ldaa	RPMish		; rpms:	[600, 4800, 7200] RPMish value:	[24, 192, 208] - linear	interpolate between points
 		jsr	loc_FF28	; another entry	point
 		psha
 		tsx
@@ -2049,17 +2060,17 @@ loc_F87B:				; CODE XREF: ROM:F877j
 		ins
 		pulx
 		ldab	unk_99		; TVIS related
-		bmi	loc_F8A5	; bounce around	tweaking the output of 3d table	lookup
+		bmi	PWRrAdv		; bounce around	tweaking the output of 3d table	lookup
 		adda	#8
 
-loc_F8A5:				; CODE XREF: ROM:F8A1j
+PWRrAdv:				; CODE XREF: ROM:F8A1j
 		ldx	#$FF94		; Tweak	output of 3d table with	output of this ADC_PWRr	function, mostly harmless though
 		jsr	$10,x		; ffa4
-		bcc	loc_F8AD	; bounce if no carry
+		bcc	temploadADV	; bounce if no carry
 		clra
 
-loc_F8AD:				; CODE XREF: ROM:loc_F857j ROM:F8AAj
-		staa	byte_A3		; stores output	from 3d	lookup
+temploadADV:				; CODE XREF: ROM:notestexitj ROM:F8AAj
+		staa	BaseAdvance	; stores output	from 3d	lookup
 		ldaa	ADC_ThW		; water	temp in	farenheit
 		jsr	boundData	; Limits AccA to bounds	set by two bytes after call
 					; Carry	bit is only set	if data	has been clipped at either level
@@ -2068,50 +2079,50 @@ loc_F8AD:				; CODE XREF: ROM:loc_F857j ROM:F8AAj
 		db $98 ; ˜		; 152 farenheit
 		db $50 ; P		; 80 farenheit
 ; ---------------------------------------------------------------------------
-		bcs	loc_F8CD+1	; clear	d is bound data	clipped	temp input
-		ldx	#1450
-		ldaa	byte_A5
-		beq	loc_F8C2
+		bcs	sumallADV+1	; clear	d is bound data	clipped	temp input
+		ldx	#1450		; only executed	between	80 and 152f
+		ldaa	byte_A5		; byte_a5 is only either 0 or D6
+		beq	tempload2
 		ldx	#1550
 
-loc_F8C2:				; CODE XREF: ROM:F8BDj
-		cpx	word_7F		; could	be load	from se056 calculation
-		bcs	loc_F8CD+1	; clear	d if word_7f is	greater	than X
-		ldaa	byte_95
-		bmi	loc_F8CD+1	; clear	d is MSB of byte_95
+tempload2:				; CODE XREF: ROM:F8BDj
+		cpx	Load		; roughly equal	to se056 pulse time * air temp table * fuzz factor
+		bcs	sumallADV+1	; clear	d if word_7f is	greater	than X
+		ldaa	byte_95		; MSB may be IDL/throttle closed condition
+		bmi	sumallADV+1	; clear	d is MSB of byte_95
 		ldd	#$FFD6
 
-loc_F8CD:				; CODE XREF: ROM:F8B6j	ROM:F8C4j ...
+sumallADV:				; CODE XREF: ROM:F8B6j	ROM:F8C4j ...
 		cpx	#$4F5F		; clra clrb
 		stab	byte_A5		; A:B is either	0:0 or FFD6, 42	counts from 0
-		addb	byte_A4
+		addb	ThW_tADV	; minimum is 28, except	when overheating when it can be	15 (load dependant)
 		adca	#0
-		addb	byte_A3		; stores output	from 3d	lookup
+		addb	BaseAdvance	; stores output	from 3d	lookup
 		adca	#0
-		addb	byte_A6
+		addb	IDLcompADV
 		adca	#0
-		bpl	loc_F8E2	; a is expected	to overflow and	become positive
-		clra
+		bpl	sumgood		; b is expected	to overflow and	carries	force A	positive
+		clra			; force	good sum of 0 advance
 		clrb
 
-loc_F8E2:				; CODE XREF: ROM:F8DEj
+sumgood:				; CODE XREF: ROM:F8DEj
 		jsr	sub_F5E3	; if AccA is 0,	return,	otherwise saturate AccB	to $FF
 		tba
 		jsr	boundData	; Limits AccA to bounds	set by two bytes after call
 					; Carry	bit is only set	if data	has been clipped at either level
 					;
 ; ---------------------------------------------------------------------------
-		db $B8 ; ¸		; 184
-		db $1F			; 31
+		db 184			; timing is roughly [this value]/255*90, so 184/255*90=65deg
+		db 31			; 31, which is 11deg
 ; ---------------------------------------------------------------------------
 		tab
-		subb	#28
+		subb	#28		; subtract 10 deg
 
 loc_F8EE:				; CODE XREF: ROM:No3dtableworkJ
 		stab	unk_D8
 
-loc_F8F0:				; CODE XREF: ROM:F869J
-		addb	#1
+SetAdvfromB:				; CODE XREF: ROM:F869J
+		addb	#1		; to prevent it	from being 0 I suppose,	incb would save	a byte here
 		pshb
 		ldd	deltaNE		; outcomp
 		jsr	DivDby16
@@ -2121,32 +2132,32 @@ loc_F8F0:				; CODE XREF: ROM:F869J
 		lsrd
 		inca			; add 256us of advance (11.3644	degrees	at 7400	RPM, 0.0074 degrees at idle)
 		subd	word_D3		; subtract 11.25 degrees of timing (account for	timing of NE edge at 10	degrees	BTDC)
-		bcs	loc_F90D	; shouldn't be set after 3d table given boundata entries
+		bcs	setnforgetADV	; branch if timing was less than 11.25 deg
 		subd	NEhighWidth	; which	im assuming is exactly 50% of the NE duty cycle, should	set the	carry
 		bcs	loc_F90B
-		clra			; from here, doesnt the	advance	get set	to 90 degrees? perhaps NEhighwidth is <50%?
+		clra			; set advance to 0 deg
 		clrb
 
 loc_F90B:				; CODE XREF: ROM:F907j
 		addd	NEhighWidth
 
-loc_F90D:				; CODE XREF: ROM:F903j
+setnforgetADV:				; CODE XREF: ROM:F903j
 		std	AdvanceinUS	; word_a1 is the backoff from 10degrees	BTDC to	fire the igniter in us
-		ldd	word_D3
+		ldd	word_D3		; deltane/16
 		addd	word_BF		; ADC_AFMr related (table output)
 		std	word_BB		; outcomp
 		lsrd
-		std	word_D3
+		std	word_D3		; looks	like a temp variable for subs
 		ldd	deltaNE		; outcomp
 		subd	word_B5		; ADC_AFMr*4+384
 		subd	#100
-		subd	word_D3
+		subd	word_D3		; looks	like a temp variable for subs
 		bcs	loc_F925
 		clra
 		clrb
 
 loc_F925:				; CODE XREF: ROM:F921j
-		addd	word_D3
+		addd	word_D3		; looks	like a temp variable for subs
 		std	word_B3
 		ldaa	#1
 		ldab	unk_C6
@@ -2154,24 +2165,24 @@ loc_F925:				; CODE XREF: ROM:F921j
 		sei
 		ora	TmrCntStat1	; set output compare level to high
 		staa	TmrCntStat1	; set output compare level to high
-		bra	loc_F950
+		bra	ExitCalcADV
 ; ---------------------------------------------------------------------------
 
 loc_F936:				; CODE XREF: ROM:F92Dj
 		bsr	OutCmp1Sub1	; called from output compare ISR
-		std	word_D3
+		std	word_D3		; looks	like a temp variable for subs
 		ldd	#$C02
 		eora	unk_4E		; xor with $0C %00001100
 		bita	#%1110
-		bne	loc_F950	; branch if bits 2,3 were low or bit 1 was high
+		bne	ExitCalcADV	; branch if bits 2,3 were low or bit 1 was high
 		bitb	Port2		; looking at /IGT
-		beq	loc_F950	; branch if /IGT low
-		ldd	word_D3
+		beq	ExitCalcADV	; branch if /IGT low
+		ldd	word_D3		; looks	like a temp variable for subs
 		std	OutCmp1
 		ldx	TmrCntStat1
 		jsr	stdOC1		; write	d to outcmp
 
-loc_F950:				; CODE XREF: ROM:F934j	ROM:F941j ...
+ExitCalcADV:				; CODE XREF: ROM:F934j	ROM:F941j ...
 		cli
 		rts
 
@@ -2256,7 +2267,7 @@ loc_F995:				; CODE XREF: sub_F96A+22j sub_F96A+27j
 
 loc_F9AF:				; CODE XREF: sub_F96A+42j
 		stab	byte_93
-		ldab	byte_95
+		ldab	byte_95		; MSB may be IDL/throttle closed condition
 		bmi	loc_F9BF
 		ldab	byte_5C
 		cba
@@ -2271,7 +2282,7 @@ loc_F9BF:				; CODE XREF: sub_F96A+49j
 		ldd	#$B020
 		cmpa	ADC_ThW		; compare water	temp to	176 deg	F
 		bhi	loc_F9E2
-		ldx	word_7F		; could	be load	from se056 calculation
+		ldx	Load		; roughly equal	to se056 pulse time * air temp table * fuzz factor
 		cpx	#400
 		bitb	Port4		; interested in	bit 5 -	test input
 		bls	loc_F9E2	; branch if test is pulled low or the carry was	set (word_7f-400)
@@ -2300,7 +2311,7 @@ loc_F9E5:				; CODE XREF: sub_F96A+73j
 		jsr	sub_F6D4	; end product seems to be word_74
 
 loc_F9F7:				; CODE XREF: sub_F96A+31j sub_F96A+39j
-		ldaa	byte_95
+		ldaa	byte_95		; MSB may be IDL/throttle closed condition
 		ldab	Port4		; p4-2 is IDL input, active low
 		andb	#4
 		beq	loc_FA0E	; bounce if not	throttle closed
@@ -2326,8 +2337,8 @@ loc_FA0E:				; CODE XREF: sub_F96A+93j
 ; ---------------------------------------------------------------------------
 
 loc_FA19:				; CODE XREF: sub_F96A+A7j
-		ldaa	byte_65
-		cmpa	#100
+		ldaa	lilRPM		; 24 = 600 rpm 255 = 6375 RPM
+		cmpa	#100		; 2500 RPM
 		bcc	loc_FA26
 		ldd	#2000
 		jsr	sub_F121
@@ -2347,7 +2358,7 @@ loc_FA31:				; CODE XREF: sub_F96A+ABj sub_F96A+C0j
 		ldaa	#3
 
 loc_FA39:				; CODE XREF: sub_F96A+A0j
-		staa	byte_95
+		staa	byte_95		; MSB may be IDL/throttle closed condition
 
 loc_FA3B:				; CODE XREF: sub_F96A+9Dj sub_F96A+A2j
 		ldd	#$10FE
@@ -2374,11 +2385,11 @@ loc_FA60:				; CODE XREF: sub_F96A+D6j
 		staa	byte_4B
 
 loc_FA62:				; CODE XREF: sub_F96A+E0j sub_F96A+E9j
-		ldab	#$4B ; 'K'
-		cmpb	SatCount_68
+		ldab	#75
+		cmpb	SatCount_68	; seems	to count main loops between incp2 trailing edges
 		bcc	loc_FA83
 		ldab	#$12
-		stab	byte_65		; write	$12 to unk_65
+		stab	lilRPM		; write	$12 to unk_65
 		tsta
 		bne	loc_FA75
 		ldaa	#1
@@ -2397,8 +2408,8 @@ loc_FA75:				; CODE XREF: sub_F96A+E3j sub_F96A+EBj ...
 loc_FA83:				; CODE XREF: sub_F96A+FCj
 		ldaa	unk_C6
 		bpl	loc_FA92
-		ldd	#$14FE
-		cmpa	byte_65
+		ldd	#$14FE		; a is 500 RPM,	which is almost	rock bottom for	measurement
+		cmpa	lilRPM		; 24 = 600 rpm 255 = 6375 RPM
 		bhi	loc_FA92
 		andb	byte_4D
 		stab	byte_4D
@@ -2632,7 +2643,7 @@ loc_FB6E:				; CODE XREF: ROM:FB65j
 		ldab	byte_CC		; used for flagging bad	sensors	probably, bits:	6-ThA, 5-TPS, 2-ThW, 0-afm(not from adc)
 		bitb	#$20 ; ' '
 		bne	loc_FBD2
-		ldab	byte_95
+		ldab	byte_95		; MSB may be IDL/throttle closed condition
 		bmi	loc_FB7C
 		ldaa	byte_5B		; TPS related
 		bra	loc_FB8F
@@ -2673,7 +2684,7 @@ loc_FB97:				; CODE XREF: ROM:FB93j
 
 loc_FBA0:				; CODE XREF: ROM:FB9Dj
 		staa	byte_5D		; =adc_tps - byte_5b, tps related
-		ldaa	byte_95
+		ldaa	byte_95		; MSB may be IDL/throttle closed condition
 		bmi	loc_FBD2
 		ldaa	byte_5D		; =adc_tps - byte_5b, tps related
 		suba	byte_5A
@@ -2688,8 +2699,8 @@ loc_FBA0:				; CODE XREF: ROM:FB9Dj
 		ldx	#$FEA7
 		clrb
 		jsr	$84,x		; ff2b
-		ldab	byte_65
-		cmpb	#80
+		ldab	lilRPM		; 24 = 600 rpm 255 = 6375 RPM
+		cmpb	#80		; 2000 RPM
 		bcs	loc_FBC1
 		lsra
 
@@ -2738,38 +2749,38 @@ loc_FBE4:				; CODE XREF: ROM:FBE0j
 ; ---------------------------------------------------------------------------
 
 loc_FBEF:				; CODE XREF: ROM:FBE8j
-		staa	byte_9E
+		staa	byte_9E		; lilRPM related
 		ldaa	ADC_ThA
 		ldx	#$FED9
 		jsr	$4C,x		; ff25
-		staa	byte_8A
+		staa	ThAcorr
 		ldx	#$FF0A
 		jsr	$11,x		; ff1b
 		ldab	ADC_ThW		; water	temp in	farenheit
-		subb	#$DA ; 'Ú'
-		bcs	loc_FC1E
+		subb	#218
+		bcs	loc_FC1E	; branch if not	overheating
 		tba
 		jsr	boundData	; Limits AccA to bounds	set by two bytes after call
 					; Carry	bit is only set	if data	has been clipped at either level
 					;
 ; ---------------------------------------------------------------------------
-		db  $F
-		db   0
+		db 15
+		db 0
 ; ---------------------------------------------------------------------------
 		ldx	#$FF11
 		clrb
 		jsr	$19,x		; ff2a
-		ldab	byte_95
+		ldab	byte_95		; MSB may be IDL/throttle closed condition
 		bmi	loc_FC1C
-		ldx	word_7F		; could	be load	from se056 calculation
+		ldx	Load		; roughly equal	to se056 pulse time * air temp table * fuzz factor
 		cpx	#2500
 		bcc	loc_FC1E
 
 loc_FC1C:				; CODE XREF: ROM:FC13j
-		ldaa	#$1C
+		ldaa	#28
 
 loc_FC1E:				; CODE XREF: ROM:FC03j	ROM:FC1Aj
-		staa	byte_A4
+		staa	ThW_tADV
 		ldaa	byte_4A
 		cmpa	#$5A ; 'Z'
 		bne	loc_FC33
@@ -2796,10 +2807,10 @@ loc_FC33:				; CODE XREF: ROM:FC24j
 		staa	byte_4A
 
 loc_FC47:				; CODE XREF: ROM:FC2Bj
-		ldab	byte_65
+		ldab	lilRPM		; 24 = 600 rpm 255 = 6375 RPM
 		ldaa	Port1		; interested in	 bit 6 /TVIS
 		anda	#$BF ; '¿'      ; and with bf force bit 6 low, tvis on
-		cmpb	#$9E ; 'ž'      ; 158
+		cmpb	#158		; 3950 RPM
 		bcs	loc_FC57	; branch if mem	$65 less than $9e
 		cmpb	#$AE ; '®'      ; 174
 		bcs	loc_FC59	; branch if mem	$65 less than $ae - causes no change to	tvis bit
@@ -2901,7 +2912,7 @@ loc_FC94:				; CODE XREF: ROM:FC91j
 ; ---------------------------------------------------------------------------
 
 jmptable1:				; DATA XREF: ROM:JumpTableo
-		ldaa	byte_95
+		ldaa	byte_95		; MSB may be IDL/throttle closed condition
 		bpl	loc_FCC9
 		ldab	word_42
 		cmpb	#66
@@ -2938,8 +2949,8 @@ loc_FCD6:				; CODE XREF: ROM:FCB9j
 loc_FCEE:				; CODE XREF: ROM:FCDFj	ROM:FCE8j
 		cmpa	#$25 ; '%'
 		bcs	loc_FCF8
-		ldaa	byte_65
-		cmpa	#$28 ; '('
+		ldaa	lilRPM		; 24 = 600 rpm 255 = 6375 RPM
+		cmpa	#40		; 1000 RPM
 		bcc	loc_FCFE
 
 loc_FCF8:				; CODE XREF: ROM:FCF0j
@@ -3038,7 +3049,7 @@ sub_FD41:				; CODE XREF: sub_FD41:loc_F0F7P
 		ldd	#$B020
 		cmpa	ADC_ThW		; compare against 176
 		bhi	loc_FD5A
-		cmpb	byte_92
+		cmpb	byte_92		; comes	about by load *	byte_65
 		bls	loc_FD5D
 
 loc_FD5A:				; CODE XREF: sub_FD41+13j
@@ -3049,8 +3060,8 @@ loc_FD5D:				; CODE XREF: sub_FD41+17j
 		jsr	$10,x		; ffe3,	saturate count satcount_D2
 		ldaa	byte_60
 		bne	loc_FD79	; p4-5,	test input active low
-		ldd	#$2001
-		cmpa	byte_65
+		ldd	#$2001		; a contains 800 RPM
+		cmpa	lilRPM		; 24 = 600 rpm 255 = 6375 RPM
 		bhi	loc_FD79	; p4-5,	test input active low
 		ldaa	unk_C6
 		bpl	loc_FD79	; p4-5,	test input active low
@@ -3095,7 +3106,7 @@ loc_FD9D:				; CODE XREF: sub_FD41+42j
 ; ---------------------------------------------------------------------------
 
 loc_FDAE:				; CODE XREF: sub_FD41+3Cj
-		ldaa	byte_95
+		ldaa	byte_95		; MSB may be IDL/throttle closed condition
 		bmi	loc_FDB8	; p4-2 is IDL, p4-3 is AC, so idling and ac perhaps?
 		ldaa	unk_9A		; oxygen sensor	related
 		bpl	loc_FDC6
@@ -3201,7 +3212,7 @@ locret_FE32:				; CODE XREF: sub_FD41+F6j
 ; ---------------------------------------------------------------------------
 
 loc_FE33:				; CODE XREF: sub_FD41+E9j
-		ldaa	byte_95
+		ldaa	byte_95		; MSB may be IDL/throttle closed condition
 		anda	byte_5D		; =adc_tps - byte_5b, tps related
 		bpl	locret_FE32
 		bitb	#$10
@@ -3285,7 +3296,7 @@ loc_FE99:				; CODE XREF: sub_FD41+146j
 ; End of function sub_FD41
 
 ; ---------------------------------------------------------------------------
-		db $1F			; data (ff2d entry)
+		db $1F			; SE056	max pulse time as a function of	FULLRPM	data (ff2d entry)
 		db $1F
 		db $23 ; #
 		db $3E ; >
@@ -3395,13 +3406,13 @@ loc_FE99:				; CODE XREF: sub_FD41+146j
 		db $27 ; '
 		db $1C			; 15
 		db $13
-		db $38 ; 8		; data (ff1b entry)
-		db $38 ; 8
-		db $37 ; 7
-		db $32 ; 2
-		db $2D ; -
-		db $1C
-		db $1C			; 6
+		db 56			; data (ff1b entry), additional	timing advance based on	water temp (value/255*90)
+		db 56			; 20 deg
+		db 55
+		db 50
+		db 45
+		db 28			; 10 deg
+		db 28			; 6
 		db $1C			; data (ff2a entry)
 		db   6			; data (ff25 entry) for	ADC_AFMr
 		db   6
