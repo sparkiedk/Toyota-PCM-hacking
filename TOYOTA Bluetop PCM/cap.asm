@@ -7,26 +7,30 @@
 
 ; Segment type:	Regular
 		code ; RegRAM
-Port1DDR:	ds 1
+Port1DDR:	ds 1			; DATA XREF: sub_FD41-D1Ew
+					; sub_FD41-CD7w
 Port2DDR:	ds 1
 Port1:		ds 1			; DATA XREF: sub_FD41-D28w ROM:F13Ar ...
 Port2:		ds 1
-Port3DDR:	ds 1
+Port3DDR:	ds 1			; DATA XREF: sub_FD41-D23w
+					; sub_FD41-CD2w
 Port4DDR:	ds 1
 Port3:		ds 1			; DATA XREF: sub_FD41-D2Dw
 					; sub_FD41-CB0r ...
 Port4:		ds 1			; DATA XREF: sub_FD41-CCDr inj1on+2r ...
-TmrCntStat1:	ds 1
+TmrCntStat1:	ds 1			; DATA XREF: sub_FD41-D36w
+					; sub_FD41-CE1w ...
 Timer:		ds 2			; DATA XREF: sub_FD41-D32w
 					; sub_FD41-CE8r ...
 OutCmp1:	ds 2
 InpCap1:	ds 2
 Port3CntStat:	ds 1			; 7- /IS3 flag	6- /IS3	/IRQ enable 5x 4- output strobe	select 3 latch enable 210x
 UARTRateMode:	ds 1
-TxRxCntStat:	ds 1
+TxRxCntStat:	ds 1			; DATA XREF: sub_FD41-D11r
+					; sub_FD41-D0Dw ...
 RxReg:		ds 1
 TxReg:		ds 1
-RAMCnt:		ds 1
+RAMCnt:		ds 1			; DATA XREF: sub_FD41-D3Aw
 		ds 1
 		ds 1
 		ds 1
@@ -35,7 +39,7 @@ TmrCntStat2:	ds 1			; DATA XREF: sub_FD41-D34w
 					; $TCSR2
 		ds 1
 		ds 1
-OutCmp2:	ds 2			; DATA XREF: ROM:F151w	injector1+23r ...
+OutCmp2:	ds 2			; DATA XREF: ROM:F151w	inj1off+23r ...
 					; compare output on P1-1, injector /#20
 InpCap2:	ds 2			; captures from	port 1-0, mixed	signal se056
 unk_1F:		ds 1			; top of sfr space
@@ -67,29 +71,38 @@ unk_38:		ds 1
 		ds 1
 		ds 1
 		ds 1
-		ds 1
+unk_3C:		ds 1
 		ds 1
 		ds 1
 		ds 1
 word_40:	ds 2			; DATA XREF: sub_F751+2r ROM:F79Fw ...
-					; if we	call this the start of user ram, it's exactly 192 bytes (inclusive)
 word_42:	ds 2			; DATA XREF: ROM:F5A6r	ROM:F749r ...
 word_44:	ds 2			; DATA XREF: sub_F70A+Fr sub_F70A+32r	...
-word_46:	ds 2
-word_48:	ds 2
+word_46:	ds 2			; DATA XREF: ROM:FC3Dw	sub_FD41+32r ...
+word_48:	ds 2			; DATA XREF: ROM:FC3Fw
+					; flagbadstuf3+15r ...
 byte_4A:	ds 1			; DATA XREF: ROM:FC20r	ROM:FC45w
 byte_4B:	ds 1
 byte_4C:	ds 1			; DATA XREF: sub_FD41-CCFr
 					; sub_FD41-CC0w ...
 					; msb inhibits injection
-byte_4D:	ds 1			; DATA XREF: sub_FD41-CC4r sub_F121+1r ...
-unk_4E:		ds 1			; used for flags in outcmp,inpcap
-ADCflags:	ds 1			; flag which can be modified in	an interrupt, msb inidicates adc data is pending in adcrxdata
+byte_4D:	ds 1			; DATA XREF: sub_FD41-CC4r
+					; ForceInjAccD+1r ...
+					; bit 6	is cache of SPD	pin, flags
+byte_4E:	ds 1			; DATA XREF: sub_FD41-C42r
+					; sub_FD41-C32r ...
+					; used for flags in outcmp,inpcap
+ADCflags:	ds 1			; DATA XREF: sub_FD41-CA3r
+					; sub_FD41-CA1w ...
+					; flag which can be modified in	an interrupt, msb inidicates adc data is pending in adcrxdata
 ADCRxData:	ds 1
 EndTxByteTime:	ds 2			; caches timer values from serial interrupt
-ADCcontrol:	ds 1			; controls a jump table	at fa9b, also deselects	ADC with LSB, also controls which channel to select
+ADCcontrol:	ds 1			; DATA XREF: sub_FD41-CA8r
+					; sub_FD41-CA6w ...
+					; controls a jump table	at fa9b, also deselects	ADC with LSB, also controls which channel to select
 ADC_TPS:	ds 1			; DATA XREF: ROM:jmptable2r ROM:FB99r
-ADC_AFMr:	ds 1			; DATA XREF: ROM:FC8Dr	ROM:FCA0r ...
+ADC_12V:	ds 1			; DATA XREF: ROM:FC8Dr	ROM:FCA0r ...
+					; +B1 terminal divided by 5... =255*12/25
 ADC_ThA:	ds 1			; DATA XREF: ROM:FAF6r	ROM:FBF1r
 ADC_ThW:	ds 1			; DATA XREF: ROM:F351r	sub_F420+D1r ...
 					; water	temp in	farenheit
@@ -102,16 +115,19 @@ byte_5C:	ds 1			; DATA XREF: ROM:F77Dr	ROM:F794w ...
 byte_5D:	ds 1			; DATA XREF: ROM:loc_F5ACr
 					; sub_F96A:loc_FA05r ...
 					; =adc_tps - byte_5b, tps related
-unk_5E:		ds 1			; timer	based
-unk_5F:		ds 1
-byte_60:	ds 1			; DATA XREF: sub_FD41-C4Cw
+NextADCsamptime:ds 1			; DATA XREF: sub_FD41-CE6w
+					; sub_FD41:loc_F083r ...
+					; timer	based
+byte_5F:	ds 1			; DATA XREF: sub_FD41-C9Br sub_F96A+8r
+SpdPlsdiff:	ds 1			; DATA XREF: sub_FD41-C4Cw
 					; sub_F420+D5r	...
-unk_61:		ds 1
+speedpulses:	ds 1			; DATA XREF: sub_FD41-CC7w
+					; sub_FD41-C4Er
 FullRPM:	ds 2			; DATA XREF: sub_F420+60r sub_F420+78w ...
 					; full range first dervitive continuous	RPM variable, rpms: 600, 8000 values: 192, 2560
 RPMish:		ds 1			; DATA XREF: sub_F420+98w ROM:F884r ...
 					; rpms:	[600, 4800, 7200] RPMish value:	[24, 192, 208] - linear	interpolate between points
-lilRPM:		ds 1			; DATA XREF: sub_F129:loc_F12Ar
+lilRPM:		ds 1			; DATA XREF: ForceInjAccD2:loc_F12Ar
 					; sub_F420+82w	...
 					; 24 = 600 rpm 255 = 6375 RPM
 deltaNE:	ds 2			; outcomp
@@ -125,17 +141,19 @@ word_70:	ds 2			; DATA XREF: ROM:F5A1w
 word_72:	ds 2			; DATA XREF: ROM:F596w	sub_F5E3+B9r ...
 unk_74:		ds 1			; written as a word @ F6E0
 unk_75:		ds 1			; lsb of word_74
-word_76:	ds 2
+word_76:	ds 2			; DATA XREF: sub_F6D4r	sub_F7BE+3Er ...
 IC2LowCnt:	ds 1			; counts input capture 2 trailing edges, reset by p3 msb low (G+ related)
 Inj10OffTime:	ds 2
 Inj20OffTime:	ds 2			; DATA XREF: ROM:F13Er	ROM:F145w ...
-word_7D:	ds 2
+InjLoadPulse:	ds 2
 Load:		ds 2			; DATA XREF: ROM:F555w	reinitLoadsr ...
 					; roughly equal	to se056 pulse time * air temp table * fuzz factor
 word_81:	ds 2			; DATA XREF: CalcInjOffTime:loc_F16Er
 					; ROM:FC9Ew
-					; injector related, ADC_AFMr table output
-unk_83:		ds 1			; TableTHW output (FEAF	decreasing)
+					; max value is 2504, table output of AFMr
+byte_83:	ds 1			; DATA XREF: sub_F5E3+B4r
+					; sub_F7BE:loc_F7C4r ...
+					; TableTHW output (FEAF	decreasing)
 byte_84:	ds 1			; DATA XREF: ROM:loc_F568w sub_F5E3+Cr ...
 		ds 1
 byte_86:	ds 1			; DATA XREF: ROM:F580w	sub_F5E3+A6r
@@ -147,9 +165,9 @@ byte_89:	ds 1			; DATA XREF: reinitLoads+7w
 					; sub_F5E3:loc_F61Bw
 					; load related?
 ThAcorr:	ds 1			; DATA XREF: sub_F6FC+2r ROM:FBF8w
-unk_8B:		ds 1			; tableTHW output (FEBD	decreasing)
-unk_8C:		ds 1
-		ds 1
+byte_8B:	ds 1			; DATA XREF: sub_F5E3+85r sub_F6BB+Dr	...
+					; tableTHW output (FEBD	decreasing)
+word_8C:	ds 2
 Loadfilt1:	ds 2			; DATA XREF: reinitLoads+4w
 					; sub_F5E3+44r	...
 Loadfilt2:	ds 2			; DATA XREF: reinitLoads+2w
@@ -161,18 +179,22 @@ byte_94:	ds 1
 byte_95:	ds 1			; DATA XREF: sub_FD41:loc_F0D1r
 					; ROM:F1E9r ...
 					; MSB may be IDL/throttle closed condition
-unk_96:		ds 1
+byte_96:	ds 1			; DATA XREF: sub_FD41:loc_F0F0w
+					; sub_F96A+6Br
 SatCount_97:	ds 1
 SatCount_98:	ds 1
-unk_99:		ds 1			; TVIS related
-unk_9A:		ds 1			; oxygen sensor	related
+TVIScounter:	ds 1			; TVIS counter,	negative (F4) when on, positive	(2) when off, counts back and forth after a transition
+byte_9A:	ds 1			; DATA XREF: sub_F7BE:loc_F7F9r
+					; sub_F96A+18r	...
+					; oxygen sensor	related
 unk_9B:		ds 1
 SatCount_9C:	ds 1
-unk_9D:		ds 1
-byte_9E:	ds 1			; DATA XREF: sub_F420:loc_F508r
+byte_9D:	ds 1			; DATA XREF: sub_FD41-C69r
+					; sub_FD41:loc_F0EEw ...
+DecelCutRPM:	ds 1			; DATA XREF: sub_F420:DecelFuelCutr
 					; sub_F5E3+87r	...
 					; lilRPM related
-InCp2TrEg:	ds 2			; DATA XREF: ROM:loc_F138w inj1onw ...
+InCp2TrEg:	ds 2			; DATA XREF: ROM:inj2onw inj1onw ...
 					; probably not just trailing edge
 AdvanceinUS:	ds 2			; OC1/igt related
 BaseAdvance:	ds 1			; DATA XREF: ROM:temploadADVw
@@ -189,23 +211,25 @@ NEhiDERV_1:	ds 2			; last word_af
 NEhiDERV:	ds 2
 NEhiwidfilt:	ds 2
 word_B3:	ds 2
-word_B5:	ds 2			; DATA XREF: ROM:F391r	ROM:F397r ...
-					; ADC_AFMr*4+384
+altDwell:	ds 2			; DATA XREF: ROM:F391r	ROM:F397r ...
+					; ADC_AFMr*4+384, abs max 1404
 NEtrEdge:	ds 2			; leading edge time of tinp2. corresponds to tr	edge of	NE
 NEleEdge:	ds 2			; set during IC1 low handler
-word_BB:	ds 2			; outcomp
+Dwell:		ds 2			; Probably dwell
 word_BD:	ds 2			; output compare routine only
 word_BF:	ds 2			; DATA XREF: ROM:F911r	ROM:FCAAr ...
 					; ADC_AFMr related (table output)
 IdleRPMfilt:	ds 2
 IdleRPMs:	ds 1			; precision RPM	counter	for idle control, saturates at 1246 RPM
-word_C4:	ds 2
-unk_C6:		ds 1
+word_C4:	ds 2			; rpm related
+byte_C6:	ds 1			; DATA XREF: ROM:F252r	ROM:F2E0r ...
 SatCount_C7:	ds 1			; DATA XREF: ROM:F84Dw
-unk_C8:		ds 1
-word_C9:	ds 2
-unk_CB:		ds 1
-byte_CC:	ds 1			; DATA XREF: ROM:loc_FB6Er sub_FD02+2r ...
+byte_C8:	ds 1			; DATA XREF: flagbadstuf3+8w
+					; sub_FD41:loc_FDCEr ...
+word_C9:	ds 2			; DATA XREF: sub_FD41+60w sub_FD41+98r ...
+byte_CB:	ds 1			; DATA XREF: sub_FD41+63w sub_FD41+87r ...
+byte_CC:	ds 1			; DATA XREF: ROM:loc_FB6Er
+					; FlagBadStuff+2r ...
 					; used for flagging bad	sensors	probably, bits:	6-ThA, 5-TPS, 2-ThW, 0-afm(not from adc)
 unk_CD:		ds 1
 SatCount_CE:	ds 1			; DATA XREF: sub_FD41-C60w
@@ -217,7 +241,8 @@ SatCount_D2:	ds 1
 word_D3:	ds 2			; looks	like a temp variable for subs
 unk_D5:		ds 1
 byte_D6:	ds 1			; DATA XREF: ROM:F74Dw	sub_FD41+46r
-unk_D7:		ds 1
+byte_D7:	ds 1			; DATA XREF: sub_F96A+Cr
+					; sub_FD41:loc_FD9Dw ...
 unk_D8:		ds 1
 		ds 1
 		ds 1
@@ -232,6 +257,7 @@ unk_D8:		ds 1
 		ds 1
 		ds 1
 		ds 1
+unk_E6:		ds 1
 		ds 1
 		ds 1
 		ds 1
@@ -251,8 +277,7 @@ unk_D8:		ds 1
 		ds 1
 		ds 1
 		ds 1
-		ds 1
-		ds 1
+unk_FA:		ds 1
 		ds 1
 		ds 1
 		ds 1
@@ -330,7 +355,7 @@ loc_F051:				; CODE XREF: sub_FD41-CEAj
 		decb
 		bne	loc_F051
 		ldab	Timer
-		stab	unk_5E		; timer	based
+		stab	NextADCsamptime	; timer	based
 		ldaa	#$1B
 		sei
 		staa	TmrCntStat1	; timer	control	$1b enables inp	cap int, enables out comp int, rising edge inp trigger,	compare	triggers leading edge.
@@ -347,18 +372,18 @@ Main_Loop:				; CODE XREF: sub_FD41:end_mainJ
 		eorb	Port4		; port 4
 		andb	#$40 ; '@'      ; p4-6 is SPD input
 		beq	loc_F083
-		inc	unk_61
-		eorb	byte_4D
-		anda	#$FE ; '˛'
+		inc	speedpulses
+		eorb	byte_4D		; bit 6	is cache of SPD	pin, flags
+		anda	#$FE		; clear	lsb of 4c
 		std	byte_4C		; msb inhibits injection
 
 loc_F083:				; CODE XREF: sub_FD41-CC9j
-		ldd	unk_5E		; timer	based
+		ldd	NextADCsamptime	; timer	based
 		cmpa	Timer
-		bpl	loc_F0FD
+		bpl	loc_F0FD	; bounce if we already sampled the ADC
 		adda	#$10
 		incb			; adds 4097
-		std	unk_5E		; timer	based
+		std	NextADCsamptime	; timer	based
 		ldaa	#$DF ; 'ﬂ'
 		sei
 		anda	Port3		; clear	bit5 (mixed signal se056)
@@ -371,8 +396,8 @@ loc_F083:				; CODE XREF: sub_FD41-CC9j
 		ora	ADCflags	; set bit 0
 		staa	ADCflags	; set bit 0
 		cli
-		jsr	loc_FAA7
-		ldaa	unk_5F
+		jsr	loc_FAA7	; force	an adc conversion
+		ldaa	byte_5F
 		asla
 		beq	loc_F0BB
 		anda	#$3E ; '>'
@@ -399,21 +424,21 @@ loc_F0BB:				; CODE XREF: sub_FD41-C98j
 loc_F0CA:				; CODE XREF: sub_FD41-C7Bj
 		bcs	loc_F0D1
 		ldaa	#8
-		jsr	sub_FD11	; p4-5
+		jsr	flagbadstuf3	; p4-5
 
 loc_F0D1:				; CODE XREF: sub_FD41:loc_F0CAj
 		ldd	byte_95		; MSB may be IDL/throttle closed condition
 		bpl	loc_F0E8
 		incb
 		bpl	loc_F0F0
-		ldaa	unk_9D
+		ldaa	byte_9D
 		suba	#1
 		jsr	boundData	; Limits AccA to bounds	set by two bytes after call
 					; Carry	bit is only set	if data	has been clipped at either level
 					;
 ; ---------------------------------------------------------------------------
-		db $E6 ; Ê
-		db $8F ; è
+		db 230
+		db 143
 ; ---------------------------------------------------------------------------
 		clr	SatCount_CE
 		ldab	#$89 ; 'â'
@@ -426,14 +451,14 @@ loc_F0E8:				; CODE XREF: sub_FD41-C6Ej
 		ldd	#$E634
 
 loc_F0EE:				; CODE XREF: sub_FD41-C5Bj
-		staa	unk_9D
+		staa	byte_9D
 
 loc_F0F0:				; CODE XREF: sub_FD41-C6Bj
 					; sub_FD41-C58j
-		stab	unk_96
-		clrb
-		ldaa	unk_61
-		std	byte_60
+		stab	byte_96
+		clrb			; clear	speedpulses when we write D
+		ldaa	speedpulses
+		std	SpdPlsdiff
 
 loc_F0F7:				; CODE XREF: sub_FD41-C94j
 					; sub_FD41-C8Aj
@@ -444,9 +469,9 @@ loc_F0FA:				; CODE XREF: sub_FD41:loc_F0B9j
 
 loc_F0FD:				; CODE XREF: sub_FD41-CBAj
 		ldaa	#2
-		bita	unk_4E		; used for flags in outcmp,inpcap
+		bita	byte_4E		; used for flags in outcmp,inpcap
 		beq	loc_F10D
-		bsr	sub_F119
+		bsr	comAmask4E
 		jsr	sub_F420	; clears IGf bit from port3cntstat
 		jsr	BeginCalcADV	; calculates ignition among other things
 		bra	end_main
@@ -454,7 +479,7 @@ loc_F0FD:				; CODE XREF: sub_FD41-CBAj
 
 loc_F10D:				; CODE XREF: sub_FD41-C40j
 		ldaa	#1
-		bita	unk_4E		; used for flags in outcmp,inpcap
+		bita	byte_4E		; used for flags in outcmp,inpcap
 		beq	end_main
 		jsr	loc_F534
 
@@ -466,10 +491,10 @@ end_main:				; CODE XREF: sub_FD41-C36j
 ; =============== S U B	R O U T	I N E =======================================
 
 
-sub_F119:				; CODE XREF: sub_FD41-C3Ep
+comAmask4E:				; CODE XREF: sub_FD41-C3Ep
 					; sub_F420+B3P	...
 		coma
-; End of function sub_F119
+; End of function comAmask4E
 
 
 ; =============== S U B	R O U T	I N E =======================================
@@ -477,8 +502,8 @@ sub_F119:				; CODE XREF: sub_FD41-C3Ep
 
 mask4E:					; CODE XREF: sub_F420+BFP ROM:F53FP
 		sei
-		anda	unk_4E		; used for flags in outcmp,inpcap
-		staa	unk_4E		; could	toggle some bits low
+		anda	byte_4E		; used for flags in outcmp,inpcap
+		staa	byte_4E		; could	toggle some bits low
 		cli
 		rts
 ; End of function mask4E
@@ -487,30 +512,30 @@ mask4E:					; CODE XREF: sub_F420+BFP ROM:F53FP
 ; =============== S U B	R O U T	I N E =======================================
 
 
-sub_F121:				; CODE XREF: sub_F96A+B8P ROM:FBCCP
+ForceInjAccD:				; CODE XREF: sub_F96A+B8P ROM:FBCCP
 		psha
-		ldaa	byte_4D
+		ldaa	byte_4D		; lsb inhibits injection here
 		rora
 		bcc	loc_F12A
 
-loc_F127:				; CODE XREF: sub_F129+5j
+tidystkRET:				; CODE XREF: ForceInjAccD2+5j
 		ins
 
-locret_F128:				; CODE XREF: sub_F129+9j
+locret_F128:				; CODE XREF: ForceInjAccD2+9j
 		rts
-; End of function sub_F121
+; End of function ForceInjAccD
 
 
 ; =============== S U B	R O U T	I N E =======================================
 
 
-sub_F129:				; CODE XREF: sub_F96A+F0P
+ForceInjAccD2:				; CODE XREF: sub_F96A+F0P
 		psha
 
-loc_F12A:				; CODE XREF: sub_F121+4j
+loc_F12A:				; CODE XREF: ForceInjAccD+4j
 		ldaa	lilRPM		; 24 = 600 rpm 255 = 6375 RPM
 		cmpa	#140		; compare to 3500 RPM
-		bcc	loc_F127
+		bcc	tidystkRET	; when above 3500 RPM
 		pula
 
 loc_F131:				; CODE XREF: ROM:F21EP
@@ -518,20 +543,20 @@ loc_F131:				; CODE XREF: ROM:F21EP
 		beq	locret_F128
 		sei
 		bsr	inj1on		; falling through, next	three bytes are	an effective NOP (ldx blahblah)
-; End of function sub_F129
+; End of function ForceInjAccD2
 
 ; ---------------------------------------------------------------------------
-inj2on:		db $CE ; Œ
+unk_F137:	db $CE ; Œ
 ; ---------------------------------------------------------------------------
 
-loc_F138:				; CODE XREF: ROM:endIC1_2P
+inj2on:					; CODE XREF: ROM:endIC1_2P
 		std	InCp2TrEg	; probably not just trailing edge
 		ldaa	Port1
 		rora
 		rora
 		ldd	Inj20OffTime
-		bsr	CalcInjOffTime	; plays	with timer, incp2treg, word_81,	accepts	injector status	in carry bit (0=on)
-		addd	#$1E
+		bsr	CalcInjOffTime
+		addd	#30
 		std	Inj20OffTime
 		ldd	#$FE0C
 		anda	TmrCntStat2	; force	next OC2 low
@@ -544,7 +569,8 @@ loc_F138:				; CODE XREF: ROM:endIC1_2P
 ; =============== S U B	R O U T	I N E =======================================
 
 
-inj1on:					; CODE XREF: sub_F129+Cp sub_F194p
+inj1on:					; CODE XREF: ForceInjAccD2+Cp
+					; sub_F194p
 
 ; FUNCTION CHUNK AT F191 SIZE 00000003 BYTES
 
@@ -552,8 +578,8 @@ inj1on:					; CODE XREF: sub_F129+Cp sub_F194p
 		ldaa	Port4		; p4-7 is injector #10
 		rola			; injector #10 status in carry bit
 		ldd	Inj10OffTime
-		bsr	CalcInjOffTime	; plays	with timer, incp2treg, word_81,	accepts	injector status	in carry bit (0=on)
-		subd	#0
+		bsr	CalcInjOffTime
+		subd	#0		; seems	unnecessary
 		std	Inj10OffTime
 		ldaa	#$7F ; ''
 		anda	Port4		; turn on injector #10
@@ -563,18 +589,17 @@ inj1on:					; CODE XREF: sub_F129+Cp sub_F194p
 
 ; =============== S U B	R O U T	I N E =======================================
 
-; plays	with timer, incp2treg, word_81,	accepts	injector status	in carry bit (0=on)
 
 CalcInjOffTime:				; CODE XREF: ROM:F140p	inj1on+7p
-		bcs	loc_F16E
+		bcs	loc_F16E	; bounce here if injector off
 		subd	Timer
-		bpl	loc_F170
+		bpl	loc_F170	; branch if the	offtime	in D is	ahead of the timer
 
 loc_F16E:				; CODE XREF: CalcInjOffTimej
-		ldd	word_81		; injector related, ADC_AFMr table output
+		ldd	word_81		; bounce here if injector off
 
 loc_F170:				; CODE XREF: CalcInjOffTime+4j
-		addd	InCp2TrEg	; probably not just trailing edge
+		addd	InCp2TrEg	; contains word_7d injection calculation
 		bpl	loc_F177
 		ldd	#32767		; saturate to 7fff
 
@@ -588,7 +613,7 @@ loc_F177:				; CODE XREF: CalcInjOffTime+Aj
 
 ; injector /#10
 
-injector1:				; CODE XREF: ROM:F2F8P	ROM:F3D7P
+inj1off:				; CODE XREF: ROM:F2F8P	ROM:F3D7P
 
 ; FUNCTION CHUNK AT F196 SIZE 0000001B BYTES
 
@@ -600,12 +625,12 @@ injector1:				; CODE XREF: ROM:F2F8P	ROM:F3D7P
 		bpl	loc_F196	; branch if not	within 320us of	inj off	time
 		ldx	Inj10OffTime
 
-loc_F189:				; CODE XREF: injector1+11j
+loc_F189:				; CODE XREF: inj1off+11j
 		cpx	Timer
 		bpl	loc_F189	; spin waiting for timer
 		ldaa	#$80 ; 'Ä'
 		ora	Port4		; turn off injector #10
-; End of function injector1
+; End of function inj1off
 
 ; START	OF FUNCTION CHUNK FOR inj1on
 
@@ -622,9 +647,9 @@ sub_F194:				; CODE XREF: ROM:F23AP
 		bsr	inj1on
 ; End of function sub_F194
 
-; START	OF FUNCTION CHUNK FOR injector1
+; START	OF FUNCTION CHUNK FOR inj1off
 
-loc_F196:				; CODE XREF: injector1+Bj
+loc_F196:				; CODE XREF: inj1off+Bj
 		ldd	#$2FE
 		anda	Port1		; test bit 1 (injector #20)
 		bne	loc_F1A3	; branch if injector #20 is not	on
@@ -632,7 +657,7 @@ loc_F196:				; CODE XREF: injector1+Bj
 		cpx	Inj10OffTime
 		bmi	locret_F1B0	; bomb out if OC2 happens earlier than inj10offtime
 
-loc_F1A3:				; CODE XREF: injector1+21j
+loc_F1A3:				; CODE XREF: inj1off+21j
 		lsra
 		andb	TmrCntStat2	; $TCSR2
 		aba
@@ -641,10 +666,9 @@ loc_F1A3:				; CODE XREF: injector1+21j
 		subd	#250
 		std	OutCmp2		; compare output on P1-1, injector /#20
 
-locret_F1B0:				; CODE XREF: injector1+2j
-					; injector1+27j
+locret_F1B0:				; CODE XREF: inj1off+2j inj1off+27j
 		rts
-; END OF FUNCTION CHUNK	FOR injector1
+; END OF FUNCTION CHUNK	FOR inj1off
 ; ---------------------------------------------------------------------------
 
 IRQinpcap:
@@ -656,7 +680,7 @@ IRQinpcap:
 ; ---------------------------------------------------------------------------
 
 IRQinpcap2:				; CODE XREF: ROM:F1B5j
-		ldaa	unk_4E		; used for flags in outcmp,inpcap
+		ldaa	byte_4E		; used for flags in outcmp,inpcap
 
 IRQinpcap3:				; CODE XREF: ROM:F1B8j
 		bmi	procInCp1	; branch if only input capture 1, or MSB of $4e	is set
@@ -669,27 +693,27 @@ procInCp1:				; CODE XREF: ROM:IRQinpcap3j
 		pshb
 		psha
 		pulx			; xgdx
-		ldaa	unk_4E		; used for flags in outcmp,inpcap
+		ldaa	byte_4E		; used for flags in outcmp,inpcap
 		bpl	endIC1_1	; msb gets flagged based on input capture level
 		ora	#1
 		anda	#$7F ; ''
-		staa	unk_4E		; set bit 0, clear bit 7
+		staa	byte_4E		; set bit 0, clear bit 7
 		cli
 		inx			; input	capture	time - B9 +1
 		cpx	SE056Mintime
 		bcc	loc_F1DA	; bounce if greater than or equal to
-		ldx	SE056Mintime
+		ldx	SE056Mintime	; enforce minimum load measurement
 
 loc_F1DA:				; CODE XREF: ROM:F1D6j
 		cpx	SE056Maxtime
 		bcs	loc_F1E0	; bounce if less than
-		ldx	SE056Maxtime
+		ldx	SE056Maxtime	; enforce maximum load measurement
 
 loc_F1E0:				; CODE XREF: ROM:F1DCj
 		ldaa	unk_CD		; X is now capped between word_6e (low)	and word_6C (high)
 		bita	#1
 		beq	loc_F1F0	; bounce is lsb	of unk_cd is low
-		ldx	#800
+		ldx	#800		; use this value if MSB	of _CD
 		ldaa	byte_95		; bounce if MSb	of byte_95 is high
 		bmi	loc_F1F0	; either 800 or	1600 or	if we're lucky: InpCap1 - LastIC2treg
 		ldx	#1600
@@ -722,20 +746,20 @@ loc_F211:				; CODE XREF: ROM:F20Aj
 		ldd	#$7FFF
 
 loc_F217:				; CODE XREF: ROM:F212j
-		std	word_7D		; middle 16 bit	result of multiplication of unk_74:unk_75 and word_6a, clipped to $7fff
+		std	InjLoadPulse	; middle 16 bit	result of multiplication of unk_74:unk_75 and word_6a, clipped to $7fff
 		sei			; mask interrupts for this section
 		ldx	byte_69
-		bmi	loc_F22C	; bounce if byte_69 has	underflowed
+		bmi	doublejuice	; bounce if byte_69 has	underflowed
 		jsr	loc_F131
 		ldaa	byte_69
 		bne	endIC1_1	; end of IC1 interrupt
 		deca			; decrement byte_69
 		staa	byte_69		; decrement byte_69
-		ldd	word_7D
+		ldd	InjLoadPulse
 		bra	choose_bank
 ; ---------------------------------------------------------------------------
 
-loc_F22C:				; CODE XREF: ROM:F21Cj
+doublejuice:				; CODE XREF: ROM:F21Cj
 		lsld
 		bpl	choose_bank	; double word_7d in AccD and cap at 32767
 		ldd	#$7FFF
@@ -753,7 +777,7 @@ endIC1_1:				; CODE XREF: ROM:F1CAj	ROM:F1F8j ...
 ; ---------------------------------------------------------------------------
 
 endIC1_2:				; CODE XREF: ROM:F238j
-		jsr	loc_F138	; turns	off OC2	(turns on injector #20)
+		jsr	inj2on		; turns	off OC2	(turns on injector #20)
 		rti			; end of IC1 interrupt sometimes
 ; ---------------------------------------------------------------------------
 
@@ -768,7 +792,7 @@ InCp2high:				; leading edge time of tinp2. corresponds to tr	edge of	NE
 		ldaa	Port2		; looking at /IGT
 		bita	#2
 		beq	IGTisON		; branch if /IGT is low
-		ldaa	unk_C6
+		ldaa	byte_C6
 		bgt	IGTisON		; IGT on
 		ldd	#$FA0D
 		anda	TmrCntStat1	; disable timer	overflow interrupt, IC1	leading	edge, OC1 low
@@ -798,8 +822,8 @@ loc_F27B:				; CODE XREF: ROM:F26Bj
 		ldd	#$FDF3
 		anda	TmrCntStat2	; set IC2 trailing edge	interrupt
 		staa	TmrCntStat2	; set IC2 trailing edge	interrupt
-		andb	unk_4E		; used for flags in outcmp,inpcap
-		stab	unk_4E		; set bits 2,3 low
+		andb	byte_4E		; used for flags in outcmp,inpcap
+		stab	byte_4E		; set bits 2,3 low
 		rti
 
 ; =============== S U B	R O U T	I N E =======================================
@@ -846,7 +870,7 @@ forceIGToff:
 
 InCp2low:				; CODE XREF: ROM:F248j
 		stx	InCp2TrEg	; probably not just trailing edge
-		ldaa	unk_4E		; checking bit 3
+		ldaa	byte_4E		; checking bit 3
 		bita	#8
 		bne	IC2low3
 		ldaa	AdvanceinUS	; OC1/igt related
@@ -878,7 +902,7 @@ IC2low4:				; CODE XREF: ROM:F2D2j
 IC2low5:				; CODE XREF: ROM:F2CEj	ROM:F2D5j
 		cmpa	#$EA ; 'Í'      ; msbyte of delta NE, compare to 204 (which is 59904 - 60159)
 		bcc	IC2low6		; branch if 498	RPM or lower
-		ldaa	unk_C6
+		ldaa	byte_C6
 		ldab	byte_4B
 		cmpb	#4
 		bcs	IC2low7
@@ -890,14 +914,14 @@ IC2low7:				; CODE XREF: ROM:F2E6j
 		tsta
 		bmi	IC2low8
 		deca
-		staa	unk_C6
+		staa	byte_C6
 
 IC2low8:				; CODE XREF: ROM:F2EBj
 		ldaa	TmrCntStat2	; $TCSR2
 		asla
 		bpl	IC2low9		; branch if OC2	flag low
 		jsr	injector2
-		jsr	injector1	; injector /#10
+		jsr	inj1off		; injector /#10
 
 IC2low9:				; CODE XREF: ROM:F2F3j
 		ldd	InCp2TrEg	; probably not just trailing edge
@@ -914,7 +938,7 @@ IC2low9:				; CODE XREF: ROM:F2F3j
 		stx	NEhiDERV_2	; last word_ad
 		ldx	NEhiDERV
 		stx	NEhiDERV_1	; last word_af
-		tst	unk_C6
+		tst	byte_C6
 		ble	IC2low10	; avoid	nuking filtered	derivative if unk_c6 <=	zero
 		clra
 		clrb
@@ -933,7 +957,7 @@ IC2low10:				; CODE XREF: ROM:F318j
 		stab	TmrCntStat1	; IC1 edge 1, OC1 unaffected
 		ora	TmrCntStat2	; IC2 edge 1, OC2 unaffected
 		staa	TmrCntStat2	; IC2 edge 1, OC2 unaffected
-		ldab	unk_4E		; used for flags in outcmp,inpcap
+		ldab	byte_4E		; used for flags in outcmp,inpcap
 		ldaa	IC2LowCnt	; counts input capture 2 trailing edges, reset by p3 msb low (G+ related)
 		inca
 		staa	IC2LowCnt	; counts input capture 2 trailing edges, reset by p3 msb low (G+ related)
@@ -966,7 +990,7 @@ IC2low12:				; CODE XREF: ROM:F35Fj
 		orb	#$80 ; 'Ä'
 
 IC2low13:				; CODE XREF: ROM:F363j
-		stab	unk_4E		; potential to set bits	7,6,5,2,1 high
+		stab	byte_4E		; potential to set bits	7,6,5,2,1 high
 		ldaa	#1
 		ora	Port4		; p4-0 is output to SE056 mixed	signal ic, finish 50us low pulse
 		staa	Port4		; p4-0 is output to SE056 mixed	signal ic, finish 50us low pulse
@@ -982,29 +1006,29 @@ IRQoutcmp:				; output compare pin p2-1 eventually becomes the signal	/IGT, or i
 		comb
 		bitb	#$41 ; 'A'
 		bne	OutCmpBombout	; if bit 6 or 1	was low	in tmrcntstat branch: if we're here for no reason (ocf flag was NOT set??) or we're here because a compare forced /IGT low, branch
-		ldab	unk_4E		; test bit 3, if high leave interrupt without doing much
+		ldab	byte_4E		; test bit 3, if high leave interrupt without doing much
 		bitb	#8
 		bne	OutCmpBombout
 		orb	#8
-		stab	unk_4E		; set bit 3 high
-		ldab	unk_C6		; bail out of interrupt	if >0
+		stab	byte_4E		; set bit 3 high
+		ldab	byte_C6		; bail out of interrupt	if >0
 		bgt	OutCmpBombout
 		anda	#$FA ; '˙'      ; a still contains tmrcntstat
 		staa	TmrCntStat1	; next compare forces /IGT low (active)
 		ldd	OutCmp1		; load last compare time, which	should have initiated this interrupt
-		addd	word_B5		; word_b5 contains a duration
-		std	word_BD		; word_bd contains next	compare	time?
+		addd	altDwell	; word_b5 contains a duration
+		std	word_BD		; word_bd contains alternate leading edge to igniter
 		ldd	deltaNE		; outcomp
-		subd	word_B5		; ADC_AFMr*4+384
-		subd	word_BB		; outcomp
-		bcc	loc_F39F
+		subd	altDwell	; ADC_AFMr*4+384, abs max 1404
+		subd	Dwell		; Probably dwell
+		bcc	loc_F39F	; this add will	remove altdwell	from the dwell calculation
 		clra
 		clrb
 
 loc_F39F:				; CODE XREF: ROM:F39Bj
-		addd	word_BD		; output compare routine only
+		addd	word_BD		; this add will	remove altdwell	from the dwell calculation
 		psha
-		ldaa	unk_4E		; used for flags in outcmp,inpcap
+		ldaa	byte_4E		; used for flags in outcmp,inpcap
 		bita	#4
 		pula			; pulls	dont touch cond	codes
 		beq	loc_F3AC
@@ -1050,7 +1074,7 @@ injector2ret:				; CODE XREF: injector2+Cj
 
 procOCmp2:				; CODE XREF: ROM:F373j
 		bsr	injector2
-		jsr	injector1	; injector /#10
+		jsr	inj1off		; injector /#10
 		rti
 ; ---------------------------------------------------------------------------
 
@@ -1060,7 +1084,7 @@ IRQSerial:				; sort of like ldaa $11	ldab $12
 		cli
 		anda	#$40 ; '@'      ; test for overrun or framing error
 		beq	SerIRQMain	; no error
-		jsr	loc_FB18	; error, after re-init the adc gets selected and output	from adcchanselect gets	written	to txreg
+		jsr	txadc3		; error, after re-init the adc gets selected and output	from adcchanselect gets	written	to txreg
 
 SerBombOut:				; CODE XREF: ROM:F3DDj
 		rti
@@ -1077,8 +1101,8 @@ SerIRQMain:				; CODE XREF: ROM:F3E2j
 		ldab	ADCcontrol	; controls a jump table	at fa9b, also deselects	ADC with LSB, also controls which channel to select
 		rorb
 		bcs	SerIRQflag	; branch if ADCcontrol was odd
-		ora	#$40 ; '@'
-		staa	Port3		; de select adc	p3-6 if	ADCcontrol was even
+		ora	#$40 ; '@'      ; here is where to inject serial RMCR edits with JSR $7F00 NOP or whateer
+		staa	Port3		; Deselect ADC p3-6 if ADCcontrol was even
 
 SerIRQflag:				; CODE XREF: ROM:F3F3j	ROM:F3F8j
 		ldab	#$80 ; 'Ä'
@@ -1117,37 +1141,37 @@ sub_F420:				; CODE XREF: sub_FD41-C3CP
 		cli
 		clrb
 		stab	Port3CntStat	; nuke all special features of port3
-		rola			; put /IS3 bit into carry, relace with SEC for emulated	port, because fuck the IGF functionality
+		rola			; put /IS3 bit into carry, relace with SEC to remove IGt functionality
 		ldd	#$7B79
-		bcc	loc_F431	; carry	bit will be set	from trailing edge on /IS3 pin (IGF)
+		bcc	RevLimiter	; carry	bit will be set	from trailing edge on /IS3 pin (IGF)
 		staa	SatCount_98	; set unk_98 to	$7B
 
-loc_F431:				; CODE XREF: sub_F420+Dj
+RevLimiter:				; CODE XREF: sub_F420+Dj
 		ldx	deltaNE		; outcomp
-		cpx	#4054		; exactly 7400rpm, set to 3332 for 9003	RPM
+		cpx	#4054		; exactly 7400rpm, set to 3750 for 8000	RPM, 3332 for 9003 RPM
 		bcs	loc_F43A	; increment unk_97, increment unk_98
 		stab	SatCount_97	; set unk_97 to	$79
 
 loc_F43A:				; CODE XREF: sub_F420+16j
 		ldx	#$FF98		; increment unk_97, increment unk_98
 		jsr	$49,x		; FFE1,	saturate count satcount_97 and satcount_98
-		bpl	loc_F446	; rts, prior instructions are LSRD
+		bpl	CalcRPM		; rts, prior instructions are LSRD
 		ldaa	#2
-		jsr	sub_FD11	; p4-5
+		jsr	flagbadstuf3	; p4-5
 
-loc_F446:				; CODE XREF: sub_F420+1Fj
+CalcRPM:				; CODE XREF: sub_F420+1Fj
 		ldx	#$FC81		; rts, prior instructions are LSRD
 		ldd	deltaNE		; the next few lines of	code do	SOMETHING with deltaNE,	could calculate	an RPM variable	maybe
 
-loc_F44B:				; CODE XREF: sub_F420+31j
+CalcRPM2:				; CODE XREF: sub_F420+31j
 		bita	#$F0 ; ''
-		beq	CalcRPMvars	; test if msN is clear
+		beq	CalcRPMTable	; test if msN is clear
 		dex			; decrementing x to point to equivalent	lsrd instructions in DivDby16
 		lsrd
-		bra	loc_F44B
+		bra	CalcRPM2
 ; ---------------------------------------------------------------------------
 
-CalcRPMvars:				; CODE XREF: sub_F420+2Dj
+CalcRPMTable:				; CODE XREF: sub_F420+2Dj
 		pshx
 		ldx	#$FEF9
 		jsr	$34,x		; ff2d
@@ -1172,16 +1196,16 @@ loc_F468:				; CODE XREF: sub_F420+43j
 		lsld
 		addd	IdleRPMfilt
 		std	IdleRPMfilt
-		ldd	word_C4
+		ldd	word_C4		; rpm related
 		ldx	FullRPM		; full range first dervitive continuous	RPM variable, rpms: 600, 8000 values: 192, 2560
-		stx	word_C4
+		stx	word_C4		; rpm related
 		subd	word_D3		; looks	like a temp variable for subs
 		bcc	loc_F48A
 		clra
 		clrb
 
 loc_F48A:				; CODE XREF: sub_F420+66j
-		jsr	sub_F5E2
+		jsr	sub_F5E2	; shift	D right	one time, if A then B=FF
 		cmpb	#6
 		bcs	loc_F494
 		clra
@@ -1216,7 +1240,7 @@ loc_F4B0:				; CODE XREF: sub_F420+8Bj
 		clra
 		staa	SatCount_D0
 		ldd	#$140
-		bita	byte_4D
+		bita	byte_4D		; bit 6	is cache of SPD	pin, flags
 		bne	loc_F4DD
 		ldaa	lilRPM		; 24 = 600 rpm 255 = 6375 RPM
 		jsr	boundData	; Limits AccA to bounds	set by two bytes after call
@@ -1225,14 +1249,14 @@ loc_F4B0:				; CODE XREF: sub_F420+8Bj
 		suba	$14,x		; bounds are CB	(203) and 60 (96) which	are 5075 RPM and 2400 RPM
 		bcs	loc_F4E2
 		ldaa	Port3
-		bpl	loc_F4D6
+		bpl	loc_F4D6	; branch if G+ related is low
 		ldaa	#$40 ; '@'
-		jsr	sub_F119
+		jsr	comAmask4E
 
 loc_F4D6:				; CODE XREF: sub_F420+AFj
 		ldx	#$FFD2
 		jsr	$11,x		; ffe3,	saturate count satcount_d1
-		bra	loc_F4EB
+		bra	calc56mintime
 ; ---------------------------------------------------------------------------
 
 loc_F4DD:				; CODE XREF: sub_F420+A2j
@@ -1241,49 +1265,49 @@ loc_F4DD:				; CODE XREF: sub_F420+A2j
 
 loc_F4E2:				; CODE XREF: sub_F420+ABj
 		sei
-		orb	unk_4E		; used for flags in outcmp,inpcap
-		stab	unk_4E		; potential to set bit 6 high
+		orb	byte_4E		; used for flags in outcmp,inpcap
+		stab	byte_4E		; potential to set bit 6 high
 		clra
 		staa	SatCount_D1	; clear	unk_d1
 		cli
 
-loc_F4EB:				; CODE XREF: sub_F420+BBj
+calc56mintime:				; CODE XREF: sub_F420+BBj
 		ldx	#230
 		ldd	#$5002
 		cmpa	ADC_ThW		; compare to 80d
 		bhi	set56mintime	; branch if over 80 deg	F
-		cmpb	byte_60
-		bhi	set56mintime
+		cmpb	SpdPlsdiff
+		bhi	set56mintime	; bounce if car	isnt really moving
 		ldaa	lilRPM		; 24 = 600 rpm 255 = 6375 RPM
 		cmpa	#80		; 2000 RPM
-		bcc	set56mintime
+		bcc	set56mintime	; bounce if higher than	2000 RPM
 		cmpa	#64		; 1600 RPM
-		bcc	loc_F508
+		bcc	DecelFuelCut	; bounce if greater than 1600 RPM
 		ldx	#460
 
 set56mintime:				; CODE XREF: sub_F420+D3j sub_F420+D7j ...
 		stx	SE056Mintime
 
-loc_F508:				; CODE XREF: sub_F420+E1j
-		ldab	byte_9E		; lilRPM related
+DecelFuelCut:				; CODE XREF: sub_F420+E1j
+		ldab	DecelCutRPM	; lilRPM related
 		ldaa	byte_4C		; msb inhibits injection
-		bmi	loc_F510
-		addb	#16		; 400 RPM incremental
+		bmi	loc_F510	; zero out bits	6,7 of unk_4c
+		addb	#16		; 400 RPM incremental bump
 
 loc_F510:				; CODE XREF: sub_F420+ECj
-		anda	#$3F ; '?'
+		anda	#$3F ; '?'      ; zero out bits 6,7 of unk_4c
 		cmpb	lilRPM		; 24 = 600 rpm 255 = 6375 RPM
-		bhi	loc_F51E
+		bhi	loc_F51E	; bounce if RPM	below cutoff
 		ldab	byte_95		; MSB may be IDL/throttle closed condition
-		bpl	loc_F51E
-		ora	#$C0 ; '¿'
+		bpl	loc_F51E	; bounce if throttle not closed
+		ora	#$C0 ; '¿'      ; set bits 7,6 of unk_4c
 		bra	Exitsubf420
 ; ---------------------------------------------------------------------------
 
 loc_F51E:				; CODE XREF: sub_F420+F4j sub_F420+F8j
 		ldab	byte_4C		; msb inhibits injection
 		bpl	Exitsubf420
-		psha
+		psha			; this code is executed	when unk_4c MSB	is set
 		ldaa	unk_D5
 		cmpa	#6
 		bhi	loc_F530
@@ -1304,7 +1328,7 @@ Exitsubf420:				; CODE XREF: sub_F420+FCj
 
 loc_F534:				; CODE XREF: sub_FD41-C2EP
 					; sub_F420+10Ep
-		jsr	sub_F119
+		jsr	comAmask4E
 		ldaa	ADC_ThW		; compare to 72d
 		cmpa	#72
 		bhi	loc_F542	; branch if over 72 deg	F
@@ -1313,7 +1337,7 @@ loc_F534:				; CODE XREF: sub_FD41-C2EP
 
 loc_F542:				; CODE XREF: ROM:F53Bj
 		ldd	#$2004
-		bita	unk_4E		; test bit 5
+		bita	byte_4E		; test bit 5
 		beq	loc_F54E	; can be set to	4, or decremented
 		ldab	byte_69
 		ble	loc_F550
@@ -1326,7 +1350,7 @@ loc_F550:				; CODE XREF: ROM:F54Bj
 		ldd	SE056plstime
 		jsr	sub_F6FC
 		std	Load		; roughly equal	to se056 pulse time * air temp table * fuzz factor
-		ldaa	byte_4D
+		ldaa	byte_4D		; bit 6	is cache of SPD	pin, flags
 		rora
 		bcc	loc_F571
 		ldd	#$FDC
@@ -1339,7 +1363,7 @@ loc_F568:				; CODE XREF: ROM:F561j
 		std	byte_84
 		ldx	#$FEC4
 		jsr	$57,x		; ff1b
-		std	unk_8C
+		std	word_8C
 
 loc_F571:				; CODE XREF: ROM:F55Aj
 		ldaa	SatCount_D2
@@ -1423,6 +1447,7 @@ sub_F5D8:				; CODE XREF: sub_F5E3+4Ap
 
 ; =============== S U B	R O U T	I N E =======================================
 
+; shift	D right	three times, if	A then B=FF
 
 sub_F5E0:				; CODE XREF: sub_F5E3+28p
 		lsrd
@@ -1431,6 +1456,7 @@ sub_F5E0:				; CODE XREF: sub_F5E3+28p
 
 ; =============== S U B	R O U T	I N E =======================================
 
+; shift	D right	two times, if A	then B=FF
 
 sub_F5E1:				; CODE XREF: sub_F70A+AP
 		lsrd
@@ -1439,6 +1465,7 @@ sub_F5E1:				; CODE XREF: sub_F70A+AP
 
 ; =============== S U B	R O U T	I N E =======================================
 
+; shift	D right	one time, if A then B=FF
 
 sub_F5E2:				; CODE XREF: sub_F420:loc_F48AP
 		lsrd
@@ -1447,6 +1474,7 @@ sub_F5E2:				; CODE XREF: sub_F420:loc_F48AP
 
 ; =============== S U B	R O U T	I N E =======================================
 
+; If A then B=FF
 
 sub_F5E3:				; CODE XREF: sub_F420+4DP sub_F420+7FP ...
 		tsta
@@ -1487,7 +1515,7 @@ loc_F600:				; CODE XREF: sub_F5E3+1Aj
 		bcs	loc_F61A
 		deca
 		bmi	loc_F61A
-		bsr	sub_F5E0
+		bsr	sub_F5E0	; right	shift d	3 times, saturate b is acca is not zero
 		ldaa	#204
 		mul
 		ldab	#176
@@ -1514,10 +1542,10 @@ loc_F61B:				; CODE XREF: sub_F5E3+35j
 		pshb
 		stx	Loadfilt1
 		ldx	#6
-		ldaa	byte_60
+		ldaa	SpdPlsdiff
 		ldab	byte_4C		; msb inhibits injection
-		cmpa	#$F
-		bhi	loc_F641
+		cmpa	#15
+		bhi	loc_F641	; bounce if vehicle is slower than 15
 		andb	#$F7 ; '˜'
 		bra	loc_F647
 ; ---------------------------------------------------------------------------
@@ -1547,17 +1575,17 @@ loadfiltloop:				; CODE XREF: sub_F5E3+77j
 		dex			; x can	contain	6 ($f632), or less depending on	previous code
 		bne	loadfiltloop
 		std	Loadfilt1
-		ldd	unk_8C
+		ldd	word_8C
 		subd	#16
 		bcc	loc_F666
 		clra
 
 loc_F666:				; CODE XREF: sub_F5E3+80j
-		std	unk_8C
-		adda	unk_8B		; tableTHW output (FEBD	decreasing)
-		ldab	byte_9E		; lilRPM related
+		std	word_8C
+		adda	byte_8B		; tableTHW output (FEBD	decreasing)
+		ldab	DecelCutRPM	; lilRPM related
 		cmpb	lilRPM		; 24 = 600 rpm 255 = 6375 RPM
-		bhi	loc_F671
+		bhi	loc_F671	; branch if RPM	is lower than cutoff
 		lsra
 
 loc_F671:				; CODE XREF: sub_F5E3+8Bj
@@ -1594,7 +1622,7 @@ loc_F67B:				; CODE XREF: sub_F5E3+95j
 		pula
 		inca
 		staa	word_D3		; looks	like a temp variable for subs
-		ldaa	unk_83		; TableTHW output (FEAF	decreasing)
+		ldaa	byte_83		; TableTHW output (FEAF	decreasing)
 		psha
 		bsr	loc_F6E6+1	; DC72 is LDD $72
 		addd	word_72
@@ -1625,13 +1653,13 @@ loc_F6B1:				; CODE XREF: sub_F5E3+C8j
 
 sub_F6BB:				; CODE XREF: sub_F96A+C4P
 		ldd	#$801
-		bita	byte_4D
+		bita	byte_4D		; bit 6	is cache of SPD	pin, flags
 		bne	sub_F6D4
 		cmpb	SatCount_9C
 		ldd	word_72
 		bcs	loc_F6D8
-		ldab	unk_8B		; tableTHW output (FEBD	decreasing)
-		addb	unk_8C
+		ldab	byte_8B		; tableTHW output (FEBD	decreasing)
+		addb	word_8C
 		pshb
 		bsr	sub_F6E3
 		lsld
@@ -1727,7 +1755,7 @@ sub_F70A:				; CODE XREF: sub_F5E3+BDp
 		psha
 		ldd	Load		; roughly equal	to se056 pulse time * air temp table * fuzz factor
 		bsr	mulDbyStack	; returns upper	16b in d
-		jsr	sub_F5E1
+		jsr	sub_F5E1	; shift	D right	two times, if A	then B=FF
 		stab	byte_92		; comes	about by load *	byte_65
 		ldab	word_44
 		bpl	loc_F71E
@@ -1787,7 +1815,7 @@ loc_F741:				; CODE XREF: sub_F70A+34j
 
 sub_F751:				; CODE XREF: sub_F96A+75P
 		ldaa	word_42
-		ldab	word_40		; if we	call this the start of user ram, it's exactly 192 bytes (inclusive)
+		ldab	word_40
 		ldx	byte_95		; MSB may be IDL/throttle closed condition
 		bpl	loc_F768
 		cba
@@ -1853,7 +1881,7 @@ loc_F798:				; CODE XREF: ROM:F776j
 		pula
 		tab
 		comb
-		std	word_40		; if we	call this the start of user ram, it's exactly 192 bytes (inclusive)
+		std	word_40
 		rts
 ; ---------------------------------------------------------------------------
 		db $19			; data (f7f1 entry)
@@ -1879,7 +1907,7 @@ loc_F7B0:				; CODE XREF: sub_F7BE+Cj sub_F7BE+10j	...
 
 loc_F7B3:				; CODE XREF: sub_F7BE+18j
 		andb	#$F7 ; '˜'
-		stab	byte_4D
+		stab	byte_4D		; bit 6	is cache of SPD	pin, flags
 		ldd	#$8000
 		stab	byte_94
 		bra	loc_F811
@@ -1892,12 +1920,12 @@ sub_F7BE:				; CODE XREF: sub_F5E3+D5P
 
 ; FUNCTION CHUNK AT F7AA SIZE 00000014 BYTES
 
-		ldab	byte_4D
+		ldab	byte_4D		; bit 6	is cache of SPD	pin, flags
 		bpl	loc_F7C4
 		andb	#$FB ; '˚'
 
 loc_F7C4:				; CODE XREF: sub_F7BE+2j
-		ldx	unk_83		; TableTHW output (FEAF	decreasing)
+		ldx	byte_83		; TableTHW output (FEAF	decreasing)
 		bne	loc_F7AA
 		ldx	byte_87
 		bne	loc_F7B0
@@ -1908,7 +1936,7 @@ loc_F7C4:				; CODE XREF: sub_F7BE+2j
 		bitb	#4
 		bne	loc_F7B3
 		orb	#8
-		stab	byte_4D
+		stab	byte_4D		; bit 6	is cache of SPD	pin, flags
 		ldd	#$6C6F
 		ldx	#1024
 		cpx	Load		; roughly equal	to se056 pulse time * air temp table * fuzz factor
@@ -1929,7 +1957,7 @@ loc_F7F1:				; p4-2 is IDL, active high when	IDL switch is closed
 		inx			; x would then be F7A8,	different for other entry points
 
 loc_F7F9:				; CODE XREF: sub_F7BE+37j
-		ldaa	unk_9A		; oxygen sensor	related
+		ldaa	byte_9A		; oxygen sensor	related
 		asla
 		ldd	word_76
 		bcc	loc_F802+1	; if msb of unk_9a is low, addd	0,x
@@ -1938,7 +1966,7 @@ loc_F7F9:				; CODE XREF: sub_F7BE+37j
 loc_F802:				; CODE XREF: sub_F7BE+40j
 		cpx	#$E300		; e300 is addd 0,x
 		pshb
-		ldab	unk_9D
+		ldab	byte_9D
 		cba
 		bcc	loc_F80F
 		negb
@@ -1962,7 +1990,7 @@ BeginCalcADV:				; CODE XREF: sub_FD41-C39P
 		ldd	#$11C		; B contains default timing value, 28/255*90 = 10 degrees
 		anda	unk_CD
 		bne	No3dtablework	; jump past table lookup because we're in test mode, or other conditions forced -10deg btdc
-		ldaa	unk_C6
+		ldaa	byte_C6
 		bpl	No3dtablework	; jump past table lookup because we're in test mode, or other conditions forced -10deg btdc
 		ldaa	byte_95		; msb could signify IDL/throttle closed	condition.
 		bpl	Pre3d		; this is the only way we're getting to the 3d table
@@ -2059,9 +2087,9 @@ lookup3d3:				; CODE XREF: ROM:F877j
 		jsr	sub_FF35	; finish up the	3d table interpolation by calling the final portion of the 2d table interpolate	code
 		ins
 		pulx
-		ldab	unk_99		; TVIS related
+		ldab	TVIScounter	; TVIS counter,	negative (F4) when on, positive	(2) when off, counts back and forth after a transition
 		bmi	PWRrAdv		; bounce around	tweaking the output of 3d table	lookup
-		adda	#8
+		adda	#8		; add 3	deg of base timing if tvis is off
 
 PWRrAdv:				; CODE XREF: ROM:F8A1j
 		ldx	#$FF94		; Tweak	output of 3d table with	output of this ADC_PWRr	function, mostly harmless though
@@ -2087,9 +2115,9 @@ temploadADV:				; CODE XREF: ROM:notestexitj ROM:F8AAj
 
 tempload2:				; CODE XREF: ROM:F8BDj
 		cpx	Load		; roughly equal	to se056 pulse time * air temp table * fuzz factor
-		bcs	sumallADV+1	; clear	d if word_7f is	greater	than X
+		bcs	sumallADV+1	; clear	d if Load is greater than X
 		ldaa	byte_95		; MSB may be IDL/throttle closed condition
-		bmi	sumallADV+1	; clear	d is MSB of byte_95
+		bmi	sumallADV+1	; clear	d if MSB of byte_95
 		ldd	#$FFD6
 
 sumallADV:				; CODE XREF: ROM:F8B6j	ROM:F8C4j ...
@@ -2145,11 +2173,11 @@ setnforgetADV:				; CODE XREF: ROM:F903j
 		std	AdvanceinUS	; word_a1 is the backoff from 10degrees	BTDC to	fire the igniter in us
 		ldd	word_D3		; deltane/16
 		addd	word_BF		; ADC_AFMr related (table output)
-		std	word_BB		; outcomp
+		std	Dwell		; Probably dwell
 		lsrd
 		std	word_D3		; looks	like a temp variable for subs
 		ldd	deltaNE		; outcomp
-		subd	word_B5		; ADC_AFMr*4+384
+		subd	altDwell	; ADC_AFMr*4+384, abs max 1404
 		subd	#100
 		subd	word_D3		; looks	like a temp variable for subs
 		bcs	loc_F925
@@ -2160,7 +2188,7 @@ loc_F925:				; CODE XREF: ROM:F921j
 		addd	word_D3		; looks	like a temp variable for subs
 		std	word_B3
 		ldaa	#1
-		ldab	unk_C6
+		ldab	byte_C6
 		bmi	loc_F936
 		sei
 		ora	TmrCntStat1	; set output compare level to high
@@ -2172,7 +2200,7 @@ loc_F936:				; CODE XREF: ROM:F92Dj
 		bsr	OutCmp1Sub1	; called from output compare ISR
 		std	word_D3		; looks	like a temp variable for subs
 		ldd	#$C02
-		eora	unk_4E		; xor with $0C %00001100
+		eora	byte_4E		; xor with $0C %00001100
 		bita	#%1110
 		bne	ExitCalcADV	; branch if bits 2,3 were low or bit 1 was high
 		bitb	Port2		; looking at /IGT
@@ -2193,7 +2221,7 @@ ExitCalcADV:				; CODE XREF: ROM:F934j	ROM:F941j ...
 OutCmp1Sub1:				; CODE XREF: ROM:F3A9P	ROM:loc_F936p
 		ldd	deltaNE		; outcomp
 		subd	AdvanceinUS	; OC1/igt related
-		subd	word_BB		; outcomp
+		subd	Dwell		; Probably dwell
 		bcc	loc_F95C
 		clra
 		clrb
@@ -2220,9 +2248,9 @@ sub_F96A:				; CODE XREF: sub_FD41:loc_F0FAP
 		ldx	#$FF69
 		jsr	$7A,x		; ffe3,	saturate count satcount_68
 		ldd	#$77F
-		anda	unk_5F
+		anda	byte_5F
 		andb	Port1		; anding with 7f=0b0111111
-		cmpa	unk_D7
+		cmpa	byte_D7
 		bcs	loc_F97C	; has potential	to toggle bit 7	- /VF ouput generation
 		orb	#$80 ; 'Ä'
 
@@ -2230,7 +2258,7 @@ loc_F97C:				; CODE XREF: sub_F96A+Ej
 		stab	Port1		; has potential	to toggle bit 7	- /VF ouput generation
 		ldaa	ADC_Oxy
 		cmpa	#23
-		ldaa	unk_9A		; oxygen sensor	related
+		ldaa	byte_9A		; oxygen sensor	related
 		bcs	oxy_low
 		inca
 		jsr	boundData	; Limits AccA to bounds	set by two bytes after call
@@ -2250,12 +2278,12 @@ oxy_low:				; CODE XREF: sub_F96A+1Aj
 		ldaa	unk_9B
 
 loc_F995:				; CODE XREF: sub_F96A+22j sub_F96A+27j
-		staa	unk_9A		; oxygen sensor	related
-		eora	byte_4D
+		staa	byte_9A		; oxygen sensor	related
+		eora	byte_4D		; bit 6	is cache of SPD	pin, flags
 		anda	#$80 ; 'Ä'
 		beq	loc_F9F7
-		eora	byte_4D
-		staa	byte_4D
+		eora	byte_4D		; bit 6	is cache of SPD	pin, flags
+		staa	byte_4D		; bit 6	is cache of SPD	pin, flags
 		bita	#8
 		beq	loc_F9F7
 		ldab	#1
@@ -2289,7 +2317,7 @@ loc_F9BF:				; CODE XREF: sub_F96A+49j
 		ldaa	unk_CD
 		bita	#1
 		bne	loc_F9E2
-		ldaa	unk_96
+		ldaa	byte_96
 		bmi	loc_F9E2
 		ldaa	byte_94
 		cmpa	#5
@@ -2314,7 +2342,7 @@ loc_F9F7:				; CODE XREF: sub_F96A+31j sub_F96A+39j
 		ldaa	byte_95		; MSB may be IDL/throttle closed condition
 		ldab	Port4		; p4-2 is IDL input, active low
 		andb	#4
-		beq	loc_FA0E	; bounce if not	throttle closed
+		beq	loc_FA0E	; bounce if throttle closed
 		tsta
 		bmi	loc_FA05
 		clr	byte_94
@@ -2341,11 +2369,11 @@ loc_FA19:				; CODE XREF: sub_F96A+A7j
 		cmpa	#100		; 2500 RPM
 		bcc	loc_FA26
 		ldd	#2000
-		jsr	sub_F121
+		jsr	ForceInjAccD
 		cli
 
 loc_FA26:				; CODE XREF: sub_F96A+ADj sub_F96A+B3j
-		ldaa	byte_4D
+		ldaa	byte_4D		; bit 6	is cache of SPD	pin, flags
 		anda	#1
 		bne	loc_FA31
 		staa	SatCount_9C
@@ -2354,7 +2382,7 @@ loc_FA26:				; CODE XREF: sub_F96A+ADj sub_F96A+B3j
 loc_FA31:				; CODE XREF: sub_F96A+ABj sub_F96A+C0j
 		ldab	byte_4C		; msb inhibits injection
 		andb	#$3F ; '?'      ; clear bits 7 and 6
-		stab	byte_4C		; msb inhibits injection
+		stab	byte_4C		; clear	bits 7 and 6
 		ldaa	#3
 
 loc_FA39:				; CODE XREF: sub_F96A+A0j
@@ -2367,7 +2395,7 @@ loc_FA3B:				; CODE XREF: sub_F96A+9Dj sub_F96A+A2j
 		andb	byte_4C		; msb inhibits injection
 		stab	byte_4C		; clear	lsb if starting
 		ldaa	byte_4B
-		ldab	unk_C6
+		ldab	byte_C6
 		bmi	loc_FA62
 		inca
 		beq	loc_FA75
@@ -2376,7 +2404,7 @@ loc_FA3B:				; CODE XREF: sub_F96A+9Dj sub_F96A+A2j
 		bcs	loc_FA62	; less than 25
 		bhi	loc_FA75	; more than 25
 		ldd	#9000		; exactly 25
-		jsr	sub_F129
+		jsr	ForceInjAccD2
 		cli
 		bra	loc_FA75
 ; ---------------------------------------------------------------------------
@@ -2398,28 +2426,28 @@ loc_FA62:				; CODE XREF: sub_F96A+E0j sub_F96A+E9j
 
 loc_FA75:				; CODE XREF: sub_F96A+E3j sub_F96A+EBj ...
 		ldd	#$405
-		orb	byte_4D
-		stab	byte_4D
-		staa	unk_C6
+		orb	byte_4D		; bit 6	is cache of SPD	pin, flags
+		stab	byte_4D		; set bits 2, 0
+		staa	byte_C6
 		staa	byte_69
 		clra
 		staa	SatCount_CE
 
 loc_FA83:				; CODE XREF: sub_F96A+FCj
-		ldaa	unk_C6
+		ldaa	byte_C6
 		bpl	loc_FA92
 		ldd	#$14FE		; a is 500 RPM,	which is almost	rock bottom for	measurement
 		cmpa	lilRPM		; 24 = 600 rpm 255 = 6375 RPM
 		bhi	loc_FA92
-		andb	byte_4D
-		stab	byte_4D
+		andb	byte_4D		; bit 6	is cache of SPD	pin, flags
+		stab	byte_4D		; clear	bit 0
 
 loc_FA92:				; CODE XREF: sub_F96A+11Bj
 					; sub_F96A+122j
-		ldab	byte_4D
+		ldab	byte_4D		; bit 6	is cache of SPD	pin, flags
 		bitb	#1
 		beq	procJmpTable
-		clr	SatCount_D2
+		clr	SatCount_D2	; clear	if MSB of 4D is	set
 ; End of function sub_F96A
 
 
@@ -2481,7 +2509,7 @@ revBitOrder:				; CODE XREF: ROM:FAC8j
 loc_FADD:				; CODE XREF: ROM:FAD9j
 		psha
 		ldaa	#4
-		jsr	sub_FD02	; acca=$04
+		jsr	FlagBadStuff	; acca=$04
 		pula
 		bcc	saveADCdata1
 		ldaa	#$C0 ; '¿'      ; default water temp?
@@ -2505,7 +2533,7 @@ procThA:				; CODE XREF: ROM:FACDj
 loc_FAF8:				; CODE XREF: ROM:FAF4j
 		psha
 		ldaa	#$40 ; '@'
-		jsr	sub_FD02	; acca=$40
+		jsr	FlagBadStuff	; acca=$40
 		pula
 		bcc	saveADCdata1
 		ldaa	#$79 ; 'y'      ; default air temp?
@@ -2524,7 +2552,7 @@ saveADCdata2:				; CODE XREF: ROM:FAEDj
 TXtoADC:				; CODE XREF: ROM:FAABj	ROM:FAC1p
 		ldaa	Port3
 		bita	#$40 ; '@'
-		beq	loc_FB15	; test to see if we're talking to the ADC (p3-6 low)
+		beq	txadc2		; test to see if we're talking to the ADC (p3-6 low)
 		pshx
 
 txwaitFB0E:				; CODE XREF: TXtoADC+Bj
@@ -2533,20 +2561,20 @@ txwaitFB0E:				; CODE XREF: TXtoADC+Bj
 		bmi	txwaitFB0E	; loop while time haas not expired yet,	while presumably tx is busy
 		pulx
 
-loc_FB15:				; CODE XREF: TXtoADC+4j
+txadc2:					; CODE XREF: TXtoADC+4j
 		inc	ADCcontrol	; controls a jump table	at fa9b, also deselects	ADC with LSB, also controls which channel to select
 
-loc_FB18:				; CODE XREF: ROM:F3E4P
+txadc3:					; CODE XREF: ROM:F3E4P
 		bsr	ADCchanSelect	; called here from serial interrupt when receive error was detected
 		ldaa	#$C		; external clock, 62500	baud (not that thats relevant i	guess)
 		staa	UARTRateMode
 		ldaa	#$1A		; Rx int enable, rx enable, tx enable
 		staa	TxRxCntStat
 		ldaa	TxRxCntStat	; read from reg	to clear any pending error bits
-		ldaa	#$BF ; 'ø'
+		ldaa	#$BF ; 'ø'      ; bit 6 low
 		sei
-		anda	Port3		; safely clear ADC /CS without clobbering other	pins
-		staa	Port3		; safely clear ADC /CS without clobbering other	pins
+		anda	Port3		; Select ADC
+		staa	Port3		; Select ADC
 		stab	TxReg		; tx a value based on the value	in ADCcontrol
 		cli
 		rts
@@ -2556,24 +2584,23 @@ loc_FB18:				; CODE XREF: ROM:F3E4P
 ; =============== S U B	R O U T	I N E =======================================
 
 
-ADCchanSelect:				; CODE XREF: ROM:FABBp
-					; TXtoADC:loc_FB18p
+ADCchanSelect:				; CODE XREF: ROM:FABBp	TXtoADC:txadc3p
 		ldab	ADCcontrol	; controls a jump table	at fa9b, also deselects	ADC with LSB, also controls which channel to select
 		lsrb			; lsb into carry bit
-		bcs	loc_FB37	; branch if lsb	was high
+		bcs	adchansel2	; branch if lsb	was high
 		ldab	#5		; otherwise return 5
 		rts
 ; ---------------------------------------------------------------------------
 
-loc_FB37:				; CODE XREF: ADCchanSelect+3j
+adchansel2:				; CODE XREF: ADCchanSelect+3j
 		andb	#7
 		cmpb	#7
-		beq	loc_FB40	; if adccontrol	was initially $xF, return 4
+		beq	adchansel3	; if adccontrol	was initially $xF, return 4
 		andb	#3		; if adccontrol	was any	odd number NOT $xF, return values in the range of 0..3
 		rts
 ; ---------------------------------------------------------------------------
 
-loc_FB40:				; CODE XREF: ADCchanSelect+Cj
+adchansel3:				; CODE XREF: ADCchanSelect+Cj
 		ldab	#4		; if adccontrol	was initially $xF, return 4
 		rts
 ; End of function ADCchanSelect
@@ -2626,12 +2653,12 @@ jmptable2:				; DATA XREF: ROM:FD3Bo
 					; Carry	bit is only set	if data	has been clipped at either level
 					;
 ; ---------------------------------------------------------------------------
-		db $FA ; ˙
-		db   5
+		db 250
+		db 5
 ; ---------------------------------------------------------------------------
 		psha
-		ldaa	#$20 ; ' '
-		jsr	sub_FD02	; acca=$20
+		ldaa	#$20 ; ' '      ; carry is unmolested by ldaa
+		jsr	FlagBadStuff	; acca=$20
 		pula
 		bcc	loc_FB6E
 		ldd	#$FF73
@@ -2711,7 +2738,7 @@ loc_FBC1:				; CODE XREF: ROM:FBBEj
 		bls	loc_FBD1	; increment the	stack pointer
 		jsr	mulDbyStack	; returns upper	16b in d
 		lsld
-		jsr	sub_F121
+		jsr	ForceInjAccD
 		cli
 ; ---------------------------------------------------------------------------
 		db $21 ; !		; branch never,	next byte is ignored when falling through
@@ -2730,7 +2757,7 @@ loc_FBD4:				; CODE XREF: ROM:FB6Cj
 
 jmptable4:				; DATA XREF: ROM:FD3Fo
 		ldx	#$FEE2
-		jsr	$39,x		; ff1b
+		jsr	$39,x		; ff1b,	table thw, decel fuel cut rpm lookup
 		ldab	SatCount_D2
 		cmpb	#76
 		bhi	loc_FBE4	; p4-3 is ac input, active high
@@ -2744,12 +2771,12 @@ loc_FBE4:				; CODE XREF: ROM:FBE0j
 					; Carry	bit is only set	if data	has been clipped at either level
 					;
 ; ---------------------------------------------------------------------------
-		db $FF			; data for fb46
-		db $3C ; <
+		db 255			; 6375 RPM and beyond
+		db 60			; 1500 RPM
 ; ---------------------------------------------------------------------------
 
 loc_FBEF:				; CODE XREF: ROM:FBE8j
-		staa	byte_9E		; lilRPM related
+		staa	DecelCutRPM	; lilRPM related
 		ldaa	ADC_ThA
 		ldx	#$FED9
 		jsr	$4C,x		; ff25
@@ -2798,7 +2825,7 @@ loc_FC29:				; CODE XREF: ROM:FC31j
 loc_FC33:				; CODE XREF: ROM:FC24j
 		ldx	#$807F
 		stx	word_42
-		stx	word_40		; if we	call this the start of user ram, it's exactly 192 bytes (inclusive)
+		stx	word_40
 		ldx	#$FF
 		stx	word_46
 		stx	word_48
@@ -2809,34 +2836,34 @@ loc_FC33:				; CODE XREF: ROM:FC24j
 loc_FC47:				; CODE XREF: ROM:FC2Bj
 		ldab	lilRPM		; 24 = 600 rpm 255 = 6375 RPM
 		ldaa	Port1		; interested in	 bit 6 /TVIS
-		anda	#$BF ; 'ø'      ; and with bf force bit 6 low, tvis on
+		anda	#$BF ; 'ø'      ; force bit 6 low, /TVIS on
 		cmpb	#158		; 3950 RPM
-		bcs	loc_FC57	; branch if mem	$65 less than $9e
-		cmpb	#$AE ; 'Æ'      ; 174
-		bcs	loc_FC59	; branch if mem	$65 less than $ae - causes no change to	tvis bit
+		bcs	setTVIS		; branch if less than 3950 RPM to set TVIS ON
+		cmpb	#174		; 4350 RPM
+		bcs	nosetTVIS	; branch if less than 4350 RPM,	no change to TVIS
 		ora	#$40 ; '@'      ; tvis off
 
-loc_FC57:				; CODE XREF: ROM:FC4Fj
+setTVIS:				; CODE XREF: ROM:FC4Fj
 		staa	Port1		; has capability to toggle bit 6 - /TVIS
 
-loc_FC59:				; CODE XREF: ROM:FC53j
-		ldaa	unk_99		; TVIS related
+nosetTVIS:				; CODE XREF: ROM:FC53j
+		ldaa	TVIScounter	; TVIS counter,	negative (F4) when on, positive	(2) when off, counts back and forth after a transition
 		ldab	Port1		; interested in	bit 6 /TVIS
 		aslb
-		bmi	loc_FC67
-		deca
-		bpl	loc_FC6C
+		bmi	loc_FC67	; branch if tvis off
+		deca			; decrement if tvis on
+		bpl	storeTVIScntr
 		ldaa	#$F4 ; 'Ù'
-		bra	loc_FC6C
+		bra	storeTVIScntr
 ; ---------------------------------------------------------------------------
 
 loc_FC67:				; CODE XREF: ROM:FC5Ej
-		inca
-		bmi	loc_FC6C
+		inca			; increment if tvis off
+		bmi	storeTVIScntr
 		ldaa	#2
 
-loc_FC6C:				; CODE XREF: ROM:FC61j	ROM:FC65j ...
-		staa	unk_99		; TVIS related
+storeTVIScntr:				; CODE XREF: ROM:FC61j	ROM:FC65j ...
+		staa	TVIScounter	; TVIS counter,	negative (F4) when on, positive	(2) when off, counts back and forth after a transition
 
 ; =============== S U B	R O U T	I N E =======================================
 
@@ -2881,8 +2908,8 @@ jmptable3:				; DATA XREF: ROM:FD3Do
 		anda	#$10
 		suba	#$10		; bit4 status is hidden	in carry
 		ldaa	#1
-		jsr	sub_FD02	; acca=$01
-		ldaa	ADC_AFMr
+		jsr	FlagBadStuff	; acca=$01
+		ldaa	ADC_12V		; +B1 terminal divided by 5... =255*12/25
 		suba	#83
 		bcc	loc_FC94
 		clra
@@ -2892,8 +2919,8 @@ loc_FC94:				; CODE XREF: ROM:FC91j
 		jsr	$3C,x		; ff25
 		bsr	DivDby32
 		addd	#464
-		std	word_81		; injector related, ADC_AFMr table output
-		ldaa	ADC_AFMr
+		std	word_81		; max value is 2504, table output of AFMr
+		ldaa	ADC_12V		; +B1 terminal divided by 5... =255*12/25
 		ldx	#$FF12
 		jsr	$13,x		; ff25
 		lsrd
@@ -2902,12 +2929,12 @@ loc_FC94:				; CODE XREF: ROM:FC91j
 		addd	word_BF		; ADC_AFMr related (table output)
 		lsrd
 		std	word_BF		; ADC_AFMr related (table output)
-		ldab	ADC_AFMr
+		ldab	ADC_12V		; +B1 terminal divided by 5... =255*12/25
 		clra
 		lsld
 		lsld
 		addd	#384
-		std	word_B5		; ADC_AFMr*4+384
+		std	altDwell	; ADC_AFMr*4+384, abs max 1404
 		bra	loc_FCD6
 ; ---------------------------------------------------------------------------
 
@@ -2956,76 +2983,78 @@ loc_FCEE:				; CODE XREF: ROM:FCDFj	ROM:FCE8j
 loc_FCF8:				; CODE XREF: ROM:FCF0j
 		ldab	SatCount_D1
 		cmpb	#9
-		bcs	locret_FD2C
+		bcs	flagbadstuf5
 
 loc_FCFE:				; CODE XREF: ROM:FCECj	ROM:FCF6j
 		ldaa	#$10
-		bra	sub_FD11	; p4-5
+		bra	flagbadstuf3	; p4-5
 
 ; =============== S U B	R O U T	I N E =======================================
 
 
-sub_FD02:				; CODE XREF: ROM:FAE0P	ROM:FAFBP ...
+FlagBadStuff:				; CODE XREF: ROM:FAE0P	ROM:FAFBP ...
 
 ; FUNCTION CHUNK AT FD2D SIZE 0000000C BYTES
 
-		bcc	loc_FD2D
+		bcc	flagbadstuf6
 		bita	byte_CC		; used for flagging bad	sensors	probably, bits:	6-ThA, 5-TPS, 2-ThW, 0-afm(not from adc)
-		bne	loc_FD0C
+		bne	flagbadstuf2
 		ora	byte_CC		; used for flagging bad	sensors	probably, bits:	6-ThA, 5-TPS, 2-ThW, 0-afm(not from adc)
-		bra	loc_FD35
+		bra	flagbadstuf7
 ; ---------------------------------------------------------------------------
 
-loc_FD0C:				; CODE XREF: sub_FD02+4j
+flagbadstuf2:				; CODE XREF: FlagBadStuff+4j
 		sec
 		bita	#$1F
-		beq	loc_FD1B
-; End of function sub_FD02
+		beq	flagbadstuf4
+; End of function FlagBadStuff
 
 
 ; =============== S U B	R O U T	I N E =======================================
 
 ; p4-5
 
-sub_FD11:				; CODE XREF: sub_FD41-C73P
+flagbadstuf3:				; CODE XREF: sub_FD41-C73P
 					; sub_F420+23P	...
 		ldab	Port4
 		bitb	#$20 ; ' '      ; p4-5 is Test mode input. low is check mode
-		beq	loc_FD1B
+		beq	flagbadstuf4
 		ldab	#$DA
-		stab	unk_C8
+		stab	byte_C8
 
-loc_FD1B:				; CODE XREF: sub_FD02+Dj sub_FD11+4j
+flagbadstuf4:				; CODE XREF: FlagBadStuff+Dj
+					; flagbadstuf3+4j
 		tab
 		orb	unk_CD
 		stab	unk_CD
 		ldab	Port4		; p4-4 is STA input, active high
 		bitb	#$10
-		bne	locret_FD2C	; bomb out if STA starting
+		bne	flagbadstuf5	; bomb out if STA starting
 		ora	word_48
 		tab
 		comb
 		std	word_48
 
-locret_FD2C:				; CODE XREF: ROM:FCFCj	sub_FD11+13j
+flagbadstuf5:				; CODE XREF: ROM:FCFCj
+					; flagbadstuf3+13j
 		rts
-; End of function sub_FD11
+; End of function flagbadstuf3
 
 ; ---------------------------------------------------------------------------
-; START	OF FUNCTION CHUNK FOR sub_FD02
+; START	OF FUNCTION CHUNK FOR FlagBadStuff
 
-loc_FD2D:				; CODE XREF: sub_FD02j
+flagbadstuf6:				; CODE XREF: FlagBadStuffj
 		coma
 		tab
 		andb	unk_CD
 		stab	unk_CD
 		anda	byte_CC		; used for flagging bad	sensors	probably, bits:	6-ThA, 5-TPS, 2-ThW, 0-afm(not from adc)
 
-loc_FD35:				; CODE XREF: sub_FD02+8j
+flagbadstuf7:				; CODE XREF: FlagBadStuff+8j
 		staa	byte_CC		; used for flagging bad	sensors	probably, bits:	6-ThA, 5-TPS, 2-ThW, 0-afm(not from adc)
 		clc
 		rts
-; END OF FUNCTION CHUNK	FOR sub_FD02
+; END OF FUNCTION CHUNK	FOR FlagBadStuff
 ; ---------------------------------------------------------------------------
 JumpTable:	dw jmptable1		; DATA XREF: procJmpTable+4o
 					; jump table 4 vectors
@@ -3038,14 +3067,16 @@ JumpTable:	dw jmptable1		; DATA XREF: procJmpTable+4o
 
 sub_FD41:				; CODE XREF: sub_FD41:loc_F0F7P
 
+arg_FC		=  $FE
+
 ; FUNCTION CHUNK AT F000 SIZE 00000119 BYTES
 
 		ldx	#$FEAF
 		jsr	$6C,x		; ff1b
-		staa	unk_83		; TableTHW output (FEAF	decreasing)
+		staa	byte_83		; TableTHW output (FEAF	decreasing)
 		ldx	#$FEBD
 		jsr	$5E,x		; ff1b
-		staa	unk_8B		; tableTHW output (FEBD	decreasing)
+		staa	byte_8B		; tableTHW output (FEBD	decreasing)
 		ldd	#$B020
 		cmpa	ADC_ThW		; compare against 176
 		bhi	loc_FD5A
@@ -3058,12 +3089,12 @@ loc_FD5A:				; CODE XREF: sub_FD41+13j
 loc_FD5D:				; CODE XREF: sub_FD41+17j
 		ldx	#$FFD3
 		jsr	$10,x		; ffe3,	saturate count satcount_D2
-		ldaa	byte_60
+		ldaa	SpdPlsdiff
 		bne	loc_FD79	; p4-5,	test input active low
 		ldd	#$2001		; a contains 800 RPM
 		cmpa	lilRPM		; 24 = 600 rpm 255 = 6375 RPM
 		bhi	loc_FD79	; p4-5,	test input active low
-		ldaa	unk_C6
+		ldaa	byte_C6
 		bpl	loc_FD79	; p4-5,	test input active low
 		andb	byte_4C		; msb inhibits injection
 		orb	word_46
@@ -3075,7 +3106,7 @@ loc_FD79:				; CODE XREF: sub_FD41+23j sub_FD41+2Aj ...
 		ldab	Port4		; p4-5,	test input active low
 		andb	#$20 ; ' '
 		beq	loc_FDAE
-		ldab	byte_4D
+		ldab	byte_4D		; bit 6	is cache of SPD	pin, flags
 		andb	#8
 		beq	loc_FD9D
 		ldaa	word_76
@@ -3093,13 +3124,13 @@ loc_FD79:				; CODE XREF: sub_FD41+23j sub_FD41+2Aj ...
 		aslb
 
 loc_FD9D:				; CODE XREF: sub_FD41+42j
-		stab	unk_D7
+		stab	byte_D7
 		clra
 		clrb
 		std	word_C9
 		coma
-		staa	unk_CB
-		ldab	byte_4D
+		staa	byte_CB
+		ldab	byte_4D		; bit 6	is cache of SPD	pin, flags
 		bitb	#1
 		bne	loc_FE1B	; may set bit 3	- MIL
 		bra	loc_FDCE
@@ -3108,7 +3139,7 @@ loc_FD9D:				; CODE XREF: sub_FD41+42j
 loc_FDAE:				; CODE XREF: sub_FD41+3Cj
 		ldaa	byte_95		; MSB may be IDL/throttle closed condition
 		bmi	loc_FDB8	; p4-2 is IDL, p4-3 is AC, so idling and ac perhaps?
-		ldaa	unk_9A		; oxygen sensor	related
+		ldaa	byte_9A		; oxygen sensor	related
 		bpl	loc_FDC6
 		bra	loc_FDC4
 ; ---------------------------------------------------------------------------
@@ -3125,13 +3156,13 @@ loc_FDC4:				; CODE XREF: sub_FD41+75j
 		ldab	#8
 
 loc_FDC6:				; CODE XREF: sub_FD41+73j sub_FD41+81j
-		stab	unk_D7
-		ldab	unk_CB
+		stab	byte_D7
+		ldab	byte_CB
 		addb	#1
 		beq	loc_FE00
 
 loc_FDCE:				; CODE XREF: sub_FD41+6Bj
-		ldaa	unk_C8
+		ldaa	byte_C8
 		inca
 		bne	loc_FE0B
 		bcs	loc_FE19
@@ -3139,7 +3170,7 @@ loc_FDCE:				; CODE XREF: sub_FD41+6Bj
 		bcc	loc_FE01
 		ldd	word_C9
 		bne	loc_FDF3
-		staa	unk_CB
+		staa	byte_CB
 		ldaa	word_46
 		anda	#1
 		ldab	Port4		; another IDL+AC test
@@ -3154,19 +3185,19 @@ loc_FDED:				; CODE XREF: sub_FD41+A8j
 		beq	loc_FE11
 
 loc_FDF3:				; CODE XREF: sub_FD41+9Aj sub_FD41+B6j
-		inc	unk_CB
+		inc	byte_CB
 		lsrd
 		bcc	loc_FDF3
 		std	word_C9
 		ldaa	#$11
-		ldab	unk_CB
+		ldab	byte_CB
 		mul
 
 loc_FE00:				; CODE XREF: sub_FD41+8Bj
 		clc
 
 loc_FE01:				; CODE XREF: sub_FD41+96j
-		stab	unk_CB
+		stab	byte_CB
 		bcs	loc_FE09
 		bitb	#$F0 ; ''
 		beq	loc_FE11
@@ -3187,7 +3218,7 @@ loc_FE11:				; CODE XREF: sub_FD41+B0j sub_FD41+C6j
 
 loc_FE19:				; CODE XREF: sub_FD41+92j
 					; sub_FD41:loc_FE0Bj ...
-		staa	unk_C8
+		staa	byte_C8
 
 loc_FE1B:				; CODE XREF: sub_FD41+69j
 		ldab	Port1		; may set bit 3	- MIL
@@ -3238,7 +3269,7 @@ ChkSumLoop:				; CODE XREF: sub_FD41+113j
 		inx
 		inx
 		bne	ChkSumLoop	; loop until x overflows
-		subd	#$AA55		; this is ACTUALLY the checksum! like the sum of your test scores equalling pi or something.
+		subd	#$AA55		; Checksum is forced to	this value by value at FFEE
 		beq	nukeram1	; branch if checksum equals aa55
 		ldaa	#%11001000
 		bra	loc_FE8B	; /VF high,/TVIS can toggle, VISC low, MIL high, watchdog low, /#20 low
@@ -3366,13 +3397,13 @@ loc_FE99:				; CODE XREF: sub_FD41+146j
 		db $99 ; ô
 		db $AA ; ™
 		db $B9 ; π		; 8
-		db $6C ; l		; data (ff1b entry)
-		db $6C ; l
-		db $68 ; h
-		db $60 ; `
-		db $50 ; P
-		db $40 ; @
-		db $30 ; 0		; 6
+		db $6C ; l		; Decel	fuel cut compare values	for lilRPM data	(ff1b entry)
+		db $6C ; l		; 2700 RPM
+		db $68 ; h		; 2600 RPM
+		db $60 ; `		; 2400 RPM
+		db $50 ; P		; 2000 RPM
+		db $40 ; @		; 1600 RPM
+		db $30 ; 0		; 1200 RPM
 		db $FF			; data (ff25 entry), offset by -83d for	ADC_AFMr
 		db $C2 ; ¬
 		db $4B ; K
@@ -3651,7 +3682,7 @@ loc_FFEA:				; CODE XREF: ROM:FFE6j
 		ldaa	$FE,x
 		rts
 ; ---------------------------------------------------------------------------
-		dw $C7BE		; illegal opcode trap? c7be is out of rom... this could	be data	or even	code for all i know
+		dw $C7BE		; illegal opcode trap vector is	used to	force ROM checksum to equal AA55
 		dw $F3DB		; serial interrupt rdrf	/ orfe / tore
 		dw $F000		; timer	overflow
 		dw $F370		; timer	output compare
