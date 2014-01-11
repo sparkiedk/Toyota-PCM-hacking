@@ -1,5 +1,4 @@
 
-
 ; Processor:	    6303 []
 ; Target assembler: 68HC11 Macro Assembler v1.2	(c) Copyright 2000 Tech	Edge Pty. Ltd.
 
@@ -138,21 +137,23 @@ SE056Maxtime:	ds 2			; DATA XREF: ROM:loc_F1DAr ROM:F1DEr ...
 SE056Mintime:	ds 2
 word_70:	ds 2			; DATA XREF: ROM:F5A1w
 					; sub_F6D4:loc_F6D8r ...
+					; upper	16 bits	of word_72*2*FED2 coolant temp table
 word_72:	ds 2			; DATA XREF: ROM:F596w	sub_F5E3+B9r ...
-unk_74:		ds 1			; written as a word @ F6E0
-unk_75:		ds 1			; lsb of word_74
-word_76:	ds 2			; DATA XREF: sub_F6D4r	sub_F7BE+3Er ...
+FuelRatioH:	ds 1			; fuel ratio high nibble
+FuelRatioL:	ds 1			; fuel ratio low nibble
+word_76:	ds 2			; DATA XREF: sub_F6D4r	Calc76+3Er ...
+					; probably oxygen sensor adjustment, default value is $8000
 IC2LowCnt:	ds 1			; counts input capture 2 trailing edges, reset by p3 msb low (G+ related)
 Inj10OffTime:	ds 2
 Inj20OffTime:	ds 2			; DATA XREF: ROM:F13Er	ROM:F145w ...
 InjLoadPulse:	ds 2
 Load:		ds 2			; DATA XREF: ROM:F555w	reinitLoadsr ...
 					; roughly equal	to se056 pulse time * air temp table * fuzz factor
-word_81:	ds 2			; DATA XREF: CalcInjOffTime:loc_F16Er
+InjDeadTime:	ds 2			; DATA XREF: CalcInjOffTime:loc_F16Er
 					; ROM:FC9Ew
-					; max value is 2504, table output of AFMr
+					; max value is 2504, table output of ADC_12V
 byte_83:	ds 1			; DATA XREF: sub_F5E3+B4r
-					; sub_F7BE:loc_F7C4r ...
+					; Calc76:loc_F7C4r ...
 					; TableTHW output (FEAF	decreasing)
 byte_84:	ds 1			; DATA XREF: ROM:loc_F568w sub_F5E3+Cr ...
 		ds 1
@@ -164,7 +165,7 @@ byte_88:	ds 1			; DATA XREF: ROM:loc_F5C3w
 byte_89:	ds 1			; DATA XREF: reinitLoads+7w
 					; sub_F5E3:loc_F61Bw
 					; load related?
-ThAcorr:	ds 1			; DATA XREF: sub_F6FC+2r ROM:FBF8w
+ThAcorr:	ds 1			; DATA XREF: Calc72+2r	ROM:FBF8w
 byte_8B:	ds 1			; DATA XREF: sub_F5E3+85r sub_F6BB+Dr	...
 					; tableTHW output (FEBD	decreasing)
 word_8C:	ds 2
@@ -173,7 +174,7 @@ Loadfilt1:	ds 2			; DATA XREF: reinitLoads+4w
 Loadfilt2:	ds 2			; DATA XREF: reinitLoads+2w
 					; sub_F5E3+1Fr	...
 byte_92:	ds 1			; DATA XREF: ROM:F5BEr	sub_F70A+Dw ...
-					; comes	about by load *	byte_65
+					; comes	about by load *	lilRPM
 byte_93:	ds 1			; DATA XREF: sub_F751+Ar sub_F751+18r	...
 byte_94:	ds 1
 byte_95:	ds 1			; DATA XREF: sub_FD41:loc_F0D1r
@@ -184,7 +185,7 @@ byte_96:	ds 1			; DATA XREF: sub_FD41:loc_F0F0w
 SatCount_97:	ds 1
 SatCount_98:	ds 1
 TVIScounter:	ds 1			; TVIS counter,	negative (F4) when on, positive	(2) when off, counts back and forth after a transition
-byte_9A:	ds 1			; DATA XREF: sub_F7BE:loc_F7F9r
+byte_9A:	ds 1			; DATA XREF: Calc76:loc_F7F9r
 					; sub_F96A+18r	...
 					; oxygen sensor	related
 unk_9B:		ds 1
@@ -212,13 +213,13 @@ NEhiDERV:	ds 2
 NEhiwidfilt:	ds 2
 word_B3:	ds 2
 altDwell:	ds 2			; DATA XREF: ROM:F391r	ROM:F397r ...
-					; ADC_AFMr*4+384, abs max 1404
+					; ADC_12V*4+384, abs max 1404
 NEtrEdge:	ds 2			; leading edge time of tinp2. corresponds to tr	edge of	NE
 NEleEdge:	ds 2			; set during IC1 low handler
 Dwell:		ds 2			; Probably dwell
 word_BD:	ds 2			; output compare routine only
 word_BF:	ds 2			; DATA XREF: ROM:F911r	ROM:FCAAr ...
-					; ADC_AFMr related (table output)
+					; tops out at 8160 at 8.6V
 IdleRPMfilt:	ds 2
 IdleRPMs:	ds 1			; precision RPM	counter	for idle control, saturates at 1246 RPM
 word_C4:	ds 2			; rpm related
@@ -233,7 +234,7 @@ byte_CC:	ds 1			; DATA XREF: ROM:loc_FB6Er
 					; used for flagging bad	sensors	probably, bits:	6-ThA, 5-TPS, 2-ThW, 0-afm(not from adc)
 unk_CD:		ds 1
 SatCount_CE:	ds 1			; DATA XREF: sub_FD41-C60w
-					; sub_F7BE:loc_F7B0w ...
+					; Calc76:fake76_3w ...
 SatCount_CF:	ds 1
 SatCount_D0:	ds 1			; DATA XREF: sub_F420+9Bw
 SatCount_D1:	ds 1
@@ -596,7 +597,7 @@ CalcInjOffTime:				; CODE XREF: ROM:F140p	inj1on+7p
 		bpl	loc_F170	; branch if the	offtime	in D is	ahead of the timer
 
 loc_F16E:				; CODE XREF: CalcInjOffTimej
-		ldd	word_81		; bounce here if injector off
+		ldd	InjDeadTime	; bounce here if injector off
 
 loc_F170:				; CODE XREF: CalcInjOffTime+4j
 		addd	InCp2TrEg	; contains word_7d injection calculation
@@ -724,13 +725,13 @@ loc_F1F0:				; CODE XREF: ROM:F1E4j	ROM:F1EBj
 		ora	byte_4C		; msb inhibits injection
 		ora	SatCount_98
 		bmi	endIC1_1	; return if satcounts are $80 or greater, or msb of byte_4c is set
-		ldaa	unk_75		; lsb of word_74
+		ldaa	FuelRatioL	; fuel ratio low nibble
 		psha
 		ldd	SE056plstime
 		jsr	mulDbyStack	; multiplies unk_75 by word_6a,	returns	only upper 16 bits of result
 		pshb
 		ldx	#0
-		ldab	unk_74		; written as a word @ F6E0
+		ldab	FuelRatioH	; fuel ratio high nibble
 		abx
 		pulb
 		beq	loc_F211	; bounce if x is zero
@@ -1019,7 +1020,7 @@ IRQoutcmp:				; output compare pin p2-1 eventually becomes the signal	/IGT, or i
 		addd	altDwell	; word_b5 contains a duration
 		std	word_BD		; word_bd contains alternate leading edge to igniter
 		ldd	deltaNE		; outcomp
-		subd	altDwell	; ADC_AFMr*4+384, abs max 1404
+		subd	altDwell	; ADC_12V*4+384, abs max 1404
 		subd	Dwell		; Probably dwell
 		bcc	loc_F39F	; this add will	remove altdwell	from the dwell calculation
 		clra
@@ -1348,7 +1349,7 @@ loc_F54E:				; CODE XREF: ROM:F547j
 
 loc_F550:				; CODE XREF: ROM:F54Bj
 		ldd	SE056plstime
-		jsr	sub_F6FC
+		jsr	Calc72
 		std	Load		; roughly equal	to se056 pulse time * air temp table * fuzz factor
 		ldaa	byte_4D		; bit 6	is cache of SPD	pin, flags
 		rora
@@ -1385,14 +1386,14 @@ loc_F57F:				; CODE XREF: ROM:F575j
 		jsr	DivDby32
 		adda	#8
 		std	SE056Maxtime
-		ldd	#$800
-		jsr	sub_F6FC
-		std	word_72
+		ldd	#2048
+		jsr	Calc72		; returns word_72 multiplied by	2 multiplied by	THAcorr
+		std	word_72		; air temp compensated
 		ldx	#$FED2
 		jsr	$49,x		; ff1b
-		psha
+		psha			; this gets multiplied by word_72*2
 		jsr	sub_F6E3
-		std	word_70
+		std	word_70		; water	temp compensated
 		ldd	#$6666
 		cmpb	word_42
 		bls	loc_F5AC
@@ -1403,14 +1404,14 @@ loc_F5AC:				; CODE XREF: ROM:F5A8j
 		bhi	loc_F5BB
 		ldd	#$26F0		; b is 6000 RPM
 		cmpb	lilRPM		; 24 = 600 rpm 255 = 6375 RPM
-		bhi	loc_F5C3
+		bhi	loc_F5C3	; branch if less than 6000 RPM
 		ldaa	#$33 ; '3'
 		bra	loc_F5C3
 ; ---------------------------------------------------------------------------
 
 loc_F5BB:				; CODE XREF: ROM:F5AEj
 		ldd	#$19C8
-		cmpb	byte_92		; comes	about by load *	byte_65
+		cmpb	byte_92		; comes	about by load *	lilRPM
 		bls	loc_F5C3
 		clra
 
@@ -1418,7 +1419,7 @@ loc_F5C3:				; CODE XREF: ROM:F5B5j	ROM:F5B9j ...
 		staa	byte_88
 		ldaa	byte_4C		; msb inhibits injection
 		bpl	loc_F5EB
-		bsr	reinitLoads
+		bsr	reinitLoads	; reset	some crap if injection is inhibited
 		jmp	loc_F673
 
 ; =============== S U B	R O U T	I N E =======================================
@@ -1496,13 +1497,13 @@ loc_F5EB:				; CODE XREF: ROM:F5C7j
 		bne	loc_F5F6
 		ldd	byte_84
 		subd	#$14
-		bcc	loc_F5F7
+		bcc	loc_F5F7	; write	byte_84, byte_85
 
 loc_F5F6:				; CODE XREF: sub_F5E3+Aj
 		clra
 
 loc_F5F7:				; CODE XREF: sub_F5E3+11j
-		std	byte_84
+		std	byte_84		; write	byte_84, byte_85
 		ldab	#$FA ; '˙'
 		addb	byte_87
 		bcs	loc_F600
@@ -1512,10 +1513,10 @@ loc_F600:				; CODE XREF: sub_F5E3+1Aj
 		stab	byte_87
 		ldd	Loadfilt2
 		subd	Load		; roughly equal	to se056 pulse time * air temp table * fuzz factor
-		bcs	loc_F61A
+		bcs	loc_F61A	; carry	is set when load is increasing
 		deca
 		bmi	loc_F61A
-		bsr	sub_F5E0	; right	shift d	3 times, saturate b is acca is not zero
+		bsr	sub_F5E0	; right	shift d	3 times, saturate b if acca is not zero
 		ldaa	#204
 		mul
 		ldab	#176
@@ -1644,7 +1645,7 @@ loc_F6B1:				; CODE XREF: sub_F5E3+C8j
 		std	word_72
 		ldx	#$FF9D
 		jsr	$46,x		; ffe3,	saturate count satcount_9c
-		jsr	sub_F7BE
+		jsr	Calc76		; calculates word_76
 ; End of function sub_F5E3
 
 
@@ -1672,18 +1673,18 @@ sub_F6BB:				; CODE XREF: sub_F96A+C4P
 
 
 sub_F6D4:				; CODE XREF: sub_F6BB+5j sub_F96A+8AP
-		ldaa	word_76
+		ldaa	word_76		; probably oxygen sensor adjustment, default value is $8000
 		bsr	sub_F700	; word_72 multiplied by	msB of word_76 with some shifting returned in d
 
 loc_F6D8:				; CODE XREF: sub_F6BB+Bj sub_F6BB+17j
-		subd	word_70
+		subd	word_70		; upper	16 bits	of word_72*2*FED2 coolant temp table
 		bcs	loc_F6DE
 		clra
 		clrb
 
 loc_F6DE:				; CODE XREF: sub_F6D4+6j
-		addd	word_70
-		std	unk_74		; written as a word @ F6E0
+		addd	word_70		; upper	16 bits	of word_72*2*FED2 coolant temp table
+		std	FuelRatioH	; stores the ratio to multiply se056plstime by
 		rts
 ; End of function sub_F6D4
 
@@ -1725,10 +1726,10 @@ mulDbyStack:				; CODE XREF: ROM:F1FFP	sub_F5E3+C3p ...
 ; =============== S U B	R O U T	I N E =======================================
 
 
-sub_F6FC:				; CODE XREF: ROM:F552P	ROM:F593P
+Calc72:					; CODE XREF: ROM:F552P	ROM:F593P
 		std	word_72
 		ldaa	ThAcorr
-; End of function sub_F6FC
+; End of function Calc72
 
 
 ; =============== S U B	R O U T	I N E =======================================
@@ -1756,7 +1757,7 @@ sub_F70A:				; CODE XREF: sub_F5E3+BDp
 		ldd	Load		; roughly equal	to se056 pulse time * air temp table * fuzz factor
 		bsr	mulDbyStack	; returns upper	16b in d
 		jsr	sub_F5E1	; shift	D right	two times, if A	then B=FF
-		stab	byte_92		; comes	about by load *	byte_65
+		stab	byte_92		; comes	about by load *	lilRPM
 		ldab	word_44
 		bpl	loc_F71E
 		negb
@@ -1769,7 +1770,7 @@ loc_F71E:				; CODE XREF: sub_F70A+11j
 
 loc_F725:				; CODE XREF: sub_F70A+2Aj
 		bcs	loc_F72E
-		cmpa	byte_92		; comes	about by load *	byte_65
+		cmpa	byte_92		; comes	about by load *	lilRPM
 		bcc	loc_F72E
 		clc
 		bra	loc_F731
@@ -1777,7 +1778,7 @@ loc_F725:				; CODE XREF: sub_F70A+2Aj
 
 loc_F72E:				; CODE XREF: sub_F70A:loc_F725j
 					; sub_F70A+1Fj
-		suba	byte_92		; comes	about by load *	byte_65
+		suba	byte_92		; comes	about by load *	lilRPM
 		sec
 
 loc_F731:				; CODE XREF: sub_F70A+22j
@@ -1802,8 +1803,8 @@ loc_F741:				; CODE XREF: sub_F70A+34j
 ; End of function sub_F70A		; Carry	bit is only set	if data	has been clipped at either level
 					;
 ; ---------------------------------------------------------------------------
-		db $99 ; ô
-		db $5C ; \
+		db 153
+		db 92
 ; ---------------------------------------------------------------------------
 		adda	word_42
 		suba	#$80 ; 'Ä'
@@ -1884,39 +1885,35 @@ loc_F798:				; CODE XREF: ROM:F776j
 		std	word_40
 		rts
 ; ---------------------------------------------------------------------------
-		db $19			; data (f7f1 entry)
-		db $96 ; ñ
-		db   7
-		db $AD ; ≠
-		db   0			; word data
-		db $EB ; Î
-		db   0			; word data
-		db $4E ; N
+		dw $1996		; data (f7f1 entry)
+		dw $7AD
+		dw $EB			; word data
+		dw $4E			; word data
 ; ---------------------------------------------------------------------------
-; START	OF FUNCTION CHUNK FOR sub_F7BE
+; START	OF FUNCTION CHUNK FOR Calc76
 
-loc_F7AA:				; CODE XREF: sub_F7BE+8j
+fake76:					; CODE XREF: Calc76+8j
 		orb	#4
 		ldaa	#$71 ; 'q'
 
-loc_F7AE:
+fake76_2:
 		staa	unk_9B
 
-loc_F7B0:				; CODE XREF: sub_F7BE+Cj sub_F7BE+10j	...
+fake76_3:				; CODE XREF: Calc76+Cj	Calc76+10j ...
 		clr	SatCount_CE
 
-loc_F7B3:				; CODE XREF: sub_F7BE+18j
+fake76_4:				; CODE XREF: Calc76+18j
 		andb	#$F7 ; '˜'
 		stab	byte_4D		; bit 6	is cache of SPD	pin, flags
 		ldd	#$8000
-		stab	byte_94
+		stab	byte_94		; clear	byte_94
 		bra	loc_F811
-; END OF FUNCTION CHUNK	FOR sub_F7BE
+; END OF FUNCTION CHUNK	FOR Calc76
 
 ; =============== S U B	R O U T	I N E =======================================
 
 
-sub_F7BE:				; CODE XREF: sub_F5E3+D5P
+Calc76:					; CODE XREF: sub_F5E3+D5P
 
 ; FUNCTION CHUNK AT F7AA SIZE 00000014 BYTES
 
@@ -1924,17 +1921,17 @@ sub_F7BE:				; CODE XREF: sub_F5E3+D5P
 		bpl	loc_F7C4
 		andb	#$FB ; '˚'
 
-loc_F7C4:				; CODE XREF: sub_F7BE+2j
+loc_F7C4:				; CODE XREF: Calc76+2j
 		ldx	byte_83		; TableTHW output (FEAF	decreasing)
-		bne	loc_F7AA
+		bne	fake76
 		ldx	byte_87
-		bne	loc_F7B0
+		bne	fake76_3
 		ldaa	byte_4C		; msb inhibits injection
-		bmi	loc_F7B0
+		bmi	fake76_3
 		ldaa	SatCount_97
-		bmi	loc_F7B0
+		bmi	fake76_3
 		bitb	#4
-		bne	loc_F7B3
+		bne	fake76_4
 		orb	#8
 		stab	byte_4D		; bit 6	is cache of SPD	pin, flags
 		ldd	#$6C6F
@@ -1943,7 +1940,7 @@ loc_F7C4:				; CODE XREF: sub_F7BE+2j
 		bhi	loc_F7E7	; bounce
 		tba
 
-loc_F7E7:				; CODE XREF: sub_F7BE+26j
+loc_F7E7:				; CODE XREF: Calc76+26j
 		ldx	#$FF9C
 		jsr	8,x		; ffa4
 		staa	unk_9B
@@ -1954,35 +1951,35 @@ loc_F7F1:				; p4-2 is IDL, active high when	IDL switch is closed
 		bitb	#4		; p4-2 is IDL, active high when	IDL switch is closed
 		beq	loc_F7F9	; bounce if not	throttle closed
 		inx
-		inx			; x would then be F7A8,	different for other entry points
+		inx			; x would then be F7A8
 
-loc_F7F9:				; CODE XREF: sub_F7BE+37j
+loc_F7F9:				; CODE XREF: Calc76+37j
 		ldaa	byte_9A		; oxygen sensor	related
 		asla
-		ldd	word_76
+		ldd	word_76		; probably oxygen sensor adjustment, default value is $8000
 		bcc	loc_F802+1	; if msb of unk_9a is low, addd	0,x
-		subd	0,x
+		subd	0,x		; otherwise subtract, is this oxygen sensor feedback control?
 
-loc_F802:				; CODE XREF: sub_F7BE+40j
-		cpx	#$E300		; e300 is addd 0,x
+loc_F802:				; CODE XREF: Calc76+40j
+		cpx	#$E300		; e300 is addd 0,x - richen mixture?
 		pshb
-		ldab	byte_9D
+		ldab	byte_9D		; dynamic limit	to oxy feedback?
 		cba
-		bcc	loc_F80F
+		bcc	capMSB76
 		negb
 		cba
 		bcc	loc_F810
 
-loc_F80F:				; CODE XREF: sub_F7BE+4Bj
+capMSB76:				; CODE XREF: Calc76+4Bj
 		tba
 
-loc_F810:				; CODE XREF: sub_F7BE+4Fj
+loc_F810:				; CODE XREF: Calc76+4Fj
 		pulb
 
-loc_F811:				; CODE XREF: sub_F7BE-2j
-		std	word_76
+loc_F811:				; CODE XREF: Calc76-2j
+		std	word_76		; probably oxygen sensor adjustment, default value is $8000
 		rts
-; End of function sub_F7BE
+; End of function Calc76
 
 ; ---------------------------------------------------------------------------
 
@@ -2172,12 +2169,12 @@ loc_F90B:				; CODE XREF: ROM:F907j
 setnforgetADV:				; CODE XREF: ROM:F903j
 		std	AdvanceinUS	; word_a1 is the backoff from 10degrees	BTDC to	fire the igniter in us
 		ldd	word_D3		; deltane/16
-		addd	word_BF		; ADC_AFMr related (table output)
+		addd	word_BF		; tops out at 8160 at 8.6V
 		std	Dwell		; Probably dwell
 		lsrd
 		std	word_D3		; looks	like a temp variable for subs
 		ldd	deltaNE		; outcomp
-		subd	altDwell	; ADC_AFMr*4+384, abs max 1404
+		subd	altDwell	; ADC_12V*4+384, abs max 1404
 		subd	#100
 		subd	word_D3		; looks	like a temp variable for subs
 		bcs	loc_F925
@@ -2256,7 +2253,7 @@ sub_F96A:				; CODE XREF: sub_FD41:loc_F0FAP
 
 loc_F97C:				; CODE XREF: sub_F96A+Ej
 		stab	Port1		; has potential	to toggle bit 7	- /VF ouput generation
-		ldaa	ADC_Oxy
+		ldaa	ADC_Oxy		; 0.45V
 		cmpa	#23
 		ldaa	byte_9A		; oxygen sensor	related
 		bcs	oxy_low
@@ -2265,8 +2262,8 @@ loc_F97C:				; CODE XREF: sub_F96A+Ej
 					; Carry	bit is only set	if data	has been clipped at either level
 					;
 ; ---------------------------------------------------------------------------
-		db $81 ; Å
-		db $67 ; g
+		db 129
+		db 103
 ; ---------------------------------------------------------------------------
 		bra	loc_F995
 ; ---------------------------------------------------------------------------
@@ -2287,9 +2284,9 @@ loc_F995:				; CODE XREF: sub_F96A+22j sub_F96A+27j
 		bita	#8
 		beq	loc_F9F7
 		ldab	#1
-		ldaa	word_76
+		ldaa	word_76		; probably oxygen sensor adjustment, default value is $8000
 		adda	byte_93
-		rora
+		rora			; carry	rotated	into bit 7
 		bmi	loc_F9AF
 		negb
 
@@ -2330,7 +2327,7 @@ loc_F9E2:				; CODE XREF: sub_F96A+5Aj sub_F96A+63j ...
 
 loc_F9E5:				; CODE XREF: sub_F96A+73j
 		inc	byte_94
-		ldaa	word_76
+		ldaa	word_76		; probably oxygen sensor adjustment, default value is $8000
 		staa	byte_93
 		ldx	#$F7A2
 		jsr	$4F,x		; f7f1 - data product seems to be word_76
@@ -2910,7 +2907,7 @@ jmptable3:				; DATA XREF: ROM:FD3Do
 		ldaa	#1
 		jsr	FlagBadStuff	; acca=$01
 		ldaa	ADC_12V		; +B1 terminal divided by 5... =255*12/25
-		suba	#83
+		suba	#83		; about	8.1V
 		bcc	loc_FC94
 		clra
 
@@ -2919,22 +2916,22 @@ loc_FC94:				; CODE XREF: ROM:FC91j
 		jsr	$3C,x		; ff25
 		bsr	DivDby32
 		addd	#464
-		std	word_81		; max value is 2504, table output of AFMr
+		std	InjDeadTime	; max value is 2504, table output of ADC_12V
 		ldaa	ADC_12V		; +B1 terminal divided by 5... =255*12/25
 		ldx	#$FF12
 		jsr	$13,x		; ff25
 		lsrd
 		lsrd
 		lsrd
-		addd	word_BF		; ADC_AFMr related (table output)
+		addd	word_BF		; tops out at 8160 at 8.6V
 		lsrd
-		std	word_BF		; ADC_AFMr related (table output)
+		std	word_BF		; tops out at 8160 at 8.6V
 		ldab	ADC_12V		; +B1 terminal divided by 5... =255*12/25
 		clra
 		lsld
 		lsld
 		addd	#384
-		std	altDwell	; ADC_AFMr*4+384, abs max 1404
+		std	altDwell	; ADC_12V*4+384, abs max 1404
 		bra	loc_FCD6
 ; ---------------------------------------------------------------------------
 
@@ -3080,7 +3077,7 @@ arg_FC		=  $FE
 		ldd	#$B020
 		cmpa	ADC_ThW		; compare against 176
 		bhi	loc_FD5A
-		cmpb	byte_92		; comes	about by load *	byte_65
+		cmpb	byte_92		; comes	about by load *	lilRPM
 		bls	loc_FD5D
 
 loc_FD5A:				; CODE XREF: sub_FD41+13j
@@ -3109,7 +3106,7 @@ loc_FD79:				; CODE XREF: sub_FD41+23j sub_FD41+2Aj ...
 		ldab	byte_4D		; bit 6	is cache of SPD	pin, flags
 		andb	#8
 		beq	loc_FD9D
-		ldaa	word_76
+		ldaa	word_76		; probably oxygen sensor adjustment, default value is $8000
 		adda	byte_D6
 		rora
 		ldab	#4
@@ -3380,15 +3377,15 @@ loc_FE99:				; CODE XREF: sub_FD41+146j
 		db   5
 		db   0
 		db   0
-		db   0			; 6
-		db $FF			; data (ff1b entry)
-		db $D8 ; ÿ
-		db $90 ; ê
-		db $68 ; h
-		db $49 ; I
-		db $43 ; C
-		db $40 ; @		; 6
-		db $66 ; f		; data (ff25 entry)
+		db   0
+		db $FF			; data (ff1b entry - tableTHW),	used for fuel pulse scaling, 0 deg F
+		db $D8 ; ÿ		; 32 deg F
+		db $90 ; ê		; 64 deg F
+		db $68 ; h		; 96 deg F
+		db $49 ; I		; 128 deg F
+		db $43 ; C		; 160 deg F
+		db $40 ; @		; 192 deg F
+		db $66 ; f		; used for adjusting ADC_THA to	THAcorr
 		db $66 ; f
 		db $6A ; j
 		db $77 ; w
@@ -3404,7 +3401,7 @@ loc_FE99:				; CODE XREF: sub_FD41+146j
 		db $50 ; P		; 2000 RPM
 		db $40 ; @		; 1600 RPM
 		db $30 ; 0		; 1200 RPM
-		db $FF			; data (ff25 entry), offset by -83d for	ADC_AFMr
+		db $FF			; data (ff25 entry), offset by -83d (-8.13V) for ADC_12V
 		db $C2 ; ¬
 		db $4B ; K
 		db $18
@@ -3445,7 +3442,7 @@ loc_FE99:				; CODE XREF: sub_FD41+146j
 		db 28			; 10 deg
 		db 28			; 6
 		db $1C			; data (ff2a entry)
-		db   6			; data (ff25 entry) for	ADC_AFMr
+		db   6			; data (ff25 entry) for	ADC_12V
 		db   6
 		db $FF
 		db $FF
@@ -3465,7 +3462,7 @@ TableThW:				; entry	point, ff1b
 		rts
 ; ---------------------------------------------------------------------------
 
-TableAFMr:				; an entry point, possibly reserved for	ADC_AFMr, ff25
+Table12V:				; an entry point, possibly reserved for	ADC_12V, ff25
 		clrb
 
 Tab1:					; CODE XREF: ROM:FF20j
@@ -3479,11 +3476,11 @@ loc_FF28:				; CODE XREF: ROM:F88AP	ROM:F891P
 		lsrd			; next executed	instruction after ff26 entry
 		lsrd
 		lsrd
-		lsrd			; tablethw, tableafmr: shifted right 5 times, ff28 shifted right 4 times
+		lsrd			; tablethw, table12v: shifted right 5 times, ff28 shifted right	4 times
 		pshb			; lower	nibble of what was initially in	a gets pushed, or another entry	point and push b
 		tab
 		abx
-		ldaa	1,x		; for tablethw b=0..6, tableafmr b=0..7, ff28 b=0..15
+		ldaa	1,x		; for tablethw b=0..6, table12v	b=0..7,	ff28 b=0..15
 		suba	0,x		; a now	contains the difference	between	the two	table points
 		pulb			; b now	has the	remainder of what was rotated from A
 
