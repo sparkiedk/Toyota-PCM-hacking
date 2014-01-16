@@ -1,0 +1,40 @@
+Denso 8x module for Table Driven Assembler
+==========================================
+
+NOTES:
+v3.0	- updated TASM32.exe to v3.3 March 2009 compile date (note change to 
+	tasm32.exe name) with specific D8X bit commands compiled in, updated 
+	TASM8X.tab table file to use new D8X bit commands.
+
+v2.0	-updated to include revised 3-byte instruction for opcode 0A
+	Kashi decodes opcode 3A and 0A as the same function ( a 2 byte function 
+	st x, _addr8_ ). I believe opcode 0A should be a 3 byte function using 
+	a 16 bit address. st x, _addr16_.
+
+v1.0	-initial release
+
+
+======================================================================
+
+Install the free version of TASM that can be downloaded from 
+
+http://home.comcast.net/~tasm/index.htm
+
+1) Install the Denso 8X processor table:
+	a) Put TASM8x.TAB in TASM subdirectory.
+	b) Put tasm8x.bat in a directory in your PATH.
+
+
+2) Edit tasm8x.bat to match your directory locations for the table and tasm.exe binary
+
+3) Try assembling the included test program from the command line using:
+
+tasm8x.bat test1.asm  
+
+You should get a compiled binary (test2.obj) and  a listing file (test2.lst). 
+No errors should be generated.
+
+
+Have fun!
+
+Jon

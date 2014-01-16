@@ -1,0 +1,156 @@
+IC's are 64 pin Plastic Dual inline package, 0.070" pin pitch, 0.750 row pitch
+
+d151803-1320
+closest to d151802-7140 presumed knock sensing microprocessor
+12MHz input clock
+1	NCO+ (tranny od clutch)
+2	/SPD
+3	high to vcc
+4	low to ground
+5	low to ground
+6+7 	clock input, cannot scope
+8 	1MHz sq. wave
+9	low
+10	low
+11	400ns low pulses
+12	high to vcc
+
+49	high to vcc
+50	high
+51	high
+52	high
+53	low
+
+62	SPD2+ (tranny speed)
+63	low to ground
+
+
+
+
+
+
+
+
+
+d151803-9260
+16MHz input clock
+1	/KS (air flow meter signal)
+2	IGF1
+3	high to vcc
+4	IGF2
+5	high
+6+7 	clock input, cannot scope
+8 	1MHz sq. wave
+9	low
+10	high
+11	400ns low pulses
+12	high to vcc
+13	1MHz square wave
+14	20us high pulse every 4ms, which occasionally expands in duty cycle.
+15	20us high pulse every 4ms, which occasionally expands in duty cycle.
+16	serial 500kBit min
+17	serial 1MBit min
+18	high
+19	serial 1MBit min
+20	high	
+21	high
+22	1.5us pulse every 4ms
+23	high
+24	/ISC4
+25	/ISC3
+26	/ISC2
+27	/ISC1
+28	high
+29	high
+30	high
+31	high
+32	low
+38	/FPU
+49	high to vcc
+50	high
+51	high
+52	high
+53	low
+
+62	/G1
+63	/NE
+
+1 ASR1 
+2 ASR0 
+3 NMI 
+4 IRP 
+5 IRL 
+6 XIN 
+7 XOUT 
+8 CCLK 
+9 ADR 
+10 IS / RD 
+11 OS / WD 
+12 I / E 
+13 CLK 
+14 SIN3 
+15 SIN2 
+16 SIN1 
+17 SIN0 
+18 SOUT1 
+19 SOUT0 
+20 PB7/DA7 
+21 PB6/DA6 
+22 PB5/DA5 
+23 PB4/DA4 
+24 PB3/DA3 
+25 PB2/DA2 
+26 PB1/DA1 
+27 PB0/DA0 
+28 PA7/A15 
+29 PA6/A14 
+30 PA5/A13 
+31 PA4/A12 
+32 GND 
+
+64 VCC 
+63 ASR2 
+62 ASR3 
+61 DOUT0 
+60 DOUT1 
+59 DOUT2 
+58 DOUT3 
+57 DOUT4 
+56 DOUT5 
+55 DOUT6 
+54 DOUT7 
+53 WDC 
+52 INIT 
+51 HALT 
+50 WI 
+49 TEST 
+48 PC0 
+47 PC1 
+46 PC2 
+45 PC3 
+44 PC4 
+43 PC5 
+42 PC6 
+41 PC7 
+40 PD0 
+39 PD1 
+38 PD2 
+37 PD3 
+36 PA0/A8 
+35 PA1/A9 
+34 PA2/A10 
+33 PA3/A1
+
+
+ND MP194
+--------
+19	THG
+20	THA
+21	THW
+22	OXR2
+23	OXR1
+24	OXL2
+25	OXL1
+
+27	sub TPS (VTA2)
+28	TPS (VTA1)

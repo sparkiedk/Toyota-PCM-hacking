@@ -1,0 +1,365 @@
+"TASM D8X Assembler.    "
+.MSFIRST
+/***************************************************************************
+/* Copyright 2008, 2012 Jon Hacker
+/*
+/* This program is free software: you can redistribute it and/or modify
+/* it under the terms of the GNU General Public License as published by
+/* the Free Software Foundation, either version 3 of the License, or
+/* (at your option) any later version.
+/*
+/* This program is distributed in the hope that it will be useful,
+/* but WITHOUT ANY WARRANTY; without even the implied warranty of
+/* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+/* GNU General Public License for more details.
+/*
+/* You should have received a copy of the GNU General Public License
+/* along with this program.  If not, see <http://www.gnu.org/licenses/>.
+/*
+/* This is the instruction set definition table for the DENSO D8X processor.
+/*
+/* v2: Modified stx, [op.2] 0Ah to be 16 bit direct
+/* v3: All bit functions use new DBIT and DREL rules with updated tasm32.exe
+/* v4: Discard $ prefix for zero-page operands, st x and jsr use new D8ZERO rule with updated tasm32.exe
+/*
+/*INSTR ARGS OPCODE BYTES MOD CLASS SHIFT OR */
+/*-------------------------------------------*/
+ADD	A,B	08	1	NOP	1
+ADD	A,#*	C0	2	NOP	1
+ADD	A,$*	D0	2	NOP	1
+ADD	A,X+*	E0	2	NOP	1
+ADD	A,Y+*	E0	2	NOP	1	0	80
+ADD	A,*	F0	3	MZERO	1
+ADD	B,#*	C1	2	NOP	1
+ADD	B,$*	D1	2	NOP	1
+ADD	B,X+*	E1	2	NOP	1
+ADD	B,Y+*	E1	2	NOP	1	0	80
+ADD	B,*	F1	3	MZERO	1		
+ADD	D,#*	87	3	SWAP	1		
+ADD	D,$*	97	2	NOP	1		
+ADD	D,X+*	A7	2	NOP	1		
+ADD	D,Y+*	A7	2	NOP	1	0	80
+ADD	D,*	B7	3	MZERO	1		
+ADD	X,A	0C	1	NOP	1		
+ADD	X,B	0E	1	NOP	1		
+ADD	Y,A	0D	1	NOP	1		
+ADD	Y,B	0F	1	NOP	1		
+ADDC	A,#*	80	2	NOP	1		
+ADDC	A,$*	90	2	NOP	1		
+ADDC	A,X+*	A0	2	NOP	1		
+ADDC	A,Y+*	A0	2	NOP	1	0	80
+ADDC	A,*	B0	3	MZERO	1		
+ADJ	A	5E	1	NOP	1		
+AND	A,#*	C2	2	NOP	1		
+AND	A,$*	D2	2	NOP	1		
+AND	A,X+*	E2	2	NOP	1	 	 
+AND	A,Y+*	E2	2	NOP	1	0	80
+AND	A,*	F2	3	MZERO	1		
+AND	B,#*	C3	2	NOP	1		
+AND	B,$*	D3	2	NOP	1		
+AND	B,X+*	E3	2	NOP	1
+AND	B,Y+*	E3	2	NOP	1	0	80
+AND	B,*	F3	3	MZERO	1		
+BCC	*	44	2	R1	1		
+BCS	*	45	2	R1	1		
+BEQ	*	47	2	R1	1		
+BGEA	*	4C	2	R1	1		
+BGT	*	42	2	R1	1		
+BGTA	*	4E	2	R1	1		
+BLE	*	43	2	R1	1		
+BLEA	*	4F	2	R1	1		
+BLTA	*	4D	2	R1	1		
+BMI	*	4B	2	R1	1		
+BNE	*	46	2	R1	1		
+BPZ	*	4A	2	R1	1		
+BRA	*	40	2	R1	1		
+BRN	#*	41	2	NOP	1
+BRN	*	41	2	R1	1
+BSR	*	61	2	R1	1
+BVC	*	48	2	R1	1		
+BVS	*	49	2	R1	1		
+CLR	X+*	62	2	NOP	1
+CLR	Y+*	62	2	NOP	1	0	80
+CLR	A	52	1	NOP	1
+CLR	B	53	1	NOP	1
+CLR	*	72	2	NOP	1
+CLRB	BIT0,*	75	2	DBIT	1	0	0
+CLRB	BIT1,*	75	2	DBIT	1	0	20
+CLRB	BIT2,*	75	2	DBIT	1	0	40
+CLRB	BIT3,*	75	2	DBIT	1	0	60
+CLRB	BIT4,*	75	2	DBIT	1	0	80
+CLRB	BIT5,*	75	2	DBIT	1	0	A0
+CLRB	BIT6,*	75	2	DBIT	1	0	C0
+CLRB	BIT7,*	75	2	DBIT	1	0	E0
+CLRC	""	65	1	NOP	1		
+CLRV	""	25	1	NOP	1		
+CMP	#*,*	79	3	COMBINE	1
+CMP	A,B	0B	1	NOP	1		
+CMP	A,#*	CC	2	NOP	1		
+CMP	A,$*	DC	2	NOP	1		
+CMP	A,X+*	EC	2	NOP	1	 	 
+CMP	A,Y+*	EC	2	NOP	1	0	80
+CMP	A,*	FC	3	MZERO	1		
+CMP	B,#*	CD	2	NOP	1		
+CMP	B,$*	DD	2	NOP	1		
+CMP	B,X+*	ED	2	NOP	1
+CMP	B,Y+*	ED	2	NOP	1	0	80
+CMP	B,*	FD	3	MZERO	1
+CMP	D,#*	89	3	SWAP	1
+CMP	D,$*	99	2	NOP	1
+CMP	D,X+*	A9	2	NOP	1
+CMP	D,Y+*	A9	2	NOP	1	0	80
+CMP	D,*	B9	3	MZERO	1
+CMP	X,#*	8C	3	SWAP	1
+CMP	X,$*	9C	2	NOP	1
+CMP	X,X+*	AC	2	NOP	1
+CMP	X,Y+*	AC	2	NOP	1	0	80
+CMP	X,*	BC	3	MZERO	1
+CMP	Y,#*	8D	3	SWAP	1
+CMP	Y,$*	9D	2	NOP	1
+CMP	Y,X+*	AD	2	NOP	1
+CMP	Y,Y+*	AD	2	NOP	1	0	80
+CMP	Y,*	BD	3	MZERO	1
+CMPB	A,#*	CE	2	NOP	1
+CMPB	A,$*	DE	2	NOP	1
+CMPB	A,X+*	EE	2	NOP	1
+CMPB	A,Y+*	EE	2	NOP	1	0	80
+CMPB	A,*	FE	3	MZERO	1
+CMPB	B,#*	CF	2	NOP	1
+CMPB	B,$*	DF	2	NOP	1
+CMPB	B,X+*	EF	2	NOP	1		
+CMPB	B,Y+*	EF	2	NOP	1	0	80
+CMPB	B,*	FF	3	SWAP	1
+CMPZ	A	58	1	NOP	1
+CMPZ	B	59	1	NOP	1
+DEC	X+*	60	2	NOP	1
+DEC	Y+*	60	2	NOP	1	0	80
+DEC	A	50	1	NOP	1
+DEC	B	51	1	NOP	1
+DEC	S	2F	1	NOP	1
+DEC	X	1E	1	NOP	1
+DEC	Y	1F	1	NOP	1
+DEC	*	70	2	NOP	1
+DI	""	05	1	NOP	1
+DIV	D,#*	85	2	NOP	1		
+DIV	D,$*	95	2	NOP	1		
+DIV	D,X+*	A5	2	NOP	1		
+DIV	D,Y+*	A5	2	NOP	1	0	80
+DIV	D,*	B5	3	MZERO	1		
+EI	""	07	1	NOP	1
+INC	X+*	66	2	NOP	1
+INC	Y+*	66	2	NOP	1	0	80
+INC	A	56	1	NOP	1
+INC	B	57	1	NOP	1
+INC	S	2D	1	NOP	1
+INC	X	1C	1	NOP	1
+INC	Y	1D	1	NOP	1
+INC	*	76	2	NOP	1
+JMP	X+*	23	2	NOP	1
+JMP	Y+*	23	2	NOP	1	0	80
+JMP	*	03	3	SWAP	1
+JSR	$*	31	2	NOP	1
+JSR	X+*	21	2	NOP	1
+JSR	Y+*	21	2	NOP	1	0	80
+JSR	*	01	3	SWAP	1
+LD	#*,*	33	3	COMBINE	1
+LD	A,[Y]	1A	1	NOP	1
+LD	A,#*	CA	2	NOP	1
+LD	A,$*	DA	2	NOP	1
+LD	A,X+*	EA	2	NOP	1
+LD	A,Y+*	EA	2	NOP	1	0	80
+LD	A,*	FA	3	MZERO	1
+LD	B,#*	CB	2	NOP	1
+LD	B,$*	DB	2	NOP	1
+LD	B,X+*	EB	2	NOP	1
+LD	B,Y+*	EB	2	NOP	1	0	80
+LD	B,*	FB	3	MZERO	1
+LD	D,[Y]	1B	1	NOP	1
+LD	D,#*	86	3	SWAP	1
+LD	D,$*	96	2	NOP	1
+LD	D,X+*	A6	2	NOP	1
+LD	D,Y+*	A6	2	NOP	1	0	80
+LD	D,*	B6	3	MZERO	1
+LD	S,#*	8B	3	SWAP	1
+LD	S,$*	9B	2	NOP	1
+LD	S,X+*	AB	2	NOP	1
+LD	S,Y+*	AB	2	NOP	1	0	80
+LD	S,*	BB	3	MZERO	1
+LD	X,#*	8E	3	SWAP	1
+LD	X,$*	9E	2	NOP	1
+LD	X,X+*	AE	2	NOP	1
+LD	X,Y+*	AE	2	NOP	1	0	80
+LD	X,*	BE	3	MZERO	1
+LD	Y,#*	8F	3	SWAP	1
+LD	Y,$*	9F	2	NOP	1
+LD	Y,X+*	AF	2	NOP	1
+LD	Y,Y+*	AF	2	NOP	1	0	80
+LD	Y,*	BF	3	MZERO	1
+MOV	A,B	5B	1	NOP	1
+MOV	A,OCR	5D	1	NOP	1
+MOV	B,A	5A	1	NOP	1
+MOV	D,X	3E	1	NOP	1
+MOV	D,Y	3F	1	NOP	1		
+MOV	OCR,A	5C	1	NOP	1		
+MOV	S,X	2E	1	NOP	1		
+MOV	X,S	2C	1	NOP	1		
+MOV	X,D	3C	1	NOP	1		
+MOV	Y,D	3D	1	NOP	1		
+MUL	A,#*	81	2	NOP	1		
+MUL	A,$*	91	2	NOP	1
+MUL	A,X+*	A1	2	NOP	1	 	 
+MUL	A,Y+*	A1	2	NOP	1	0	80
+MUL	A,*	B1	3	MZERO	1		
+NEG	X+*	64	2	NOP	1
+NEG	Y+*	64	2	NOP	1	0	80
+NEG	A	54	1	NOP	1
+NEG	B	55	1	NOP	1
+NEG	*	74	2	NOP	1
+NMI	""	5F	1	NOP	1
+NOP	""	00	1	NOP	1
+OR	A,#*	C6	2	NOP	1
+OR	A,$*	D6	2	NOP	1
+OR	A,X+*	E6	2	NOP	1
+OR	A,Y+*	E6	2	NOP	1	0	80
+OR	A,*	F6	3	MZERO	1
+OR	B,#*	C7	2	NOP	1
+OR	B,$*	D7	2	NOP	1
+OR	B,X+*	E7	2	NOP	1
+OR	B,Y+*	E7	2	NOP	1	0	80
+OR	B,*	F7	3	MZERO	1
+PULL	A	7C	1	NOP	1
+PULL	B	7D	1	NOP	1
+PULL	D	78	1	NOP	1
+PULL	X	7E	1	NOP	1
+PULL	Y	7F	1	NOP	1
+PUSH	A	6C	1	NOP	1		
+PUSH	B	6D	1	NOP	1		
+PUSH	D	68	1	NOP	1		
+PUSH	X	6E	1	NOP	1		
+PUSH	Y	6F	1	NOP	1		
+RET	""	63	1	NOP	1		
+RETI	""	73	1	NOP	1		
+ROLC	X+*	26	2	NOP	1
+ROLC	Y+*	26	2	NOP	1	0	80
+ROLC	A	16	1	NOP	1
+ROLC	B	17	1	NOP	1
+ROLC	*	36	2	NOP	1
+RORC	X+*	24	2	NOP	1
+RORC	Y+*	24	2	NOP	1	0	80
+RORC	A	14	1	NOP	1
+RORC	B	15	1	NOP	1
+RORC	*	34	2	NOP	1
+SETB	BIT0,*	77	2	DBIT	1	0	0
+SETB	BIT1,*	77	2	DBIT	1	0	20
+SETB	BIT2,*	77	2	DBIT	1	0	40
+SETB	BIT3,*	77	2	DBIT	1	0	60
+SETB	BIT4,*	77	2	DBIT	1	0	80
+SETB	BIT5,*	77	2	DBIT	1	0	A0
+SETB	BIT6,*	77	2	DBIT	1	0	C0
+SETB	BIT7,*	77	2	DBIT	1	0	E0
+SETC	""	67	1	NOP	1
+SETV	""	27	1	NOP	1
+SHL	A	12	1	NOP	1
+SHL	B	13	1	NOP	1
+SHL	D	06	1	NOP	1
+SHL	X	22	1	NOP	1
+SHL	*	32	2	NOP	1
+SHR	A	10	1	NOP	1
+SHR	B	11	1	NOP	1
+SHR	D	04	1	NOP	1
+SHR	X	20	1	NOP	1
+SHR	*	30	2	NOP	1
+SHRA	X+*	28	2	NOP	1
+SHRA	Y+*	28	2	NOP	1	0	80
+SHRA	A	18	1	NOP	1
+SHRA	B	19	1	NOP	1
+SHRA	*	38	2	NOP	1
+ST	A,[Y]	82	1	NOP	1
+ST	A,$*	92	2	NOP	1
+ST	A,X+*	A2	2	NOP	1
+ST	A,Y+*	A2	2	NOP	1	0	80
+ST	A,*	B2	3	MZERO	1
+ST	B,$*	93	2	NOP	1
+ST	B,X+*	A3	2	NOP	1
+ST	B,Y+*	A3	2	NOP	1	0	80
+ST	B,*	B3	3	MZERO	1
+ST	D,[Y]	8A	1	NOP	1
+ST	D,$*	9A	2	NOP	1
+ST	D,X+*	AA	2	NOP	1
+ST	D,Y+*	AA	2	NOP	1	0	80
+ST	D,*	BA	3	MZERO	1
+ST	S,X+*	29	2	NOP	1
+ST	S,Y+*	29	2	NOP	1	0	80
+ST	S,*	39	2	NOP	1
+ST	X,X+*	2A	2	NOP	1
+ST	X,Y+*	2A	2	NOP	1	0	80
+ST	X,$*	3A	2	NOP	1
+/* MZERO doesn't work with ST X,*   */
+ST	X,*	0A	3	DZERO	1
+ST	Y,X+*	2B	2	NOP	1
+ST	Y,Y+*	2B	2	NOP	1	0	80
+ST	Y,*	3B	2	NOP	1
+SUB	A,B	09	1	NOP	1		
+SUB	A,#*	C4	2	NOP	1		
+SUB	A,$*	D4	2	NOP	1		
+SUB	A,X+*	E4	2	NOP	1		
+SUB	A,Y+*	E4	2	NOP	1	0	80
+SUB	A,*	F4	3	MZERO	1		
+SUB	B,#*	C5	2	NOP	1		
+SUB	B,$*	D5	2	NOP	1		
+SUB	B,X+*	E5	2	NOP	1		
+SUB	B,Y+*	E5	2	NOP	1	0	80
+SUB	B,*	F5	3	MZERO	1		
+SUB	D,#*	88	3	SWAP	1		
+SUB	D,$*	98	2	NOP	1		
+SUB	D,X+*	A8	2	NOP	1		
+SUB	D,Y+*	A8	2	NOP	1	0	80
+SUB	D,*	B8	3	MZERO	1		
+SUBC	A,#*	84	2	NOP	1		
+SUBC	A,$*	94	2	NOP	1		
+SUBC	A,X+*	A4	2	NOP	1		
+SUBC	A,Y+*	A4	2	NOP	1	0	80
+SUBC	A,*	B4	3	MZERO	1		
+TBBC	BIT0,*,*	37	3	DREL	1	0	0
+TBBC	BIT1,*,*	37	3	DREL	1	0	20
+TBBC	BIT2,*,*	37	3	DREL	1	0	40
+TBBC	BIT3,*,*	37	3	DREL	1	0	60
+TBBC	BIT4,*,*	37	3	DREL	1	0	80
+TBBC	BIT5,*,*	37	3	DREL	1	0	A0
+TBBC	BIT6,*,*	37	3	DREL	1	0	C0
+TBBC	BIT7,*,*	37	3	DREL	1	0	E0
+TBBS	BIT0,*,*	35	3	DREL	1	0	0
+TBBS	BIT1,*,*	35	3	DREL	1	0	20
+TBBS	BIT2,*,*	35	3	DREL	1	0	40
+TBBS	BIT3,*,*	35	3	DREL	1	0	60
+TBBS	BIT4,*,*	35	3	DREL	1	0	80
+TBBS	BIT5,*,*	35	3	DREL	1	0	A0
+TBBS	BIT6,*,*	35	3	DREL	1	0	C0
+TBBS	BIT7,*,*	35	3	DREL	1	0	E0
+TBS	BIT0,*	71	2	DBIT	1	0	0
+TBS	BIT1,*	71	2	DBIT	1	0	20
+TBS	BIT2,*	71	2	DBIT	1	0	40
+TBS	BIT3,*	71	2	DBIT	1	0	60
+TBS	BIT4,*	71	2	DBIT	1	0	80
+TBS	BIT5,*	71	2	DBIT	1	0	A0
+TBS	BIT6,*	71	2	DBIT	1	0	C0
+TBS	BIT7,*	71	2	DBIT	1	0	E0
+WAIT	""	83	1	NOP	1
+XCH	A,B	02	1	NOP	1
+XCH	A,X+*	6A	2	NOP	1
+XCH	A,Y+*	6A	2	NOP	1	0	80
+XCH	A,*	7A	2	NOP	1
+XCH	B,X+*	6B	2	NOP	1
+XCH	B,Y+*	6B	2	NOP	1	0	80
+XCH	B,*	7B	2	NOP	1
+XCH	X,Y	69	1	NOP	1
+XOR	A,#*	C8	2	NOP	1
+XOR	A,$*	D8	2	NOP	1
+XOR	A,X+*	E8	2	NOP	1		
+XOR	A,Y+*	E8	2	NOP	1	0	80
+XOR	A,*	F8	3	MZERO	1		
+XOR	B,#*	C9	2	NOP	1		
+XOR	B,$*	D9	2	NOP	1		
+XOR	B,X+*	E9	2	NOP	1		
+XOR	B,Y+*	E9	2	NOP	1	0	80
+XOR	B,*	F9	3	MZERO	1		
