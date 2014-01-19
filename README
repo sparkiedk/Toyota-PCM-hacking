@@ -6,10 +6,13 @@ Hot items:
 toyota bluetop pcm/cap.asm - a working disassembly of the bluetop code, slowly being understood,
 This is a disassebmly of the AE86 Bluetop code, from chip denso d151801-0642
 
+Toyota 1uz pcm/cap *.asm - working disassemblies of the two d151803 microprocessors inside a
+92~94 SC400 PCM. Specific part numbers are d151803-9260 (8243) and d151803-1320 (8568)
+
 Notes: 
 
 The Bluetop PCM uses a nippondenso specific issue of the hitachi HD6301v1 processor.
-Subsequent PCMs (open exceptions of course ;) use the toshiba 8x processor.
+1UZ PCM uses the toshiba 8x processor.
 
 CRUCIALLY IMPORTANT: The d151801 REQUIRES the power rails to come up BEFORE being released from /res.
 Failure to do so will cause unpredictible behaviour.
@@ -27,7 +30,7 @@ for dasm.
 SCHEMATICS are done with ExpressPCB custom software, available free from their website. I 
 know it sucks... and I apologize.
 
-cap.bin is the same as cap1-151801-0642.bin, literally pulled from the same chip two different
+bluetop/cap.bin is the same as cap1-151801-0642.bin, literally pulled from the same chip two different
 times. apologies that the main disassembly is cap.asm, and not the more appropriately named 
 cap1-151801-0642.asm
 
@@ -38,8 +41,16 @@ AE86
 Corolla GTS	
 4A-GE	
 Bluetop	
+1.6L twin cam 16 valve
 D151801	
 D151801-0642
 D151801-2860
 Hitachi 6301
 HD6301
+SC400
+LS400
+1UZ-FE
+4.0L quad cam 32 valve
+D151803
+D151803-9260
+D151803-1320

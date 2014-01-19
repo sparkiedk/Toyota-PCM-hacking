@@ -1,6 +1,6 @@
 IC's are 64 pin Plastic Dual inline package, 0.070" pin pitch, 0.750 row pitch
 
-d151803-1320
+d151803-1320 (IC501)
 closest to d151802-7140 presumed knock sensing microprocessor
 12MHz input clock
 1	NCO+ (tranny od clutch)
@@ -32,7 +32,7 @@ closest to d151802-7140 presumed knock sensing microprocessor
 
 
 
-d151803-9260
+d151803-9260 (IC502)
 16MHz input clock
 1	/KS (air flow meter signal)
 2	IGF1
@@ -45,13 +45,13 @@ d151803-9260
 10	high
 11	400ns low pulses
 12	high to vcc
-13	1MHz square wave
+13	1MHz square wave - to 1k then to 9+10 of ADC
 14	20us high pulse every 4ms, which occasionally expands in duty cycle.
 15	20us high pulse every 4ms, which occasionally expands in duty cycle.
 16	serial 500kBit min
-17	serial 1MBit min
+17	serial 1MBit min to 1k then to pin 8 of ADC
 18	high
-19	serial 1MBit min
+19	serial 1MBit min to 750 ohm then to pin 7 of ADC
 20	high	
 21	high
 22	1.5us pulse every 4ms

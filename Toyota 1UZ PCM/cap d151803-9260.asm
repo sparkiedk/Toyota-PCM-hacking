@@ -99,7 +99,25 @@ IRQL:		.block 1		; DATA XREF: __RESET+4Ew
 IRQLL:		.block 1		; DATA XREF: ROM:loc_ED22r ROM:EDB5r ...
 					; Interrupt Request Flag LSB
 IMASK:		.block 1		; DATA XREF: sub_D2B9+Aw __RESET+50w ...
-; end of 'FSR'                          ; Interrupt Request Mask MSB
+					; Interrupt Request Mask MSB
+IMASKL:		.block 1		; Interrupt Request Mask LSB
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+; end of 'FSR'
 
 ; ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
 
@@ -186,6 +204,13 @@ unk_7D:		.block 1		; DATA XREF: ROM:C940r	ROM:C944w ...
 unk_7E:		.block 1		; DATA XREF: ROM:CDC0r	__RESET+132Er ...
 unk_7F:		.block 1		; DATA XREF: __RESET+1653w
 					; __RESET+166Ar ...
+; end of 'RAM'
+
+; ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+
+; Segment type:	Regular
+		;.segment notsure
+		.org 80h
 unk_80:		.block 1		; DATA XREF: __RESET:loc_D614r
 					; __RESET+9FFr	...
 		.block 1
@@ -220,6 +245,13 @@ unk_9C:		.block 1		; DATA XREF: __RESET+6BBr __RESET+6DFr ...
 		.block 1
 unk_9E:		.block 1		; DATA XREF: sub_D688+3Fw
 		.block 1
+; end of 'notsure'
+
+; ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+
+; Segment type:	Regular
+		;.segment RAM
+		.org 0A0h
 unk_A0:		.block 1		; DATA XREF: sub_D688+41w
 		.block 1
 unk_A2:		.block 1		; DATA XREF: sub_C64D+3Cr ROM:C972r ...
@@ -346,7 +378,7 @@ unk_FB:		.block 1		; DATA XREF: ROM:FC08w
 		.block 1
 		.block 1
 		.block 1
-		.block 1
+unk_FF:		.block 1
 unk_100:	.block 1		; DATA XREF: __RESET+1733r
 unk_101:	.block 1		; DATA XREF: __RESET+481r
 unk_102:	.block 1		; DATA XREF: __RESET+46Fr IV6+D2r
@@ -577,6 +609,325 @@ unk_1BC:	.block 1		; DATA XREF: ROM:CD0Aw	ROM:CD21r ...
 unk_1BD:	.block 1		; DATA XREF: ROM:loc_CD7Er ROM:CD8Aw
 unk_1BE:	.block 1		; DATA XREF: ROM:CD53r	ROM:loc_CD70w ...
 unk_1BF:	.block 1		; DATA XREF: ROM:CD8Dr	ROM:CD99w
+unk_1C0:	.block 1
+unk_1C1:	.block 1
+unk_1C2:	.block 1
+unk_1C3:	.block 1
+unk_1C4:	.block 1
+unk_1C5:	.block 1
+unk_1C6:	.block 1
+unk_1C7:	.block 1
+unk_1C8:	.block 1
+unk_1C9:	.block 1
+unk_1CA:	.block 1
+		.block 1
+unk_1CC:	.block 1
+unk_1CD:	.block 1
+unk_1CE:	.block 1
+unk_1CF:	.block 1
+unk_1D0:	.block 1
+		.block 1
+		.block 1
+unk_1D3:	.block 1
+unk_1D4:	.block 1
+		.block 1
+		.block 1
+unk_1D7:	.block 1
+unk_1D8:	.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
+		.block 1
 ; end of 'RAM'
 
 ; File Name   :	C:\Documents and Settings\Sparkie\Desktop\Toyota PCM hacking\Toyota 1UZ PCM\cap d151803-9260.bin
@@ -2685,6 +3036,29 @@ loc_C8A3:				; CODE XREF: sub_C895+8j
 		add	d, unk_51
 		jsr	sub_C13D
 		st	b, 334Ch	; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
 		cmp	b, #88h
 		bra	loc_C8B7
 
@@ -2737,8 +3111,55 @@ sub_C8D9:				; CODE XREF: sub_C64D:loc_C7B4p
 		push	x
 		ld	d, 300h		; Bad Address
 					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
 		tbbc	bit0, unk_40, loc_C8E3
 		ld	d, 302h		; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
 					; Bad Address
 
 loc_C8E3:				; CODE XREF: sub_C8D9+4j
@@ -2853,9 +3274,8 @@ loc_C96A:				; CODE XREF: ROM:C95Cj	ROM:C95Ej ...
 		and	a, #0FAh
 		st	a, unk_A2
 		clr	a
-		st	a, 1C0h		; Bad Address
-					; Bad Address
-		st	a, 1C1h		; Bad Address
+		st	a, unk_1C0
+		st	a, unk_1C1
 		bra	loc_C9C9
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
@@ -2865,13 +3285,13 @@ loc_C981:				; CODE XREF: ROM:C96Cj
 		bne	loc_C99B
 		ld	a, unk_1AA
 		cmpb	a, #01h
-		bne	loc_C992	; Bad Address
+		bne	loc_C992
 		and	b, #0FEh
 		bra	loc_C99B
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_C992:				; CODE XREF: ROM:C98Cj
-		ld	a, 1C0h		; Bad Address
+		ld	a, unk_1C0
 		cmp	a, #3Dh
 		ble	loc_C9A5
 		or	b, #01h
@@ -2881,8 +3301,7 @@ loc_C99B:				; CODE XREF: ROM:C985j	ROM:C990j
 		or	a, #01h
 		st	a, unk_A2
 		clr	a
-		st	a, 1C0h		; Bad Address
-					; Bad Address
+		st	a, unk_1C0
 
 loc_C9A5:				; CODE XREF: ROM:C997j
 		ld	a, unk_50
@@ -2890,15 +3309,13 @@ loc_C9A5:				; CODE XREF: ROM:C997j
 		bne	loc_C9BF
 		ld	a, unk_1AA
 		cmpb	a, #04h
-		bne	loc_C9B6	; Bad Address
-					; Bad Address
+		bne	loc_C9B6
 		and	b, #0FBh
 		bra	loc_C9BF
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_C9B6:				; CODE XREF: ROM:C9B0j
-		ld	a, 1C1h		; Bad Address
-					; Bad Address
+		ld	a, unk_1C1
 		cmp	a, #3Dh
 		ble	loc_C9C9
 		or	b, #04h
@@ -2908,9 +3325,7 @@ loc_C9BF:				; CODE XREF: ROM:C9A9j	ROM:C9B4j
 		or	a, #04h
 		st	a, unk_A2
 		clr	a
-		st	a, 1C1h		; Bad Address
-					; Bad Address
-					; Bad Address
+		st	a, unk_1C1
 
 loc_C9C9:				; CODE XREF: ROM:C97Fj	ROM:C9BBj
 		st	b, unk_7D
@@ -2921,12 +3336,8 @@ loc_C9C9:				; CODE XREF: ROM:C97Fj	ROM:C9BBj
 		and	a, #0F5h
 		st	a, unk_A2
 		clr	a
-		st	a, 1C2h		; Bad Address
-					; Bad Address
-					; Bad Address
-		st	a, 1C3h		; Bad Address
-					; Bad Address
-					; Bad Address
+		st	a, unk_1C2
+		st	a, unk_1C3
 		bra	loc_CA2A
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
@@ -2936,13 +3347,13 @@ loc_C9E2:				; CODE XREF: ROM:C9CDj
 		bne	loc_C9FC
 		ld	a, unk_1AA
 		cmpb	a, #02h
-		bne	loc_C9F3	; Bad Address
+		bne	loc_C9F3
 		and	b, #0FDh
 		bra	loc_C9FC
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_C9F3:				; CODE XREF: ROM:C9EDj
-		ld	a, 1C2h		; Bad Address
+		ld	a, unk_1C2
 		cmp	a, #3Dh
 		ble	loc_CA06
 		or	b, #02h
@@ -2952,9 +3363,7 @@ loc_C9FC:				; CODE XREF: ROM:C9E6j	ROM:C9F1j
 		or	a, #02h
 		st	a, unk_A2
 		clr	a
-		st	a, 1C2h		; Bad Address
-					; Bad Address
-					; Bad Address
+		st	a, unk_1C2
 
 loc_CA06:				; CODE XREF: ROM:C9F8j
 		ld	a, unk_50
@@ -2962,19 +3371,13 @@ loc_CA06:				; CODE XREF: ROM:C9F8j
 		bne	loc_CA20
 		ld	a, unk_1AA
 		cmpb	a, #08h
-		bne	loc_CA17	; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
+		bne	loc_CA17
 		and	b, #0F7h
 		bra	loc_CA20
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_CA17:				; CODE XREF: ROM:CA11j
-		ld	a, 1C3h		; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
+		ld	a, unk_1C3
 		cmp	a, #3Dh
 		ble	loc_CA2A
 		or	b, #08h
@@ -2984,27 +3387,15 @@ loc_CA20:				; CODE XREF: ROM:CA0Aj	ROM:CA15j
 		or	a, #08h
 		st	a, unk_A2
 		clr	a
-		st	a, 1C3h		; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
+		st	a, unk_1C3
 
 loc_CA2A:				; CODE XREF: ROM:C9E0j	ROM:CA1Cj
 		st	b, unk_7D
-		ld	a, 1D3h		; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
+		ld	a, unk_1D3
 		cmp	a, #4Ch
 		ble	loc_CA6D
 		clr	b
-		st	b, 1D3h		; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
+		st	b, unk_1D3
 		ld	a, unk_8A
 		or	a, unk_8C
 		and	a, #7Ch
@@ -3065,8 +3456,7 @@ loc_CA80:				; CODE XREF: ROM:loc_DAE1j
 		ld	d, unk_17A
 		cmp	d, #55D5h
 		bcs	loc_CAC9
-		ld	b, 1D8h		; Bad Address
-					; Bad Address
+		ld	b, unk_1D8
 		cmp	b, #3Bh
 		ble	loc_CAC9
 		cmp	#5Ah, unk_5D
@@ -3113,22 +3503,18 @@ loc_CB03:				; CODE XREF: ROM:CAF9j	ROM:CAFEj
 		ld	a, #0FFh
 		ld	b, unk_94
 		cmpb	b, #28h
-		bne	loc_CB0C	; Bad Address
-					; Bad Address
+		bne	loc_CB0C
 		clr	a
 
 loc_CB0C:				; CODE XREF: ROM:CB09j
-		st	a, 1CEh		; Bad Address
-					; Bad Address
+		st	a, unk_1CE
 		ld	b, unk_90
 		cmpb	b, #78h
-		bne	loc_CB16	; Bad Address
-					; Bad Address
+		bne	loc_CB16
 		clr	a
 
 loc_CB16:				; CODE XREF: ROM:CB13j
-		st	a, 1CFh		; Bad Address
-					; Bad Address
+		st	a, unk_1CF
 		jmp	loc_CC1F
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
@@ -3158,51 +3544,40 @@ loc_CB2B:				; CODE XREF: ROM:CB22j
 loc_CB40:				; CODE XREF: ROM:CB3Dj
 		clrb	bit0, unk_40
 		cmp	a, #0Dh
-		bcc	loc_CB5A	; Bad Address
-		ld	a, 1CEh		; Bad Address
-					; Bad Address
-		beq	loc_CB4C	; Bad Address
+		bcc	loc_CB5A
+		ld	a, unk_1CE
+		beq	loc_CB4C
 		dec	a
 
 loc_CB4C:				; CODE XREF: ROM:CB49j
-		st	a, 1CEh		; Bad Address
-		ld	b, 1CFh		; Bad Address
-					; Bad Address
-		beq	loc_CB55	; Bad Address
+		st	a, unk_1CE
+		ld	b, unk_1CF
+		beq	loc_CB55
 		dec	b
 
 loc_CB55:				; CODE XREF: ROM:CB52j
-		st	b, 1CFh		; Bad Address
-		bra	loc_CB75	; Bad Address
-					; Bad Address
+		st	b, unk_1CF
+		bra	loc_CB75
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_CB5A:				; CODE XREF: ROM:CB44j
-		ld	a, 1CEh		; Bad Address
+		ld	a, unk_1CE
 		inc	a
-		beq	loc_CB63	; Bad Address
-					; Bad Address
-		st	a, 1CEh		; Bad Address
-					; Bad Address
+		beq	loc_CB63
+		st	a, unk_1CE
 
 loc_CB63:				; CODE XREF: ROM:CB5Ej
-		ld	b, 1CFh		; Bad Address
-					; Bad Address
+		ld	b, unk_1CF
 		ld	a, unk_142
 		and	a, #80h
-		beq	loc_CB75	; Bad Address
-					; Bad Address
+		beq	loc_CB75
 		setb	bit0, unk_40
 		inc	b
-		beq	loc_CB75	; Bad Address
-					; Bad Address
-		st	b, 1CFh		; Bad Address
-					; Bad Address
-					; Bad Address
+		beq	loc_CB75
+		st	b, unk_1CF
 
 loc_CB75:				; CODE XREF: ROM:CB58j	ROM:CB6Bj ...
-		ld	a, 1CEh		; Bad Address
-					; Bad Address
+		ld	a, unk_1CE
 		bne	loc_CB9B
 		ld	x, #0D253h
 		ld	y, #012Dh
@@ -3214,8 +3589,7 @@ loc_CB75:				; CODE XREF: ROM:CB58j	ROM:CB6Bj ...
 		and	a, #7Fh
 		st	a, unk_142
 		clr	a
-		st	a, 1CFh		; Bad Address
-					; Bad Address
+		st	a, unk_1CF
 		jmp	loc_CC1F
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
@@ -3240,13 +3614,13 @@ loc_CBA9:				; CODE XREF: ROM:CBA6j
 		st	a, unk_51
 
 loc_CBB4:				; CODE XREF: ROM:CBACj
-		ld	a, 1CEh		; Bad Address
+		ld	a, unk_1CE
 		cmp	a, #99h
-		bne	loc_CBEB	; Bad Address
+		bne	loc_CBEB
 		tbbs	bit3, unk_4B, loc_CBD7
 		ld	a, unk_142
 		and	a, #80h
-		bne	loc_CBEB	; Bad Address
+		bne	loc_CBEB
 		ld	a, unk_146
 		or	a, #28h
 		st	a, unk_146
@@ -3268,7 +3642,7 @@ loc_CBD7:				; CODE XREF: ROM:CBBBj
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_CBEB:				; CODE XREF: ROM:CBB9j	ROM:CBC3j
-		ld	a, 1CFh		; Bad Address
+		ld	a, unk_1CF
 		cmp	a, #99h
 		bne	loc_CC1F
 		tbbc	bit0, unk_40, loc_CC1F
@@ -3316,10 +3690,8 @@ loc_CC1F:				; CODE XREF: ROM:CB19j	ROM:CB98j ...
 
 loc_CC30:				; CODE XREF: ROM:CC20j	ROM:CC23j ...
 		st	a, unk_C7
-		st	a, 1D0h		; Bad Address
-					; Bad Address
-		st	a, 1D4h		; Bad Address
-					; Bad Address
+		st	a, unk_1D0
+		st	a, unk_1D4
 		bra	loc_CC53
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
@@ -3598,31 +3970,27 @@ loc_CE41:				; CODE XREF: ROM:CE19j	ROM:CE1Dj ...
 
 loc_CE48:				; CODE XREF: ROM:CE45j
 		st	a, unk_1BB
-		tbbc	bit3, unk_4B, loc_CE6B+1
-		tbbc	bit6, unk_45, loc_CE6B+1
-		tbbs	bit0, unk_45, loc_CE6B+1
-		tbbs	bit7, unk_4C, loc_CE6B+1
+		tbbc	bit3, unk_4B, loc_CE6B+1 ; clear bit
+		tbbc	bit6, unk_45, loc_CE6B+1 ; clear bit
+		tbbs	bit0, unk_45, loc_CE6B+1 ; clear bit
+		tbbs	bit7, unk_4C, loc_CE6B+1 ; clear bit
 		cmp	#00h, unk_66
-		beq	loc_CE6B+1
+		beq	loc_CE6B+1	; clear	bit
 		cmp	a, #2Eh
 		bcs	loc_CE63
 		tbbc	bit0, unk_41, loc_CE69
 
 loc_CE63:				; CODE XREF: ROM:CE5Ej
 		tbbs	bit1, unk_45, loc_CE69
-		tbbs	bit5, unk_45, loc_CE6B+1
+		tbbs	bit5, unk_45, loc_CE6B+1 ; clear bit
 
 loc_CE69:				; CODE XREF: ROM:CE60j	ROM:loc_CE63j
 		setb	bit5, unk_4D
 
 loc_CE6B:				; CODE XREF: ROM:CE4Bj	ROM:CE4Ej ...
-		cmp	x, #75BDh
+		cmp	x, #75BDh	; clear	bit
 		tbbs	bit0, unk_45, loc_CE89
-		ld	a, 1C4h		; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
+		ld	a, unk_1C4
 		ld	b, unk_140
 		cmpb	b, #01h
 		beq	loc_CE7D
@@ -3631,11 +3999,11 @@ loc_CE6B:				; CODE XREF: ROM:CE4Bj	ROM:CE4Ej ...
 loc_CE7D:				; CODE XREF: ROM:CE79j
 		ld	b, unk_15C
 		cmpb	b, #01h
-		beq	loc_CE86	; Bad Address
+		beq	loc_CE86
 		and	a, #0FDh
 
 loc_CE86:				; CODE XREF: ROM:CE82j
-		st	a, 1C4h		; Bad Address
+		st	a, unk_1C4
 
 loc_CE89:				; CODE XREF: ROM:CE6Ej
 		ld	a, unk_4D
@@ -3767,21 +4135,21 @@ sub_CF4E:				; CODE XREF: sub_D222+1Fp sub_D222+2Ap ...
 loc_CF57:				; CODE XREF: ROM:CF4Aj
 		clr	a
 		jsr	sub_D0B3
-		ld	b, 1C6h		; Bad Address
+		ld	b, unk_1C6
 		and	b, #7Fh
 		cmpz	a
 		beq	loc_CF65
 		or	b, #80h
 
 loc_CF65:				; CODE XREF: ROM:CF61j
-		st	b, 1C6h		; Bad Address
+		st	b, unk_1C6
 		ld	x, #0D2ABh
 		ld	y, #0D2ABh
 		tbbc	bit6, unk_45, loc_CF96
 		tbbc	bit0, unk_41, loc_CF88
-		ld	b, 1C6h		; Bad Address
+		ld	b, unk_1C6
 		bmi	loc_CFBE
-		ld	b, 1C4h		; Bad Address
+		ld	b, unk_1C4
 		and	b, #03h
 		bne	loc_CFBE
 		ld	x, #0D2AFh
@@ -3949,12 +4317,12 @@ loc_D054:				; CODE XREF: ROM:D050j
 
 loc_D05A:				; CODE XREF: ROM:D056j
 		inc	b
-		beq	loc_D061+1
+		beq	loc_D061+1	; ld b,#$7E
 		bvc	loc_D064
 		ld	b, #0FEh
 
 loc_D061:				; CODE XREF: ROM:D05Bj
-		cmp	x, #0CB7Eh
+		cmp	x, #0CB7Eh	; ld b,#$7E
 
 loc_D064:				; CODE XREF: ROM:D05Dj
 		bra	loc_D0A0
@@ -4002,11 +4370,11 @@ loc_D0A0:				; CODE XREF: ROM:CFCEj	ROM:loc_D064j ...
 
 loc_D0A7:				; CODE XREF: ROM:D017j	ROM:D036j ...
 		st	b, unk_70
-		bpz	loc_D0AD+1
+		bpz	loc_D0AD+1	; set bit
 		clrb	bit2, SSD
 
 loc_D0AD:				; CODE XREF: ROM:D0A9j
-		cmp	x, #774Bh
+		cmp	x, #774Bh	; set bit
 		jmp	locret_D158
 
 ; ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ S U B	R O U T	I N E ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ
@@ -4391,7 +4759,7 @@ sub_D257:				; CODE XREF: __RESET+1738p
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_D25F:				; CODE XREF: sub_D257j
-		ld	x, 1CAh		; Bad Address
+		ld	x, unk_1CA
 		bne	locret_D268
 		ld	b, unk_7C
 		bpz	loc_D269
@@ -4431,7 +4799,7 @@ loc_D289:				; CODE XREF: sub_D257+6j
 		clr	b
 
 loc_D28B:				; CODE XREF: sub_D257+2Dj
-		st	d, 1CAh		; Bad Address
+		st	d, unk_1CA
 		ret
 ; End of function sub_D257
 
@@ -4498,7 +4866,7 @@ loc_D2C8:				; CODE XREF: sub_D2B9+B5j
 		ld	a, #0Eh
 		st	a, DOUT		; DOUT Data Register
 		clrb	bit3, IRQLL
-		ld	#08h, 2Fh	; Bad Address
+		ld	#08h, IMASKL	; Interrupt Request Mask LSB
 		ld	y, #0F765h
 
 loc_D2D6:				; CODE XREF: sub_D2B9+2Bj
@@ -4911,7 +5279,7 @@ locret_D4B5:				; CODE XREF: sub_D499+18j
 
 		; public __RESET
 __RESET:				; CODE XREF: sub_FF01+C3j
-					; DATA XREF: IVf+3o ...
+					; DATA XREF: __NMI+3o ...
 
 ; FUNCTION CHUNK AT D6D6 SIZE 000003FE BYTES
 ; FUNCTION CHUNK AT DAEC SIZE 00000094 BYTES
@@ -4947,8 +5315,8 @@ __RESET:				; CODE XREF: sub_FF01+C3j
 		ld	a, SIDR_SODR	; Serial Input/Output Data Register
 		clr	a
 		clr	b
-		st	d, IRQL		; Interrupt Request Flag MSB
-		st	d, IMASK	; Interrupt Request Mask MSB
+		st	d, IRQL		; clear	all flags
+		st	d, IMASK	; clear	all mask bits
 		ld	s, #02DFh	; byte 735, super mega ram!
 		clr	a
 		clr	b
@@ -5054,11 +5422,7 @@ loc_D525:				; CODE XREF: sub_D3D5+17j __RESET+6Bj
 
 loc_D5B6:				; CODE XREF: __RESET+D4j
 		jsr	sub_D415
-		ld	#08h, 2Fh	; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
+		ld	#08h, IMASKL	; Interrupt Request Mask LSB
 		ei
 		clr	b
 
@@ -5076,10 +5440,7 @@ loc_D5BE:				; CODE XREF: __RESET+111j
 
 loc_D5D5:				; CODE XREF: __RESET+113j __RESET+116j
 		ld	a, #03h
-		st	a, 1C4h		; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
+		st	a, unk_1C4
 		tbbc	bit7, RAMST, loc_D614 ;	Built-in RAM status
 		cmp	#5Ah, unk_84
 		bne	loc_D614
@@ -5098,19 +5459,13 @@ loc_D5D5:				; CODE XREF: __RESET+113j __RESET+116j
 		ld	b, #80h
 		st	b, unk_142
 		ld	b, #0FFh
-		st	b, 1CEh		; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
+		st	b, unk_1CE
 		ld	a, unk_90
 		or	a, unk_92
 		and	a, #28h
 		beq	loc_D614
 		ld	b, #0FFh
-		st	b, 1CFh		; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
+		st	b, unk_1CF
 
 loc_D614:				; CODE XREF: __RESET+124j __RESET+12Aj ...
 		ld	d, unk_80
@@ -5240,17 +5595,331 @@ sub_D688:				; CODE XREF: __RESET:loc_D65Dp
 		ld	d, #6699h
 		st	d, 304h		; Bad Address
 					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
 		st	d, 306h		; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
 					; Bad Address
 		ld	d, #00FFh
 		st	d, 300h		; Bad Address
 					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
 		st	d, 302h		; Bad Address
 					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad
 		st	d, unk_9E
 		st	d, unk_A0
 		st	d, 308h		; Bad Address
 					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad
 		ld	d, #5AA5h
 		st	d, unk_84
 		clrb	bit1, unk_4B
@@ -5911,6 +6580,39 @@ loc_DAD4:				; CODE XREF: __RESET+608p __RESET+60Fp ...
 		jsr	sub_C128
 		st	b, 6644h	; Bad Address
 					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
 
 loc_DAE1:				; CODE XREF: ROM:DAD9j
 		jmp	loc_CA80
@@ -6031,6 +6733,86 @@ sub_DB80:				; CODE XREF: __RESET:loc_DB79p
 					; __RESET:loc_DBC9p ...
 		jsr	sub_C128
 		st	b, 665Bh	; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
 					; Bad Address
 					; Bad Address
 		xor	b, #0FFh
@@ -6155,11 +6937,11 @@ loc_DC2B:				; CODE XREF: __RESET+61Bj
 		di
 		ld	x, unk_64
 		cmp	x, #0238h
-		bcs	loc_DC49+1
+		bcs	loc_DC49+1	; setb
 		ld	b, unk_17D
 		bpz	loc_DC47
 		cmp	a, #32h
-		bcc	loc_DC49+1
+		bcc	loc_DC49+1	; setb
 		cmp	a, #1Eh
 		bcc	loc_DC4C
 
@@ -6167,7 +6949,7 @@ loc_DC47:				; CODE XREF: __RESET+787j
 		clrb	bit3, unk_44
 
 loc_DC49:				; CODE XREF: __RESET+782j __RESET+78Bj
-		cmp	x, #7774h
+		cmp	x, #7774h	; setb
 
 loc_DC4C:				; CODE XREF: __RESET+78Fj
 		ei
@@ -6244,7 +7026,7 @@ loc_DCC0:				; CODE XREF: __RESET+800j
 		cmp	#80h, unk_F6
 		bcs	loc_DCCB
 		tbbs	bit0, unk_45, loc_DCCB
-		tbbc	bit7, unk_4C, loc_DCD1+1
+		tbbc	bit7, unk_4C, loc_DCD1+1 ; clrb
 
 loc_DCCB:				; CODE XREF: __RESET+80Dj __RESET+80Fj
 		setb	bit6, unk_49
@@ -6252,7 +7034,7 @@ loc_DCCB:				; CODE XREF: __RESET+80Dj __RESET+80Fj
 		st	a, unk_178
 
 loc_DCD1:				; CODE XREF: __RESET+812j
-		cmp	x, #75D9h
+		cmp	x, #75D9h	; clrb
 
 loc_DCD4:				; CODE XREF: __RESET+7FBj
 		jsr	sub_C634
@@ -6839,21 +7621,21 @@ loc_E02B:				; CODE XREF: __RESET:loc_DFEAj
 		setb	bit5, unk_48
 
 loc_E033:				; CODE XREF: __RESET+B54j __RESET+B59j ...
-		tbbc	bit4, unk_44, loc_E04F+1
-		tbbs	bit5, unk_45, loc_E04F+1
+		tbbc	bit4, unk_44, loc_E04F+1 ; clrb
+		tbbs	bit5, unk_45, loc_E04F+1 ; clrb
 		cmp	#37h, unk_5E
-		bcs	loc_E04F+1
+		bcs	loc_E04F+1	; clrb
 		cmp	#14h, unk_DB
-		bcs	loc_E04F+1
+		bcs	loc_E04F+1	; clrb
 		cmp	#20h, unk_F0
-		bcs	loc_E04F+1
+		bcs	loc_E04F+1	; clrb
 		cmp	#24h, unk_F0
 		bcs	loc_E052
 		setb	bit0, unk_48
 
 loc_E04F:				; CODE XREF: __RESET:loc_E033j
 					; __RESET+B80j	...
-		cmp	x, #7518h
+		cmp	x, #7518h	; clrb
 
 loc_E052:				; CODE XREF: __RESET+B95j
 		ld	y, #0C4C0h
@@ -7011,11 +7793,11 @@ loc_E136:				; CODE XREF: __RESET+C36j __RESET+C69j
 		add	a, #20h
 		cmp	a, unk_DC
 		beq	loc_E151
-		bcs	loc_E14E+1
+		bcs	loc_E14E+1	; dec unk_DC
 		inc	unk_DC
 
 loc_E14E:				; CODE XREF: __RESET+C94j
-		cmp	x, #70DCh
+		cmp	x, #70DCh	; dec unk_DC
 
 loc_E151:				; CODE XREF: __RESET+C84j __RESET+C88j ...
 		di
@@ -7851,6 +8633,59 @@ loc_E60B:				; CODE XREF: __RESET+1109j
 		st	x, 3D3Eh	; Bad Address
 					; Bad Address
 					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
 		shl	d
 		shl	d
 		cmp	a, y + 0Fh
@@ -7891,14 +8726,13 @@ loc_E63C:				; CODE XREF: __RESET:loc_E636j
 		ld	b, unk_142
 		or	b, unk_15E
 		and	b, #40h
-		beq	loc_E657	; Bad Address
-		ld	a, 1D3h		; Bad Address
-					; Bad Address
+		beq	loc_E657
+		ld	a, unk_1D3
 		inc	a
 		beq	loc_E65A
 
 loc_E657:				; CODE XREF: __RESET+1199j
-		st	a, 1D3h		; Bad Address
+		st	a, unk_1D3
 
 loc_E65A:				; CODE XREF: __RESET+119Fj
 		ld	a, unk_A2
@@ -8016,7 +8850,7 @@ loc_E6DC:				; CODE XREF: __RESET+1222j
 		bne	loc_E722
 		ld	a, unk_7D
 		and	a, #00h
-		beq	loc_E726	; Bad Address
+		beq	loc_E726
 
 loc_E722:				; CODE XREF: __RESET:loc_E6DCj
 					; __RESET+122Cj ...
@@ -8025,7 +8859,7 @@ loc_E722:				; CODE XREF: __RESET:loc_E6DCj
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_E726:				; CODE XREF: __RESET+126Aj
-		ld	a, 1D7h		; Bad Address
+		ld	a, unk_1D7
 		ld	b, unk_50
 		and	b, #10h
 		bne	loc_E74F
@@ -8077,17 +8911,13 @@ loc_E76C:				; CODE XREF: __RESET+12ABj
 					; __RESET+12B2j
 		pull	a
 		cmp	a, b
-		bcc	loc_E775	; Bad Address
-					; Bad Address
-		st	a, 1D7h		; Bad Address
-					; Bad Address
-					; Bad Address
+		bcc	loc_E775
+		st	a, unk_1D7
 		bra	loc_E79D
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_E775:				; CODE XREF: __RESET+12B8j
-		st	b, 1D7h		; Bad Address
-					; Bad Address
+		st	b, unk_1D7
 		cmp	#4Bh, unk_5C
 		bcc	loc_E794
 		ld	a, unk_146
@@ -8124,13 +8954,11 @@ loc_E79D:				; CODE XREF: __RESET+1183j
 loc_E7B5:				; CODE XREF: __RESET+12FAj
 		ld	b, unk_1BE
 		inc	b
-		beq	loc_E7BE	; Bad Address
-					; Bad Address
+		beq	loc_E7BE
 		st	b, unk_1BE
 
 loc_E7BE:				; CODE XREF: __RESET+1303j
-		ld	a, 1D8h		; Bad Address
-					; Bad Address
+		ld	a, unk_1D8
 		bne	loc_E7CA
 		ld	b, unk_140
 		and	b, #02h
@@ -8139,9 +8967,7 @@ loc_E7BE:				; CODE XREF: __RESET+1303j
 loc_E7CA:				; CODE XREF: __RESET+130Bj
 		inc	a
 		beq	loc_E7D0
-		st	a, 1D8h		; Bad Address
-					; Bad Address
-					; Bad Address
+		st	a, unk_1D8
 
 loc_E7D0:				; CODE XREF: __RESET+1312j
 					; __RESET+1315j
@@ -8573,8 +9399,7 @@ loc_EA30:				; CODE XREF: __RESET+150Ej
 		ld	y, #0C5BAh
 		jsr	loc_C15D
 		st	a, unk_51
-		ld	a, 1CDh		; Bad Address
-					; Bad Address
+		ld	a, unk_1CD
 		ld	b, unk_6C
 		cmp	b, #2Fh
 		bcc	loc_EA45
@@ -8627,8 +9452,7 @@ loc_EA81:				; CODE XREF: __RESET+15C5j
 		bne	loc_EA8C
 		ld	b, #0Fh
 		jsr	sub_C23F
-		bra	loc_EA91	; Bad Address
-					; Bad Address
+		bra	loc_EA91
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_EA8C:				; CODE XREF: __RESET+15BDj
@@ -8637,8 +9461,7 @@ loc_EA8C:				; CODE XREF: __RESET+15BDj
 		jsr	sub_C23A
 
 loc_EA91:				; CODE XREF: __RESET+15D4j
-		st	a, 1CDh		; Bad Address
-					; Bad Address
+		st	a, unk_1CD
 		cmp	#64h, unk_5E
 		bcs	loc_EAA1
 		ld	x, #0308h
@@ -8648,6 +9471,82 @@ loc_EA91:				; CODE XREF: __RESET+15D4j
 loc_EAA1:				; CODE XREF: __RESET+15E1j
 		cmp	#31h, unk_CD
 		beq	loc_EAC1	; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
 					; Bad Address
 					; Bad Address
 		bgt	loc_EACC
@@ -8661,6 +9560,79 @@ loc_EAA1:				; CODE XREF: __RESET+15E1j
 					; Bad Address
 					; Bad Address
 					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
 		and	a, #01h
 		beq	loc_EAD3
 
@@ -8671,6 +9643,82 @@ loc_EABD:				; CODE XREF: __RESET+15FEj
 
 loc_EAC1:				; CODE XREF: __RESET+15EEj
 		ld	b, 308h		; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
 					; Bad Address
 					; Bad Address
 		and	b, #0FEh
@@ -8809,24 +9857,13 @@ loc_EB81:				; CODE XREF: __RESET+16C7j
 
 loc_EB8A:				; CODE XREF: __RESET+16D0j
 		ld	b, unk_197
-		beq	loc_EB91	; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
+		beq	loc_EB91
 		or	a, #40h
 
 loc_EB91:				; CODE XREF: __RESET+16D7j
-		st	a, 1C5h		; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
+		st	a, unk_1C5
 		clr	b
-		ld	a, 1C6h		; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
+		ld	a, unk_1C6
 		and	a, #80h
 		tbbc	bit0, unk_45, loc_EB9F
 		or	a, #01h
@@ -8848,33 +9885,30 @@ loc_EBAE:				; CODE XREF: __RESET:loc_EBA9j
 		or	a, #10h
 
 loc_EBB3:				; CODE XREF: __RESET:loc_EBAEj
-		tbbc	bit2, unk_49, loc_EBB8 ; Bad Address
+		tbbc	bit2, unk_49, loc_EBB8
 		or	a, #20h
 
 loc_EBB8:				; CODE XREF: __RESET:loc_EBB3j
-		st	a, 1C6h		; Bad Address
+		st	a, unk_1C6
 		ld	b, unk_45
 		st	b, unk_F8
 		ld	d, unk_164
 		jsr	sub_EC27
-		st	b, 1C8h		; Bad Address
-					; Bad Address
+		st	b, unk_1C8
 		ld	d, unk_F0
 		shl	d
-		bcc	loc_EBCF	; Bad Address
+		bcc	loc_EBCF
 		ld	a, #0FFh
 
 loc_EBCF:				; CODE XREF: __RESET+1715j
-		st	a, 1C9h		; Bad Address
+		st	a, unk_1C9
 		ld	d, unk_78
 		shl	d
-		bcc	loc_EBD9	; Bad Address
-					; Bad Address
+		bcc	loc_EBD9
 		ld	a, #0FFh
 
 loc_EBD9:				; CODE XREF: __RESET+171Fj
-		st	a, 1C7h		; Bad Address
-					; Bad Address
+		st	a, unk_1C7
 		ld	a, unk_6A
 		st	a, unk_F4
 		ld	a, unk_124
@@ -8939,13 +9973,13 @@ IVe:					; DATA XREF: ROM:FFFAo
 		cmpz	b
 		beq	loc_EC72
 		cmp	b, #18h
-		bcc	loc_EC4C+1
+		bcc	loc_EC4C+1	; ld b,#$01
 		inc	b
 		cmp	b, #0Dh
 		bne	loc_EC72
 
 loc_EC4C:				; CODE XREF: ROM:EC45j
-		cmp	x, #0CB01h
+		cmp	x, #0CB01h	; ld b,#$01
 
 loc_EC4F:				; CODE XREF: ROM:EC66j	ROM:EC70j
 		tbbs	bit7, unk_4C, loc_EC72
@@ -9974,26 +11008,13 @@ loc_F1B2:				; CODE XREF: sub_F1A9+4j
 loc_F1BB:				; CODE XREF: sub_F1A9+Dj
 		clr	a
 		ld	b, unk_187
-		beq	loc_F1C7	; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-		ld	a, 1CCh		; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
+		beq	loc_F1C7
+		ld	a, unk_1CC
 		inc	a
 		beq	loc_F1CA
 
 loc_F1C7:				; CODE XREF: sub_F1A9+16j
-		st	a, 1CCh		; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
+		st	a, unk_1CC
 
 loc_F1CA:				; CODE XREF: sub_F1A9+1Cj
 		cmp	#67h, unk_F0
@@ -10118,11 +11139,7 @@ loc_F278:				; CODE XREF: sub_F1A9+B6j
 		bne	loc_F289
 		ld	b, unk_187
 		beq	loc_F28C
-		ld	b, 1CCh		; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
+		ld	b, unk_1CC
 		cmp	b, #20h
 		ble	loc_F28C
 
@@ -10246,14 +11263,7 @@ IVc:					; DATA XREF: ROM:FFF6o
 		tbbc	bit7, unk_45, loc_F34D
 		clrb	bit4, PORTB
 		ld	a, unk_7C
-		bpz	loc_F33A	; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
+		bpz	loc_F33A
 		inc	a
 		st	a, unk_7C
 		cmp	a, #0F0h
@@ -10262,24 +11272,9 @@ IVc:					; DATA XREF: ROM:FFF6o
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_F33A:				; CODE XREF: IVc+Fj
-		ld	d, 1CAh		; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
+		ld	d, unk_1CA
 		shr	d
-		st	d, 1CAh		; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
+		st	d, unk_1CA
 		ble	loc_F349
 
 loc_F343:				; CODE XREF: IVc+16j
@@ -11148,7 +12143,7 @@ loc_F79D:				; CODE XREF: SerialINT+2j
 		bpz	loc_F7B5
 		setb	bit1, SSD
 		ld	#02h, SIDR_SODR	; Serial Input/Output Data Register
-		ld	b, #0Ch
+		ld	b, #012
 
 loc_F7AA:				; CODE XREF: SerialINT+18j
 		dec	b
@@ -11422,6 +12417,40 @@ loc_F90C:				; CODE XREF: SerialINT+73j
 					; Bad Address
 					; Bad Address
 					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
 		sub	a, b
 		clrb	bit7, unk_43
 		tbbs	bit3, unk_4B, loc_F91F
@@ -11530,6 +12559,68 @@ loc_F98F:				; CODE XREF: ROM:F987j	ROM:F98Bj
 					; Bad Address
 					; Bad Address
 					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
 		sub	a, b
 		clrb	bit6, unk_43
 		tbbs	bit3, unk_4B, loc_F9A0
@@ -11569,6 +12660,63 @@ loc_F9B8:				; CODE XREF: ROM:loc_F9A0j
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 		jsr	sub_C128
 		ld	b, 745h		; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
 					; Bad Address
 					; Bad Address
 					; Bad Address
@@ -11662,7 +12810,7 @@ loc_FA29:				; CODE XREF: ROM:FA1Fj	ROM:FA24j
 
 loc_FA35:				; CODE XREF: ROM:FA2Fj
 		cmp	d, #0CC0h
-		bcc	loc_FA49+1
+		bcc	loc_FA49+1	; clr b
 
 loc_FA3A:				; CODE XREF: ROM:FA33j
 		neg	a
@@ -11677,7 +12825,7 @@ loc_FA47:				; CODE XREF: ROM:FA31j
 		ld	b, #0FFh
 
 loc_FA49:				; CODE XREF: ROM:FA38j
-		brn	#53h
+		brn	#53h		; clr b
 
 loc_FA4B:				; CODE XREF: ROM:FA45j
 		ld	a, unk_122
@@ -12980,8 +14128,8 @@ DefaultINT:				; DATA XREF: ROM:FFE2o	ROM:FFE4o ...
 ; Looks	like this could	be the NMI, as dead space is populated with NMI	instruction. would reset nicely.
 ; 672 bytes of ram is implied here
 
-		; public IVf
-IVf:					; DATA XREF: ROM:FFFCo
+		; public __NMI
+__NMI:					; DATA XREF: ROM:FFFCo
 		ld	s, #02DFh
 		ld	d, #__RESET
 		push	d
@@ -12990,13 +14138,11 @@ IVf:					; DATA XREF: ROM:FFFCo
 		push	a
 		clrb	bit7, IMASK
 		reti
-; End of function IVf
+; End of function __NMI
 
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
-		.db  51h ; Q
-		.db  9Bh ; ›
-		.db  82h ; ‚
-		.db  43h ; C
+		.dw 519Bh		; likely checksum
+		.dw 8243h		; mask rom version!
 		.dw IV0			; External interrupt 0
 		.dw SerialINT		; External interrupt 1
 		.dw DefaultINT		; External interrupt 2
@@ -13012,7 +14158,7 @@ IVf:					; DATA XREF: ROM:FFFCo
 		.dw IVc			; External interrupt c
 		.dw IVd			; External interrupt d
 		.dw IVe			; External interrupt e
-		.dw IVf			; External interrupt f
+		.dw __NMI		; External interrupt f
 		.dw __RESET		; Processor reset
 ; end of 'ROM'
 
