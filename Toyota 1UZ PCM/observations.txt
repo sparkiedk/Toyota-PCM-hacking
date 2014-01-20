@@ -71,7 +71,12 @@ d151803-9260 (IC502)
 51	high
 52	high
 53	low
+54	#40 output
+55	#30 output
+56	#20 output
+57	#10 output
 
+61	looks like IGT output for all sparks, multiplexed by MP908 (iHope)
 62	/G1
 63	/NE
 

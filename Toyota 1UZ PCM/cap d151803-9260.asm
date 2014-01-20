@@ -80,7 +80,7 @@ TAIT:		.block 1		; DATA XREF: __RESET+34r __RESET+173Er
 LDOUT:		.block 1		; DATA XREF: sub_EF13+11r sub_EF13+32r ...
 					; Latch	DOUT
 DOUT:		.block 1		; DATA XREF: sub_C8BB+9w sub_D2B9+13w	...
-					; DOUT Data Register
+					; bit 0	is IGT,	bits 4~7 are #40~#10
 DOM:		.block 1		; DATA XREF: sub_D2B9:loc_D2C8w
 					; __RESET+3Dr ...
 					; DOUT Control Register
@@ -3059,6 +3059,10 @@ loc_C8A3:				; CODE XREF: sub_C895+8j
 					; Bad Address
 					; Bad Address
 					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
 		cmp	b, #88h
 		bra	loc_C8B7
 
@@ -3079,7 +3083,7 @@ sub_C8BB:				; CODE XREF: ROM:CB2Dp	ROM:CB34p ...
 		shr	d
 		jsr	sub_C13D
 		cmpz	b
-		st	d, DOUT		; DOUT Data Register
+		st	d, DOUT		; bit 0	is IGT,	bits 4~7 are #40~#10
 		inc	y + 1Ah
 		dec	b
 		clr	b
@@ -3132,8 +3136,17 @@ sub_C8D9:				; CODE XREF: sub_C64D:loc_C7B4p
 					; Bad Address
 					; Bad Address
 					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
 		tbbc	bit0, unk_40, loc_C8E3
 		ld	d, 302h		; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
 					; Bad Address
 					; Bad Address
 					; Bad Address
@@ -4864,7 +4877,7 @@ loc_D2C8:				; CODE XREF: sub_D2B9+B5j
 					; sub_D2B9+119j
 		clr	DOM		; DOUT Control Register
 		ld	a, #0Eh
-		st	a, DOUT		; DOUT Data Register
+		st	a, DOUT		; bit 0	is IGT,	bits 4~7 are #40~#10
 		clrb	bit3, IRQLL
 		ld	#08h, IMASKL	; Interrupt Request Mask LSB
 		ld	y, #0F765h
@@ -5306,7 +5319,7 @@ __RESET:				; CODE XREF: sub_FF01+C3j
 		ld	#0Bh, PORTD_ASRIN ; Port D Data	Register / ASR Input Data
 		ld	#33h, TAIT	; Timer	ASR Control
 		ld	#0FDh, ASR1P	; ASR1 pos edge	counter	value MSB
-		ld	#00h, DOUT	; DOUT Data Register
+		ld	#00h, DOUT	; bit 0	is IGT,	bits 4~7 are #40~#10
 		ld	#00h, DOM	; DOUT Control Register
 		ld	#30h, SMRC_SIR	; Serial Master	Register Control
 		ld	#04h, SSD	; Serial Status	Data Register
@@ -5644,7 +5657,13 @@ sub_D688:				; CODE XREF: __RESET:loc_D65Dp
 					; Bad Address
 					; Bad Address
 					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
 		st	d, 306h		; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
 					; Bad Address
 					; Bad Address
 					; Bad Address
@@ -5697,6 +5716,9 @@ sub_D688:				; CODE XREF: __RESET:loc_D65Dp
 					; Bad Address
 		ld	d, #00FFh
 		st	d, 300h		; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
 					; Bad Address
 					; Bad Address
 					; Bad Address
@@ -6613,6 +6635,9 @@ loc_DAD4:				; CODE XREF: __RESET+608p __RESET+60Fp ...
 					; Bad Address
 					; Bad Address
 					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
 
 loc_DAE1:				; CODE XREF: ROM:DAD9j
 		jmp	loc_CA80
@@ -6815,6 +6840,9 @@ sub_DB80:				; CODE XREF: __RESET:loc_DB79p
 					; Bad Address
 					; Bad Address
 					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad
 		xor	b, #0FFh
 		ret
 ; End of function sub_DB80
@@ -8686,6 +8714,9 @@ loc_E60B:				; CODE XREF: __RESET+1109j
 					; Bad Address
 					; Bad Address
 					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
 		shl	d
 		shl	d
 		cmp	a, y + 0Fh
@@ -9549,6 +9580,9 @@ loc_EAA1:				; CODE XREF: __RESET+15E1j
 					; Bad Address
 					; Bad Address
 					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
 		bgt	loc_EACC
 		tbbc	bit0, unk_45, loc_EAD3
 		ld	b, unk_103
@@ -9557,6 +9591,9 @@ loc_EAA1:				; CODE XREF: __RESET+15E1j
 		cmpb	b, #20h
 		bne	loc_EABD
 		ld	a, 308h		; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
 					; Bad Address
 					; Bad Address
 					; Bad Address
@@ -9643,6 +9680,9 @@ loc_EABD:				; CODE XREF: __RESET+15FEj
 
 loc_EAC1:				; CODE XREF: __RESET+15EEj
 		ld	b, 308h		; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
 					; Bad Address
 					; Bad Address
 					; Bad Address
@@ -10958,15 +10998,15 @@ loc_F180:				; CODE XREF: sub_F158+Cj
 		add	d, TIMER	; Timer	MSB (bit11~bit18)
 		ld	x, y + 18h
 		st	d, x + 00h
-		ld	d, DOUT		; DOUT Data Register
+		ld	d, DOUT		; bit 0	is IGT,	bits 4~7 are #40~#10
 		or	a, y + 00h
 		and	b, y + 08h
-		st	d, DOUT		; DOUT Data Register
-		ld	d, DOUT		; DOUT Data Register
+		st	d, DOUT		; bit 0	is IGT,	bits 4~7 are #40~#10
+		ld	d, DOUT		; bit 0	is IGT,	bits 4~7 are #40~#10
 		and	a, y + 08h
 		or	b, y + 00h
 		st	b, DOM		; DOUT Control Register
-		st	a, DOUT		; DOUT Data Register
+		st	a, DOUT		; bit 0	is IGT,	bits 4~7 are #40~#10
 		ei
 		ret
 ; End of function sub_F158
@@ -11333,7 +11373,7 @@ loc_F388:				; CODE XREF: IVc+3Bj IVc+56j ...
 loc_F38A:				; CODE XREF: IVc+66j
 		tbbs	bit6, unk_4C, loc_F39B
 		tbbc	bit7, unk_4B, loc_F39B
-		tbbs	bit3, DOUT, loc_F39B ; DOUT Data Register
+		tbbs	bit3, DOUT, loc_F39B ; bit 0 is	IGT, bits 4~7 are #40~#10
 		bra	loc_F397
 ; 컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴�
 
@@ -12451,6 +12491,9 @@ loc_F90C:				; CODE XREF: SerialINT+73j
 					; Bad Address
 					; Bad Address
 					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
 		sub	a, b
 		clrb	bit7, unk_43
 		tbbs	bit3, unk_4B, loc_F91F
@@ -12621,6 +12664,9 @@ loc_F98F:				; CODE XREF: ROM:F987j	ROM:F98Bj
 					; Bad Address
 					; Bad Address
 					; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
 		sub	a, b
 		clrb	bit6, unk_43
 		tbbs	bit3, unk_4B, loc_F9A0
@@ -12660,6 +12706,9 @@ loc_F9B8:				; CODE XREF: ROM:loc_F9A0j
 ; 컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴�
 		jsr	sub_C128
 		ld	b, 745h		; Bad Address
+					; Bad Address
+					; Bad Address
+					; Bad Address
 					; Bad Address
 					; Bad Address
 					; Bad Address
