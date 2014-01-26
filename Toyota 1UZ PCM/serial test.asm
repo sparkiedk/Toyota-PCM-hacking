@@ -64,11 +64,11 @@ _IMASKL		.equ $2F
 ; ROM segment
 .org $8000
 reset:
-	ld    	#$02, _OMODE	; change to mode 6
+	ld    	#$02, _OMODE	; 
 	di    			; disable interrupts
 	ld    	s, #$01bf		; set stack to top of RAM
-	ld    	#18h, _SMRC_SIR	; set SMRC cintrol reg to 0001 1000
-
+	ld    	#018h, _SMRC_SIR	; set SMRC cintrol reg to 0001 1000 (bits 7~5 - no effect on tx, bit 4 - no effect on tx, bit3 - no tx at all (txen?))
+;	ld	#0FFh,_SSD		;writing FF to ssd seems to inhibit tx
 	
 wait	ld    	b, _SSD		; load serial status data reg into b
 	and   	b, #$20		; mask (bit 5)  0010 0000

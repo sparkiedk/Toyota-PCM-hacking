@@ -23,44 +23,37 @@ WDC:		.block 1		; watch	dog timer
 TIMER3:		.block 1		; DATA XREF: sub_C010:loc_C025r
 					; sub_C010+18r	...
 					; Timer	LSB (bit0~bit2)
-TIMER:		.block 1		; DATA XREF: sub_F158+13r
-					; sub_F158:loc_F180r ...
+TIMER:		.block 2		; DATA XREF: DoInjectors+13r
+					; DoInjectors:DoInj6r ...
 					; Timer	MSB (bit11~bit18)
-TIMERL:		.block 1		; Timer	LSB (bit3~bit10)
 SIDR_SODR:	.block 1		; DATA XREF: sub_D45F+8w sub_D45F+18r	...
 					; Serial Input/Output Data Register
 SMRC_SIR:	.block 1		; DATA XREF: sub_D45F+13r __RESET+40r	...
 					; Serial Master	Register Control
-CPR0:		.block 1		; DATA XREF: sub_F689+3w sub_F69E+6w
+CPR0:		.block 2		; DATA XREF: sub_F689+3w sub_F69E+6w
 					; Timer	comparison #0 MSB
-CPR0L:		.block 1		; Timer	comparison #0 LSB
-CPR1:		.block 1		; DATA XREF: ROM:ED38w
+CPR1:		.block 2		; DATA XREF: ROM:ED38w
 					; Timer	comparison #1 MSB
-CPR1L:		.block 1		; Timer	comparison #1 LSB
-CPR2:		.block 1		; Timer	comparison #2 MSB
-CPR2L:		.block 1		; Timer	comparison #2 LSB
-CPR3:		.block 1		; Timer	comparison #3 MSB
-CPR3L:		.block 1		; Timer	comparison #3 LSB
+CPR2:		.block 2		; Timer	comparison #2 MSB
+CPR3:		.block 2		; Timer	comparison #3 MSB
 ASR0P:		.block 1		; DATA XREF: __RESET+12r __RESET+1747r
-					; ASR0 pos edge	counter	value MSB
+					; ASR0 pos edge	counter	value MSB (IGF1)
 ASR0PL:		.block 1		; DATA XREF: __RESET+2Er __RESET+174Ar
 					; ASR0 pos edge	counter	value LSB
 ASR0N:		.block 1		; DATA XREF: sub_C003+Aw sub_C010+11w	...
-					; ASR0 neg edge	counter	value MSB
+					; ASR0 neg edge	counter	value MSB (IGF1)
 ASR0NL:		.block 1		; DATA XREF: __RESET+18r __RESET+1750r
 					; ASR0 neg edge	counter	value LSB
-ASR1P:		.block 1		; DATA XREF: __RESET+37r __RESET+174Dr
-					; ASR1 pos edge	counter	value MSB
-ASR1PL:		.block 1		; ASR1 pos edge	counter	value LSB
-ASR1N:		.block 1		; DATA XREF: __RESET+28r IVdr	...
-					; ASR1 neg edge	counter	value MSB
+ASR1P:		.block 2		; DATA XREF: __RESET+37r __RESET+174Dr
+					; ASR1 pos edge	counter	value MSB (KS)
+ASR1N:		.block 1		; DATA XREF: __RESET+28r intASR1r ...
+					; ASR1 neg edge	counter	value MSB (KS)
 ASR1NL:		.block 1		; DATA XREF: __RESET+2Br
 					; ASR1 neg edge	counter	value LSB
-ASR2:		.block 1		; DATA XREF: sub_C010+52w IV0+14w ...
-					; ASR2 edge counter value MSB
-ASR2L:		.block 1		; ASR2 edge counter value LSB
+ASR2:		.block 2		; DATA XREF: sub_C010+52w IV0+14w ...
+					; ASR2 edge counter value MSB (NE)
 ASR3:		.block 1		; DATA XREF: sub_C010+31w __RESET+26w	...
-					; ASR3 edge counter value MSB
+					; ASR3 edge counter value MSB (G1)
 ASR3L:		.block 1		; ASR3 edge counter value LSB
 unk_1C:		.block 1		; DATA XREF: IV0+2r
 unk_1D:		.block 1		; DATA XREF: sub_D47F:loc_D489r
@@ -79,8 +72,8 @@ TAIT:		.block 1		; DATA XREF: __RESET+34r __RESET+173Er
 					; Timer	ASR Control
 LDOUT:		.block 1		; DATA XREF: sub_EF13+11r sub_EF13+32r ...
 					; Latch	DOUT
-DOUT:		.block 1		; DATA XREF: sub_C8BB+9w sub_D2B9+13w	...
-					; bit 0	is IGT,	bits 4~7 are #40~#10
+DOUT:		.block 1		; DATA XREF: sub_D2B9+13w __RESET+3Ar	...
+					; DOUT Data Register
 DOM:		.block 1		; DATA XREF: sub_D2B9:loc_D2C8w
 					; __RESET+3Dr ...
 					; DOUT Control Register
@@ -101,22 +94,18 @@ IRQLL:		.block 1		; DATA XREF: ROM:loc_ED22r ROM:EDB5r ...
 IMASK:		.block 1		; DATA XREF: sub_D2B9+Aw __RESET+50w ...
 					; Interrupt Request Mask MSB
 IMASKL:		.block 1		; Interrupt Request Mask LSB
+unk_30:		.block 1
 		.block 1
 		.block 1
 		.block 1
+unk_34:		.block 1
 		.block 1
 		.block 1
 		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
+CPR4:		.block 2		; no evidence compares 4~7 exist
+CPR5:		.block 2
+CPR6:		.block 2
+CPR7:		.block 2
 ; end of 'FSR'
 
 ; ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
@@ -187,18 +176,15 @@ unk_6E:		.block 1		; DATA XREF: __RESET:loc_D784w
 unk_70:		.block 1		; DATA XREF: ROM:CFE2r	ROM:D01Ew ...
 unk_71:		.block 1		; DATA XREF: ROM:CFE7r	ROM:loc_CFFAw ...
 unk_72:		.block 1		; DATA XREF: ROM:loc_CFDDr ROM:CFFCr ...
-unk_73:		.block 1		; DATA XREF: IV6:loc_F3D0r
-					; SerialINT+26r ...
+unk_73:		.block 1		; DATA XREF: IV6:loc_F3D0r intSIN0+26r ...
 unk_74:		.block 1		; DATA XREF: sub_D45F+2w IV6+480w ...
 unk_75:		.block 1		; DATA XREF: IV6:loc_F3CAr
 					; IV6:loc_F3F6w ...
 unk_76:		.block 1		; DATA XREF: IV6+4B5r IV6:loc_F433w ...
 unk_77:		.block 1		; DATA XREF: __RESET+26Ar __RESET+26Fw ...
-unk_78:		.block 1		; DATA XREF: __RESET:loc_D72Fr
+word_78:	.block 2		; DATA XREF: __RESET:loc_D72Fr
 					; __RESET+288r	...
-		.block 1
-unk_7A:		.block 1		; DATA XREF: sub_C152r	__RESET+315w ...
-		.block 1
+word_7A:	.block 2		; DATA XREF: danger1r __RESET+315w ...
 unk_7C:		.block 1		; DATA XREF: sub_D257+3r sub_D257+Dr ...
 unk_7D:		.block 1		; DATA XREF: ROM:C940r	ROM:C944w ...
 unk_7E:		.block 1		; DATA XREF: ROM:CDC0r	__RESET+132Er ...
@@ -211,40 +197,24 @@ unk_7F:		.block 1		; DATA XREF: __RESET+1653w
 ; Segment type:	Regular
 		;.segment notsure
 		.org 80h
-unk_80:		.block 1		; DATA XREF: __RESET:loc_D614r
+word_80:	.block 2		; DATA XREF: __RESET:loc_D614r
 					; __RESET+9FFr	...
-		.block 1
-unk_82:		.block 1		; DATA XREF: sub_C505r	sub_D688+22w ...
-		.block 1
-unk_84:		.block 1		; DATA XREF: __RESET+127r __RESET+19Dr ...
-		.block 1
-unk_86:		.block 1		; DATA XREF: ROM:CA83r	ROM:loc_CCD9r ...
-		.block 1
-unk_88:		.block 1		; DATA XREF: ROM:CCDFr	ROM:CDA2r
-		.block 1
-unk_8A:		.block 1		; DATA XREF: ROM:CA37r	ROM:CCE5r ...
-		.block 1
-unk_8C:		.block 1		; DATA XREF: ROM:CA39r	ROM:CCE7r ...
-		.block 1
-unk_8E:		.block 1		; DATA XREF: ROM:CC58r	ROM:CCF1r ...
-		.block 1
-unk_90:		.block 1		; DATA XREF: ROM:CA89r	ROM:CB0Fr ...
-		.block 1
-unk_92:		.block 1		; DATA XREF: ROM:CA8Br	ROM:D08Er ...
-		.block 1
-unk_94:		.block 1		; DATA XREF: sub_C64D+5Fr ROM:CB05r ...
-		.block 1
-unk_96:		.block 1		; DATA XREF: sub_C64D+61r ROM:CCEBr ...
-		.block 1
-unk_98:		.block 1		; DATA XREF: sub_C64D+222r sub_C8BBr ...
-		.block 1
-unk_9A:		.block 1		; DATA XREF: __RESET+6E6r
+word_82:	.block 2		; DATA XREF: sub_C505r	sub_D688+22w ...
+word_84:	.block 2		; DATA XREF: __RESET+127r __RESET+19Dr ...
+word_86:	.block 2		; DATA XREF: ROM:CA83r	ROM:loc_CCD9r ...
+word_88:	.block 2		; DATA XREF: ROM:CCDFr	ROM:CDA2r
+word_8A:	.block 2		; DATA XREF: ROM:CA37r	ROM:CCE5r ...
+word_8C:	.block 2		; DATA XREF: ROM:CA39r	ROM:CCE7r ...
+word_8E:	.block 2		; DATA XREF: ROM:CC58r	ROM:CCF1r ...
+word_90:	.block 2		; DATA XREF: ROM:CA89r	ROM:CB0Fr ...
+word_92:	.block 2		; DATA XREF: ROM:CA8Br	ROM:D08Er ...
+word_94:	.block 2		; DATA XREF: sub_C64D+5Fr ROM:CB05r ...
+word_96:	.block 2		; DATA XREF: sub_C64D+61r ROM:CCEBr ...
+word_98:	.block 2		; DATA XREF: sub_C64D+222r sub_C8BBr ...
+word_9A:	.block 2		; DATA XREF: __RESET+6E6r
 					; __RESET:loc_DBC0r ...
-		.block 1
-unk_9C:		.block 1		; DATA XREF: __RESET+6BBr __RESET+6DFr ...
-		.block 1
-unk_9E:		.block 1		; DATA XREF: sub_D688+3Fw
-		.block 1
+word_9C:	.block 2		; DATA XREF: __RESET+6BBr __RESET+6DFr ...
+word_9E:	.block 2		; DATA XREF: sub_D688+3Fw
 ; end of 'notsure'
 
 ; ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
@@ -264,8 +234,7 @@ unk_A5:		.block 1		; DATA XREF: __RESET+F54r
 unk_A6:		.block 1		; DATA XREF: __RESET+43Ar
 					; __RESET:loc_D8F7w
 unk_A7:		.block 1		; DATA XREF: __RESET+2C1r __RESET+567w
-unk_A8:		.block 1		; DATA XREF: SerialINT+110r
-					; SerialINT+125w ...
+unk_A8:		.block 1		; DATA XREF: intSIN0+110r intSIN0+125w ...
 unk_A9:		.block 1		; DATA XREF: sub_C003r
 					; sub_C010:loc_C046r ...
 unk_AA:		.block 1		; DATA XREF: sub_C010r	sub_C010+5w ...
@@ -275,15 +244,15 @@ unk_AC:		.block 1		; DATA XREF: sub_F1A9+ACw
 unk_AD:		.block 1		; DATA XREF: ROM:CE9Er	ROM:F963w
 unk_AE:		.block 1		; DATA XREF: ROM:CE91r	ROM:F968w
 unk_AF:		.block 1		; DATA XREF: ROM:CE99r	ROM:CFC9r ...
-unk_B0:		.block 1		; DATA XREF: sub_F6AC+5Ar
-					; SerialINT+12Bw
+unk_B0:		.block 1		; DATA XREF: sub_F6AC+5Ar intSIN0+12Bw
 unk_B1:		.block 1		; DATA XREF: IVc+44r IVc:loc_F388w ...
-unk_B2:		.block 1		; DATA XREF: IVd+5r IVd:loc_F726r ...
+unk_B2:		.block 1		; DATA XREF: intASR1+5r
+					; intASR1:loc_F726r ...
 unk_B3:		.block 1		; DATA XREF: __RESET+241w __RESET+DE1r ...
 unk_B4:		.block 1		; DATA XREF: IV6+19Dr IV6:loc_F10Dw ...
 		.block 1
 		.block 1
-unk_B7:		.block 1		; DATA XREF: ROM:FB39w	ROM:FB40r
+unk_B7:		.block 1		; DATA XREF: ROM:F925w	ROM:F92Ar ...
 unk_B8:		.block 1		; DATA XREF: __RESET:loc_E816w
 					; __RESET:loc_E818r
 unk_B9:		.block 1		; DATA XREF: __RESET+22Ar
@@ -362,7 +331,7 @@ unk_EB:		.block 1		; DATA XREF: IV6+1A2r IV6+1C1w ...
 		.block 1
 		.block 1
 		.block 1
-unk_F0:		.block 1		; DATA XREF: ROM:loc_C15Dr sub_C1B0r ...
+unk_F0:		.block 1		; DATA XREF: ROM:danger4r sub_C1B0r ...
 		.block 1
 unk_F2:		.block 1		; DATA XREF: ROM:CAFBr	ROM:CCF7r ...
 		.block 1
@@ -370,7 +339,7 @@ unk_F4:		.block 1		; DATA XREF: __RESET+1728w
 unk_F5:		.block 1		; DATA XREF: __RESET+172Dw
 unk_F6:		.block 1		; DATA XREF: __RESET+406r
 					; __RESET:loc_DCC0r ...
-unk_F7:		.block 1		; DATA XREF: sub_C160r	sub_C634+4r ...
+unk_F7:		.block 1		; DATA XREF: danger5r sub_C634+4r ...
 unk_F8:		.block 1		; DATA XREF: __RESET+1707w
 unk_F9:		.block 1		; DATA XREF: __RESET+488r IV6+5EAr ...
 unk_FA:		.block 1		; DATA XREF: sub_C61C+5r __RESET+2D0r	...
@@ -409,9 +378,9 @@ unk_116:	.block 1		; DATA XREF: __RESET+D0Er
 					; __RESET+1624r
 unk_117:	.block 1		; DATA XREF: __RESET+10FBr
 					; __RESET+12A1r
-unk_118:	.block 1		; DATA XREF: IVd+2r IVd+4Aw
-		.block 1
-unk_11A:	.block 1		; DATA XREF: IV6+70r IV6+8Cw ...
+lastASR1N:	.block 2		; DATA XREF: intASR1+2r intASR1+4Aw
+deltaKS:	.block 1		; DATA XREF: IV6+70r IV6+8Cw ...
+					; sort of the difference between new and previous KS values
 unk_11B:	.block 1		; DATA XREF: IV6+78r IV6+8Fw
 unk_11C:	.block 1		; DATA XREF: sub_C003+7w sub_C010+8r ...
 unk_11D:	.block 1		; DATA XREF: __RESET+120Er
@@ -444,7 +413,7 @@ unk_131:	.block 1		; DATA XREF: ROM:loc_CF96r __RESET+9Aw
 		.block 1
 unk_137:	.block 1		; DATA XREF: __RESET+38Bw
 unk_138:	.block 1		; DATA XREF: IV6+605r IV6+60Bw
-		.block 1
+unk_139:	.block 1
 		.block 1
 		.block 1
 		.block 1
@@ -488,22 +457,17 @@ unk_15F:	.block 1		; DATA XREF: ROM:CD44r
 unk_161:	.block 1		; DATA XREF: ROM:CFC5w	__RESET+CCw
 unk_162:	.block 1		; DATA XREF: ROM:C933r	ROM:C93Dw ...
 unk_163:	.block 1		; DATA XREF: ROM:CBE1r	ROM:CBE6w ...
-unk_164:	.block 1		; DATA XREF: sub_C5E7+2Aw __RESET+83w	...
-		.block 1
-unk_166:	.block 1		; DATA XREF: sub_C5E7+2Dw __RESET+86w	...
-		.block 1
-unk_168:	.block 1		; DATA XREF: __RESET+8Cw __RESET+9CEr	...
-		.block 1
-unk_16A:	.block 1		; DATA XREF: __RESET+92w __RESET+3DBw	...
-		.block 1
-unk_16C:	.block 1		; DATA XREF: __RESET+95w
+word_164:	.block 2		; DATA XREF: sub_C5E7+2Aw __RESET+83w	...
+					; DoInjectors related
+word_166:	.block 2		; DATA XREF: sub_C5E7+2Dw __RESET+86w	...
+					; DoInjectors related
+word_168:	.block 2		; DATA XREF: __RESET+8Cw __RESET+9CEr	...
+word_16A:	.block 2		; DATA XREF: __RESET+92w __RESET+3DBw	...
+word_16C:	.block 2		; DATA XREF: __RESET+95w
 					; __RESET:loc_D899w ...
-		.block 1
-unk_16E:	.block 1		; DATA XREF: __RESET:loc_D858r
+word_16E:	.block 2		; DATA XREF: __RESET:loc_D858r
 					; __RESET+7F6w	...
-		.block 1
-unk_170:	.block 1		; DATA XREF: sub_C64D+51r ROM:CABFr ...
-		.block 1
+word_170:	.block 2		; DATA XREF: sub_C64D+51r ROM:CABFr ...
 unk_172:	.block 1		; DATA XREF: ROM:CAC2r	__RESET+7D7w ...
 		.block 1
 unk_174:	.block 1		; DATA XREF: __RESET:loc_DCA3w
@@ -577,17 +541,15 @@ unk_1A2:	.block 1		; DATA XREF: __RESET+166Fr
 					; __RESET:loc_EB30w
 unk_1A3:	.block 1		; DATA XREF: __RESET+165Cw
 					; __RESET:loc_EB3Ar
-unk_1A4:	.block 1		; DATA XREF: ROM:EC7Cr	ROM:loc_EC86w ...
-		.block 1
+lastASR2:	.block 2		; DATA XREF: ROM:EC7Cr	ROM:loc_EC86w ...
 unk_1A6:	.block 1		; DATA XREF: __RESET+341r __RESET+35Er ...
 		.block 1
 unk_1A8:	.block 1		; DATA XREF: sub_C4DF+14r __RESET+2FBw ...
-unk_1A9:	.block 1		; DATA XREF: SerialINT+96r
-					; SerialINT+9Fw
+unk_1A9:	.block 1		; DATA XREF: intSIN0+96r intSIN0+9Fw
 unk_1AA:	.block 1		; DATA XREF: ROM:C987r	ROM:C9ABr ...
 unk_1AB:	.block 1		; DATA XREF: __RESET:loc_EB0Br	IVc+36r ...
-unk_1AC:	.block 1		; DATA XREF: __RESET+266w IVd+2Br
-		.block 1
+word_1AC:	.block 2		; DATA XREF: __RESET+266w intASR1+2Br
+					; something deltaKS related
 unk_1AE:	.block 1		; DATA XREF: __RESET+DF7r __RESET+E05w ...
 unk_1AF:	.block 1		; DATA XREF: __RESET:loc_E2D0r
 					; __RESET:loc_E308w
@@ -602,7 +564,7 @@ unk_1B6:	.block 1		; DATA XREF: ROM:CEA8w	sub_D41C+21w ...
 unk_1B7:	.block 1		; DATA XREF: ROM:CEABw	sub_D41C+24w ...
 		.block 1
 		.block 1
-unk_1BA:	.block 1		; DATA XREF: ROM:CEB9r	SerialINT+11Aw
+unk_1BA:	.block 1		; DATA XREF: ROM:CEB9r	intSIN0+11Aw
 unk_1BB:	.block 1		; DATA XREF: ROM:loc_CE41r
 					; ROM:loc_CE48w ...
 unk_1BC:	.block 1		; DATA XREF: ROM:CD0Aw	ROM:CD21r ...
@@ -613,9 +575,9 @@ unk_1C0:	.block 1
 unk_1C1:	.block 1
 unk_1C2:	.block 1
 unk_1C3:	.block 1
-unk_1C4:	.block 1
+unk_1C4:	.block 1		; DATA XREF: ROM:CE71r	ROM:loc_CE86w ...
 unk_1C5:	.block 1
-unk_1C6:	.block 1
+unk_1C6:	.block 1		; DATA XREF: ROM:CF5Br	ROM:loc_CF65w ...
 unk_1C7:	.block 1
 unk_1C8:	.block 1
 unk_1C9:	.block 1
@@ -623,16 +585,17 @@ unk_1CA:	.block 1
 		.block 1
 unk_1CC:	.block 1
 unk_1CD:	.block 1
-unk_1CE:	.block 1
-unk_1CF:	.block 1
-unk_1D0:	.block 1
+unk_1CE:	.block 1		; DATA XREF: ROM:loc_CB0Cw ROM:CB46r ...
+unk_1CF:	.block 1		; DATA XREF: ROM:loc_CB16w ROM:CB4Fr ...
+unk_1D0:	.block 1		; DATA XREF: ROM:CC32w
 		.block 1
 		.block 1
 unk_1D3:	.block 1
-unk_1D4:	.block 1
+unk_1D4:	.block 1		; DATA XREF: ROM:CC35w
 		.block 1
 		.block 1
-unk_1D7:	.block 1
+unk_1D7:	.block 1		; DATA XREF: __RESET:loc_E726r
+					; __RESET+12BAw ...
 unk_1D8:	.block 1
 		.block 1
 		.block 1
@@ -661,6 +624,7 @@ unk_1D8:	.block 1
 		.block 1
 		.block 1
 		.block 1
+unk_1F4:	.block 1
 		.block 1
 		.block 1
 		.block 1
@@ -728,8 +692,7 @@ unk_1D8:	.block 1
 		.block 1
 		.block 1
 		.block 1
-		.block 1
-		.block 1
+unk_238:	.block 1
 		.block 1
 		.block 1
 		.block 1
@@ -930,6 +893,18 @@ unk_1D8:	.block 1
 		.block 1
 ; end of 'RAM'
 
+; ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+
+; Segment type:	Regular
+		;.segment badaddress
+		.org 300h
+unk_300:	.block 1
+		.block 1
+word_302:	.block 2
+word_304:	.block 2
+word_306:	.block 2
+unk_308:	.block 1
+; end of 'badaddress'
 ; File Name   :	C:\Documents and Settings\Sparkie\Desktop\Toyota PCM hacking\Toyota 1UZ PCM\cap d151803-9260.bin
 ; Format      :	Binary file
 ; Base Address:	0000h Range: C000h - 10000h Loaded length: 4000h
@@ -950,7 +925,7 @@ sub_C003:				; CODE XREF: __RESET+17Dp
 		ld	a, #34h
 		or	a, #0C0h
 		st	a, unk_11C
-		st	a, ASR0N	; ASR0 neg edge	counter	value MSB
+		st	a, ASR0N	; ASR0 neg edge	counter	value MSB (IGF1)
 		ret
 ; End of function sub_C003
 
@@ -967,7 +942,7 @@ sub_C010:				; CODE XREF: IV6:loc_F4DEp
 		and	a, #0BFh
 		st	a, unk_11C
 		ei
-		st	a, ASR0N	; ASR0 neg edge	counter	value MSB
+		st	a, ASR0N	; ASR0 neg edge	counter	value MSB (IGF1)
 		bra	loc_C034
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
@@ -984,9 +959,9 @@ loc_C034:				; CODE XREF: sub_C010+13j sub_C010+20j
 		ld	a, unk_11C
 		or	a, #40h
 		st	a, unk_11C
-		st	a, ASR0N	; ASR0 neg edge	counter	value MSB
+		st	a, ASR0N	; ASR0 neg edge	counter	value MSB (IGF1)
 		ld	d, #38F0h
-		st	d, ASR3		; ASR3 edge counter value MSB
+		st	d, ASR3		; ASR3 edge counter value MSB (G1)
 		ld	#0B7h, TIMER3	; Timer	LSB (bit0~bit2)
 
 loc_C046:				; CODE XREF: sub_C010+1Cj
@@ -995,13 +970,13 @@ loc_C046:				; CODE XREF: sub_C010+1Cj
 		ld	a, unk_11C
 		and	a, #7Fh
 		st	a, unk_11C
-		st	a, ASR0N	; ASR0 neg edge	counter	value MSB
+		st	a, ASR0N	; ASR0 neg edge	counter	value MSB (IGF1)
 		ld	a, unk_11C
 		or	a, #80h
 		st	a, unk_11C
-		st	a, ASR0N	; ASR0 neg edge	counter	value MSB
+		st	a, ASR0N	; ASR0 neg edge	counter	value MSB (IGF1)
 		ld	d, #3900h
-		st	d, ASR2		; ASR2 edge counter value MSB
+		st	d, ASR2		; ASR2 edge counter value MSB (NE)
 		ld	#4Fh, TIMER3	; Timer	LSB (bit0~bit2)
 		clr	unk_A9
 
@@ -1021,12 +996,12 @@ IV0:					; DATA XREF: ROM:FFDEo
 		ld	#0FFh, TIMER3	; Timer	LSB (bit0~bit2)
 		ld	a, TIMER3	; Timer	LSB (bit0~bit2)
 		cmpb	a, #30h
-		bne	loc_C07B
+		bne	iv0part2
 		clr	unk_A9
 
-loc_C07B:				; CODE XREF: IV0+Dj
+iv0part2:				; CODE XREF: IV0+Dj
 		ld	d, #3900h
-		st	d, ASR2		; ASR2 edge counter value MSB
+		st	d, ASR2		; ASR2 edge counter value MSB (NE)
 		ld	#4Fh, TIMER3	; Timer	LSB (bit0~bit2)
 		reti
 ; End of function IV0
@@ -1038,7 +1013,7 @@ loc_C07B:				; CODE XREF: IV0+Dj
 sub_C084:				; CODE XREF: sub_C084+9j
 					; sub_C64D:loc_C891p ...
 		di
-		ld	a, [y]
+		ld	a, [y]		; postincrement	y (ld a,y+0 | inc y)
 		inc	a
 		beq	loc_C08B
 		dec	y
@@ -1110,7 +1085,7 @@ loc_C0BE:				; CODE XREF: sub_C09C+1Fj
 
 sub_C0C1:				; CODE XREF: __RESET+257p __RESET+29Cp ...
 		st	x, unk_51
-		beq	locret_C114
+		beq	locret_C114	; if zero return
 		shr	d
 		mov	d, y
 		clr	a
@@ -1119,10 +1094,10 @@ sub_C0C1:				; CODE XREF: __RESET+257p __RESET+29Cp ...
 		ld	d, unk_51
 
 loc_C0CC:				; CODE XREF: sub_C0C1+Fj
-		bmi	loc_C0D2
-		inc	x
+		bmi	loc_C0D2	; shift	left until msb is 1
+		inc	x		; x counts number of shifts
 		shl	d
-		bra	loc_C0CC
+		bra	loc_C0CC	; shift	left until msb is 1
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_C0D2:				; CODE XREF: sub_C0C1:loc_C0CCj
@@ -1131,18 +1106,18 @@ loc_C0D2:				; CODE XREF: sub_C0C1:loc_C0CCj
 		push	d
 		mov	s, x
 		dec	x
-		dec	x
+		dec	x		; compensate for later pushes
 		ld	a, x + 02h
 		mov	y, d
-		beq	loc_C0E5
-		div	d, x + 02h
-		push	b
+		beq	loc_C0E5	; pushing Int.Frac result
+		div	d, x + 02h	; d is input d,	x+02 is	MSB of shifted input x
+		push	b		; b is the division, a is the modulo
 		clr	b
 		div	d, x + 02h
 		pull	a
 
 loc_C0E5:				; CODE XREF: sub_C0C1+1Bj
-		push	d
+		push	d		; pushing Int.Frac result
 		mov	y, d
 		dec	x + 02h
 		div	d, x + 02h
@@ -1190,21 +1165,21 @@ locret_C114:				; CODE XREF: sub_C0C1+2j
 ; ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ S U B	R O U T	I N E ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ
 
 
-sub_C115:				; CODE XREF: sub_C634:loc_C63Fp
+MulAbyY:				; CODE XREF: sub_C634:loc_C63Fp
 					; __RESET+294p	...
 		push	y
 		mov	s, x
 		xch	a, x + 01h
-		mul	a, x + 01h
+		mul	a, x + 01h	; d now	contains input acca*lsBy
 		addc	a, #00h
 		xch	a, x + 01h
-		mul	a, x + 00h
+		mul	a, x + 00h	; d now	contains input acca*msBy
 		mov	d, y
 		pull	d
 		add	y, b
 		mov	y, d
 		ret
-; End of function sub_C115
+; End of function MulAbyY
 
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 		.db 0DAh ; Ú
@@ -1213,118 +1188,118 @@ sub_C115:				; CODE XREF: sub_C634:loc_C63Fp
 ; ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ S U B	R O U T	I N E ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ
 
 
-sub_C128:				; CODE XREF: sub_C8D9:loc_C8E9p
+SaturateData:				; CODE XREF: sub_C8D9:loc_C8E9p
 					; sub_C907+1p ...
 		pull	x
 		cmp	a, x + 00h
-		ble	loc_C131
+		ble	satd2
 		ld	a, x + 00h
-		bra	loc_C137
+		bra	satd3
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
-loc_C131:				; CODE XREF: sub_C128+3j
+satd2:					; CODE XREF: SaturateData+3j
 		cmp	a, x + 01h
-		bcc	loc_C13A
+		bcc	satd4
 		ld	a, x + 01h
 
-loc_C137:				; CODE XREF: sub_C128+7j
+satd3:					; CODE XREF: SaturateData+7j
 		setc
 		jmp	x + 02h
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
-loc_C13A:				; CODE XREF: sub_C128+Bj
+satd4:					; CODE XREF: SaturateData+Bj
 		clrc
 		jmp	x + 02h
-; End of function sub_C128
+; End of function SaturateData
 
 
 ; ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ S U B	R O U T	I N E ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ
 
 
-sub_C13D:				; CODE XREF: sub_C64D+226p
+SaturateD16b:				; CODE XREF: sub_C64D+226p
 					; sub_C895+18p	...
 		pull	x
 		cmp	d, x + 00h
-		ble	loc_C146
+		ble	sat16_1
 		ld	d, x + 00h
-		bra	loc_C14C
+		bra	sat16_2
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
-loc_C146:				; CODE XREF: sub_C13D+3j
+sat16_1:				; CODE XREF: SaturateD16b+3j
 		cmp	d, x + 02h
-		bcc	loc_C14F
+		bcc	sat16_3
 		ld	d, x + 02h
 
-loc_C14C:				; CODE XREF: sub_C13D+7j
+sat16_2:				; CODE XREF: SaturateD16b+7j
 		setc
 		jmp	x + 04h
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
-loc_C14F:				; CODE XREF: sub_C13D+Bj
+sat16_3:				; CODE XREF: SaturateD16b+Bj
 		clrc
 		jmp	x + 04h
-; End of function sub_C13D
+; End of function SaturateD16b
 
 
 ; ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ S U B	R O U T	I N E ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ
 
 
-sub_C152:				; CODE XREF: __RESET+75Ap __RESET+7A1p ...
-		ld	d, unk_7A
-; End of function sub_C152
+danger1:				; CODE XREF: __RESET+75Ap __RESET+7A1p ...
+		ld	d, word_7A
+; End of function danger1
 
 
 ; ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ S U B	R O U T	I N E ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ
 
 
-sub_C154:				; CODE XREF: __RESET+28Ep
+danger2:				; CODE XREF: __RESET+28Ep
 		div	d, #40h
-		bcc	loc_C15A
+		bcc	danger3
 		ld	b, #0FFh
 
-loc_C15A:				; CODE XREF: sub_C154+2j
+danger3:				; CODE XREF: danger2+2j
 		mov	b, a
-		bra	sub_C162
-; End of function sub_C154
+		bra	danger6
+; End of function danger2
 
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
-loc_C15D:				; CODE XREF: __RESET+2A9p __RESET+4A7p ...
+danger4:				; CODE XREF: __RESET+2A9p __RESET+4A7p ...
 		ld	a, unk_F0
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
-		.db  8Ch ; Œ
+		.db  8Ch ; Œ		; cpx
 
 ; ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ S U B	R O U T	I N E ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ
 
 
-sub_C160:				; CODE XREF: sub_C4DF:loc_C4E2p
+danger5:				; CODE XREF: sub_C4DF:loc_C4E2p
 					; sub_C61Cp ...
 		ld	a, unk_F7
-; End of function sub_C160
+; End of function danger5
 
 
 ; ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ S U B	R O U T	I N E ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ
 
 
-sub_C162:				; CODE XREF: sub_C154+7j sub_C4DF+1Ap	...
+danger6:				; CODE XREF: danger2+7j sub_C4DF+1Ap ...
 		cmp	a, y + 00h
-		bgt	loc_C16B
+		bgt	danger9
 
-loc_C166:				; CODE XREF: sub_C162+11j
+danger7:				; CODE XREF: danger6+11j
 		clr	a
-		bra	loc_C18E
+		bra	danger12
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
-loc_C169:				; CODE XREF: sub_C162+Bj
+danger8:				; CODE XREF: danger6+Bj
 		inc	y
 		inc	y
 
-loc_C16B:				; CODE XREF: sub_C162+2j
+danger9:				; CODE XREF: danger6+2j
 		cmp	a, y + 02h
-		bgt	loc_C169
+		bgt	danger8
 		ld	b, y + 02h
 		cmp	b, #0FFh
-		beq	loc_C166
+		beq	danger7
 		sub	a, y + 00h
 		sub	b, y + 00h
 		push	b
@@ -1333,20 +1308,20 @@ loc_C16B:				; CODE XREF: sub_C162+2j
 		div	d, x + 00h
 		inc	s
 		ld	a, y + 03h
-		bcs	loc_C18A
+		bcs	danger10
 		cmp	a, y + 01h
-		bcc	loc_C18C
+		bcc	danger11
 		neg	b
 		ld	a, y + 01h
 
-loc_C18A:				; CODE XREF: sub_C162+1Fj
+danger10:				; CODE XREF: danger6+1Fj
 		inc	y
 		inc	y
 
-loc_C18C:				; CODE XREF: sub_C162+23j
+danger11:				; CODE XREF: danger6+23j
 		sub	a, y + 01h
 
-loc_C18E:				; CODE XREF: sub_C162+5j
+danger12:				; CODE XREF: danger6+5j
 		inc	y
 		push	b
 		mov	s, x
@@ -1354,7 +1329,7 @@ loc_C18E:				; CODE XREF: sub_C162+5j
 		inc	s
 		add	a, y + 00h
 		ret
-; End of function sub_C162
+; End of function danger6
 
 
 ; ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ S U B	R O U T	I N E ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ
@@ -1722,7 +1697,7 @@ unk_C26A:	.db 0A5h ; ¥		; DATA XREF: __RESET:loc_DD50r
 		.db 0CCh ; Ì
 		.db  1Bh
 		.db 0FFh
-		.db  0Bh
+		.db  0Bh		; C623
 		.db 0EAh ; ê
 		.db  24h ; $
 		.db 0B7h ; ·
@@ -1737,11 +1712,11 @@ unk_C26A:	.db 0A5h ; ¥		; DATA XREF: __RESET:loc_DD50r
 		.db 0E4h ; ä
 		.db  0Fh
 		.db 0FFh
-		.db  12h
+unk_C2DB:	.db  12h		; data used by F070
 		.db  15h
 		.db  06h
 		.db  09h
-		.db  15h
+		.db  15h		; C619
 		.db 0B9h ; ¹
 		.db  24h ; $
 		.db  67h ; g
@@ -1752,7 +1727,7 @@ unk_C26A:	.db 0A5h ; ¥		; DATA XREF: __RESET:loc_DD50r
 		.db 0E4h ; ä
 		.db  2Ch ; ,
 		.db 0FFh
-		.db  86h ; †
+		.db  86h ; †		; C5F4
 		.db  14h
 		.db 0D2h ; Ò
 		.db  0Ah
@@ -2265,7 +2240,7 @@ sub_C4DF:				; CODE XREF: __RESET+C8Bp
 		ld	y, #0C49Dh
 
 loc_C4E2:				; CODE XREF: sub_C4DA+3j
-		jsr	sub_C160
+		jsr	danger5
 		ld	b, unk_DA
 		shr	b
 		shr	b
@@ -2279,7 +2254,7 @@ loc_C4F0:				; CODE XREF: sub_C4DF+Dj
 		st	a, unk_51
 		ld	a, unk_1A8
 		ld	y, #0C498h
-		jsr	sub_C162
+		jsr	danger6
 		add	a, unk_51
 		cmp	a, #7Dh
 		ble	locret_C504
@@ -2295,7 +2270,7 @@ locret_C504:				; CODE XREF: sub_C4DF+21j
 
 sub_C505:				; CODE XREF: __RESET+171p
 					; __RESET:loc_DEF0p
-		ld	d, unk_82
+		ld	d, word_82
 		xor	b, #0FFh
 		cmp	a, b
 		bne	loc_C510
@@ -2541,7 +2516,7 @@ loc_C5FA:				; CODE XREF: sub_C5E7+Bj
 		ld	a, unk_114
 		and	a, #02h
 		beq	loc_C60D
-		ld	d, #0139h
+		ld	d, #00313
 		add	d, unk_51
 		st	d, unk_51
 
@@ -2549,8 +2524,8 @@ loc_C60D:				; CODE XREF: sub_C5E7+1Dj
 		ld	d, unk_51
 		shl	d
 		shl	d
-		st	d, unk_164
-		st	d, unk_166
+		st	d, word_164	; DoInjectors related
+		st	d, word_166	; DoInjectors related
 		ei
 		ret
 ; End of function sub_C5E7
@@ -2568,13 +2543,13 @@ sub_C619:				; CODE XREF: sub_C5E7p	sub_C634p
 
 
 sub_C61C:				; CODE XREF: sub_C5E7+10p
-		jsr	sub_C160
+		jsr	danger5
 		st	d, unk_51
 		ld	a, unk_FA
 		ld	y, #0C2CCh
-		jsr	sub_C162
+		jsr	danger6
 		mul	a, #08h
-		add	d, #0CD0h
+		add	d, #03280
 		ld	y, unk_51
 		jsr	sub_C09C
 		ret
@@ -2593,7 +2568,7 @@ sub_C634:				; CODE XREF: __RESET+17Ap
 		ld	a, #80h
 
 loc_C63F:				; CODE XREF: sub_C634+7j
-		jsr	sub_C115
+		jsr	MulAbyY
 		shr	d
 		shr	d
 		shr	d
@@ -2664,15 +2639,15 @@ loc_C687:				; CODE XREF: sub_C64D+Bj
 
 loc_C69D:				; CODE XREF: sub_C64D+46j
 		push	a
-		ld	a, unk_170
+		ld	a, word_170
 		cmp	a, #0Dh
 		pull	a
 		bgt	loc_C6B7
 		ld	a, unk_44
 		cmpb	a, #3Fh
 		bne	loc_C6B7
-		ld	a, unk_94
-		or	a, unk_96
+		ld	a, word_94
+		or	a, word_96
 		cmpb	a, #04h
 		bne	loc_C6B7
 		tbbc	bit3, unk_43, loc_C6EB
@@ -2990,11 +2965,13 @@ loc_C861:				; CODE XREF: sub_C64D+20Cj
 		add	b, #80h
 		add	b, unk_51
 		addc	a, #00h
-		add	b, unk_98
+		add	b, word_98
 		addc	a, #00h
-		jsr	sub_C13D
-		jsr	sub_FF01
-		nop
+		jsr	SaturateD16b
+; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+		.dw 01FFh
+		.dw 0100h
+; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 		add	b, y + 04h
 		rorc	b
 		st	b, y + 04h
@@ -3034,39 +3011,12 @@ loc_C8A3:				; CODE XREF: sub_C895+8j
 		shr	d
 		add	d, #4000h
 		add	d, unk_51
-		jsr	sub_C13D
-		st	b, 334Ch	; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-		cmp	b, #88h
-		bra	loc_C8B7
-
-loc_C8B7:
+		jsr	SaturateD16b
+; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+		.dw 0B333h
+		.dw 4CCDh
+; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+		sub	d, #4000h
 		shl	d
 		st	d, y + 01h
 		ret
@@ -3077,15 +3027,18 @@ loc_C8B7:
 
 
 sub_C8BB:				; CODE XREF: ROM:CB2Dp	ROM:CB34p ...
-		add	a, unk_98
+		add	a, word_98
 		rorc	a
 		rorc	b
 		shr	d
-		jsr	sub_C13D
-		cmpz	b
-		st	d, DOUT		; bit 0	is IGT,	bits 4~7 are #40~#10
-		inc	y + 1Ah
-		dec	b
+		jsr	SaturateD16b
+; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+		.db  59h ; Y
+		.db  9Ah ; š
+		.db  26h ; &
+		.db  66h ; f
+; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+		st	d, unk_51
 		clr	b
 		ld	a, unk_175
 		shra	a
@@ -3113,67 +3066,9 @@ sub_C8D6:				; CODE XREF: sub_C64D:loc_C7D0p
 sub_C8D9:				; CODE XREF: sub_C64D:loc_C7B4p
 					; __RESET:loc_D861p
 		push	x
-		ld	d, 300h		; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
+		ld	d, unk_300
 		tbbc	bit0, unk_40, loc_C8E3
-		ld	d, 302h		; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
+		ld	d, word_302
 
 loc_C8E3:				; CODE XREF: sub_C8D9+4j
 		xor	b, #0FFh
@@ -3182,8 +3077,11 @@ loc_C8E3:				; CODE XREF: sub_C8D9+4j
 		clr	a
 
 loc_C8E9:				; CODE XREF: sub_C8D6+1j sub_C8D9+Dj
-		jsr	sub_C128
-		inc	x + 00h
+		jsr	SaturateData
+; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+		.db  66h ; f
+		.db  00h
+; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 		mov	a, b
 		xor	b, #0FFh
 		ld	x, #0300h
@@ -3215,8 +3113,11 @@ sub_C900:				; CODE XREF: sub_C64D:loc_C67Bp
 
 sub_C907:				; CODE XREF: __RESET:loc_E59Ep
 		push	x
-		jsr	sub_C128
-		subc	a, x + 29h
+		jsr	SaturateData
+; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+		.db 0A4h ; ¤
+		.db  29h ; )
+; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 		pull	x
 		bcc	loc_C912
 
@@ -3409,8 +3310,8 @@ loc_CA2A:				; CODE XREF: ROM:C9E0j	ROM:CA1Cj
 		ble	loc_CA6D
 		clr	b
 		st	b, unk_1D3
-		ld	a, unk_8A
-		or	a, unk_8C
+		ld	a, word_8A
+		or	a, word_8C
 		and	a, #7Ch
 		bne	loc_CA5D
 		ld	a, unk_142
@@ -3445,18 +3346,15 @@ loc_CA6D:				; CODE XREF: ROM:CA31j
 		and	a, #06h
 		bne	loc_CAC9
 		ld	a, unk_4F
-; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
-		.db 0C2h ; Â
-; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
-loc_CA80:				; CODE XREF: ROM:loc_DAE1j
-		ei
+loc_CA7F:				; 0x07 is enable interrupts, ei
+		and	a, #07h
 		bne	loc_CAC9
-		ld	a, unk_86
+		ld	a, word_86
 		and	a, #08h
 		bne	loc_CAC9
-		ld	a, unk_90
-		or	a, unk_92
+		ld	a, word_90
+		or	a, word_92
 		and	a, #01h
 		bne	loc_CAC9
 		ld	a, unk_7D
@@ -3478,7 +3376,7 @@ loc_CA80:				; CODE XREF: ROM:loc_DAE1j
 		bcs	loc_CAC9
 		cmp	#0ECh, unk_F7
 		bgt	loc_CAC9
-		ld	a, unk_170
+		ld	a, word_170
 		or	a, unk_172
 		bne	loc_CAC9
 		setb	bit5, unk_4B
@@ -3486,12 +3384,18 @@ loc_CA80:				; CODE XREF: ROM:loc_DAE1j
 loc_CAC9:				; CODE XREF: ROM:CA6Fj	ROM:CA75j ...
 		clrb	bit0, unk_40
 		ld	a, unk_12E
-		jsr	sub_C128
-		sub	b, x + 1Ah
+		jsr	SaturateData
+; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+		.db 0E5h ; å
+		.db  1Ah
+; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 		bcs	loc_CADF
 		ld	a, unk_14A
-		jsr	sub_C128
-		sub	b, x + 1Ah
+		jsr	SaturateData
+; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+		.db 0E5h ; å
+		.db  1Ah
+; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 		bcc	loc_CAF1
 
 loc_CADF:				; CODE XREF: ROM:CAD3j
@@ -3514,14 +3418,14 @@ loc_CAF1:				; CODE XREF: ROM:CADDj
 
 loc_CB03:				; CODE XREF: ROM:CAF9j	ROM:CAFEj
 		ld	a, #0FFh
-		ld	b, unk_94
+		ld	b, word_94
 		cmpb	b, #28h
 		bne	loc_CB0C
 		clr	a
 
 loc_CB0C:				; CODE XREF: ROM:CB09j
 		st	a, unk_1CE
-		ld	b, unk_90
+		ld	b, word_90
 		cmpb	b, #78h
 		bne	loc_CB16
 		clr	a
@@ -3722,12 +3626,12 @@ loc_CC3A:				; CODE XREF: ROM:CC2Ej
 loc_CC53:				; CODE XREF: ROM:CC38j	ROM:CC3Dj
 		cmp	#82h, unk_5E
 		bcc	loc_CC7D
-		ld	a, unk_8E
+		ld	a, word_8E
 		and	a, #10h
 		bne	loc_CC7D
 		cmp	#1Eh, unk_F0
 		bcs	loc_CC7D
-		ld	d, unk_170
+		ld	d, word_170
 		cmp	d, #0CCDh
 		bcc	loc_CC7D
 		ld	a, unk_A2
@@ -3786,19 +3690,19 @@ loc_CCCB:				; CODE XREF: ROM:loc_CCBDj
 		clr	unk_D1
 
 loc_CCD9:				; CODE XREF: ROM:loc_CCCBj
-		ld	a, unk_86
+		ld	a, word_86
 		and	a, #08h
 		bne	loc_CD09
-		ld	a, unk_88
+		ld	a, word_88
 		and	a, #01h
 		bne	loc_CD09
-		ld	a, unk_8A
-		or	a, unk_8C
-		or	a, unk_94
-		or	a, unk_96
+		ld	a, word_8A
+		or	a, word_8C
+		or	a, word_94
+		or	a, word_96
 		and	a, #7Ch
 		bne	loc_CD09
-		ld	a, unk_8E
+		ld	a, word_8E
 		and	a, #10h
 		bne	loc_CD09
 		cmp	#24h, unk_F2
@@ -3883,17 +3787,17 @@ loc_CD7E:				; CODE XREF: ROM:CD78j
 		ld	y, #0149h
 		jsr	sub_D1BC
 		st	b, unk_1BF
-		ld	b, unk_86
+		ld	b, word_86
 		and	b, #08h
 		bne	loc_CDC5
-		ld	b, unk_88
+		ld	b, word_88
 		and	b, #01h
 		bne	loc_CDC5
-		ld	b, unk_8A
-		or	b, unk_8C
+		ld	b, word_8A
+		or	b, word_8C
 		and	b, #7Dh
 		bne	loc_CDC5
-		ld	b, unk_8E
+		ld	b, word_8E
 		and	b, #1Fh
 		bne	loc_CDC5
 		ld	b, unk_147
@@ -3983,25 +3887,25 @@ loc_CE41:				; CODE XREF: ROM:CE19j	ROM:CE1Dj ...
 
 loc_CE48:				; CODE XREF: ROM:CE45j
 		st	a, unk_1BB
-		tbbc	bit3, unk_4B, loc_CE6B+1 ; clear bit
-		tbbc	bit6, unk_45, loc_CE6B+1 ; clear bit
-		tbbs	bit0, unk_45, loc_CE6B+1 ; clear bit
-		tbbs	bit7, unk_4C, loc_CE6B+1 ; clear bit
+		tbbc	bit3, unk_4B, loc_CE6B+1
+		tbbc	bit6, unk_45, loc_CE6B+1
+		tbbs	bit0, unk_45, loc_CE6B+1
+		tbbs	bit7, unk_4C, loc_CE6B+1
 		cmp	#00h, unk_66
-		beq	loc_CE6B+1	; clear	bit
+		beq	loc_CE6B+1
 		cmp	a, #2Eh
 		bcs	loc_CE63
 		tbbc	bit0, unk_41, loc_CE69
 
 loc_CE63:				; CODE XREF: ROM:CE5Ej
 		tbbs	bit1, unk_45, loc_CE69
-		tbbs	bit5, unk_45, loc_CE6B+1 ; clear bit
+		tbbs	bit5, unk_45, loc_CE6B+1
 
 loc_CE69:				; CODE XREF: ROM:CE60j	ROM:loc_CE63j
 		setb	bit5, unk_4D
 
 loc_CE6B:				; CODE XREF: ROM:CE4Bj	ROM:CE4Ej ...
-		cmp	x, #75BDh	; clear	bit
+		cmp	x, #75BDh
 		tbbs	bit0, unk_45, loc_CE89
 		ld	a, unk_1C4
 		ld	b, unk_140
@@ -4360,10 +4264,10 @@ loc_D06E:				; CODE XREF: ROM:loc_D066j
 		ld	a, unk_56
 		and	a, #0Fh
 		bne	loc_D0A0
-		ld	a, unk_90
+		ld	a, word_90
 		and	a, #0FFh
 		bne	loc_D0A0
-		ld	a, unk_92
+		ld	a, word_92
 		and	a, #7Fh
 		bne	loc_D0A0
 		ld	b, unk_70
@@ -4866,10 +4770,10 @@ loc_D28B:				; CODE XREF: sub_D257+2Dj
 sub_D2B9:				; CODE XREF: __RESET+F97p
 		clr	a
 		clr	b
-		clrb	bit2, DOUT
+		clrb	bit2, DOUT	; trailing edge
+		div	d, #00h		; probably a good time waster
 		div	d, #00h
-		div	d, #00h
-		setb	bit2, DOUT
+		setb	bit2, DOUT	; leading edge
 		st	d, IMASK	; Interrupt Request Mask MSB
 		jsr	sub_D3F3
 
@@ -4877,7 +4781,7 @@ loc_D2C8:				; CODE XREF: sub_D2B9+B5j
 					; sub_D2B9+119j
 		clr	DOM		; DOUT Control Register
 		ld	a, #0Eh
-		st	a, DOUT		; bit 0	is IGT,	bits 4~7 are #40~#10
+		st	a, DOUT		; DOUT Data Register
 		clrb	bit3, IRQLL
 		ld	#08h, IMASKL	; Interrupt Request Mask LSB
 		ld	y, #0F765h
@@ -5019,18 +4923,18 @@ loc_D382:				; CODE XREF: sub_D2B9+D1j
 		clr	a
 		clr	b
 
-loc_D397:				; CODE XREF: sub_D2B9+EDj
+calcChecksum:				; CODE XREF: sub_D2B9+EDj
 		ld	y, #0100h
 
-loc_D39A:				; CODE XREF: sub_D2B9+E6j
+calcChecksum2:				; CODE XREF: sub_D2B9+E6j
 		add	d, x + 00h
 		inc	x
 		inc	x
 		dec	y
-		bne	loc_D39A
+		bne	calcChecksum2
 		bsr	sub_D3D5
 		cmp	x, #0000h
-		bne	loc_D397
+		bne	calcChecksum
 		cmp	d, #0AA55h
 		bne	loc_D3B4
 		shl	b
@@ -5160,7 +5064,7 @@ sub_D41C:				; CODE XREF: __RESET+185p
 					; __RESET:loc_D6F9p
 		clrb	bit4, PORTAL
 		clrb	bit5, PORTAL
-		clrb	bit0, DOUT
+		clrb	bit0, DOUT	; IGT off
 		clrb	bit0, DOM
 		jsr	sub_D448
 		ld	d, #2000h
@@ -5291,8 +5195,7 @@ locret_D4B5:				; CODE XREF: sub_D499+18j
 
 
 		; public __RESET
-__RESET:				; CODE XREF: sub_FF01+C3j
-					; DATA XREF: __NMI+3o ...
+__RESET:				; DATA XREF: __NMI+3o ROM:FFFEo
 
 ; FUNCTION CHUNK AT D6D6 SIZE 000003FE BYTES
 ; FUNCTION CHUNK AT DAEC SIZE 00000094 BYTES
@@ -5305,21 +5208,21 @@ __RESET:				; CODE XREF: sub_FF01+C3j
 		ld	#10h, PORTB	; Port B Data Register
 		ld	#3Fh, DDRB	; Port B i/o config
 		clr	PBCS		; Port B Control Register
-		ld	#1Eh, ASR0P	; ASR0 pos edge	counter	value MSB
+		ld	#1Eh, ASR0P	; ASR0 pos edge	counter	value MSB (IGF1)
 		ld	#08h, unk_1D
 		ld	#30h, ASR0NL	; ASR0 neg edge	counter	value LSB
-		ld	#34h, ASR0N	; ASR0 neg edge	counter	value MSB
+		ld	#34h, ASR0N	; ASR0 neg edge	counter	value MSB (IGF1)
 		ld	d, #3900h
-		st	d, ASR2		; ASR2 edge counter value MSB
+		st	d, ASR2		; ASR2 edge counter value MSB (NE)
 		ld	d, #38F0h
-		st	d, ASR3		; ASR3 edge counter value MSB
-		ld	#00h, ASR1N	; ASR1 neg edge	counter	value MSB
+		st	d, ASR3		; ASR3 edge counter value MSB (G1)
+		ld	#00h, ASR1N	; ASR1 neg edge	counter	value MSB (KS)
 		ld	#00h, ASR1NL	; ASR1 neg edge	counter	value LSB
 		ld	#0Fh, ASR0PL	; ASR0 pos edge	counter	value LSB
 		ld	#0Bh, PORTD_ASRIN ; Port D Data	Register / ASR Input Data
 		ld	#33h, TAIT	; Timer	ASR Control
-		ld	#0FDh, ASR1P	; ASR1 pos edge	counter	value MSB
-		ld	#00h, DOUT	; bit 0	is IGT,	bits 4~7 are #40~#10
+		ld	#0FDh, ASR1P	; ASR1 pos edge	counter	value MSB (KS)
+		ld	#00h, DOUT	; turn off all
 		ld	#00h, DOM	; DOUT Control Register
 		ld	#30h, SMRC_SIR	; Serial Master	Register Control
 		ld	#04h, SSD	; Serial Status	Data Register
@@ -5357,14 +5260,14 @@ loc_D525:				; CODE XREF: sub_D3D5+17j __RESET+6Bj
 		setb	bit6, unk_49
 		setb	bit3, unk_47
 		setb	bit7, unk_44
-		ld	d, #0B09h
-		st	d, unk_164
-		st	d, unk_166
+		ld	d, #02825
+		st	d, word_164	; DoInjectors related
+		st	d, word_166	; DoInjectors related
 		ld	d, #0189h
-		st	d, unk_168
+		st	d, word_168
 		ld	d, #4000h
-		st	d, unk_16A
-		st	d, unk_16C
+		st	d, word_16A
+		st	d, word_16C
 		ld	a, #80h
 		st	a, unk_131
 		st	a, unk_14D
@@ -5390,7 +5293,7 @@ loc_D525:				; CODE XREF: sub_D3D5+17j __RESET+6Bj
 		st	a, unk_1B3
 		jmp	loc_D5B6
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
-		.db 0B9h ; ¹
+		.db 0B9h ; ¹		; data for D525
 		.db  86h ; †
 		.db  5Fh ; _
 		.db 0FFh
@@ -5455,33 +5358,33 @@ loc_D5D5:				; CODE XREF: __RESET+113j __RESET+116j
 		ld	a, #03h
 		st	a, unk_1C4
 		tbbc	bit7, RAMST, loc_D614 ;	Built-in RAM status
-		cmp	#5Ah, unk_84
+		cmp	#5Ah, word_84
 		bne	loc_D614
 		jsr	sub_D667
 		bcs	loc_D614
-		ld	a, unk_94
+		ld	a, word_94
 		and	a, #0FFh
 		st	a, unk_147
-		ld	a, unk_96
+		ld	a, word_96
 		and	a, #0FFh
 		st	a, unk_163
-		ld	a, unk_94
-		or	a, unk_96
+		ld	a, word_94
+		or	a, word_96
 		and	a, #28h
 		beq	loc_D614
 		ld	b, #80h
 		st	b, unk_142
 		ld	b, #0FFh
 		st	b, unk_1CE
-		ld	a, unk_90
-		or	a, unk_92
+		ld	a, word_90
+		or	a, word_92
 		and	a, #28h
 		beq	loc_D614
 		ld	b, #0FFh
 		st	b, unk_1CF
 
 loc_D614:				; CODE XREF: __RESET+124j __RESET+12Aj ...
-		ld	d, unk_80
+		ld	d, word_80
 		xor	b, #0FFh
 		cmp	a, b
 		beq	loc_D621
@@ -5516,7 +5419,7 @@ loc_D64C:				; CODE XREF: __RESET+191j
 		tbbc	bit5, RAMST, loc_D665 ;	Built-in RAM status
 		tbs	bit7, RAMST	; Built-in RAM status
 		beq	loc_D65D
-		cmp	#5Ah, unk_84
+		cmp	#5Ah, word_84
 		bne	loc_D65D
 		jsr	sub_D667
 		bcc	loc_D660
@@ -5599,351 +5502,23 @@ sub_D688:				; CODE XREF: __RESET:loc_D65Dp
 		st	d, [y]
 		st	d, [y]
 		ld	d, #14EBh
-		st	d, unk_82
+		st	d, word_82
 		ld	d, #807Fh
 		ld	y, #0098h
 		st	d, [y]
 		st	d, [y]
 		st	d, [y]
 		ld	d, #6699h
-		st	d, 304h		; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-		st	d, 306h		; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
+		st	d, word_304
+		st	d, word_306
 		ld	d, #00FFh
-		st	d, 300h		; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-		st	d, 302h		; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad
-		st	d, unk_9E
+		st	d, unk_300
+		st	d, word_302
+		st	d, word_9E
 		st	d, unk_A0
-		st	d, 308h		; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad
+		st	d, unk_308
 		ld	d, #5AA5h
-		st	d, unk_84
+		st	d, word_84
 		clrb	bit1, unk_4B
 		ret
 ; End of function sub_D688
@@ -5994,11 +5569,11 @@ loc_D70A:				; CODE XREF: __RESET+24Dj
 loc_D711:				; CODE XREF: __RESET+252j
 		st	d, unk_F0
 		ld	y, #0C25Bh
-		jsr	sub_C162
+		jsr	danger6
 		shr	d
 		shr	d
 		shr	d
-		st	d, unk_1AC
+		st	d, word_1AC	; something deltaKS related
 
 loc_D71F:				; CODE XREF: __RESET+246j
 		di
@@ -6013,19 +5588,19 @@ loc_D71F:				; CODE XREF: __RESET+246j
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_D72F:				; CODE XREF: __RESET+274j
-		ld	d, unk_78
+		ld	d, word_78
 		shr	d
 		ld	y, unk_F0
 		jsr	sub_C09C
 		cmp	y, #004Bh
 		ble	loc_D757
 		st	y, unk_51
-		ld	d, unk_78
+		ld	d, word_78
 		shr	d
 		ld	y, #0C246h
-		jsr	sub_C154
+		jsr	danger2
 		ld	y, #214Bh
-		jsr	sub_C115
+		jsr	MulAbyY
 		add	d, #214Bh
 		ld	x, unk_51
 		jsr	sub_C0C1
@@ -6038,7 +5613,7 @@ loc_D757:				; CODE XREF: __RESET+284j
 loc_D75A:				; CODE XREF: __RESET+29Fj
 		st	d, unk_51
 		ld	y, #0C2B8h
-		jsr	loc_C15D
+		jsr	danger4
 		cmp	d, unk_51
 		ble	loc_D768
 		ld	d, unk_51
@@ -6061,7 +5636,7 @@ loc_D784:				; CODE XREF: __RESET+2B3j __RESET+2B9j ...
 		st	y, unk_6E
 		ld	a, unk_FA
 		ld	y, #0C2CCh
-		jsr	sub_C162
+		jsr	danger6
 		mov	a, b
 		clr	a
 		add	d, #019Ah
@@ -6097,9 +5672,9 @@ loc_D784:				; CODE XREF: __RESET+2B3j __RESET+2B9j ...
 		shr	d
 		shr	d
 		mov	d, x
-		ld	d, unk_78
+		ld	d, word_78
 		jsr	sub_C0C1
-		st	d, unk_7A
+		st	d, word_7A
 		cmp	d, #01D4h
 		bcs	loc_D7D5
 		ld	#7Ah, unk_BA
@@ -6174,8 +5749,11 @@ loc_D82F:				; CODE XREF: __RESET+369j
 		ld	a, #0FFh
 
 loc_D835:				; CODE XREF: __RESET+373j __RESET+377j ...
-		jsr	sub_C128
-		xor	a, x + 30h
+		jsr	SaturateData
+; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+		.db 0E8h ; è
+		.db  30h ; 0
+; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 		st	a, unk_6D
 		cmp	a, #84h
 		bcs	loc_D847
@@ -6194,7 +5772,7 @@ loc_D847:				; CODE XREF: __RESET+388j
 		ld	a, #73h
 
 loc_D858:				; CODE XREF: __RESET+398j __RESET+39Ej
-		mul	a, unk_16E
+		mul	a, word_16E
 		shl	d
 		st	a, unk_51
 		push	a
@@ -6238,14 +5816,14 @@ loc_D887:				; CODE XREF: __RESET+3C8j __RESET+3CCj
 loc_D88D:				; CODE XREF: __RESET+3D2j
 		tbs	bit0, unk_40
 		bne	loc_D899
-		st	d, unk_16A
+		st	d, word_16A
 		pull	a
 		st	a, unk_51
 		bra	loc_D861
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_D899:				; CODE XREF: __RESET+3D9j
-		st	d, unk_16C
+		st	d, word_16C
 		ld	y, #0C54Ch
 		ld	d, unk_F2
 		jsr	sub_C197
@@ -6267,9 +5845,9 @@ loc_D8B1:				; CODE XREF: __RESET+276j __RESET+32Cj
 		ld	y, #0C5E2h
 
 loc_D8C4:				; CODE XREF: __RESET+409j
-		jsr	sub_C162
+		jsr	danger6
 		st	d, unk_51
-		ld	d, unk_164
+		ld	d, word_164	; DoInjectors related
 		ld	y, unk_F0
 		jsr	sub_C09C
 		cmp	y, #0B66h
@@ -6366,7 +5944,7 @@ loc_D957:				; CODE XREF: __RESET+49Dj
 		and	b, #0BFh
 		push	b
 		ld	y, #0C321h
-		jsr	loc_C15D
+		jsr	danger4
 		pull	b
 		cmp	a, unk_F2
 		bcc	loc_D967
@@ -6405,7 +5983,7 @@ loc_D98A:				; CODE XREF: __RESET+4CEj
 loc_D993:				; CODE XREF: __RESET+4D2j __RESET+4D9j
 		st	b, unk_183
 		ld	a, unk_104
-		ld	x, unk_170
+		ld	x, word_170
 		cmp	x, #11ECh
 		bcc	loc_D9AD
 		ld	b, unk_A2
@@ -6451,7 +6029,7 @@ loc_D9DB:				; CODE XREF: __RESET+521j
 loc_D9E1:				; CODE XREF: __RESET+4F9j __RESET+4FEj
 		st	a, unk_D4
 		ld	y, #0C336h
-		jsr	sub_C160
+		jsr	danger5
 		clrb	bit0, unk_40
 		tbbc	bit1, unk_45, loc_D9F4
 		tbbs	bit5, unk_45, loc_D9F4
@@ -6598,58 +6176,23 @@ loc_DAD4:				; CODE XREF: __RESET+608p __RESET+60Fp ...
 		ld	d, y + 00h
 		xor	b, #0FFh
 		cmp	a, b
-		bne	loc_DAE1+1
-		jsr	sub_C128
-		st	b, 6644h	; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-
-loc_DAE1:				; CODE XREF: ROM:DAD9j
-		jmp	loc_CA80
+		bne	loc_DAE2
+		jsr	SaturateData
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
-		.db  5Bh ; [
-		.db 0C9h ; É
-		.db 0FFh
-		.db 0AAh ; ª
-		.db  80h ; €
-		.db 0A9h ; ©
-		.db  80h ; €
-		.db  63h ; c
+		.db 0B3h ; ³
+		.db  66h ; f
+; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+		bcc	loc_DAE5
+
+loc_DAE2:				; CODE XREF: ROM:DAD9j
+		ld	a, #80h
+		mov	a, b
+
+loc_DAE5:				; CODE XREF: ROM:DAE0j
+		xor	b, #0FFh
+		st	d, y + 00h
+		cmp	d, y + 00h
+		ret
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 ; START	OF FUNCTION CHUNK FOR __RESET
 
@@ -6658,7 +6201,7 @@ loc_DAEC:				; CODE XREF: __RESET+618j
 		and	a, unk_15C
 		cmpb	a, #02h
 		beq	loc_DB08
-		ld	d, unk_170
+		ld	d, word_170
 		bne	loc_DB08
 		tbbs	bit2, PORTD_ASRIN, loc_DB08 ; Port D Data Register / ASR Input Data
 		cmp	#0DCh, unk_F7
@@ -6681,7 +6224,7 @@ loc_DB0D:				; CODE XREF: __RESET+693j
 loc_DB12:				; CODE XREF: __RESET+650j
 		setb	bit2, unk_4B
 		ld	a, unk_D8
-		ld	x, unk_7A
+		ld	x, word_7A
 		tbbc	bit7, unk_44, loc_DB2A
 		cmp	#02h, unk_5E
 		bcc	loc_DB0A
@@ -6727,19 +6270,21 @@ loc_DB5B:				; CODE XREF: __RESET+6A2j
 		st	a, unk_176
 		mov	b, a
 		clr	b
-		jsr	sub_C128
-		st	d, [y]
-		inc	unk_44
-		di
+		jsr	SaturateData
+; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+		.db  8Ah ; Š
+		.db  76h ; v
+; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+		bcc	loc_DB6E
 		inc	b
 		cmpz	a
 		bmi	loc_DB6E
 		neg	b
 
-loc_DB6E:				; CODE XREF: __RESET+6B5j
-		add	b, unk_98
+loc_DB6E:				; CODE XREF: __RESET+6B1j __RESET+6B5j
+		add	b, word_98
 		mov	b, a
-		ld	b, unk_9C
+		ld	b, word_9C
 		sub	b, #0Fh
 		cmp	a, b
 		bcc	loc_DB79
@@ -6747,7 +6292,7 @@ loc_DB6E:				; CODE XREF: __RESET+6B5j
 
 loc_DB79:				; CODE XREF: __RESET+6C0j
 		bsr	sub_DB80
-		st	d, unk_98
+		st	d, word_98
 		jmp	loc_DC0D
 ; END OF FUNCTION CHUNK	FOR __RESET
 
@@ -6756,93 +6301,12 @@ loc_DB79:				; CODE XREF: __RESET+6C0j
 
 sub_DB80:				; CODE XREF: __RESET:loc_DB79p
 					; __RESET:loc_DBC9p ...
-		jsr	sub_C128
-		st	b, 665Bh	; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad
+		jsr	SaturateData
+; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+		.db 0B3h ; ³
+		.db  66h ; f
+; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+		mov	a, b
 		xor	b, #0FFh
 		ret
 ; End of function sub_DB80
@@ -6854,13 +6318,13 @@ loc_DB89:				; CODE XREF: __RESET+69Dj
 		tbs	bit2, unk_42
 		bne	loc_DBA4
 		mov	d, y
-		ld	a, unk_98
+		ld	a, word_98
 		sub	a, #0Fh
 		st	a, unk_180
-		ld	a, unk_9C
+		ld	a, word_9C
 		sub	a, #0Fh
 		st	a, unk_181
-		ld	a, unk_9A
+		ld	a, word_9A
 		sub	a, #0Fh
 		st	a, unk_182
 		mov	y, d
@@ -6874,17 +6338,19 @@ loc_DBA4:				; CODE XREF: __RESET+6D5j
 		bgt	loc_DBCF
 		mov	b, a
 		clr	b
-		jsr	sub_C128
-		st	d, [y]
-		inc	unk_44
-		shl	d
+		jsr	SaturateData
+; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+		.db  8Ah ; Š
+		.db  76h ; v
+; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+		bcc	loc_DBC0
 		ld	b, #04h
 		cmpz	a
 		bmi	loc_DBC0
 		neg	b
 
-loc_DBC0:				; CODE XREF: __RESET+707j
-		add	b, unk_9A
+loc_DBC0:				; CODE XREF: __RESET+702j __RESET+707j
+		add	b, word_9A
 		ld	a, unk_182
 		cmp	a, b
 		bcc	loc_DBC9
@@ -6892,7 +6358,7 @@ loc_DBC0:				; CODE XREF: __RESET+707j
 
 loc_DBC9:				; CODE XREF: __RESET+710j
 		bsr	sub_DB80
-		st	d, unk_9A
+		st	d, word_9A
 		bra	loc_DC0D
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
@@ -6903,7 +6369,7 @@ loc_DBCF:				; CODE XREF: __RESET+6F3j __RESET+6F9j
 		add	a, unk_51
 		st	a, unk_176
 		neg	unk_51
-		ld	a, unk_98
+		ld	a, word_98
 		add	a, unk_51
 		ld	b, unk_180
 		cmp	a, b
@@ -6912,23 +6378,23 @@ loc_DBCF:				; CODE XREF: __RESET+6F3j __RESET+6F9j
 
 loc_DBE8:				; CODE XREF: __RESET+72Fj
 		bsr	sub_DB80
-		st	d, unk_98
+		st	d, word_98
 		mov	a, b
 		shl	unk_51
 		bcs	loc_DBF7
-		sub	b, unk_9C
+		sub	b, word_9C
 		bcs	loc_DC0D
 		bra	loc_DBFB
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_DBF7:				; CODE XREF: __RESET+739j
-		sub	b, unk_9C
+		sub	b, word_9C
 		bcc	loc_DC0D
 
 loc_DBFB:				; CODE XREF: __RESET+73Fj
-		add	a, unk_9C
+		add	a, word_9C
 		rorc	a
-		add	a, unk_9C
+		add	a, word_9C
 		rorc	a
 		ld	b, unk_181
 		cmp	a, b
@@ -6937,23 +6403,23 @@ loc_DBFB:				; CODE XREF: __RESET+73Fj
 
 loc_DC08:				; CODE XREF: __RESET+74Fj
 		jsr	sub_DB80
-		st	d, unk_9C
+		st	d, word_9C
 
 loc_DC0D:				; CODE XREF: __RESET+659j __RESET+6C7j ...
 		ld	y, #0C246h
-		jsr	sub_C152
+		jsr	danger1
 		setc
 		rorc	a
 		mul	a, #29h
 		st	a, unk_51
-		ld	d, unk_7A
+		ld	d, word_7A
 		div	d, unk_51
 		bcc	loc_DC21
 		ld	b, #0FFh
 
 loc_DC21:				; CODE XREF: __RESET+767j
 		st	b, unk_51
-		ld	a, unk_9A
+		ld	a, word_9A
 		mul	a, unk_51
 		shr	unk_51
 		sub	a, unk_51
@@ -6985,10 +6451,10 @@ loc_DC4C:				; CODE XREF: __RESET+78Fj
 		tbbs	bit7, unk_4C, loc_DC6D
 		tbbs	bit0, unk_41, loc_DC6D
 		ld	y, #0C5C3h
-		jsr	sub_C152
+		jsr	danger1
 		st	a, unk_51
 		ld	y, #0C5D2h
-		jsr	sub_C160
+		jsr	danger5
 		ld	b, unk_51
 		cmp	a, b
 		ble	loc_DC68
@@ -7008,10 +6474,10 @@ loc_DC6D:				; CODE XREF: __RESET+798j __RESET+79Bj
 		clrb	bit7, unk_4C
 		clrb	bit2, DOUT
 		ld	y, #0C2EFh
-		jsr	sub_C160
-		st	d, unk_170
+		jsr	danger5
+		st	d, word_170
 		ld	y, #0C2FFh
-		jsr	sub_C160
+		jsr	danger5
 		shr	d
 		shr	d
 		st	d, unk_172
@@ -7034,8 +6500,8 @@ loc_DC9B:				; CODE XREF: __RESET+7E1j
 loc_DCA3:				; CODE XREF: __RESET+7E9j
 		st	a, unk_174
 		ld	y, #0C30Ah
-		jsr	sub_C160
-		st	d, unk_16E
+		jsr	danger5
+		st	d, word_16E
 		setb	bit2, DOUT
 		bra	loc_DCD4
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
@@ -7067,7 +6533,7 @@ loc_DCD1:				; CODE XREF: __RESET+812j
 loc_DCD4:				; CODE XREF: __RESET+7FBj
 		jsr	sub_C634
 		ld	y, #0C2B1h
-		jsr	sub_C160
+		jsr	danger5
 		st	a, unk_51
 		ld	d, unk_172
 		shl	d
@@ -7123,7 +6589,7 @@ loc_DD20:				; CODE XREF: __RESET+863j
 		st	d, unk_56
 		ld	y, #0C2A8h
 		ld	a, unk_DB
-		jsr	sub_C162
+		jsr	danger6
 		push	d
 		ld	d, unk_F0
 		shr	d
@@ -7200,21 +6666,21 @@ loc_DDAD:				; CODE XREF: __RESET:loc_DD87j
 
 loc_DDAF:				; CODE XREF: __RESET+8C2j __RESET+8C6j ...
 		ld	y, #0C31Ch
-		jsr	sub_C160
+		jsr	danger5
 		push	a
 		ld	y, #0C2FAh
-		jsr	loc_C15D
-		ld	y, unk_170
-		jsr	sub_C115
+		jsr	danger4
+		ld	y, word_170
+		jsr	MulAbyY
 		add	a, #80h
 		mov	d, x
 		ld	a, unk_D5
 		clr	b
 		shr	d
 		st	d, unk_51
-		ld	d, unk_16A
+		ld	d, word_16A
 		tbbc	bit0, unk_40, loc_DDD4
-		ld	d, unk_16C
+		ld	d, word_16C
 
 loc_DDD4:				; CODE XREF: __RESET+918j
 		add	d, unk_51
@@ -7318,16 +6784,16 @@ loc_DE48:				; CODE XREF: __RESET+987j __RESET+98Aj ...
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_DE5B:				; CODE XREF: __RESET+9A0j
-		ld	y, unk_164
+		ld	y, word_164	; DoInjectors related
 		ld	a, #0E6h
-		jsr	sub_C115
+		jsr	MulAbyY
 		cmp	d, unk_51
 		bcc	loc_DE6B
 		clrb	bit1, unk_46
 		ld	d, unk_51
 
 loc_DE6B:				; CODE XREF: __RESET+856j __RESET+9AFj
-		st	d, unk_164
+		st	d, word_164	; DoInjectors related
 		bra	loc_DE7C
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
@@ -7335,19 +6801,19 @@ loc_DE70:				; CODE XREF: __RESET:loc_DE48j
 		ld	d, unk_51
 		tbs	bit0, unk_40
 		bne	loc_DE7C
-		st	d, unk_164
+		st	d, word_164	; DoInjectors related
 		jmp	loc_DCF9
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_DE7C:				; CODE XREF: __RESET+9B8j __RESET+9BEj
-		st	d, unk_166
+		st	d, word_166	; DoInjectors related
 
 loc_DE7F:				; CODE XREF: __RESET+9A2j
 		ld	b, #12h
 		tbbs	bit7, unk_4C, loc_DEA8
-		ld	d, unk_168
+		ld	d, word_168
 		add	d, #0652h
-		add	d, unk_164
+		add	d, word_164	; DoInjectors related
 		bcs	loc_DE92
 		shl	d
 		bcc	loc_DE95
@@ -7358,7 +6824,7 @@ loc_DE92:				; CODE XREF: __RESET+9D7j
 loc_DE95:				; CODE XREF: __RESET+9DAj
 		mov	d, y
 		ld	a, unk_F0
-		jsr	sub_C115
+		jsr	MulAbyY
 		sub	d, #122Fh
 		bcs	loc_DEA2
 		clr	a
@@ -7379,7 +6845,7 @@ loc_DEAE:				; CODE XREF: __RESET+9F4j
 		st	b, unk_110
 		tbbc	bit5, RAMST, loc_DEE7 ;	Built-in RAM status
 		di
-		ld	d, unk_80
+		ld	d, word_80
 		xor	b, #0FFh
 		cmp	a, b
 		beq	loc_DECB
@@ -7406,8 +6872,8 @@ loc_DEDB:				; CODE XREF: __RESET+A17j
 		st	a, unk_DB
 		mov	a, b
 		xor	b, #0FFh
-		st	d, unk_80
-		cmp	d, unk_80
+		st	d, word_80
+		cmp	d, word_80
 		ei
 		beq	loc_DEF0
 
@@ -7424,7 +6890,7 @@ loc_DEF0:				; CODE XREF: __RESET+A2Fj
 		jsr	sub_C505
 		mov	a, b
 		xor	b, #0FFh
-		st	d, unk_82
+		st	d, word_82
 		cmp	#3Dh, unk_B9
 		bcs	loc_DF31
 		clr	unk_DD
@@ -7482,7 +6948,7 @@ loc_DF3C:				; CODE XREF: __RESET:loc_DF31j
 		st	d, unk_DB
 		mov	a, b
 		xor	b, #0FFh
-		st	d, unk_80
+		st	d, word_80
 
 loc_DF54:				; CODE XREF: __RESET:loc_DF3Cj
 		clrb	bit3, unk_48
@@ -7496,7 +6962,7 @@ loc_DF56:				; CODE XREF: __RESET+A8Cj __RESET+A8Ej
 
 loc_DF60:				; CODE XREF: __RESET+AA3j
 		ld	y, #0C486h
-		jsr	sub_C160
+		jsr	danger5
 		cmp	a, unk_F0
 		bgt	loc_DF83
 		cmp	#80h, unk_F6
@@ -7667,7 +7133,7 @@ loc_E04F:				; CODE XREF: __RESET:loc_E033j
 
 loc_E052:				; CODE XREF: __RESET+B95j
 		ld	y, #0C4C0h
-		jsr	loc_C15D
+		jsr	danger4
 		st	a, unk_E2
 		tbbs	bit3, unk_43, loc_E0AD
 		tbbc	bit4, unk_47, loc_E0AD
@@ -7685,7 +7151,7 @@ loc_E072:				; CODE XREF: __RESET+BB4j
 
 loc_E075:				; CODE XREF: __RESET+BBAj
 		ld	a, unk_5E
-		jsr	sub_C162
+		jsr	danger6
 		st	a, unk_51
 		tbbc	bit1, unk_42, loc_E091
 		clr	a
@@ -7706,7 +7172,7 @@ loc_E091:				; CODE XREF: __RESET+BC6j
 		jsr	sub_C221
 		mov	b, a
 		ld	y, #0C4C7h
-		jsr	sub_C162
+		jsr	danger6
 
 loc_E09D:				; CODE XREF: __RESET:loc_E08Fj
 		cmp	a, unk_51
@@ -7733,7 +7199,7 @@ loc_E0B4:				; CODE XREF: __RESET+BF5j
 		ei
 		ld	a, unk_1A8
 		ld	y, #0C498h
-		jsr	sub_C162
+		jsr	danger6
 		ld	b, unk_DA
 		shr	b
 		shr	b
@@ -7772,7 +7238,7 @@ loc_E0EE:				; CODE XREF: __RESET+C30j
 
 loc_E103:				; CODE XREF: __RESET+C45j
 		st	a, unk_52
-		jsr	sub_C160
+		jsr	danger5
 		push	a
 		ld	d, unk_F0
 		cmp	a, #40h
@@ -8004,7 +7470,7 @@ loc_E23E:				; CODE XREF: __RESET+D78j
 		st	a, unk_DA
 		mov	a, b
 		xor	b, #0FFh
-		st	d, unk_82
+		st	d, word_82
 
 loc_E245:				; CODE XREF: __RESET+CCFj
 					; __RESET:loc_E1E0j ...
@@ -8040,8 +7506,11 @@ loc_E268:				; CODE XREF: __RESET+DAEj
 		ei
 		di
 		ld	a, unk_DC
-		jsr	sub_C128
-		mul	a, x + 02h
+		jsr	SaturateData
+; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+		.db 0A1h ; ¡
+		.db  02h
+; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 		st	a, unk_DC
 		ei
 
@@ -8067,7 +7536,7 @@ loc_E282:				; CODE XREF: __RESET+DC8j
 		cmp	#9Fh, unk_B3
 		bcs	loc_E2BE
 		setb	bit0, unk_4C
-		ld	a, unk_86
+		ld	a, word_86
 		and	a, #08h
 		beq	loc_E2B8
 
@@ -8201,7 +7670,7 @@ loc_E34E:				; CODE XREF: __RESET+E80j __RESET+F29j
 		ld	y, #0C32Fh
 
 loc_E35A:				; CODE XREF: __RESET+E9Fj
-		jsr	sub_C152
+		jsr	danger1
 		pull	y
 		mov	a, b
 		clr	a
@@ -8362,9 +7831,9 @@ loc_E43E:				; CODE XREF: __RESET+F75j
 loc_E453:				; CODE XREF: __RESET+F8Aj __RESET+F92j ...
 		ld	a, unk_F6
 		ld	y, #0C2BFh
-		jsr	sub_C162
+		jsr	danger6
 		jsr	sub_C215
-		st	d, unk_168
+		st	d, word_168
 
 loc_E461:				; CODE XREF: __RESET+E17j
 		setb	bit2, unk_4A
@@ -8416,10 +7885,10 @@ loc_E4AC:				; CODE XREF: __RESET+FEEj __RESET+FF2j
 		ei
 		jsr	loc_C918
 		ld	y, #0C343h
-		jsr	loc_C15D
+		jsr	danger4
 		ld	x, unk_17E
 		add	x, a
-		ld	a, unk_8E
+		ld	a, word_8E
 		cmpb	a, #10h
 		bne	loc_E4CB
 		cmp	#05h, unk_5E
@@ -8656,67 +8125,12 @@ loc_E602:				; CODE XREF: __RESET+113Fj
 
 loc_E60B:				; CODE XREF: __RESET+1109j
 					; __RESET+110Ej ...
-		jsr	sub_C13D
-		shra	y + 76h
-		st	x, 3D3Eh	; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
+		jsr	SaturateD16b
+; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+		.dw 28F6h
+		.dw 0A3Dh
+; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+		mov	d, x
 		shl	d
 		shl	d
 		cmp	a, y + 0Fh
@@ -8774,7 +8188,7 @@ loc_E65A:				; CODE XREF: __RESET+119Fj
 		bcs	loc_E678
 		cmp	#6Bh, unk_F7
 		bcs	loc_E678
-		ld	d, unk_7A
+		ld	d, word_7A
 		cmp	d, #084Dh
 		bcc	loc_E67F
 		cmp	#2Eh, unk_CA
@@ -8808,7 +8222,7 @@ loc_E68F:				; CODE XREF: __RESET+11C7j
 		bcs	loc_E6AD
 		cmp	#0B3h, unk_F7
 		bcs	loc_E6AD
-		ld	d, unk_7A
+		ld	d, word_7A
 		cmp	d, #084Dh
 		bcc	loc_E6BB
 		cmp	#2Eh, unk_CB
@@ -8861,22 +8275,28 @@ loc_E6DC:				; CODE XREF: __RESET+1222j
 		cmp	#5Ah, unk_5D
 		bcs	loc_E722
 		ld	a, unk_12E
-		jsr	sub_C128
-		sub	b, x + 1Ah
+		jsr	SaturateData
+; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+		.db 0E5h ; å
+		.db  1Ah
+; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 		bcs	loc_E722
 		ld	a, unk_14A
-		jsr	sub_C128
-		sub	b, x + 1Ah
+		jsr	SaturateData
+; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+		.db 0E5h ; å
+		.db  1Ah
+; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 		bcs	loc_E722
 		cmp	#58h, unk_CE
 		bcs	loc_E722
 		tbbs	bit0, unk_4F, loc_E722
 		tbbs	bit1, unk_4F, loc_E722
 		tbbs	bit2, unk_4F, loc_E722
-		ld	a, unk_90
+		ld	a, word_90
 		and	a, #7Bh
 		bne	loc_E722
-		ld	a, unk_92
+		ld	a, word_92
 		and	a, #7Bh
 		bne	loc_E722
 		ld	a, unk_7D
@@ -8894,7 +8314,7 @@ loc_E726:				; CODE XREF: __RESET+126Aj
 		ld	b, unk_50
 		and	b, #10h
 		bne	loc_E74F
-		ld	x, unk_78
+		ld	x, word_78
 		cmp	x, #1482h
 		bgt	loc_E74F
 		cmp	#60h, unk_6E
@@ -9007,7 +8427,7 @@ loc_E7D0:				; CODE XREF: __RESET+1312j
 		cmp	#3Bh, unk_CD
 		ble	loc_E7F4
 		inc	b
-		ld	y, unk_78
+		ld	y, word_78
 		cmp	y, #1D7Eh
 		bcs	loc_E7EC
 		cmp	y, #29CCh
@@ -9043,7 +8463,7 @@ loc_E7F6:				; CODE XREF: __RESET+12E9j
 loc_E806:				; CODE XREF: __RESET+134Bj
 		clr	a
 		tbbs	bit0, unk_41, loc_E816
-		ld	b, unk_94
+		ld	b, word_94
 		cmpb	b, #80h
 		bne	loc_E816
 		ld	b, unk_50
@@ -9098,11 +8518,11 @@ loc_E854:				; CODE XREF: __RESET+139Aj
 		ld	a, unk_F7
 		push	a
 		ld	y, #0C45Eh
-		jsr	sub_C162
+		jsr	danger6
 		st	a, unk_51
 		pull	a
 		ld	y, #0C467h
-		jsr	sub_C162
+		jsr	danger6
 		st	a, unk_52
 		ld	a, unk_185
 		cmpb	a, #80h
@@ -9159,7 +8579,7 @@ loc_E8A7:				; CODE XREF: __RESET+13DEj
 		bne	loc_E8C9
 		ld	a, unk_F2
 		ld	y, #0C481h
-		jsr	sub_C162
+		jsr	danger6
 		ld	b, unk_51
 		sub	b, #80h
 		bcc	loc_E8CC
@@ -9184,7 +8604,7 @@ loc_E8CD:				; CODE XREF: __RESET+1411j
 		cmp	#28h, unk_F2
 		bcs	loc_E8E1
 		ld	y, #0C474h
-		jsr	sub_C160
+		jsr	danger5
 
 loc_E8E1:				; CODE XREF: __RESET+141Ej
 					; __RESET+1423j
@@ -9274,7 +8694,7 @@ loc_E94C:				; CODE XREF: __RESET:loc_E930j
 
 loc_E951:				; CODE XREF: __RESET+1498j
 		ld	y, #0C3F9h
-		jsr	sub_C162
+		jsr	danger6
 		tbbc	bit5, unk_45, loc_E95D
 		tbbc	bit1, unk_45, loc_E963
 
@@ -9357,7 +8777,7 @@ loc_E9B9:				; CODE XREF: __RESET+134Dj
 		cmpb	b, #10h
 		bne	loc_EA30
 		ld	y, #0C2EFh
-		jsr	sub_C160
+		jsr	danger5
 		mul	a, #0E9h
 		sub	a, #0Ch
 		bcc	loc_E9D4
@@ -9366,7 +8786,7 @@ loc_E9B9:				; CODE XREF: __RESET+134Dj
 
 loc_E9D4:				; CODE XREF: __RESET+151Aj
 		st	d, unk_51
-		ld	d, unk_170
+		ld	d, word_170
 		sub	d, #0008h
 		ble	loc_E9E2
 		cmp	d, unk_51
@@ -9376,7 +8796,7 @@ loc_E9E2:				; CODE XREF: __RESET+1526j
 		ld	d, unk_51
 
 loc_E9E4:				; CODE XREF: __RESET+152Aj
-		st	d, unk_170
+		st	d, word_170
 		ld	d, unk_172
 		sub	d, #0018h
 		bcc	loc_E9F1
@@ -9408,7 +8828,7 @@ loc_EA09:				; CODE XREF: __RESET+1550j
 
 loc_EA13:				; CODE XREF: __RESET+155Aj
 		st	a, unk_D5
-		ld	d, unk_16E
+		ld	d, word_16E
 		sub	d, #000Dh
 		bcc	loc_EA1F
 		clr	a
@@ -9417,18 +8837,18 @@ loc_EA13:				; CODE XREF: __RESET+155Aj
 loc_EA1F:				; CODE XREF: __RESET+1565j
 		st	d, unk_51
 		ld	y, #0C313h
-		jsr	sub_C160
+		jsr	danger5
 		cmp	d, unk_51
 		bcc	loc_EA2D
 		ld	d, unk_51
 
 loc_EA2D:				; CODE XREF: __RESET+1573j
-		st	d, unk_16E
+		st	d, word_16E
 
 loc_EA30:				; CODE XREF: __RESET+150Ej
 		setb	bit2, unk_4A
 		ld	y, #0C5BAh
-		jsr	loc_C15D
+		jsr	danger4
 		st	a, unk_51
 		ld	a, unk_1CD
 		ld	b, unk_6C
@@ -9501,88 +8921,7 @@ loc_EA91:				; CODE XREF: __RESET+15D4j
 
 loc_EAA1:				; CODE XREF: __RESET+15E1j
 		cmp	#31h, unk_CD
-		beq	loc_EAC1	; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
+		beq	loc_EAC1
 		bgt	loc_EACC
 		tbbc	bit0, unk_45, loc_EAD3
 		ld	b, unk_103
@@ -9590,86 +8929,7 @@ loc_EAA1:				; CODE XREF: __RESET+15E1j
 		beq	loc_EAD3
 		cmpb	b, #20h
 		bne	loc_EABD
-		ld	a, 308h		; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
+		ld	a, unk_308
 		and	a, #01h
 		beq	loc_EAD3
 
@@ -9679,88 +8939,7 @@ loc_EABD:				; CODE XREF: __RESET+15FEj
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_EAC1:				; CODE XREF: __RESET+15EEj
-		ld	b, 308h		; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
+		ld	b, unk_308
 		and	b, #0FEh
 		ld	x, #0308h
 		jsr	sub_CF4E
@@ -9879,7 +9058,7 @@ loc_EB69:				; CODE XREF: __RESET+168Ej
 		or	a, #01h
 
 loc_EB71:				; CODE XREF: __RESET+16B7j
-		ld	x, unk_170
+		ld	x, word_170
 		beq	loc_EB78
 		or	a, #02h
 
@@ -9932,7 +9111,7 @@ loc_EBB8:				; CODE XREF: __RESET:loc_EBB3j
 		st	a, unk_1C6
 		ld	b, unk_45
 		st	b, unk_F8
-		ld	d, unk_164
+		ld	d, word_164	; DoInjectors related
 		jsr	sub_EC27
 		st	b, unk_1C8
 		ld	d, unk_F0
@@ -9942,7 +9121,7 @@ loc_EBB8:				; CODE XREF: __RESET:loc_EBB3j
 
 loc_EBCF:				; CODE XREF: __RESET+1715j
 		st	a, unk_1C9
-		ld	d, unk_78
+		ld	d, word_78
 		shl	d
 		bcc	loc_EBD9
 		ld	a, #0FFh
@@ -9966,9 +9145,9 @@ loc_EBEC:				; CODE XREF: __RESET+1730j
 		ld	#33h, TAIT	; Timer	ASR Control
 		ld	#0C3h, DDRA	; Port A i/o config
 		ld	#3Fh, DDRB	; Port B i/o config
-		ld	#1Eh, ASR0P	; ASR0 pos edge	counter	value MSB
+		ld	#1Eh, ASR0P	; ASR0 pos edge	counter	value MSB (IGF1)
 		ld	#0Fh, ASR0PL	; ASR0 pos edge	counter	value LSB
-		ld	#0FDh, ASR1P	; ASR1 pos edge	counter	value MSB
+		ld	#0FDh, ASR1P	; ASR1 pos edge	counter	value MSB (KS)
 		ld	#30h, ASR0NL	; ASR0 neg edge	counter	value LSB
 		ld	#08h, unk_1D
 		ld	#30h, SMRC_SIR	; Serial Master	Register Control
@@ -9989,7 +9168,7 @@ loc_EBEC:				; CODE XREF: __RESET+1730j
 
 
 sub_EC27:				; CODE XREF: __RESET+170Cp
-		add	d, unk_168
+		add	d, word_168
 		jsr	sub_C216
 		cmpz	a
 		beq	locret_EC32
@@ -10001,11 +9180,11 @@ locret_EC32:				; CODE XREF: sub_EC27+7j
 
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
-		; public IVe
-IVe:					; DATA XREF: ROM:FFFAo
-		push	x
+		; public intASR2
+intASR2:				; DATA XREF: ROM:FFFAo
+		push	x		; interrupts for NE
 		push	y
-		clrb	bit6, IRQLL
+		clrb	bit6, IRQLL	; clear	interrupt flag
 		ld	b, unk_66
 		mov	b, a
 		tbbc	bit4, PORTA, loc_EC6A ;	Port A Data Register
@@ -10048,19 +9227,19 @@ loc_EC6A:				; CODE XREF: ROM:EC3Aj
 
 loc_EC72:				; CODE XREF: ROM:EC41j	ROM:EC4Aj ...
 		st	b, unk_66
-		ld	d, ASR2		; ASR2 edge counter value MSB
+		ld	d, ASR2		; ASR2 edge counter value MSB (NE)
 		mov	d, x
 		cmp	#08h, unk_B9
 		bcc	loc_EC83
-		sub	d, unk_1A4
-		cmp	a, #20h
+		sub	d, lastASR2
+		cmp	a, #20h		; limit	counts since last interrupt
 		bcs	loc_EC86
 
 loc_EC83:				; CODE XREF: ROM:EC7Aj
 		ld	d, #2000h
 
 loc_EC86:				; CODE XREF: ROM:EC81j
-		st	x, unk_1A4
+		st	x, lastASR2
 		cmp	#02h, unk_7F
 		bcc	loc_EC97
 		cmp	#06h, unk_B9
@@ -10083,14 +9262,14 @@ loc_ECA4:				; CODE XREF: ROM:EC9Fj
 		tbs	bit0, unk_4A
 		beq	loc_ECC2
 		ld	y, #0060h
-		xch	a, y + 02h
+		xch	a, y + 02h	; word 62
 		xch	b, y + 03h
-		xch	a, y + 00h
+		xch	a, y + 00h	; word 60
 		xch	b, y + 01h
 		add	d, unk_60
 		add	d, unk_62
 		st	d, unk_64
-		cmp	d, #0238h
+		cmp	d, #00568
 		bcc	loc_ECC2
 		setb	bit3, unk_44
 		setb	bit4, unk_43
@@ -10101,14 +9280,14 @@ loc_ECC2:				; CODE XREF: ROM:ECA6j	ROM:ECBCj
 		beq	loc_ECD0
 		inc	y
 		cmp	#01h, unk_66
-		bne	loc_ED22
+		bne	loc_ED22	; asr3 irq flag	(G1)
 
 loc_ECD0:				; CODE XREF: ROM:ECC8j
 		tbbc	bit0, unk_41, loc_ED1A
 		ld	d, unk_64
-		cmp	d, #05DCh
+		cmp	d, #01500
 		bcs	loc_ED1A
-		cmp	d, #4000h
+		cmp	d, #16384
 		bcc	loc_ED1A
 		tbbs	bit4, unk_46, loc_ED1C
 		clr	a
@@ -10136,8 +9315,8 @@ loc_ECD0:				; CODE XREF: ROM:ECC8j
 		div	d, #5Ah
 		pull	a
 		push	d
-		ld	d, unk_1A4
-		sub	d, ASR3		; ASR3 edge counter value MSB
+		ld	d, lastASR2
+		sub	d, ASR3		; ASR3 edge counter value MSB (G1)
 		mov	s, x
 		cmp	d, x + 02h
 		bgt	loc_ED16
@@ -10163,7 +9342,7 @@ loc_ED1E:				; CODE XREF: ROM:ED18j
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_ED22:				; CODE XREF: ROM:ECCEj
-		tbbc	bit7, IRQLL, loc_ED29 ;	Interrupt Request Flag LSB
+		tbbc	bit7, IRQLL, loc_ED29 ;	asr3 irq flag (G1)
 		setb	bit4, unk_46
 
 loc_ED27:				; CODE XREF: ROM:ED20j
@@ -10177,7 +9356,7 @@ loc_ED29:				; CODE XREF: ROM:loc_ED22j
 		ld	b, unk_63
 		div	d, #03h
 		pull	a
-		add	d, ASR2		; ASR2 edge counter value MSB
+		add	d, ASR2		; ASR2 edge counter value MSB (NE)
 		setb	bit1, DOM
 		st	d, CPR1		; Timer	comparison #1 MSB
 		ld	b, unk_66
@@ -10566,8 +9745,8 @@ sub_EF4E:				; CODE XREF: sub_EF13+Ep sub_EF13+1Ap
 		addc	a, #00h
 		add	y, a
 		ld	a, #0ABh
-		jsr	sub_C115
-		add	d, unk_1A4
+		jsr	MulAbyY
+		add	d, lastASR2
 		st	d, unk_191
 		ret
 ; End of function sub_EF4E
@@ -10667,7 +9846,7 @@ loc_EFCC:				; CODE XREF: IV6+60j
 		st	a, unk_77
 		di
 		clr	a
-		ld	b, unk_11A
+		ld	b, deltaKS	; sort of the difference between new and previous KS values
 		div	d, unk_68
 		bcs	loc_F013
 		push	b
@@ -10682,11 +9861,11 @@ loc_EFEA:				; CODE XREF: IV6+82j
 		st	a, unk_1AE
 		clr	a
 		st	a, unk_68
-		st	a, unk_11A
+		st	a, deltaKS	; sort of the difference between new and previous KS values
 		st	a, unk_11B
 		ei
 		pull	a
-		add	d, unk_78
+		add	d, word_78
 		rorc	a
 		rorc	b
 		cmp	#10h, unk_69
@@ -10696,18 +9875,18 @@ loc_EFEA:				; CODE XREF: IV6+82j
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_F005:				; CODE XREF: IV6+9Bj
-		add	d, unk_78
+		add	d, word_78
 		rorc	a
 		rorc	b
-		add	d, unk_78
+		add	d, word_78
 		rorc	a
 		rorc	b
-		add	d, unk_78
+		add	d, word_78
 		rorc	a
 		rorc	b
 
 loc_F011:				; CODE XREF: IV6+9Fj
-		st	d, unk_78
+		st	d, word_78
 
 loc_F013:				; CODE XREF: IV6+75j
 		ei
@@ -10814,17 +9993,17 @@ loc_F08C:				; CODE XREF: IV6+123j
 		mov	y, d
 		sub	d, #0C2DBh
 		st	b, unk_112
-		ld	y, #0F138h
+		ld	y, #InjBits	; data used by DoInjectors
 		shl	b
 		add	y, b
-		ld	a, y + 10h
+		ld	a, y + 10h	; either 00 or 02
 		ld	x, #0164h
 		add	x, a
 		ld	d, x + 00h
-		jsr	sub_F158
-		ld	b, unk_77
+		jsr	DoInjectors
+		ld	b, unk_77	; going	to clear bit 4
 		and	b, #0DFh
-		st	b, unk_77
+		st	b, unk_77	; clear	bit 4
 
 loc_F0B4:				; CODE XREF: IV6+107j
 		ld	a, unk_110
@@ -10925,7 +10104,8 @@ loc_F135:				; CODE XREF: IV6+1CCj
 ; End of function IV6
 
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
-		.db  10h
+InjBits:	.db  10h		; DATA XREF: IV6+13Ao sub_F19Ao
+					; data used by DoInjectors
 		.db  00h
 		.db  20h
 		.db  00h
@@ -10933,7 +10113,7 @@ loc_F135:				; CODE XREF: IV6+1CCj
 		.db  00h
 		.db  80h ; €
 		.db  00h
-		.db 0EFh ; ï
+		.db 0EFh ; ï		; offset 08h
 		.db  00h
 		.db 0DFh ; ß
 		.db  00h
@@ -10941,86 +10121,82 @@ loc_F135:				; CODE XREF: IV6+1CCj
 		.db  00h
 		.db  7Fh ; 
 		.db  00h
-		.db  00h
-		.db  00h
-		.db  02h
+		.db  00h		; offset 10h
 		.db  00h
 		.db  02h
 		.db  00h
+		.db  02h
 		.db  00h
 		.db  00h
 		.db  00h
-		.db  38h ; 8
-		.db  00h
-		.db  3Ah ; :
-		.db  00h
-		.db  3Ch ; <
-		.db  00h
-		.db  3Eh ; >
+		.dw 0038h		; offset 18h (CPR4)
+		.dw 003Ah		; (CPR5)
+		.dw 003Ch		; (CPR6)
+		.dw 003Eh		; (CPR7)
 
 ; ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ S U B	R O U T	I N E ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ
 
 
-sub_F158:				; CODE XREF: IV6+147p sub_F19A+4p
+DoInjectors:				; CODE XREF: IV6+147p sub_F19A+4p
 		di
 		push	d
 		ld	a, LDOUT	; Latch	DOUT
 		cmpb	a, y + 00h
-		bne	loc_F166
+		bne	DoInj2
 		pull	d
-		add	d, unk_168
-		bra	loc_F180
+		add	d, word_168
+		bra	DoInj6
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
-loc_F166:				; CODE XREF: sub_F158+6j
+DoInj2:					; CODE XREF: DoInjectors+6j
 		ld	x, y + 18h
 		ld	d, x + 00h
 		mov	s, x
 		sub	d, TIMER	; Timer	MSB (bit11~bit18)
 		cmp	a, #0FFh
-		bne	loc_F173
+		bne	DoInj3		; data was pushed at start of sub, then	stack was copied into x
 		clr	a
 		clr	b
 
-loc_F173:				; CODE XREF: sub_F158+17j
-		add	d, x + 00h
-		bcs	loc_F17C
+DoInj3:					; CODE XREF: DoInjectors+17j
+		add	d, x + 00h	; data was pushed at start of sub, then	stack was copied into x
+		bcs	DoInj4
 		cmp	d, #7FEEh
-		ble	loc_F17F
+		ble	DoInj5		; tidy up stack
 
-loc_F17C:				; CODE XREF: sub_F158+1Dj
+DoInj4:					; CODE XREF: DoInjectors+1Dj
 		ld	d, #7FEEh
 
-loc_F17F:				; CODE XREF: sub_F158+22j
-		pull	x
+DoInj5:					; CODE XREF: DoInjectors+22j
+		pull	x		; tidy up stack
 
-loc_F180:				; CODE XREF: sub_F158+Cj
+DoInj6:					; CODE XREF: DoInjectors+Cj
 		add	d, TIMER	; Timer	MSB (bit11~bit18)
 		ld	x, y + 18h
 		st	d, x + 00h
-		ld	d, DOUT		; bit 0	is IGT,	bits 4~7 are #40~#10
+		ld	d, DOUT		; DOUT Data Register
 		or	a, y + 00h
 		and	b, y + 08h
-		st	d, DOUT		; bit 0	is IGT,	bits 4~7 are #40~#10
-		ld	d, DOUT		; bit 0	is IGT,	bits 4~7 are #40~#10
+		st	d, DOUT		; DOUT Data Register
+		ld	d, DOUT		; DOUT Data Register
 		and	a, y + 08h
 		or	b, y + 00h
 		st	b, DOM		; DOUT Control Register
-		st	a, DOUT		; bit 0	is IGT,	bits 4~7 are #40~#10
+		st	a, DOUT		; DOUT Data Register
 		ei
 		ret
-; End of function sub_F158
+; End of function DoInjectors
 
 
 ; ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ S U B	R O U T	I N E ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ
 
 
 sub_F19A:				; CODE XREF: __RESET+5CFp IV6+40p ...
-		ld	y, #0F138h
+		ld	y, #InjBits	; data used by DoInjectors
 
 loc_F19D:				; CODE XREF: sub_F19A+Cj
 		push	d
-		bsr	sub_F158
+		bsr	DoInjectors
 		inc	y
 		inc	y
 		pull	d
@@ -11373,7 +10549,7 @@ loc_F388:				; CODE XREF: IVc+3Bj IVc+56j ...
 loc_F38A:				; CODE XREF: IVc+66j
 		tbbs	bit6, unk_4C, loc_F39B
 		tbbc	bit7, unk_4B, loc_F39B
-		tbbs	bit3, DOUT, loc_F39B ; bit 0 is	IGT, bits 4~7 are #40~#10
+		tbbs	bit3, DOUT, loc_F39B ; DOUT Data Register
 		bra	loc_F397
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
@@ -11684,7 +10860,7 @@ loc_F522:				; CODE XREF: IV6+5AAj
 		bra	loc_F52E
 ; END OF FUNCTION CHUNK	FOR IV6
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
-		.db  01h
+		.db  01h		; data for F53D
 		.db  02h
 		.db  02h
 		.db  04h
@@ -11871,8 +11047,8 @@ loc_F62C:				; CODE XREF: IV6+6C2j
 loc_F62D:				; CODE XREF: IV6+6B4j
 		mov	a, b
 		xor	b, #0FFh
-		st	d, unk_80
-		cmp	d, unk_80
+		st	d, word_80
+		cmp	d, word_80
 		bne	loc_F5FC
 		st	a, unk_DB
 
@@ -11915,10 +11091,10 @@ loc_F666:				; CODE XREF: IV6:loc_F516j IV6+5BBj ...
 ; ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ S U B	R O U T	I N E ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ
 
 
-		; public IV9
-IV9:					; DATA XREF: ROM:FFF0o
+		; public intCPR0
+intCPR0:				; DATA XREF: ROM:FFF0o
 		clrb	bit0, IRQL
-		tbbc	bit0, LDOUT, loc_F67B ;	Latch DOUT
+		tbbc	bit0, LDOUT, loc_F67B ;	branch if IGT low
 		push	x
 		push	y
 		jsr	sub_F6AC
@@ -11929,21 +11105,22 @@ IV9:					; DATA XREF: ROM:FFF0o
 		bra	loc_F686
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
-loc_F67B:				; CODE XREF: IV9+2j
+loc_F67B:				; CODE XREF: intCPR0+2j
 		setb	bit1, unk_4C
 		tbbs	bit0, unk_45, loc_F682
 		setb	bit2, unk_4C
 
-loc_F682:				; CODE XREF: IV9+14j
+loc_F682:				; CODE XREF: intCPR0+14j
 		tbbc	bit6, unk_40, locret_F688
 		setc
 
-loc_F686:				; CODE XREF: IV9+10j
+loc_F686:				; CODE XREF: intCPR0+10j
 		bsr	sub_F689
 
-locret_F688:				; CODE XREF: IV9+Cj IV9:loc_F682j
+locret_F688:				; CODE XREF: intCPR0+Cj
+					; intCPR0:loc_F682j
 		reti
-; End of function IV9
+; End of function intCPR0
 
 
 ; ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ S U B	R O U T	I N E ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ
@@ -11954,13 +11131,13 @@ sub_F689:				; CODE XREF: sub_EF13+29p
 		ld	d, unk_191
 		st	d, CPR0		; Timer	comparison #0 MSB
 		setb	bit0, DOM
-		bcc	loc_F696
-		setb	bit0, DOUT
+		bcc	loc_F696	; IGT output
+		setb	bit0, DOUT	; IGT output
 		bra	loc_F698
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_F696:				; CODE XREF: sub_F689+7j
-		clrb	bit0, DOUT
+		clrb	bit0, DOUT	; IGT output
 
 loc_F698:				; CODE XREF: sub_F689+Bj
 		sub	d, TIMER	; Timer	MSB (bit11~bit18)
@@ -11989,7 +11166,7 @@ loc_F6A6:				; CODE XREF: sub_F689+13j
 ; ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ S U B	R O U T	I N E ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ
 
 
-sub_F6AC:				; CODE XREF: IV9+7p
+sub_F6AC:				; CODE XREF: intCPR0+7p
 		clr	a
 		ld	b, unk_66
 		sub	b, #01h
@@ -12076,28 +11253,28 @@ locret_F714:				; CODE XREF: sub_F6AC+45j sub_F6AC+52j ...
 ; ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ S U B	R O U T	I N E ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ
 
 
-		; public IVd
-IVd:					; DATA XREF: ROM:FFF8o
-		ld	d, ASR1N	; ASR1 neg edge	counter	value MSB
-		sub	d, unk_118
+		; public intASR1
+intASR1:				; DATA XREF: ROM:FFF8o
+		ld	d, ASR1N	; ASR1 neg edge	counter	value MSB (KS)
+		sub	d, lastASR1N
 		cmp	#0Eh, unk_B2
 		bcc	loc_F726
-		cmp	d, #01F4h
+		cmp	d, #00500
 		ble	loc_F751
 		bra	loc_F72F
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
-loc_F726:				; CODE XREF: IVd+8j
+loc_F726:				; CODE XREF: intASR1+8j
 		cmp	#17h, unk_B2
 		bcc	loc_F751
 		cmpz	a
 		setc
 		bpz	loc_F730
 
-loc_F72F:				; CODE XREF: IVd+Fj
+loc_F72F:				; CODE XREF: intASR1+Fj
 		clrc
 
-loc_F730:				; CODE XREF: IVd+18j
+loc_F730:				; CODE XREF: intASR1+18j
 		rorc	a
 		rorc	b
 		clr	unk_EA
@@ -12105,32 +11282,33 @@ loc_F730:				; CODE XREF: IVd+18j
 		beq	loc_F73B
 		inc	unk_EB
 
-loc_F73B:				; CODE XREF: IVd+22j
+loc_F73B:				; CODE XREF: intASR1+22j
 		cmp	#80h, unk_E9
 		bcs	loc_F747
-		cmp	d, unk_1AC
+		cmp	d, word_1AC	; something deltaKS related
 		bcs	loc_F747
 		inc	unk_68
 
-loc_F747:				; CODE XREF: IVd+29j IVd+2Ej
-		add	d, unk_11A
+loc_F747:				; CODE XREF: intASR1+29j intASR1+2Ej
+		add	d, deltaKS	; sort of the difference between new and previous KS values
 		bcs	loc_F751
-		st	d, unk_11A
+		st	d, deltaKS	; sort of the difference between new and previous KS values
 		inc	unk_68
 
-loc_F751:				; CODE XREF: IVd+Dj IVd+14j ...
+loc_F751:				; CODE XREF: intASR1+Dj intASR1+14j ...
 		tbbs	bit0, unk_4C, loc_F759
 		tbbs	bit3, unk_4E, loc_F759
 		clr	unk_B3
 
-loc_F759:				; CODE XREF: IVd:loc_F751j IVd+3Fj
+loc_F759:				; CODE XREF: intASR1:loc_F751j
+					; intASR1+3Fj
 		clr	unk_B2
 		clr	unk_C6
-		ld	d, ASR1N	; ASR1 neg edge	counter	value MSB
-		st	d, unk_118
-		clrb	bit5, IRQLL
+		ld	d, ASR1N	; ASR1 neg edge	counter	value MSB (KS)
+		st	d, lastASR1N
+		clrb	bit5, IRQLL	; service ASR1 IRQ flag
 		reti
-; End of function IVd
+; End of function intASR1
 
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 		.db 0C1h ; Á
@@ -12169,30 +11347,30 @@ unk_F767:	.db  4Fh ; O		; DATA XREF: __RESET:loc_D5BEr
 ; ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ S U B	R O U T	I N E ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ
 
 
-		; public SerialINT
-SerialINT:				; DATA XREF: ROM:FFE0o
+		; public intSIN0
+intSIN0:				; DATA XREF: ROM:FFE0o
 		push	x
 		push	y
 		tbbc	bit6, SSD, loc_F79D ; Serial Status Data Register
 		jmp	loc_F800
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
-loc_F79D:				; CODE XREF: SerialINT+2j
+loc_F79D:				; CODE XREF: intSIN0+2j
 		ld	a, SIDR_SODR	; Serial Input/Output Data Register
 		ld	b, unk_74
 		bpz	loc_F7B5
 		setb	bit1, SSD
-		ld	#02h, SIDR_SODR	; Serial Input/Output Data Register
+		ld	#02h, SIDR_SODR	; transmit 02
 		ld	b, #012
 
-loc_F7AA:				; CODE XREF: SerialINT+18j
+loc_F7AA:				; CODE XREF: intSIN0+18j
 		dec	b
 		beq	loc_F800
 		tbbc	bit7, SSD, loc_F7AA ; Serial Status Data Register
 		tbbs	bit6, SSD, loc_F800 ; Serial Status Data Register
 		ld	b, SIDR_SODR	; Serial Input/Output Data Register
 
-loc_F7B5:				; CODE XREF: SerialINT+Cj
+loc_F7B5:				; CODE XREF: intSIN0+Cj
 		mov	d, y
 		ld	b, unk_74
 		push	b
@@ -12206,7 +11384,7 @@ loc_F7B5:				; CODE XREF: SerialINT+Cj
 		clr	a
 		clrb	bit7, unk_42
 
-loc_F7C9:				; CODE XREF: SerialINT+2Fj
+loc_F7C9:				; CODE XREF: intSIN0+2Fj
 		st	a, unk_73
 		shr	a
 		bcs	loc_F7F1
@@ -12218,13 +11396,13 @@ loc_F7C9:				; CODE XREF: SerialINT+2Fj
 		bra	loc_F7E3
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
-loc_F7DB:				; CODE XREF: SerialINT+39j
+loc_F7DB:				; CODE XREF: intSIN0+39j
 		and	a, #03h
 		ld	x, #0F771h
 		add	x, a
 		ld	a, x + 00h
 
-loc_F7E3:				; CODE XREF: SerialINT+44j
+loc_F7E3:				; CODE XREF: intSIN0+44j
 		st	a, unk_74
 		clrb	bit7, unk_46
 		di
@@ -12233,8 +11411,7 @@ loc_F7E3:				; CODE XREF: SerialINT+44j
 		and	a, #1Fh
 		st	a, SIDR_SODR	; Serial Input/Output Data Register
 
-loc_F7F1:				; CODE XREF: SerialINT+2Aj
-					; SerialINT+37j ...
+loc_F7F1:				; CODE XREF: intSIN0+2Aj intSIN0+37j ...
 		clrb	bit3, IRQLL
 		ei
 		pull	b
@@ -12246,8 +11423,7 @@ loc_F7F1:				; CODE XREF: SerialINT+2Aj
 		jmp	x + 00h
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
-loc_F800:				; CODE XREF: SerialINT+5j
-					; SerialINT+16j ...
+loc_F800:				; CODE XREF: intSIN0+5j intSIN0+16j ...
 		ld	a, SIDR_SODR	; Serial Input/Output Data Register
 		jmp	loc_F905
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
@@ -12257,24 +11433,24 @@ loc_F805:				; CODE XREF: ROM:F95Cj	ROM:loc_F98Fj ...
 		jmp	loc_F90C
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
-loc_F80B:				; CODE XREF: SerialINT:loc_F805j
+loc_F80B:				; CODE XREF: intSIN0:loc_F805j
 		ld	#70h, SMRC_SIR	; Serial Master	Register Control
 		ld	a, SSD		; Serial Status	Data Register
 		ld	a, SIDR_SODR	; Serial Input/Output Data Register
 		setb	bit1, PORTD_ASRIN
 		ld	a, #0Ch
 
-loc_F816:				; CODE XREF: SerialINT+85j
+loc_F816:				; CODE XREF: intSIN0+85j
 		tbbs	bit7, SSD, loc_F820 ; Serial Status Data Register
 		dec	a
 		bne	loc_F816
 
-loc_F81C:				; CODE XREF: SerialINT:loc_F820j
+loc_F81C:				; CODE XREF: intSIN0:loc_F820j
 		ld	a, SIDR_SODR	; Serial Input/Output Data Register
 		bra	loc_F837
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
-loc_F820:				; CODE XREF: SerialINT:loc_F816j
+loc_F820:				; CODE XREF: intSIN0:loc_F816j
 		tbbs	bit6, SSD, loc_F81C ; Serial Status Data Register
 		ld	a, SIDR_SODR	; Serial Input/Output Data Register
 		xor	a, #0E6h
@@ -12288,21 +11464,21 @@ loc_F820:				; CODE XREF: SerialINT:loc_F816j
 		pull	b
 		st	b, unk_1A9
 
-loc_F837:				; CODE XREF: SerialINT+89j
+loc_F837:				; CODE XREF: intSIN0+89j
 		clrb	bit1, PORTD_ASRIN
 		ld	a, #0Ch
 
-loc_F83B:				; CODE XREF: SerialINT+AAj
+loc_F83B:				; CODE XREF: intSIN0+AAj
 		tbbs	bit7, SSD, loc_F845 ; Serial Status Data Register
 		dec	a
 		bne	loc_F83B
 
-loc_F841:				; CODE XREF: SerialINT:loc_F845j
+loc_F841:				; CODE XREF: intSIN0:loc_F845j
 		ld	a, SIDR_SODR	; Serial Input/Output Data Register
 		bra	loc_F873
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
-loc_F845:				; CODE XREF: SerialINT:loc_F83Bj
+loc_F845:				; CODE XREF: intSIN0:loc_F83Bj
 		tbbs	bit6, SSD, loc_F841 ; Serial Status Data Register
 		ld	a, SIDR_SODR	; Serial Input/Output Data Register
 		xor	a, #0Fh
@@ -12321,42 +11497,41 @@ loc_F845:				; CODE XREF: SerialINT:loc_F83Bj
 		bra	loc_F869
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
-loc_F867:				; CODE XREF: SerialINT+CCj
+loc_F867:				; CODE XREF: intSIN0+CCj
 		clrb	bit0, unk_49
 
-loc_F869:				; CODE XREF: SerialINT+D0j
+loc_F869:				; CODE XREF: intSIN0+D0j
 		cmpb	b, #20h
 		beq	loc_F871
 		setb	bit2, unk_49
 		bra	loc_F873
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
-loc_F871:				; CODE XREF: SerialINT+D6j
+loc_F871:				; CODE XREF: intSIN0+D6j
 		clrb	bit2, unk_49
 
-loc_F873:				; CODE XREF: SerialINT+AEj
-					; SerialINT+DAj
+loc_F873:				; CODE XREF: intSIN0+AEj intSIN0+DAj
 		tbbc	bit4, PBCS, loc_F87F ; Port B Control Register
 		tbbs	bit3, unk_42, loc_F87B
 		clrb	bit0, unk_41
 
-loc_F87B:				; CODE XREF: SerialINT+E1j
+loc_F87B:				; CODE XREF: intSIN0+E1j
 		clrb	bit3, unk_42
 		bra	loc_F886
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
-loc_F87F:				; CODE XREF: SerialINT:loc_F873j
+loc_F87F:				; CODE XREF: intSIN0:loc_F873j
 		tbbc	bit3, unk_42, loc_F884
 		setb	bit0, unk_41
 
-loc_F884:				; CODE XREF: SerialINT:loc_F87Fj
+loc_F884:				; CODE XREF: intSIN0:loc_F87Fj
 		setb	bit3, unk_42
 
-loc_F886:				; CODE XREF: SerialINT+E8j
+loc_F886:				; CODE XREF: intSIN0+E8j
 		tbbs	bit4, unk_45, loc_F88B
 		clr	unk_AF
 
-loc_F88B:				; CODE XREF: SerialINT:loc_F886j
+loc_F88B:				; CODE XREF: intSIN0:loc_F886j
 		setb	bit1, SSD
 		ld	#0DAh, SIDR_SODR ; Serial Input/Output Data Register
 		ld	a, unk_49
@@ -12374,7 +11549,7 @@ loc_F88B:				; CODE XREF: SerialINT:loc_F886j
 		bra	loc_F8DA
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
-loc_F8AE:				; CODE XREF: SerialINT+10Dj
+loc_F8AE:				; CODE XREF: intSIN0+10Dj
 		clr	a
 		st	a, unk_1BA
 		tbs	bit7, unk_4A
@@ -12394,36 +11569,35 @@ loc_F8AE:				; CODE XREF: SerialINT+10Dj
 		bra	loc_F8DA
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
-loc_F8D2:				; CODE XREF: SerialINT+11Fj
+loc_F8D2:				; CODE XREF: intSIN0+11Fj
 		cmp	#25h, unk_A8
 		ble	loc_F8DA
 		ld	#26h, unk_A8
 
-loc_F8DA:				; CODE XREF: SerialINT+113j
-					; SerialINT+117j ...
+loc_F8DA:				; CODE XREF: intSIN0+113j intSIN0+117j ...
 		ld	a, #0Dh
 
-loc_F8DC:				; CODE XREF: SerialINT+148j
+loc_F8DC:				; CODE XREF: intSIN0+148j
 		dec	a
 		bne	loc_F8DC
 		tbbc	bit7, SSD, loc_F8E5 ; Serial Status Data Register
 		tbbc	bit6, SSD, loc_F8E9 ; Serial Status Data Register
 
-loc_F8E5:				; CODE XREF: SerialINT+14Aj
+loc_F8E5:				; CODE XREF: intSIN0+14Aj
 		ld	a, SIDR_SODR	; Serial Input/Output Data Register
 		bra	loc_F905
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
-loc_F8E9:				; CODE XREF: SerialINT+14Dj
+loc_F8E9:				; CODE XREF: intSIN0+14Dj
 		ld	b, SIDR_SODR	; Serial Input/Output Data Register
 		ld	a, SSD		; Serial Status	Data Register
 		and	a, #01h
 		shl	d
 		cmp	d, #003Eh
-		bne	loc_F8F8
+		bne	txMaskRom
 		ld	d, #0FFDCh
 
-loc_F8F8:				; CODE XREF: SerialINT+15Ej
+txMaskRom:				; CODE XREF: intSIN0+15Ej
 		mov	d, x
 		ld	d, x + 00h
 		clrb	bit1, SSD
@@ -12432,69 +11606,26 @@ loc_F8F8:				; CODE XREF: SerialINT+15Ej
 		clrb	bit1, SSD
 		st	b, SIDR_SODR	; Serial Input/Output Data Register
 
-loc_F905:				; CODE XREF: SerialINT+6Dj
-					; SerialINT+152j
+loc_F905:				; CODE XREF: intSIN0+6Dj intSIN0+152j
 		di
 		ld	#01h, unk_75
 		clrb	bit3, IRQLL
 		ei
 
-loc_F90C:				; CODE XREF: SerialINT+73j
+loc_F90C:				; CODE XREF: intSIN0+73j
 		pull	y
 		pull	x
 		setb	bit1, unk_4A
 		reti
-; End of function SerialINT
+; End of function intSIN0
 
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
-		jsr	sub_C128
-		ld	b, 0F45h	; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-		sub	a, b
+		jsr	SaturateData
+; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+		.db 0FBh ; û
+		.db  0Fh
+; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+		bcs	loc_F921
 		clrb	bit7, unk_43
 		tbbs	bit3, unk_4B, loc_F91F
 		clrb	bit2, unk_4F
@@ -12502,30 +11633,28 @@ loc_F90C:				; CODE XREF: SerialINT+73j
 loc_F91F:				; CODE XREF: ROM:F91Aj
 		bra	loc_F939
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
-		.db  71h ; q
-		.db 0F3h ; ó
-		.db  46h ; F
-		.db  02h
-		.db  72h ; r
-		.db 0B7h ; ·
-		.db  35h ; 5
-		.db  7Bh ; {
-		.db  07h
-		.db  79h ; y
-		.db  3Dh ; =
-		.db 0B7h ; ·
-		.db  45h ; E
-		.db  06h
-		.db  40h ; @
-		.db  02h
-		.db  77h ; w
-		.db 0DDh ; İ
-		.db  77h ; w
-		.db  5Fh ; _
-		.db 0CBh ; Ë
-		.db 0B4h ; ´
-		.db  40h ; @
-		.db  21h ; !
+
+loc_F921:				; CODE XREF: ROM:F916j
+		tbs	bit7, unk_43
+		bne	loc_F927
+		clr	unk_B7
+
+loc_F927:				; CODE XREF: ROM:F923j
+		tbbs	bit3, unk_4B, loc_F931
+		cmp	#3Dh, unk_B7
+		bcs	loc_F935
+		bra	loc_F933
+; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+loc_F931:				; CODE XREF: ROM:loc_F927j
+		setb	bit6, unk_4D
+
+loc_F933:				; CODE XREF: ROM:F92Fj
+		setb	bit2, unk_4F
+
+loc_F935:				; CODE XREF: ROM:F92Dj
+		ld	b, #0B4h
+		bra	loc_F95A
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_F939:				; CODE XREF: ROM:loc_F91Fj
@@ -12547,11 +11676,16 @@ loc_F94B:				; CODE XREF: ROM:loc_F946j
 		setb	bit7, unk_49
 
 loc_F94D:				; CODE XREF: ROM:F944j
-		jsr	sub_C128
-		or	b, unk_71
+		jsr	SaturateData
+; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+		.db 0D7h ; ×
+		.db  71h ; q
+; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 		sub	a, #71h
 		ld	y, #0273h
-		jsr	sub_C115
+		jsr	MulAbyY
+
+loc_F95A:				; CODE XREF: ROM:F937j
 		st	b, unk_5D
 		jmp	loc_F805
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
@@ -12597,77 +11731,12 @@ loc_F989:				; CODE XREF: ROM:F982j
 loc_F98F:				; CODE XREF: ROM:F987j	ROM:F98Bj
 		jmp	loc_F805
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
-		jsr	sub_C128
-		ld	b, 745h		; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-		sub	a, b
+		jsr	SaturateData
+; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+		.db 0FBh ; û
+		.db  07h
+; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+		bcs	loc_F9A2
 		clrb	bit6, unk_43
 		tbbs	bit3, unk_4B, loc_F9A0
 		clrb	bit1, unk_4F
@@ -12675,104 +11744,39 @@ loc_F98F:				; CODE XREF: ROM:F987j	ROM:F98Bj
 loc_F9A0:				; CODE XREF: ROM:F99Bj
 		bra	loc_F9B8
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
-		.db  71h ; q
-		.db 0D3h ; Ó
-		.db  46h ; F
-		.db  02h
-		.db  72h ; r
-		.db 0B7h ; ·
-		.db  35h ; 5
-		.db  7Bh ; {
-		.db  07h
-		.db  79h ; y
-		.db  3Dh ; =
-		.db 0B7h ; ·
-		.db  45h ; E
-		.db  06h
-		.db  40h ; @
-		.db  02h
-		.db  77h ; w
-		.db 0DDh ; İ
-		.db  77h ; w
-		.db  3Fh ; ?
-		.db 0CAh ; Ê
-		.db  79h ; y
+
+loc_F9A2:				; CODE XREF: ROM:F997j
+		tbs	bit6, unk_43
+		bne	loc_F9A8
+		clr	unk_B7
+
+loc_F9A8:				; CODE XREF: ROM:F9A4j
+		tbbs	bit3, unk_4B, loc_F9B2
+		cmp	#3Dh, unk_B7
+		bcs	loc_F9B6
+		bra	loc_F9B4
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+loc_F9B2:				; CODE XREF: ROM:loc_F9A8j
+		setb	bit6, unk_4D
+
+loc_F9B4:				; CODE XREF: ROM:F9B0j
+		setb	bit1, unk_4F
+
+loc_F9B6:				; CODE XREF: ROM:F9AEj
+		ld	a, #79h
 
 loc_F9B8:				; CODE XREF: ROM:loc_F9A0j
 		xor	a, #0FFh
 		st	a, unk_FA
 		jmp	loc_F805
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
-		jsr	sub_C128
-		ld	b, 745h		; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-					; Bad Address
-		sub	a, b
+		jsr	SaturateData
+; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+		.db 0FBh ; û
+		.db  07h
+; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+		bcs	loc_F9CF
 		clrb	bit5, unk_43
 		tbbs	bit3, unk_4B, loc_F9CD
 		clrb	bit0, unk_4F
@@ -12780,29 +11784,27 @@ loc_F9B8:				; CODE XREF: ROM:loc_F9A0j
 loc_F9CD:				; CODE XREF: ROM:F9C8j
 		bra	loc_F9E5
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
-		.db  71h ; q
-		.db 0B3h ; ³
-		.db  46h ; F
-		.db  02h
-		.db  72h ; r
-		.db 0B7h ; ·
-		.db  35h ; 5
-		.db  7Bh ; {
-		.db  07h
-		.db  79h ; y
-		.db  3Dh ; =
-		.db 0B7h ; ·
-		.db  45h ; E
-		.db  06h
-		.db  40h ; @
-		.db  02h
-		.db  77h ; w
-		.db 0DDh ; İ
-		.db  77h ; w
-		.db  1Fh
-		.db 0CAh ; Ê
-		.db  1Bh
+
+loc_F9CF:				; CODE XREF: ROM:F9C4j
+		tbs	bit5, unk_43
+		bne	loc_F9D5
+		clr	unk_B7
+
+loc_F9D5:				; CODE XREF: ROM:F9D1j
+		tbbs	bit3, unk_4B, loc_F9DF
+		cmp	#3Dh, unk_B7
+		bcs	loc_F9E3
+		bra	loc_F9E1
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+loc_F9DF:				; CODE XREF: ROM:loc_F9D5j
+		setb	bit6, unk_4D
+
+loc_F9E1:				; CODE XREF: ROM:F9DDj
+		setb	bit0, unk_4F
+
+loc_F9E3:				; CODE XREF: ROM:F9DBj
+		ld	a, #1Bh
 
 loc_F9E5:				; CODE XREF: ROM:loc_F9CDj
 		xor	a, #0FFh
@@ -12810,7 +11812,7 @@ loc_F9E5:				; CODE XREF: ROM:loc_F9CDj
 		jmp	loc_F805
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 		ld	y, #0F9F7h
-		jsr	sub_C162
+		jsr	danger6
 		st	a, unk_5C
 		jmp	loc_F805
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
@@ -13168,15 +12170,21 @@ loc_FBCD:				; CODE XREF: ROM:FBBEj	ROM:FBC3j ...
 		jmp	loc_F805
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 		setb	bit1, unk_49
-		jsr	sub_C128
-		rorc	x + 12h
+		jsr	SaturateData
+; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+		.db  24h ; $
+		.db  12h
+; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 		bcc	loc_FBEE
 		clrb	bit1, unk_49
 		bra	loc_FBEE
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 		setb	bit3, unk_49
-		jsr	sub_C128
-		rorc	x + 12h
+		jsr	SaturateData
+; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+		.db  24h ; $
+		.db  12h
+; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 		bcc	loc_FBEE
 		clrb	bit3, unk_49
 
@@ -13204,8 +12212,7 @@ loc_FC03:				; CODE XREF: ROM:FBF5j	ROM:FBF9j ...
 ; ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ S U B	R O U T	I N E ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ
 
 
-sub_FC0D:				; CODE XREF: SerialINT+100p
-					; SerialINT+10Ap
+sub_FC0D:				; CODE XREF: intSIN0+100p intSIN0+10Ap
 		push	a
 		mov	s, x
 		ld	b, y + 13h
@@ -13951,209 +12958,204 @@ loc_FC4C:				; CODE XREF: sub_FC0D+6j sub_FC0D+13j	...
 		.db  5Fh ; _
 		.db  5Fh ; _
 		.db  5Fh ; _
-
-; ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ S U B	R O U T	I N E ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ
-
-
-sub_FF01:				; CODE XREF: sub_C64D+229p
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		nmi
-		jmp	__RESET
-; End of function sub_FF01
-
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  5Fh ; _
+		.db  03h
+		.db 0D4h ; Ô
+		.db 0B6h ; ¶
 
 ; ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ S U B	R O U T	I N E ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ
 
@@ -14174,8 +13176,6 @@ DefaultINT:				; DATA XREF: ROM:FFE2o	ROM:FFE4o ...
 
 ; ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ S U B	R O U T	I N E ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ
 
-; Looks	like this could	be the NMI, as dead space is populated with NMI	instruction. would reset nicely.
-; 672 bytes of ram is implied here
 
 		; public __NMI
 __NMI:					; DATA XREF: ROM:FFFCo
@@ -14190,24 +13190,24 @@ __NMI:					; DATA XREF: ROM:FFFCo
 ; End of function __NMI
 
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
-		.dw 519Bh		; likely checksum
+		.dw 519Bh		; Used to force	checksum to equal AA55 at D397
 		.dw 8243h		; mask rom version!
-		.dw IV0			; External interrupt 0
-		.dw SerialINT		; External interrupt 1
-		.dw DefaultINT		; External interrupt 2
-		.dw DefaultINT		; External interrupt 3
-		.dw DefaultINT		; External interrupt 4
-		.dw DefaultINT		; External interrupt 5
+		.dw IV0			; External interrupt 0,	probably serial	TX related
+		.dw intSIN0		; triggered on SIN0, possibly others
+		.dw DefaultINT		; /IRL
+		.dw DefaultINT		; /IRP (IGF2)
+		.dw DefaultINT		; ASR3 events (G1)
+		.dw DefaultINT		; ASR0 events (IGF1)
 		.dw IV6			; External interrupt 6
-		.dw DefaultINT		; External interrupt 7
-		.dw DefaultINT		; External interrupt 8
-		.dw IV9			; External interrupt 9
-		.dw DefaultINT		; External interrupt a
-		.dw DefaultINT		; External interrupt b
+		.dw DefaultINT		; Timer	Compare	1
+		.dw DefaultINT		; Timer	Compare	2
+		.dw intCPR0		; Timer	Compare	0
+		.dw DefaultINT		; Timer	Compare	3
+		.dw DefaultINT		; Timer	Overflow
 		.dw IVc			; External interrupt c
-		.dw IVd			; External interrupt d
-		.dw IVe			; External interrupt e
-		.dw __NMI		; External interrupt f
+		.dw intASR1		; ASR1 events (KS)
+		.dw intASR2		; ASR2 events (NE)
+		.dw __NMI		; Non maskable interrupt
 		.dw __RESET		; Processor reset
 ; end of 'ROM'
 

@@ -1,0 +1,4 @@
+d3ab: disabled checksum fail (BNE -> BRN)
+d4b7: set omode to 02h
+IVT set to execute interrupts from 81n0h
+all toyota codes writes to _SIDR_SODR changed to DDRA (00h)

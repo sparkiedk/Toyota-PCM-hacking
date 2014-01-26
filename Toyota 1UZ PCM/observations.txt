@@ -34,10 +34,10 @@ closest to d151802-7140 presumed knock sensing microprocessor
 
 d151803-9260 (IC502)
 16MHz input clock
-1	/KS (air flow meter signal)
-2	IGF1
+1	/KS (air flow meter signal) (ASR1)
+2	IGF1 (ASR0)
 3	high to vcc
-4	IGF2
+4	IGF2 (IRP)
 5	high
 6+7 	clock input, cannot scope
 8 	1MHz sq. wave
