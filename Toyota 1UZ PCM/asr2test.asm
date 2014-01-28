@@ -64,38 +64,243 @@ _IMASKL		.equ $2F
 ; ROM segment
 .org $8000
 reset:
-	ld    	#$02, _OMODE	; 
+	ld    	#$02, _OMODE	; change to mode 6
 	di    			; disable interrupts
-	ld    	s, #$01bf		; set stack to top of RAM
-	ld    	#018h, _SMRC_SIR	; set SMRC cintrol reg to 0001 1000 (bits 7~5 - no effect on tx, bit 4 - no effect on tx, bit3 - no tx at all (txen?))
-;	ld	#0FFh,_SSD		;writing FF to ssd seems to inhibit tx
-	
-wait	ld    	b, _SSD		; load serial status data reg into b
-	and   	b, #$20		; mask (bit 5)  0010 0000
-	beq   	wait		; loop until bit 6 set
-	ld	a,#$55
-	st    	a, _SIDR_SODR	; store character from a into SODR
+	ld    	s, #$01bf	; set stack near top of RAM
+	ld    	#18h, _SMRC_SIR	; set SMRC cintrol reg to 0001 1000
 
-loop	bra	wait
+	clr	_IRQL
+	clr	_IRQLL
+	clr	_IMASK	;danger! danger! high voltage!
+	ld	#40h,_IMASKL
+	ld      #0FFh, _TAIT
+	ld      #0fFh, _TIMER3
+	
+	ei
+infloop bra	infloop
+
+start	ld	d,_TIMER
+delay	cmp	d,_TIMER
+	ble	delay
+
+
+	ld	a,_IRQL
+	jsr	putch
+	ld	a,_IRQLL
+	jsr	putch
+	ld	a,_TAIT
+	jsr	putch
+	ld	a,_TIMER3
+	jsr	putch
+	ld	a,#$55
+	jsr	putch
+
+	ei
+
+	bra	start
+
+;=========================================================================putch
+putch	
+	ld    	b, _SSD		; load serial status data reg into b
+	and   	b, #$20		; mask (bit 5)  0010 0000
+	beq   	putch		; loop until bit 6 set
+	st	a,_SIDR_SODR
+pwait	ld    	b, _SSD		; load serial status data reg into b
+	and   	b, #$20		; mask (bit 5)  0010 0000
+	beq   	pwait		; loop until bit 6 set
+	ret
+
+;=========================================================================interrupts
+.org $9000
+int0	
+	di
+	ld	a,#$00
+	jsr	putch
+	clr	_IRQL
+	clr	_IRQLL
+	reti
+
+
+int1
+	di
+	ld	a,#$01
+	jsr	putch
+	clr	_IRQL
+	clr	_IRQLL
+	reti
+
+
+
+int2
+	di
+	ld	a,#$02
+	jsr	putch
+	clr	_IRQL
+	clr	_IRQLL
+	reti
+
+
+
+
+int3
+	di
+	ld	a,#$03
+	jsr	putch
+	clr	_IRQL
+	clr	_IRQLL
+	reti
+
+
+
+
+int4			;ASR3
+	di
+	ld	a,#$04
+	jsr	putch
+	clr	_IRQL
+	clr	_IRQLL
+	reti
+
+
+
+
+int5	di		;ASR0
+	ld	a,#$05
+	jsr	putch
+	clr	_IRQL
+	clr	_IRQLL
+	reti
+
+
+
+
+
+int6	di
+	ld	a,#$06
+	jsr	putch
+	clr	_IRQL
+	clr	_IRQLL
+	reti
+
+
+
+
+int7	di
+	ld	a,#$07
+	jsr	putch
+	clr	_IRQL
+	clr	_IRQLL
+	reti
+
+
+
+
+int8	di
+	ld	a,#$08
+	jsr	putch
+	clr	_IRQL
+	clr	_IRQLL
+	reti
+
+
+
+
+int9	di
+	ld	a,#$09
+	jsr	putch
+	clr	_IRQL
+	clr	_IRQLL
+	reti
+
+
+
+
+inta	di
+	ld	a,#$0a
+	jsr	putch
+	clr	_IRQL
+	clr	_IRQLL
+	reti
+
+
+
+
+intb	di
+	ld	a,#$0b
+	jsr	putch
+	clr	_IRQL
+	clr	_IRQLL
+	reti
+
+
+
+
+intc	di
+	ld	a,#$0c
+	jsr	putch
+	clr	_IRQL
+	clr	_IRQLL
+	reti
+
+
+
+
+intd	di		;ASR1
+	ld	a,#$0d
+	jsr	putch
+	clr	_IRQL
+	clr	_IRQLL
+	reti
+
+
+
+
+inte	di		;ASR2
+	ld	d,_TIMER
+	push	b
+	jsr	putch
+	pull	a
+	jsr	putch
+	ld	d,_ASR2
+	push	b
+	jsr	putch
+	pull	a
+	jsr	putch
+	ld	a,#$55
+	jsr	putch
+	clr	_IRQL
+	clr	_IRQLL
+	reti
+
+
+
+
+__NMI	
+	di
+	ld	a,#$0f
+	jsr	putch
+	clrb	bit7,_IMASK
+	reti
+
 
 
 .org 0ffdeh
-IV0:            .dw reset              ; External interrupt 0
-IV1:            .dw reset              ; External interrupt 1
-IV2:            .dw reset              ; External interrupt 2
-IV3:            .dw reset              ; External interrupt 3
-IV4:            .dw reset              ; External interrupt 4
-IV5:            .dw reset              ; External interrupt 5
-IV6:            .dw reset              ; External interrupt 6
-IV7:            .dw reset              ; External interrupt 7
-IV8:            .dw reset              ; External interrupt 8
-IV9:            .dw reset              ; External interrupt 9
-IVa:            .dw reset              ; External interrupt a
-IVb:            .dw reset              ; External interrupt b
-IVc:            .dw reset              ; External interrupt c
-IVd:            .dw reset              ; External interrupt d
-IVe:            .dw reset              ; External interrupt e
-IVf:            .dw reset              ; External interrupt f
+IV0:            .dw int0              ; External interrupt 0
+IV1:            .dw int1              ; External interrupt 1
+IV2:            .dw int2              ; External interrupt 2
+IV3:            .dw int3              ; External interrupt 3
+IV4:            .dw int4              ; 4- ASR3
+IV5:            .dw int5              ; 5- ASR0
+IV6:            .dw int6              ; External interrupt 6
+IV7:            .dw int7              ; External interrupt 7
+IV8:            .dw int8              ; External interrupt 8
+IV9:            .dw int9              ; External interrupt 9
+IVa:            .dw inta              ; External interrupt a
+IVb:            .dw intb              ; External interrupt b
+IVc:            .dw intc              ; External interrupt c
+IVd:            .dw intd              ; D- ASR1
+IVe:            .dw inte              ; E- ASR2
+IVf:            .dw __NMI              ; Non-Maskable Interrupt
 RESET:		.dw reset             ; Processor reset
 		.end
 

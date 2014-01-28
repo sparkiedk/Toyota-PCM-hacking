@@ -56,275 +56,262 @@
 0056   0000             _IRQLL          .equ $2D                ; Interrupt Request Flag LSB bit 0 - pin 5 low (level sensitive) 
 0057   0000             _IMASK          .equ $2E                ; Interrupt Request Mask MSB
 0058   0000             _IMASKL		.equ $2F
-0059   0000             _CPR4		.equ $38
-0060   0000             _CPR5		.equ $3A
-0061   0000             _CPR6		.equ $3C
-0062   0000             _CPR7		.equ $3E
+0059   0000             ;============================================================================================
+0060   0000             ; RAM segment
+0061   0000             
+0062   0000             
 0063   0000             ;============================================================================================
-0064   0000             ; RAM segment
-0065   0000             
-0066   0000             
-0067   0000             ;============================================================================================
-0068   0000             ; ROM segment
-0069   8000             .org $8000
-0070   8000             reset:
-0071   8000 33 02 1F    	ld    	#$02, _OMODE	; change to mode 6
-0072   8003 05          	di    			; disable interrupts
-0073   8004 8B 01 BF    	ld    	s, #$01bf	; set stack near top of RAM
-0074   8007 33 18 07    	ld    	#18h, _SMRC_SIR	; set SMRC cintrol reg to 0001 1000
-0075   800A             
-0076   800A 33 00 27    	ld	#$00,_DOM
-0077   800D 33 AA 26    	ld	#$0AA,_DOUT
-0078   8010             
-0079   8010 96 04       start	ld	d,_TIMER
-0080   8012 99 04       delay	cmp	d,_TIMER
-0081   8014 43 FC       	ble	delay
-0082   8016             
-0083   8016             
-0084   8016 DA 27       	ld	a,_DOM
-0085   8018 01 80 2C    	jsr	putch
-0086   801B DA 25       	ld	a,_LDOUT
-0087   801D 01 80 2C    	jsr	putch
-0088   8020 DA 26       	ld	a,_DOUT
-0089   8022 01 80 2C    	jsr	putch
-0090   8025 CA 55       	ld	a,#$55
-0091   8027 01 80 2C    	jsr	putch
-0092   802A             
-0093   802A 40 E4       	bra	start
-0094   802C             
-0095   802C             ;=========================================================================putch
-0096   802C             putch	
-0097   802C DB 2B       	ld    	b, _SSD		; load serial status data reg into b
-0098   802E C3 20       	and   	b, #$20		; mask (bit 5)  0010 0000
-0099   8030 47 FA       	beq   	putch		; loop until bit 6 set
-0100   8032 92 06       	st	a,_SIDR_SODR
-0101   8034 DB 2B       pwait	ld    	b, _SSD		; load serial status data reg into b
-0102   8036 C3 20       	and   	b, #$20		; mask (bit 5)  0010 0000
-0103   8038 47 FA       	beq   	pwait		; loop until bit 6 set
-0104   803A 63          	ret
-0105   803B             
-0106   803B             ;=========================================================================interrupts
-0107   9000             .org $9000
-0108   9000             int0	
-0109   9000 05          	di
-0110   9001 CA 00       	ld	a,#$00
-0111   9003 01 80 2C    	jsr	putch
-0112   9006 72 2C       	clr	_IRQL
-0113   9008 72 2D       	clr	_IRQLL
-0114   900A 73          	reti
-0115   900B             
-0116   900B             
-0117   900B             int1
-0118   900B 05          	di
-0119   900C CA 01       	ld	a,#$01
-0120   900E 01 80 2C    	jsr	putch
-0121   9011 72 2C       	clr	_IRQL
-0122   9013 72 2D       	clr	_IRQLL
-0123   9015 73          	reti
-0124   9016             
-0125   9016             
-0126   9016             
-0127   9016             int2
-0128   9016 05          	di
-0129   9017 CA 02       	ld	a,#$02
-0130   9019 01 80 2C    	jsr	putch
-0131   901C 72 2C       	clr	_IRQL
-0132   901E 72 2D       	clr	_IRQLL
-0133   9020 73          	reti
-0134   9021             
-0135   9021             
-0136   9021             
-0137   9021             
-0138   9021             int3
-0139   9021 05          	di
-0140   9022 CA 03       	ld	a,#$03
-0141   9024 01 80 2C    	jsr	putch
-0142   9027 72 2C       	clr	_IRQL
-0143   9029 72 2D       	clr	_IRQLL
-0144   902B 73          	reti
-0145   902C             
-0146   902C             
-0147   902C             
-0148   902C             
-0149   902C             int4
-0150   902C 05          	di
-0151   902D CA 04       	ld	a,#$04
-0152   902F 01 80 2C    	jsr	putch
-0153   9032 72 2C       	clr	_IRQL
-0154   9034 72 2D       	clr	_IRQLL
-0155   9036 73          	reti
-0156   9037             
-0157   9037             
-0158   9037             
-0159   9037             
-0160   9037 05          int5	di
-0161   9038 CA 05       	ld	a,#$05
-0162   903A 01 80 2C    	jsr	putch
-0163   903D 72 2C       	clr	_IRQL
-0164   903F 72 2D       	clr	_IRQLL
-0165   9041 73          	reti
-0166   9042             
-0167   9042             
-0168   9042             
-0169   9042             
-0170   9042             
-0171   9042 05          int6	di
-0172   9043 CA 06       	ld	a,#$06
-0173   9045 01 80 2C    	jsr	putch
-0174   9048 72 2C       	clr	_IRQL
-0175   904A 72 2D       	clr	_IRQLL
-0176   904C 73          	reti
-0177   904D             
-0178   904D             
-0179   904D             
-0180   904D             
-0181   904D             int7			;timer periodic
-0182   904D 9E 04       	ld	x,_TIMER
-0183   904F 6E          	push	x
-0184   9050 CA 07       	ld	a,#$07
-0185   9052 01 80 2C    	jsr	putch
-0186   9055 7C          	pull	a
-0187   9056 01 80 2C    	jsr	putch
-0188   9059 7C          	pull	a
-0189   905A 01 80 2C    	jsr	putch
-0190   905D 72 2C       	clr	_IRQL
-0191   905F 72 2D       	clr	_IRQLL
-0192   9061 73          	reti
-0193   9062             
-0194   9062             
-0195   9062             
-0196   9062             
-0197   9062             int8			;timer periodic
-0198   9062 9E 04       	ld	x,_TIMER
-0199   9064 6E          	push	x
-0200   9065 CA 08       	ld	a,#$08
-0201   9067 01 80 2C    	jsr	putch
-0202   906A 7C          	pull	a
-0203   906B 01 80 2C    	jsr	putch
-0204   906E 7C          	pull	a
-0205   906F 01 80 2C    	jsr	putch
-0206   9072 72 2C       	clr	_IRQL
-0207   9074 72 2D       	clr	_IRQLL
-0208   9076 73          	reti
-0209   9077             
-0210   9077             
-0211   9077             
-0212   9077             
-0213   9077             int9			;timer periodic
-0214   9077 9E 04       	ld	x,_TIMER
-0215   9079 6E          	push	x
-0216   907A CA 09       	ld	a,#$09
-0217   907C 01 80 2C    	jsr	putch
-0218   907F 7C          	pull	a
-0219   9080 01 80 2C    	jsr	putch
-0220   9083 7C          	pull	a
-0221   9084 01 80 2C    	jsr	putch
-0222   9087 72 2C       	clr	_IRQL
-0223   9089 72 2D       	clr	_IRQLL
-0224   908B 73          	reti
-0225   908C             
-0226   908C             
-0227   908C             
-0228   908C             
-0229   908C             inta			;timer periodic
-0230   908C 9E 04       	ld	x,_TIMER
-0231   908E 6E          	push	x
-0232   908F CA 0A       	ld	a,#$0a
-0233   9091 01 80 2C    	jsr	putch
-0234   9094 7C          	pull	a
-0235   9095 01 80 2C    	jsr	putch
-0236   9098 7C          	pull	a
-0237   9099 01 80 2C    	jsr	putch
-0238   909C 72 2C       	clr	_IRQL
-0239   909E 72 2D       	clr	_IRQLL
-0240   90A0 73          	reti
-0241   90A1             
-0242   90A1             
-0243   90A1             
-0244   90A1             
-0245   90A1             intb	
-0246   90A1 9E 04       	ld	x,_TIMER
-0247   90A3 6E          	push	x
-0248   90A4 CA 0B       	ld	a,#$0b
-0249   90A6 01 80 2C    	jsr	putch
-0250   90A9 7C          	pull	a
-0251   90AA 01 80 2C    	jsr	putch
-0252   90AD 7C          	pull	a
-0253   90AE 01 80 2C    	jsr	putch
-0254   90B1 72 2C       	clr	_IRQL
-0255   90B3 72 2D       	clr	_IRQLL
-0256   90B5 73          	reti
-0257   90B6             
-0258   90B6             
-0259   90B6             
-0260   90B6             
-0261   90B6 05          intc	di
-0262   90B7 CA 0C       	ld	a,#$0c
-0263   90B9 01 80 2C    	jsr	putch
-0264   90BC 72 2C       	clr	_IRQL
-0265   90BE 72 2D       	clr	_IRQLL
-0266   90C0 73          	reti
-0267   90C1             
-0268   90C1             
-0269   90C1             
-0270   90C1             
-0271   90C1 05          intd	di
-0272   90C2 CA 0D       	ld	a,#$0d
-0273   90C4 01 80 2C    	jsr	putch
-0274   90C7 72 2C       	clr	_IRQL
-0275   90C9 72 2D       	clr	_IRQLL
-0276   90CB 73          	reti
-0277   90CC             
-0278   90CC             
-0279   90CC             
-0280   90CC             
-0281   90CC 05          inte	di
-0282   90CD CA 0E       	ld	a,#$0e
-0283   90CF 01 80 2C    	jsr	putch
-0284   90D2 72 2C       	clr	_IRQL
-0285   90D4 72 2D       	clr	_IRQLL
-0286   90D6 73          	reti
-0287   90D7             
-0288   90D7             
-0289   90D7             
-0290   90D7             
-0291   90D7             __NMI	
-0292   90D7 05          	di
-0293   90D8 CA 0F       	ld	a,#$0f
-0294   90DA 01 80 2C    	jsr	putch
-0295   90DD 75 EE       	clrb	bit7,_IMASK
-0296   90DF 73          	reti
-0297   90E0             
-0298   90E0             
-0299   90E0             
-0300   FFDE             .org 0ffdeh
-0301   FFDE 90 00       IV0:            .dw int0              ; External interrupt 0
-0302   FFE0 90 0B       IV1:            .dw int1              ; External interrupt 1
-0303   FFE2 90 16       IV2:            .dw int2              ; External interrupt 2
-0304   FFE4 90 21       IV3:            .dw int3              ; External interrupt 3
-0305   FFE6 90 2C       IV4:            .dw int4              ; External interrupt 4
-0306   FFE8 90 37       IV5:            .dw int5              ; External interrupt 5
-0307   FFEA 90 42       IV6:            .dw int6              ; External interrupt 6
-0308   FFEC 90 4D       IV7:            .dw int7              ;Compare 1
-0309   FFEE 90 62       IV8:            .dw int8              ;Compare 2
-0310   FFF0 90 77       IV9:            .dw int9              ;Compare 0
-0311   FFF2 90 8C       IVa:            .dw inta              ;Compare 3
-0312   FFF4 90 A1       IVb:            .dw intb              ;Timer overflow
-0313   FFF6 90 B6       IVc:            .dw intc              ; External interrupt c
-0314   FFF8 90 C1       IVd:            .dw intd              ; External interrupt d
-0315   FFFA 90 CC       IVe:            .dw inte              ; External interrupt e
-0316   FFFC 90 D7       IVf:            .dw __NMI             ; Non-Maskable Interrupt
-0317   FFFE 80 00       RESET:		.dw reset             ; Processor reset
-0318   10000             		.end
-0319   10000             
+0064   0000             ; ROM segment
+0065   8000             .org $8000
+0066   8000             reset:
+0067   8000 33 02 1F    	ld    	#$02, _OMODE	; change to mode 6
+0068   8003 05          	di    			; disable interrupts
+0069   8004 8B 01 BF    	ld    	s, #$01bf	; set stack near top of RAM
+0070   8007 33 18 07    	ld    	#18h, _SMRC_SIR	; set SMRC cintrol reg to 0001 1000
+0071   800A             
+0072   800A 72 2C       	clr	_IRQL
+0073   800C 72 2D       	clr	_IRQLL
+0074   800E 72 2E       	clr	_IMASK	;danger! danger! high voltage!
+0075   8010 33 40 2F    	ld	#40h,_IMASKL
+0076   8013 33 FF 24    	ld      #0FFh, _TAIT
+0077   8016 33 FF 03    	ld      #0fFh, _TIMER3
+0078   8019             	
+0079   8019 07          	ei
+0080   801A 40 FE       infloop bra	infloop
+0081   801C             
+0082   801C 96 04       start	ld	d,_TIMER
+0083   801E 99 04       delay	cmp	d,_TIMER
+0084   8020 43 FC       	ble	delay
+0085   8022             
+0086   8022             
+0087   8022 DA 2C       	ld	a,_IRQL
+0088   8024 01 80 3E    	jsr	putch
+0089   8027 DA 2D       	ld	a,_IRQLL
+0090   8029 01 80 3E    	jsr	putch
+0091   802C DA 24       	ld	a,_TAIT
+0092   802E 01 80 3E    	jsr	putch
+0093   8031 DA 03       	ld	a,_TIMER3
+0094   8033 01 80 3E    	jsr	putch
+0095   8036 CA 55       	ld	a,#$55
+0096   8038 01 80 3E    	jsr	putch
+0097   803B             
+0098   803B 07          	ei
+0099   803C             
+0100   803C 40 DE       	bra	start
+0101   803E             
+0102   803E             ;=========================================================================putch
+0103   803E             putch	
+0104   803E DB 2B       	ld    	b, _SSD		; load serial status data reg into b
+0105   8040 C3 20       	and   	b, #$20		; mask (bit 5)  0010 0000
+0106   8042 47 FA       	beq   	putch		; loop until bit 6 set
+0107   8044 92 06       	st	a,_SIDR_SODR
+0108   8046 DB 2B       pwait	ld    	b, _SSD		; load serial status data reg into b
+0109   8048 C3 20       	and   	b, #$20		; mask (bit 5)  0010 0000
+0110   804A 47 FA       	beq   	pwait		; loop until bit 6 set
+0111   804C 63          	ret
+0112   804D             
+0113   804D             ;=========================================================================interrupts
+0114   9000             .org $9000
+0115   9000             int0	
+0116   9000 05          	di
+0117   9001 CA 00       	ld	a,#$00
+0118   9003 01 80 3E    	jsr	putch
+0119   9006 72 2C       	clr	_IRQL
+0120   9008 72 2D       	clr	_IRQLL
+0121   900A 73          	reti
+0122   900B             
+0123   900B             
+0124   900B             int1
+0125   900B 05          	di
+0126   900C CA 01       	ld	a,#$01
+0127   900E 01 80 3E    	jsr	putch
+0128   9011 72 2C       	clr	_IRQL
+0129   9013 72 2D       	clr	_IRQLL
+0130   9015 73          	reti
+0131   9016             
+0132   9016             
+0133   9016             
+0134   9016             int2
+0135   9016 05          	di
+0136   9017 CA 02       	ld	a,#$02
+0137   9019 01 80 3E    	jsr	putch
+0138   901C 72 2C       	clr	_IRQL
+0139   901E 72 2D       	clr	_IRQLL
+0140   9020 73          	reti
+0141   9021             
+0142   9021             
+0143   9021             
+0144   9021             
+0145   9021             int3
+0146   9021 05          	di
+0147   9022 CA 03       	ld	a,#$03
+0148   9024 01 80 3E    	jsr	putch
+0149   9027 72 2C       	clr	_IRQL
+0150   9029 72 2D       	clr	_IRQLL
+0151   902B 73          	reti
+0152   902C             
+0153   902C             
+0154   902C             
+0155   902C             
+0156   902C             int4			;ASR3
+0157   902C 05          	di
+0158   902D CA 04       	ld	a,#$04
+0159   902F 01 80 3E    	jsr	putch
+0160   9032 72 2C       	clr	_IRQL
+0161   9034 72 2D       	clr	_IRQLL
+0162   9036 73          	reti
+0163   9037             
+0164   9037             
+0165   9037             
+0166   9037             
+0167   9037 05          int5	di		;ASR0
+0168   9038 CA 05       	ld	a,#$05
+0169   903A 01 80 3E    	jsr	putch
+0170   903D 72 2C       	clr	_IRQL
+0171   903F 72 2D       	clr	_IRQLL
+0172   9041 73          	reti
+0173   9042             
+0174   9042             
+0175   9042             
+0176   9042             
+0177   9042             
+0178   9042 05          int6	di
+0179   9043 CA 06       	ld	a,#$06
+0180   9045 01 80 3E    	jsr	putch
+0181   9048 72 2C       	clr	_IRQL
+0182   904A 72 2D       	clr	_IRQLL
+0183   904C 73          	reti
+0184   904D             
+0185   904D             
+0186   904D             
+0187   904D             
+0188   904D 05          int7	di
+0189   904E CA 07       	ld	a,#$07
+0190   9050 01 80 3E    	jsr	putch
+0191   9053 72 2C       	clr	_IRQL
+0192   9055 72 2D       	clr	_IRQLL
+0193   9057 73          	reti
+0194   9058             
+0195   9058             
+0196   9058             
+0197   9058             
+0198   9058 05          int8	di
+0199   9059 CA 08       	ld	a,#$08
+0200   905B 01 80 3E    	jsr	putch
+0201   905E 72 2C       	clr	_IRQL
+0202   9060 72 2D       	clr	_IRQLL
+0203   9062 73          	reti
+0204   9063             
+0205   9063             
+0206   9063             
+0207   9063             
+0208   9063 05          int9	di
+0209   9064 CA 09       	ld	a,#$09
+0210   9066 01 80 3E    	jsr	putch
+0211   9069 72 2C       	clr	_IRQL
+0212   906B 72 2D       	clr	_IRQLL
+0213   906D 73          	reti
+0214   906E             
+0215   906E             
+0216   906E             
+0217   906E             
+0218   906E 05          inta	di
+0219   906F CA 0A       	ld	a,#$0a
+0220   9071 01 80 3E    	jsr	putch
+0221   9074 72 2C       	clr	_IRQL
+0222   9076 72 2D       	clr	_IRQLL
+0223   9078 73          	reti
+0224   9079             
+0225   9079             
+0226   9079             
+0227   9079             
+0228   9079 05          intb	di
+0229   907A CA 0B       	ld	a,#$0b
+0230   907C 01 80 3E    	jsr	putch
+0231   907F 72 2C       	clr	_IRQL
+0232   9081 72 2D       	clr	_IRQLL
+0233   9083 73          	reti
+0234   9084             
+0235   9084             
+0236   9084             
+0237   9084             
+0238   9084 05          intc	di
+0239   9085 CA 0C       	ld	a,#$0c
+0240   9087 01 80 3E    	jsr	putch
+0241   908A 72 2C       	clr	_IRQL
+0242   908C 72 2D       	clr	_IRQLL
+0243   908E 73          	reti
+0244   908F             
+0245   908F             
+0246   908F             
+0247   908F             
+0248   908F 05          intd	di		;ASR1
+0249   9090 CA 0D       	ld	a,#$0d
+0250   9092 01 80 3E    	jsr	putch
+0251   9095 72 2C       	clr	_IRQL
+0252   9097 72 2D       	clr	_IRQLL
+0253   9099 73          	reti
+0254   909A             
+0255   909A             
+0256   909A             
+0257   909A             
+0258   909A 05          inte	di		;ASR2
+0259   909B 96 04       	ld	d,_TIMER
+0260   909D 6D          	push	b
+0261   909E 01 80 3E    	jsr	putch
+0262   90A1 7C          	pull	a
+0263   90A2 01 80 3E    	jsr	putch
+0264   90A5 96 18       	ld	d,_ASR2
+0265   90A7 6D          	push	b
+0266   90A8 01 80 3E    	jsr	putch
+0267   90AB 7C          	pull	a
+0268   90AC 01 80 3E    	jsr	putch
+0269   90AF CA 55       	ld	a,#$55
+0270   90B1 01 80 3E    	jsr	putch
+0271   90B4 72 2C       	clr	_IRQL
+0272   90B6 72 2D       	clr	_IRQLL
+0273   90B8 73          	reti
+0274   90B9             
+0275   90B9             
+0276   90B9             
+0277   90B9             
+0278   90B9             __NMI	
+0279   90B9 05          	di
+0280   90BA CA 0F       	ld	a,#$0f
+0281   90BC 01 80 3E    	jsr	putch
+0282   90BF 75 EE       	clrb	bit7,_IMASK
+0283   90C1 73          	reti
+0284   90C2             
+0285   90C2             
+0286   90C2             
+0287   FFDE             .org 0ffdeh
+0288   FFDE 90 00       IV0:            .dw int0              ; External interrupt 0
+0289   FFE0 90 0B       IV1:            .dw int1              ; External interrupt 1
+0290   FFE2 90 16       IV2:            .dw int2              ; External interrupt 2
+0291   FFE4 90 21       IV3:            .dw int3              ; External interrupt 3
+0292   FFE6 90 2C       IV4:            .dw int4              ; 4- ASR3
+0293   FFE8 90 37       IV5:            .dw int5              ; 5- ASR0
+0294   FFEA 90 42       IV6:            .dw int6              ; External interrupt 6
+0295   FFEC 90 4D       IV7:            .dw int7              ; External interrupt 7
+0296   FFEE 90 58       IV8:            .dw int8              ; External interrupt 8
+0297   FFF0 90 63       IV9:            .dw int9              ; External interrupt 9
+0298   FFF2 90 6E       IVa:            .dw inta              ; External interrupt a
+0299   FFF4 90 79       IVb:            .dw intb              ; External interrupt b
+0300   FFF6 90 84       IVc:            .dw intc              ; External interrupt c
+0301   FFF8 90 8F       IVd:            .dw intd              ; D- ASR1
+0302   FFFA 90 9A       IVe:            .dw inte              ; E- ASR2
+0303   FFFC 90 B9       IVf:            .dw __NMI              ; Non-Maskable Interrupt
+0304   FFFE 80 00       RESET:		.dw reset             ; Processor reset
+0305   10000             		.end
+0306   10000             
 
 ADDR  00 01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F
 -----------------------------------------------------
-8000  33 02 1F 05 8B 01 BF 33 18 07 33 00 27 33 AA 26
-8010  96 04 99 04 43 FC DA 27 01 80 2C DA 25 01 80 2C
-8020  DA 26 01 80 2C CA 55 01 80 2C 40 E4 DB 2B C3 20
-8030  47 FA 92 06 DB 2B C3 20 47 FA 63 FF FF FF FF FF
-8040  FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF
+8000  33 02 1F 05 8B 01 BF 33 18 07 72 2C 72 2D 72 2E
+8010  33 40 2F 33 FF 24 33 FF 03 07 40 FE 96 04 99 04
+8020  43 FC DA 2C 01 80 3E DA 2D 01 80 3E DA 24 01 80
+8030  3E DA 03 01 80 3E CA 55 01 80 3E 07 40 DE DB 2B
+8040  C3 20 47 FA 92 06 DB 2B C3 20 47 FA 63 FF FF FF
 8050  FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF
 8060  FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF
 8070  FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF
@@ -576,20 +563,20 @@ ADDR  00 01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F
 8FD0  FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF
 8FE0  FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF
 8FF0  FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF
-9000  05 CA 00 01 80 2C 72 2C 72 2D 73 05 CA 01 01 80
-9010  2C 72 2C 72 2D 73 05 CA 02 01 80 2C 72 2C 72 2D
-9020  73 05 CA 03 01 80 2C 72 2C 72 2D 73 05 CA 04 01
-9030  80 2C 72 2C 72 2D 73 05 CA 05 01 80 2C 72 2C 72
-9040  2D 73 05 CA 06 01 80 2C 72 2C 72 2D 73 9E 04 6E
-9050  CA 07 01 80 2C 7C 01 80 2C 7C 01 80 2C 72 2C 72
-9060  2D 73 9E 04 6E CA 08 01 80 2C 7C 01 80 2C 7C 01
-9070  80 2C 72 2C 72 2D 73 9E 04 6E CA 09 01 80 2C 7C
-9080  01 80 2C 7C 01 80 2C 72 2C 72 2D 73 9E 04 6E CA
-9090  0A 01 80 2C 7C 01 80 2C 7C 01 80 2C 72 2C 72 2D
-90A0  73 9E 04 6E CA 0B 01 80 2C 7C 01 80 2C 7C 01 80
-90B0  2C 72 2C 72 2D 73 05 CA 0C 01 80 2C 72 2C 72 2D
-90C0  73 05 CA 0D 01 80 2C 72 2C 72 2D 73 05 CA 0E 01
-90D0  80 2C 72 2C 72 2D 73 05 CA 0F 01 80 2C 75 EE 73
+9000  05 CA 00 01 80 3E 72 2C 72 2D 73 05 CA 01 01 80
+9010  3E 72 2C 72 2D 73 05 CA 02 01 80 3E 72 2C 72 2D
+9020  73 05 CA 03 01 80 3E 72 2C 72 2D 73 05 CA 04 01
+9030  80 3E 72 2C 72 2D 73 05 CA 05 01 80 3E 72 2C 72
+9040  2D 73 05 CA 06 01 80 3E 72 2C 72 2D 73 05 CA 07
+9050  01 80 3E 72 2C 72 2D 73 05 CA 08 01 80 3E 72 2C
+9060  72 2D 73 05 CA 09 01 80 3E 72 2C 72 2D 73 05 CA
+9070  0A 01 80 3E 72 2C 72 2D 73 05 CA 0B 01 80 3E 72
+9080  2C 72 2D 73 05 CA 0C 01 80 3E 72 2C 72 2D 73 05
+9090  CA 0D 01 80 3E 72 2C 72 2D 73 05 96 04 6D 01 80
+90A0  3E 7C 01 80 3E 96 18 6D 01 80 3E 7C 01 80 3E CA
+90B0  55 01 80 3E 72 2C 72 2D 73 05 CA 0F 01 80 3E 75
+90C0  EE 73 FF FF FF FF FF FF FF FF FF FF FF FF FF FF
+90D0  FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF
 90E0  FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF
 90F0  FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF
 9100  FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF
@@ -2366,8 +2353,8 @@ FFA0  FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF
 FFB0  FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF
 FFC0  FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF
 FFD0  FF FF FF FF FF FF FF FF FF FF FF FF FF FF 90 00
-FFE0  90 0B 90 16 90 21 90 2C 90 37 90 42 90 4D 90 62
-FFF0  90 77 90 8C 90 A1 90 B6 90 C1 90 CC 90 D7 80 00
+FFE0  90 0B 90 16 90 21 90 2C 90 37 90 42 90 4D 90 58
+FFF0  90 63 90 6E 90 79 90 84 90 8F 90 9A 90 B9 80 00
 
 
 tasm: Number of errors = 0

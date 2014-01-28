@@ -56,6 +56,10 @@ _IRQL           .equ $2C                ; Interrupt Request Flag MSB bit 4 - pin
 _IRQLL          .equ $2D                ; Interrupt Request Flag LSB bit 0 - pin 5 low (level sensitive) 
 _IMASK          .equ $2E                ; Interrupt Request Mask MSB
 _IMASKL		.equ $2F
+_CPR4		.equ $38
+_CPR5		.equ $3A
+_CPR6		.equ $3C
+_CPR7		.equ $3E
 ;============================================================================================
 ; RAM segment
 
@@ -64,38 +68,42 @@ _IMASKL		.equ $2F
 ; ROM segment
 .org $8000
 reset:
-	ld    	#$02, _OMODE	; change to mode 6
+	ld    	#$02, _OMODE	; change to mode 2
 	di    			; disable interrupts
 	ld    	s, #$01bf	; set stack near top of RAM
 	ld    	#18h, _SMRC_SIR	; set SMRC cintrol reg to 0001 1000
-
+	clr	_DOUT
+	clr	_DOM
+	clr	_IMASK
+	ld	#$02,_IMASKL
+	ld	#$08,$1D
 	clr	_IRQL
 	clr	_IRQLL
-	clr	_IMASK	;danger! danger! high voltage!
-	ld	#40h,_IMASKL
-	ld      #0FFh, _TAIT
-	ld      #0fFh, _TIMER3
-	
-	ei
-infloop bra	infloop
+	ei			;could not invoke an interrupt yet
 
 start	ld	d,_TIMER
 delay	cmp	d,_TIMER
 	ble	delay
 
 
-	ld	a,_IRQL
+	ld	a,_DOM
 	jsr	putch
-	ld	a,_IRQLL
+	ld	a,_LDOUT
 	jsr	putch
-	ld	a,_TAIT
-	jsr	putch
-	ld	a,_TIMER3
+	ld	a,_DOUT
 	jsr	putch
 	ld	a,#$55
 	jsr	putch
 
-	ei
+	ld	d,_TIMER	;generate a short pulse using output compare
+	add	d,#$007F
+	st	d,_CPR4
+
+	ld	#$10,_DOUT
+	ld	#$EF,_DOM
+
+	ld	#$10,_DOM
+	ld	#$EF,_DOUT
 
 	bra	start
 
@@ -153,7 +161,7 @@ int3
 
 
 
-int4			;ASR3
+int4
 	di
 	ld	a,#$04
 	jsr	putch
@@ -164,7 +172,7 @@ int4			;ASR3
 
 
 
-int5	di		;ASR0
+int5	di
 	ld	a,#$05
 	jsr	putch
 	clr	_IRQL
@@ -185,9 +193,15 @@ int6	di
 
 
 
-int7	di
+int7			;timer periodic
+	ld	x,_TIMER
+	push	x
 	ld	a,#$07
 	jsr	putch
+	pull	a
+	jsr	putch
+	pull	a
+	jsr	putch
 	clr	_IRQL
 	clr	_IRQLL
 	reti
@@ -195,9 +209,15 @@ int7	di
 
 
 
-int8	di
+int8			;timer periodic
+	ld	x,_TIMER
+	push	x
 	ld	a,#$08
 	jsr	putch
+	pull	a
+	jsr	putch
+	pull	a
+	jsr	putch
 	clr	_IRQL
 	clr	_IRQLL
 	reti
@@ -205,18 +225,14 @@ int8	di
 
 
 
-int9	di
+int9			;timer periodic
+	ld	x,_TIMER
+	push	x
 	ld	a,#$09
 	jsr	putch
-	clr	_IRQL
-	clr	_IRQLL
-	reti
-
-
-
-
-inta	di
-	ld	a,#$0a
+	pull	a
+	jsr	putch
+	pull	a
 	jsr	putch
 	clr	_IRQL
 	clr	_IRQLL
@@ -225,8 +241,30 @@ inta	di
 
 
 
-intb	di
+inta			;timer periodic
+	ld	x,_TIMER
+	push	x
+	ld	a,#$0a
+	jsr	putch
+	pull	a
+	jsr	putch
+	pull	a
+	jsr	putch
+	clr	_IRQL
+	clr	_IRQLL
+	reti
+
+
+
+
+intb	
+	ld	x,_TIMER
+	push	x
 	ld	a,#$0b
+	jsr	putch
+	pull	a
+	jsr	putch
+	pull	a
 	jsr	putch
 	clr	_IRQL
 	clr	_IRQLL
@@ -245,7 +283,7 @@ intc	di
 
 
 
-intd	di		;ASR1
+intd	di
 	ld	a,#$0d
 	jsr	putch
 	clr	_IRQL
@@ -255,18 +293,8 @@ intd	di		;ASR1
 
 
 
-inte	di		;ASR2
-	ld	d,_TIMER
-	push	b
-	jsr	putch
-	pull	a
-	jsr	putch
-	ld	d,_ASR2
-	push	b
-	jsr	putch
-	pull	a
-	jsr	putch
-	ld	a,#$55
+inte	di
+	ld	a,#$0e
 	jsr	putch
 	clr	_IRQL
 	clr	_IRQLL
@@ -289,18 +317,18 @@ IV0:            .dw int0              ; External interrupt 0
 IV1:            .dw int1              ; External interrupt 1
 IV2:            .dw int2              ; External interrupt 2
 IV3:            .dw int3              ; External interrupt 3
-IV4:            .dw int4              ; 4- ASR3
-IV5:            .dw int5              ; 5- ASR0
+IV4:            .dw int4              ; External interrupt 4
+IV5:            .dw int5              ; External interrupt 5
 IV6:            .dw int6              ; External interrupt 6
-IV7:            .dw int7              ; External interrupt 7
-IV8:            .dw int8              ; External interrupt 8
-IV9:            .dw int9              ; External interrupt 9
-IVa:            .dw inta              ; External interrupt a
-IVb:            .dw intb              ; External interrupt b
+IV7:            .dw int7              ;Compare 1
+IV8:            .dw int8              ;Compare 2
+IV9:            .dw int9              ;Compare 0
+IVa:            .dw inta              ;Compare 3
+IVb:            .dw intb              ;Timer overflow
 IVc:            .dw intc              ; External interrupt c
-IVd:            .dw intd              ; D- ASR1
-IVe:            .dw inte              ; E- ASR2
-IVf:            .dw __NMI              ; Non-Maskable Interrupt
+IVd:            .dw intd              ; External interrupt d
+IVe:            .dw inte              ; External interrupt e
+IVf:            .dw __NMI             ; Non-Maskable Interrupt
 RESET:		.dw reset             ; Processor reset
 		.end
 

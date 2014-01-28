@@ -56,10 +56,6 @@ _IRQL           .equ $2C                ; Interrupt Request Flag MSB bit 4 - pin
 _IRQLL          .equ $2D                ; Interrupt Request Flag LSB bit 0 - pin 5 low (level sensitive) 
 _IMASK          .equ $2E                ; Interrupt Request Mask MSB
 _IMASKL		.equ $2F
-_CPR4		.equ $38
-_CPR5		.equ $3A
-_CPR6		.equ $3C
-_CPR7		.equ $3E
 ;============================================================================================
 ; RAM segment
 
@@ -68,29 +64,26 @@ _CPR7		.equ $3E
 ; ROM segment
 .org $8000
 reset:
-	ld    	#$02, _OMODE	; change to mode 6
-	di    			; disable interrupts
-	ld    	s, #$01bf	; set stack near top of RAM
-	ld    	#18h, _SMRC_SIR	; set SMRC cintrol reg to 0001 1000
+	ld    	#$02, _OMODE		; 
+	di    				; disable interrupts
+	ld    	s, #$01bf		; set stack to top of RAM
+	ld    	#018h, _SMRC_SIR	; set SMRC cintrol reg to 0001 1000 (bits 7~5 - no effect on tx, bit 4 - no effect on tx, bit3 - no tx at all (txen?))
 
-	ld	#$00,_DOM	;bits will go to port no matter what is here. what does this control?
-	ld	#$0AA,_DOUT
-
-start	ld	d,_TIMER
-delay	cmp	d,_TIMER
-	ble	delay
-
-
-	ld	a,_DOM
-	jsr	putch
-	ld	a,_LDOUT
-	jsr	putch
-	ld	a,_DOUT
-	jsr	putch
+	
+start
+	ld	#00h,_SSD		;select serial port 0
 	ld	a,#$55
-	jsr	putch
+	bsr	putch
 
-	bra	start
+	ld	#04h,_SSD		;select serial port 1
+	ld	a,#$0AA
+	bsr	putch
+
+
+loop	bra	start
+
+
+
 
 ;=========================================================================putch
 putch	
@@ -102,6 +95,7 @@ pwait	ld    	b, _SSD		; load serial status data reg into b
 	and   	b, #$20		; mask (bit 5)  0010 0000
 	beq   	pwait		; loop until bit 6 set
 	ret
+
 
 ;=========================================================================interrupts
 .org $9000
@@ -298,8 +292,8 @@ __NMI
 
 
 .org 0ffdeh
-IV0:            .dw int0              ; External interrupt 0
-IV1:            .dw int1              ; External interrupt 1
+IV0:            .dw int0              ; Could be serial related
+IV1:            .dw int1              ; SIN0
 IV2:            .dw int2              ; External interrupt 2
 IV3:            .dw int3              ; External interrupt 3
 IV4:            .dw int4              ; External interrupt 4
@@ -316,4 +310,3 @@ IVe:            .dw inte              ; External interrupt e
 IVf:            .dw __NMI             ; Non-Maskable Interrupt
 RESET:		.dw reset             ; Processor reset
 		.end
-
