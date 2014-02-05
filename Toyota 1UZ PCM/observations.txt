@@ -149,6 +149,18 @@ d151803-9260 (IC502)
 
 ND MP194
 --------
+03	reset
+
+07	RX
+08	TX
+09	CLK 1MHz
+10	CLK 1MHz
+11	GND
+12	GND
+13	GND
+14	GND
+
+
 19	THG
 20	THA
 21	THW
@@ -159,3 +171,26 @@ ND MP194
 
 27	sub TPS (VTA2)
 28	TPS (VTA1)
+
+tx to adc	pin value returned
+===================================
+01		28 VTA1
+03		27 VTA2
+05		26
+07		25 OXL1
+09		24 OXL2
+0B		23 OXR1
+0D		22 OXR2
+0F		21 THW
+11		20 THA
+13		19 THG
+15		18
+17		17
+19		16 
+1B		15
+
+
+02:EB
+06:0B
+1E:00	presumably converts pins tied to gnd on low side of chip
+1F:00	presumably converts pins tied to gnd on low side of chip

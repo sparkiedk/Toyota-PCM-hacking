@@ -30,7 +30,8 @@ SIDR_SODR:	.block 1		; DATA XREF: sub_D45F+8w sub_D45F+18r	...
 					; Serial Input/Output Data Register
 SMRC_SIR:	.block 1		; DATA XREF: sub_D45F+13r __RESET+40r	...
 					; Serial Master	Register Control
-CPR0:		.block 2		; DATA XREF: sub_F689+3w sub_F69E+6w
+CPR0:		.block 2		; DATA XREF: Cmp0IGTdwell+3w
+					; Cmp0NOW+6w
 					; Timer	comparison #0 MSB
 CPR1:		.block 2		; DATA XREF: ROM:ED38w
 					; Timer	comparison #1 MSB
@@ -89,7 +90,7 @@ SSD:		.block 1		; DATA XREF: sub_D2B9:loc_D3B5r
 IRQL:		.block 1		; DATA XREF: __RESET+4Ew
 					; __RESET:loc_E636r ...
 					; Interrupt Request Flag MSB
-IRQLL:		.block 1		; DATA XREF: ROM:loc_ED22r ROM:EDB5r ...
+IRQLL:		.block 1		; DATA XREF: ROM:intASR2_17r ROM:EDB5r ...
 					; Interrupt Request Flag LSB
 IMASK:		.block 1		; DATA XREF: sub_D2B9+Aw __RESET+50w ...
 					; Interrupt Request Mask MSB
@@ -118,6 +119,7 @@ unk_41:		.block 1		; DATA XREF: sub_C64D+19Ar ROM:CC23r ...
 unk_42:		.block 1		; DATA XREF: __RESET+57Er __RESET+581r ...
 unk_43:		.block 1		; DATA XREF: sub_C64D+67r ROM:CC77r ...
 unk_44:		.block 1		; DATA XREF: sub_C64D+59r ROM:CC71r ...
+					; bits 543210 will all cause a branch past doinjectors
 unk_45:		.block 1		; DATA XREF: ROM:loc_C918r
 					; ROM:loc_C952r ...
 unk_46:		.block 1		; DATA XREF: __RESET:loc_DE48r
@@ -135,7 +137,7 @@ unk_4D:		.block 1		; DATA XREF: ROM:C920r	ROM:C923r ...
 unk_4E:		.block 1		; DATA XREF: ROM:C928r	ROM:C92Ew ...
 unk_4F:		.block 1		; DATA XREF: ROM:loc_C946r ROM:C94Aw ...
 unk_50:		.block 1		; DATA XREF: sub_C23A+1r sub_C23F+1r ...
-unk_51:		.block 1		; DATA XREF: sub_C0C1w	sub_C0C1+9r ...
+unk_51:		.block 1		; DATA XREF: divDbyXw divDbyX+9r ...
 unk_52:		.block 1		; DATA XREF: sub_C64D+10Cw
 					; sub_C64D+15Br ...
 unk_53:		.block 1		; DATA XREF: sub_C197+6w sub_C1BB+Br ...
@@ -146,7 +148,8 @@ unk_57:		.block 1		; DATA XREF: ROM:CEFAw	ROM:CF01r ...
 unk_58:		.block 1		; DATA XREF: IV6+49w IV6+4Br ...
 		.block 1
 unk_5A:		.block 1
-CylinderNum:	.block 1		; DATA XREF: ROM:ED46w	ROM:loc_EE10r ...
+ModuloNE:	.block 1		; DATA XREF: ROM:ED46w	ROM:intASR2_39r ...
+					; contains modulo: NEcounts%3, represents 30 degree chunks after 10dBTDC cylinder NEcounts/3
 unk_5C:		.block 1		; DATA XREF: sub_D2B9+46r
 					; __RESET:loc_E6D5r ...
 unk_5D:		.block 1		; DATA XREF: ROM:CAB0r	__RESET+2DFr ...
@@ -154,21 +157,19 @@ unk_5E:		.block 1		; DATA XREF: sub_C64D:loc_C826r
 					; ROM:CA72r ...
 unk_5F:		.block 1		; DATA XREF: __RESET:loc_D826r
 					; __RESET+FE8r	...
-deltaNE:	.block 1		; DATA XREF: sub_D41C+Ew ROM:ECB3r
+deltaNE:	.block 1		; DATA XREF: ReInitNEIGT+Ew ROM:ECB3r
 		.block 1
-deltaNE_1:	.block 1		; DATA XREF: sub_D41C+10w ROM:ECB5r ...
+deltaNE_1:	.block 1		; DATA XREF: ReInitNEIGT+10w ROM:ECB5r ...
 deltaNE_1l:	.block 1		; DATA XREF: ROM:ED2Fr
-threeDeltaNE:	.block 1		; DATA XREF: sub_D41C+14w
+threeDeltaNE:	.block 1		; DATA XREF: ReInitNEIGT+14w
 					; __RESET:loc_D6FEr ...
-threeDeltaNEl:	.block 1		; DATA XREF: ROM:ECE8r
-					; calcIGT_time1+5r
+threeDeltaNEl:	.block 1		; DATA XREF: ROM:ECE8r	calcIGT_time+5r
 NEcounts:	.block 1		; DATA XREF: ROM:C961r	ROM:CE57r ...
 unk_67:		.block 1		; DATA XREF: IV6+1Aw IV6+2Ew ...
 unk_68:		.block 1		; DATA XREF: IV6+73r IV6+7Br ...
 					; deltaKS related
 unk_69:		.block 1		; DATA XREF: IV6+98r IV6+9Dw ...
-unk_6A:		.block 1		; DATA XREF: sub_C5E7+8r __RESET+2BBr	...
-		.block 1
+word_6A:	.block 2		; DATA XREF: calcInjPW+8r __RESET+2BBr ...
 unk_6C:		.block 1		; DATA XREF: __RESET+B3w __RESET+44Dr	...
 unk_6D:		.block 1		; DATA XREF: sub_C64D+48r
 					; sub_C64D:loc_C702r ...
@@ -180,13 +181,14 @@ unk_71:		.block 1		; DATA XREF: ROM:CFE7r	ROM:loc_CFFAw ...
 unk_72:		.block 1		; DATA XREF: ROM:loc_CFDDr ROM:CFFCr ...
 unk_73:		.block 1		; DATA XREF: IV6:loc_F3D0r intSIN0+26r ...
 unk_74:		.block 1		; DATA XREF: sub_D45F+2w IV6+480w ...
+					; the last byte	intended for the SODR, while not restricted in value, will always be masked with 1F before TX
 unk_75:		.block 1		; DATA XREF: IV6:loc_F3CAr
 					; IV6:loc_F3F6w ...
 unk_76:		.block 1		; DATA XREF: IV6+4B5r IV6:loc_F433w ...
 unk_77:		.block 1		; DATA XREF: __RESET+26Ar __RESET+26Fw ...
 word_78:	.block 2		; DATA XREF: __RESET:loc_D72Fr
 					; __RESET+288r	...
-word_7A:	.block 2		; DATA XREF: danger1r __RESET+315w ...
+word_7A:	.block 2		; DATA XREF: TwoD_7Ar __RESET+315w ...
 unk_7C:		.block 1		; DATA XREF: sub_D257+3r sub_D257+Dr ...
 unk_7D:		.block 1		; DATA XREF: ROM:C940r	ROM:C944w ...
 unk_7E:		.block 1		; DATA XREF: ROM:CDC0r	__RESET+132Er ...
@@ -246,7 +248,7 @@ unk_AC:		.block 1		; DATA XREF: sub_F1A9+ACw
 unk_AD:		.block 1		; DATA XREF: ROM:CE9Er	ROM:F963w
 unk_AE:		.block 1		; DATA XREF: ROM:CE91r	ROM:F968w
 unk_AF:		.block 1		; DATA XREF: ROM:CE99r	ROM:CFC9r ...
-unk_B0:		.block 1		; DATA XREF: sub_F6AC+5Ar intSIN0+12Bw
+unk_B0:		.block 1		; DATA XREF: CPR0_sub+5Ar intSIN0+12Bw
 unk_B1:		.block 1		; DATA XREF: IVc+44r IVc:loc_F388w ...
 unk_B2:		.block 1		; DATA XREF: intASR1+5r
 					; intASR1:loc_F726r ...
@@ -322,10 +324,10 @@ unk_E1:		.block 1		; DATA XREF: __RESET:loc_DEE7r
 unk_E2:		.block 1		; DATA XREF: __RESET+BA2w IV6+678r ...
 unk_E3:		.block 1		; DATA XREF: __RESET+ADDw __RESET+C81r ...
 unk_E4:		.block 1		; DATA XREF: __RESET+D32r __RESET+D71r ...
-unk_E5:		.block 1		; DATA XREF: ROM:ED53r	ROM:loc_ED66w ...
+unk_E5:		.block 1		; DATA XREF: ROM:ED53r	ROM:intASR2_24w ...
 unk_E6:		.block 1		; DATA XREF: ROM:EDA8r	ROM:EDADw ...
 		.block 1
-unk_E8:		.block 1		; DATA XREF: ROM:loc_EDD2r ROM:EDD8w ...
+unk_E8:		.block 1		; DATA XREF: ROM:intASR2_32r ROM:EDD8w ...
 unk_E9:		.block 1		; DATA XREF: IV6+B6r IV6:loc_F023w ...
 unk_EA:		.block 1		; DATA XREF: IV6+1B4r IV6+1B9w ...
 unk_EB:		.block 1		; DATA XREF: IV6+1A2r IV6+1C1w ...
@@ -333,15 +335,14 @@ unk_EB:		.block 1		; DATA XREF: IV6+1A2r IV6+1C1w ...
 		.block 1
 		.block 1
 		.block 1
-unk_F0:		.block 1		; DATA XREF: ROM:danger4r sub_C1B0r ...
-		.block 1
-unk_F2:		.block 1		; DATA XREF: ROM:CAFBr	ROM:CCF7r ...
-		.block 1
+word_F0:	.block 2		; DATA XREF: ROM:TwoD_F0r sub_C1B0r ...
+					; I think it's RPM/100
+word_F2:	.block 2		; DATA XREF: ROM:CAFBr	ROM:CCF7r ...
 unk_F4:		.block 1		; DATA XREF: __RESET+1728w
 unk_F5:		.block 1		; DATA XREF: __RESET+172Dw
 unk_F6:		.block 1		; DATA XREF: __RESET+406r
 					; __RESET:loc_DCC0r ...
-unk_F7:		.block 1		; DATA XREF: danger5r sub_C634+4r ...
+unk_F7:		.block 1		; DATA XREF: TwoD_F7r sub_C634+4r ...
 unk_F8:		.block 1		; DATA XREF: __RESET+1707w
 unk_F9:		.block 1		; DATA XREF: __RESET+488r IV6+5EAr ...
 unk_FA:		.block 1		; DATA XREF: sub_C61C+5r __RESET+2D0r	...
@@ -367,19 +368,25 @@ unk_109:	.block 1		; DATA XREF: ROM:CE27r	__RESET+458r ...
 		.block 1
 		.block 1
 		.block 1
-unk_110:	.block 1		; DATA XREF: sub_D448+8w
+unk_110:	.block 1		; DATA XREF: ReInitCounters+8w
 					; __RESET:loc_DEAEw ...
 unk_111:	.block 1		; DATA XREF: IV6+153r IV6+168w
-unk_112:	.block 1		; DATA XREF: sub_D448+2w IV6+104w ...
-unk_113:	.block 1		; DATA XREF: sub_D448:loc_D45Bw
+unk_112:	.block 1		; DATA XREF: ReInitCounters+2w
+					; IV6+104w ...
+unk_113:	.block 1		; DATA XREF: ReInitCounters:ReInitCNT_1w
 					; IV6+119r ...
-unk_114:	.block 1		; DATA XREF: sub_C5E7+18r __RESET+393r ...
+unk_114:	.block 1		; DATA XREF: calcInjPW+18r
+					; __RESET+393r	...
+					; written from serial receive int
 unk_115:	.block 1		; DATA XREF: __RESET+D08r
 					; __RESET+1464r
+					; written from serial receive int
 unk_116:	.block 1		; DATA XREF: __RESET+D0Er
 					; __RESET+1624r
+					; written from serial receive int
 unk_117:	.block 1		; DATA XREF: __RESET+10FBr
 					; __RESET+12A1r
+					; written from serial receive int
 lastASR1N:	.block 2		; DATA XREF: intASR1+2r intASR1+4Aw
 deltaKS:	.block 1		; DATA XREF: IV6+70r IV6+8Cw ...
 					; sort of the difference between new and previous KS values
@@ -392,12 +399,15 @@ unk_11F:	.block 1		; DATA XREF: __RESET+C4w __RESET+A61r	...
 unk_120:	.block 1		; DATA XREF: IVc:loc_F3A7r IVc+9Fw ...
 unk_121:	.block 1		; DATA XREF: __RESET+ACAw __RESET+BEEr ...
 unk_122:	.block 1		; DATA XREF: ROM:FA17r	ROM:loc_FA4Br
+					; written from serial receive int
 unk_123:	.block 1		; DATA XREF: __RESET+ABw
 unk_124:	.block 1		; DATA XREF: __RESET+172Ar ROM:FA14r
+					; written from serial receive int
 		.block 1
 unk_126:	.block 1		; DATA XREF: __RESET+55Fr __RESET+5D3w ...
 		.block 1
 unk_128:	.block 1		; DATA XREF: ROM:FA1Ar
+					; written from serial receive int
 unk_129:	.block 1		; DATA XREF: __RESET+AEw
 unk_12A:	.block 1		; DATA XREF: sub_D2B9+43r __RESET+B7w	...
 		.block 1
@@ -459,12 +469,12 @@ unk_15F:	.block 1		; DATA XREF: ROM:CD44r
 unk_161:	.block 1		; DATA XREF: ROM:CFC5w	__RESET+CCw
 unk_162:	.block 1		; DATA XREF: ROM:C933r	ROM:C93Dw ...
 unk_163:	.block 1		; DATA XREF: ROM:CBE1r	ROM:CBE6w ...
-word_164:	.block 2		; DATA XREF: sub_C5E7+2Aw __RESET+83w	...
-					; DoInjectors related
-word_166:	.block 2		; DATA XREF: sub_C5E7+2Dw __RESET+86w	...
-					; DoInjectors related
-word_168:	.block 2		; DATA XREF: __RESET+8Cw __RESET+9CEr	...
-					; DoInjectors related
+InjectPW1:	.block 2		; DATA XREF: calcInjPW+2Aw __RESET+83w ...
+					; pulsewidth for most cases/cylinders
+InjectPW2:	.block 2		; DATA XREF: calcInjPW+2Dw __RESET+86w ...
+					; For the rest of the time
+InjDeadtime:	.block 2		; DATA XREF: __RESET+8Cw __RESET+9CEr	...
+					; probably deadtime, have to chase out ADC code
 word_16A:	.block 2		; DATA XREF: __RESET+92w __RESET+3DBw	...
 word_16C:	.block 2		; DATA XREF: __RESET+95w
 					; __RESET:loc_D899w ...
@@ -516,8 +526,8 @@ unk_18F:	.block 1		; DATA XREF: ROM:EE2Fr
 					; NEsub1:loc_EF09w ...
 unk_190:	.block 1		; DATA XREF: sub_EF13+Br
 					; sub_EF13:loc_EF2Ar ...
-IGT_time1:	.block 2		; DATA XREF: calcIGT_time1+12w
-					; sub_F689r
+IGT_time:	.block 2		; DATA XREF: calcIGT_time+12w
+					; Cmp0IGTdwellr
 word_193:	.block 2		; DATA XREF: __RESET+591w __RESET+8F3w ...
 unk_195:	.block 1		; DATA XREF: NEsub1+9Aw
 unk_196:	.block 1		; DATA XREF: sub_F1A9:loc_F1D8r
@@ -534,7 +544,7 @@ unk_19B:	.block 1		; DATA XREF: sub_F1A9:loc_F216w
 unk_19C:	.block 1		; DATA XREF: sub_F1A9r	sub_F1A9+6w ...
 unk_19D:	.block 1		; DATA XREF: sub_F1A9:loc_F1B2r
 					; sub_F1A9+Fw ...
-unk_19E:	.block 1		; DATA XREF: ROM:loc_EDBAr ROM:EDBDw ...
+unk_19E:	.block 1		; DATA XREF: ROM:intASR2_30r ROM:EDBDw ...
 unk_19F:	.block 1		; DATA XREF: IVc+3Dr IVc+51w ...
 unk_1A0:	.block 1		; DATA XREF: __RESET+BCw __RESET+F42r	...
 unk_1A1:	.block 1		; DATA XREF: __RESET+BFw
@@ -543,7 +553,7 @@ unk_1A2:	.block 1		; DATA XREF: __RESET+166Fr
 					; __RESET:loc_EB30w
 unk_1A3:	.block 1		; DATA XREF: __RESET+165Cw
 					; __RESET:loc_EB3Ar
-lastASR2:	.block 2		; DATA XREF: ROM:EC7Cr	ROM:loc_EC86w ...
+lastASR2:	.block 2		; DATA XREF: ROM:EC7Cr	ROM:intASR2_7w	...
 unk_1A6:	.block 1		; DATA XREF: __RESET+341r __RESET+35Er ...
 		.block 1
 unk_1A8:	.block 1		; DATA XREF: sub_C4DF+14r __RESET+2FBw ...
@@ -562,8 +572,8 @@ unk_1B2:	.block 1		; DATA XREF: IV6+589w IV6+58Fr
 unk_1B3:	.block 1		; DATA XREF: __RESET+D1w
 		.block 1
 unk_1B5:	.block 1		; DATA XREF: ROM:CE14w	ROM:CE2Er ...
-unk_1B6:	.block 1		; DATA XREF: ROM:CEA8w	sub_D41C+21w ...
-unk_1B7:	.block 1		; DATA XREF: ROM:CEABw	sub_D41C+24w ...
+unk_1B6:	.block 1		; DATA XREF: ROM:CEA8w	ReInitNEIGT+21w ...
+unk_1B7:	.block 1		; DATA XREF: ROM:CEABw	ReInitNEIGT+24w ...
 		.block 1
 		.block 1
 unk_1BA:	.block 1		; DATA XREF: ROM:CEB9r	intSIN0+11Aw
@@ -599,7 +609,7 @@ unk_1D5:	.block 1
 unk_1D7:	.block 1		; DATA XREF: __RESET:loc_E726r
 					; __RESET+12BAw ...
 unk_1D8:	.block 1
-		.block 1
+unk_1D9:	.block 1
 		.block 1
 		.block 1
 		.block 1
@@ -861,7 +871,7 @@ unk_238:	.block 1
 		.block 1
 		.block 1
 		.block 1
-		.block 1
+unk_2DF:	.block 1
 		.block 1
 		.block 1
 		.block 1
@@ -906,8 +916,8 @@ word_302:	.block 2
 word_304:	.block 2
 word_306:	.block 2
 unk_308:	.block 1
-
 ; end of 'badaddress'
+
 ; File Name   :	C:\Documents and Settings\Sparkie\Desktop\Toyota PCM hacking\Toyota 1UZ PCM\cap d151803-9260.bin
 ; Format      :	Binary file
 ; Base Address:	0000h Range: C000h - 10000h Loaded length: 4000h
@@ -1052,6 +1062,7 @@ loc_C096:				; CODE XREF: sub_C090+3j
 
 ; ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ S U B	R O U T	I N E ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ
 
+; returns upper	16 bits	in Y, lower 16 bits in D
 
 MulDbyY:				; CODE XREF: sub_C61C+14p __RESET+27Ep ...
 		push	y
@@ -1066,7 +1077,7 @@ MulDbyY:				; CODE XREF: sub_C61C+14p __RESET+27Ep ...
 		ld	a, x + 01h
 		mul	a, x + 02h	; Dl*Yh
 		add	y, a
-		add	b, x + 00h
+		add	b, x + 00h	; looking for a	carry
 		bcc	MulDbyY2
 		inc	y
 
@@ -1074,7 +1085,7 @@ MulDbyY2:				; CODE XREF: MulDbyY+14j
 		st	b, x + 00h
 		ld	a, x + 01h
 		mul	a, x + 03h	; Dl*Yl
-		add	a, x + 00h
+		add	a, x + 00h	; looking for last carry
 		bcc	MulDbyY3
 		inc	y
 
@@ -1087,42 +1098,42 @@ MulDbyY3:				; CODE XREF: MulDbyY+1Fj
 
 ; ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ S U B	R O U T	I N E ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ
 
-; wicked awesome division interpolation	math with X and	D
+; divide D by X, does some shifting to return ?? bits
 
-sub_C0C1:				; CODE XREF: __RESET+257p __RESET+29Cp ...
+divDbyX:				; CODE XREF: __RESET+257p __RESET+29Cp ...
 		st	x, unk_51
-		beq	locret_C114	; if zero return
+		beq	divDbyX_end	; if zero return
 		shr	d
 		mov	d, y
-		clr	a
+		clr	a		; clear	d
 		clr	b
-		mov	d, x
+		mov	d, x		; clear	x
 		ld	d, unk_51
 
-loc_C0CC:				; CODE XREF: sub_C0C1+Fj
-		bmi	loc_C0D2	; shift	left until msb is 1
+divDbyX1:				; CODE XREF: divDbyX+Fj
+		bmi	divDbyX2	; shift	left until msb is 1
 		inc	x		; x counts number of shifts
-		shl	d
-		bra	loc_C0CC	; shift	left until msb is 1
+		shl	d		; shifting initial X until MSB D is set
+		bra	divDbyX1	; shift	left until msb is 1
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
-loc_C0D2:				; CODE XREF: sub_C0C1:loc_C0CCj
-		st	x, unk_51
+divDbyX2:				; CODE XREF: divDbyX:divDbyX1j
+		st	x, unk_51	; 51 now stores	the number of times we shifted left
 		inc	a		; because....?
 		push	d		; push shifted input x onto stack
 		mov	s, x
 		dec	x
 		dec	x		; compensate for later pushes
-		ld	a, x + 02h
-		mov	y, d
-		beq	loc_C0E5	; pushing Int.Frac result
+		ld	a, x + 02h	; load MSB of shifted input X to get cond codes
+		mov	y, d		; and then clobber it with initial D input
+		beq	divDbyX3	; pushing Int.Frac result
 		div	d, x + 02h	; d is input d,	x+02 is	(MSB of	shifted	input x)+1
 		push	b		; b is the division, a is the modulo
 		clr	b
 		div	d, x + 02h
 		pull	a
 
-loc_C0E5:				; CODE XREF: sub_C0C1+1Bj
+divDbyX3:				; CODE XREF: divDbyX+1Bj
 		push	d		; pushing Int.Frac result
 		mov	y, d		; y still contains input arg d
 		dec	x + 02h		; get rid of original +1
@@ -1131,9 +1142,9 @@ loc_C0E5:				; CODE XREF: sub_C0C1+1Bj
 		clr	b
 		div	d, x + 02h
 		pull	a		; AccD now contains new	int.frac
-		neg	x + 03h
-		beq	loc_C101
-		sub	d, x + 00h	; subtract old int.frac, but .frac waas	negated
+		neg	x + 03h		; negate shifted input X LSB where it hides in the stack
+		beq	divDbyX4
+		sub	d, x + 00h	; subtract old int.frac, yielding a small positive number
 		push	b
 		mul	a, x + 03h
 		mov	d, y
@@ -1141,31 +1152,31 @@ loc_C0E5:				; CODE XREF: sub_C0C1+1Bj
 		mul	a, x + 03h
 		add	y, a
 		mov	y, d
-		add	d, x + 00h
+		add	d, x + 00h	; after	a short	interpolation we now have a precise div	by 16
 
-loc_C101:				; CODE XREF: sub_C0C1+31j
+divDbyX4:				; CODE XREF: divDbyX+31j
 		pull	y
-		pull	y
-		ld	x, unk_51
+		pull	y		; tidy stack
+		ld	x, unk_51	; x now	contains number	of shifts we did to get	divisor
 
-loc_C105:				; CODE XREF: sub_C0C1+4Bj sub_C0C1+51j
+divDbyX5:				; CODE XREF: divDbyX+4Bj divDbyX+51j
 		cmp	x, #0007h
-		bcc	loc_C10E
+		bcc	divDbyX6
 		inc	x
 		shr	d
-		bra	loc_C105
+		bra	divDbyX5
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
-loc_C10E:				; CODE XREF: sub_C0C1+47j
-		beq	locret_C114
+divDbyX6:				; CODE XREF: divDbyX+47j
+		beq	divDbyX_end
 		dec	x
 		shl	d
-		bpz	loc_C105
+		bpz	divDbyX5
 
-locret_C114:				; CODE XREF: sub_C0C1+2j
-					; sub_C0C1:loc_C10Ej
+divDbyX_end:				; CODE XREF: divDbyX+2j
+					; divDbyX:divDbyX6j
 		ret
-; End of function sub_C0C1
+; End of function divDbyX
 
 
 ; ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ S U B	R O U T	I N E ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ
@@ -1250,93 +1261,97 @@ sat16_3:				; CODE XREF: SaturateD16b+Bj
 
 ; ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ S U B	R O U T	I N E ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ
 
+; Lookup unk_7A, integer return	in Acca, fraction return in AccB
 
-danger1:				; CODE XREF: __RESET+75Ap __RESET+7A1p ...
+TwoD_7A:				; CODE XREF: __RESET+75Ap __RESET+7A1p ...
 		ld	d, word_7A
-; End of function danger1
+; End of function TwoD_7A
 
 
 ; ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ S U B	R O U T	I N E ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ
 
+; lookup AccD/64, integer return in Acca, fraction return in AccB
 
-danger2:				; CODE XREF: __RESET+28Ep
-		div	d, #40h
-		bcc	danger3
+TwoD_AccD:				; CODE XREF: __RESET+28Ep
+		div	d, #064
+		bcc	TwoD_AccD_1
 		ld	b, #0FFh
 
-danger3:				; CODE XREF: danger2+2j
+TwoD_AccD_1:				; CODE XREF: TwoD_AccD+2j
 		mov	b, a
-		bra	danger6
-; End of function danger2
+		bra	TwoDTable	; X value in AccA, integer return in Acca, fraction return in AccB
+; End of function TwoD_AccD
 
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
-danger4:				; CODE XREF: __RESET+2A9p __RESET+4A7p ...
-		ld	a, unk_F0
+TwoD_F0:				; CODE XREF: __RESET+2A9p __RESET+4A7p ...
+		ld	a, word_F0	; lookup unk_F0, integer return	in Acca, fraction return in AccB
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
-		.db  8Ch ; Œ		; cpx
+		.db  8Ch ; Œ		; cpx... Nop's through the next load
 
 ; ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ S U B	R O U T	I N E ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ
 
+; lookup unk_F7, integer return	in Acca, fraction return in AccB
 
-danger5:				; CODE XREF: sub_C4DF:loc_C4E2p
+TwoD_F7:				; CODE XREF: sub_C4DF:loc_C4E2p
 					; sub_C61Cp ...
 		ld	a, unk_F7
-; End of function danger5
+; End of function TwoD_F7
 
 
 ; ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ S U B	R O U T	I N E ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ
 
+; X value in AccA, integer return in Acca, fraction return in AccB
 
-danger6:				; CODE XREF: danger2+7j sub_C4DF+1Ap ...
+TwoDTable:				; CODE XREF: TwoD_AccD+7j sub_C4DF+1Ap ...
 		cmp	a, y + 00h
-		bgt	danger9
+		bgt	TwoD1		; bounce if a is greater than data
 
-danger7:				; CODE XREF: danger6+11j
+TwoDendSat:				; CODE XREF: TwoDTable+11j
 		clr	a
-		bra	danger12
+		bra	TwoD4
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
-danger8:				; CODE XREF: danger6+Bj
+TwoDsearch:				; CODE XREF: TwoDTable+Bj
 		inc	y
 		inc	y
 
-danger9:				; CODE XREF: danger6+2j
+TwoD1:					; CODE XREF: TwoDTable+2j
 		cmp	a, y + 02h
-		bgt	danger8
-		ld	b, y + 02h
-		cmp	b, #0FFh
-		beq	danger7
-		sub	a, y + 00h
-		sub	b, y + 00h
-		push	b
-		mov	s, x
+		bgt	TwoDsearch	; loop until data is greater than accA
+		ld	b, y + 02h	; b now	has larger X value
+		cmp	b, #0FFh	; signifies table end
+		beq	TwoDendSat
+		sub	a, y + 00h	; subtract from	desired	X the smaller avlue from table
+		sub	b, y + 00h	; find the difference between points
+		push	b		; stack	decrement
+		mov	s, x		; x now	points to x axis difference between table points
 		clr	b
-		div	d, x + 00h
-		inc	s
+		div	d, x + 00h	; b now	has ratio of desired point inside table	points
+		inc	s		; stack	increment
 		ld	a, y + 03h
-		bcs	danger10
+		bcs	TwoD2
 		cmp	a, y + 01h
-		bcc	danger11
-		neg	b
+		bcc	TwoD3		; bounce if table is increasing
+		neg	b		; otherwise we negate the ratio	and tweak our pointers to get the same result
 		ld	a, y + 01h
 
-danger10:				; CODE XREF: danger6+1Fj
+TwoD2:					; CODE XREF: TwoDTable+1Fj
 		inc	y
 		inc	y
 
-danger11:				; CODE XREF: danger6+23j
+TwoD3:					; CODE XREF: TwoDTable+23j
 		sub	a, y + 01h
 
-danger12:				; CODE XREF: danger6+5j
+TwoD4:					; CODE XREF: TwoDTable+5j
 		inc	y
-		push	b
+		push	b		; stack	decrement
 		mov	s, x
 		mul	a, x + 00h
-		inc	s
-		add	a, y + 00h
+		inc	s		; stack	increment
+		add	a, y + 00h	; add the offset from base ale calculated with the base	value. bam! table output.
 		ret
-; End of function danger6
+; End of function TwoDTable
 
 
 ; ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ S U B	R O U T	I N E ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ
@@ -1347,10 +1362,10 @@ sub_C197:				; CODE XREF: __RESET+3EBp
 		st	b, unk_54
 		mov	a, b
 		clr	a
-		div	d, #0Ch
+		div	d, #012
 		st	b, unk_53
 		ld	b, unk_54
-		div	d, #0Ch
+		div	d, #012
 		st	b, unk_54
 		ret
 ; End of function sub_C197
@@ -1371,7 +1386,7 @@ sub_C197:				; CODE XREF: __RESET+3EBp
 
 
 sub_C1B0:				; CODE XREF: __RESET+1371p
-		ld	d, unk_F0
+		ld	d, word_F0	; I think it's RPM/100
 		cmp	a, #18h
 		bcs	loc_C1BC
 		add	a, #18h
@@ -1438,7 +1453,7 @@ sub_C1EC:				; CODE XREF: sub_C1BB+3p sub_C1BB+Dp
 
 loc_C1F2:				; CODE XREF: sub_C1EC+2j
 		cmp	a, y + 02h
-		bcs	loc_C1F9
+		bcs	loc_C1F9	; select the smaller of	subtraction or y+02
 		ld	a, y + 02h
 		clr	b
 
@@ -1533,20 +1548,21 @@ locret_C22C:				; CODE XREF: sub_C221+7j
 
 ; ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ S U B	R O U T	I N E ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ
 
+; fill ram with	default	values
 
-sub_C22D:				; CODE XREF: sub_C22D+Aj __RESET+72p
+InitRAM:				; CODE XREF: InitRAM+Aj __RESET+72p
 		ld	a, [y]
-		beq	locret_C239
+		beq	locret_C239	; an address of	zero is	code to	quit
 		ld	x, #0000h
 		add	x, a
 		ld	a, [y]
 		st	a, x + 00h
-		bra	sub_C22D
+		bra	InitRAM		; fill ram with	default	values
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
-locret_C239:				; CODE XREF: sub_C22D+1j
+locret_C239:				; CODE XREF: InitRAM+1j
 		ret
-; End of function sub_C22D
+; End of function InitRAM
 
 
 ; ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ S U B	R O U T	I N E ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ
@@ -1575,7 +1591,7 @@ loc_C242:				; CODE XREF: sub_C23A+3j
 ; End of function sub_C23F
 
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
-		.db  03h
+unk_C246:	.db  03h		; D741 2d lookup for word_78, also DC0D	for 7A
 		.db 0CBh ; Ë
 		.db  06h
 		.db 0D2h ; Ò
@@ -1596,7 +1612,7 @@ loc_C242:				; CODE XREF: sub_C23A+3j
 		.db 0FCh ; ü
 		.db 0E6h ; æ
 		.db 0FFh
-		.db  10h
+		.db  10h		; D713 2d lookup for F0
 		.db 0BCh ; ¼
 		.db  18h
 		.db  7Ah ; z
@@ -1613,8 +1629,7 @@ loc_C242:				; CODE XREF: sub_C23A+3j
 		.db 0FFh
 unk_C26A:	.db 0A5h ; ¥		; DATA XREF: __RESET:loc_DD50r
 		.db  80h ; €
-		.db  01h
-		.db  80h ; €
+		.dw 0180h		; data refrenced at DD2A
 		.db  05h
 		.db  00h
 		.db  00h
@@ -1673,7 +1688,7 @@ unk_C26A:	.db 0A5h ; ¥		; DATA XREF: __RESET:loc_DD50r
 		.db  62h ; b
 		.db  69h ; i
 		.db  67h ; g
-		.db  0Ah
+		.db  0Ah		; DD32,	2d lookup for DB
 		.db  12h
 		.db  3Eh ; >
 		.db  4Dh ; M
@@ -1682,21 +1697,21 @@ unk_C26A:	.db 0A5h ; ¥		; DATA XREF: __RESET:loc_DD50r
 		.db 0FFh
 		.db  00h
 		.db  00h
-		.db  5Dh ; ]
+		.db  5Dh ; ]		; DCD7,	2d lookup for F7
 		.db  96h ; –
 		.db 0B3h ; ³
 		.db  5Bh ; [
 		.db 0E4h ; ä
 		.db  26h ; &
 		.db 0FFh
-		.db  4Eh ; N
+		.db  4Eh ; N		; D75C,	lookup for F0
 		.db  98h ; ˜
 		.db  60h ; `
 		.db 0A0h ;  
 		.db  78h ; x
 		.db  90h ; 
 		.db 0FFh
-		.db  4Ch ; L
+		.db  4Ch ; L		; F6 table from	E455
 		.db  9Dh ; 
 		.db  66h ; f
 		.db  62h ; b
@@ -1709,7 +1724,7 @@ unk_C26A:	.db 0A5h ; ¥		; DATA XREF: __RESET:loc_DD50r
 		.db 0CCh ; Ì
 		.db  1Bh
 		.db 0FFh
-		.db  0Bh		; C623
+		.db  0Bh		; C623,	lookup for FA
 		.db 0EAh ; ê
 		.db  24h ; $
 		.db 0B7h ; ·
@@ -1724,11 +1739,11 @@ unk_C26A:	.db 0A5h ; ¥		; DATA XREF: __RESET:loc_DD50r
 		.db 0E4h ; ä
 		.db  0Fh
 		.db 0FFh
-unk_C2DB:	.db  12h		; data used by F070
-		.db  15h
-		.db  06h
-		.db  09h
-		.db  15h		; C619
+byte_C2DB:	.db 12h			; data used by F070 (18)
+		.db 15h			; 21
+		.db 06h			; 6
+		.db 09h			; 9
+		.db  15h		; C619 2d lookup for F7
 		.db 0B9h ; ¹
 		.db  24h ; $
 		.db  67h ; g
@@ -1739,12 +1754,12 @@ unk_C2DB:	.db  12h		; data used by F070
 		.db 0E4h ; ä
 		.db  2Ch ; ,
 		.db 0FFh
-		.db  86h ; †		; C5F4
-		.db  14h
+unk_C2EA:	.db  86h ; †		; C5F4,	lookup for F7
+		.db  14h		; 5120
 		.db 0D2h ; Ò
-		.db  0Ah
+		.db  0Ah		; 2560
 		.db 0FFh
-		.db  15h
+		.db  15h		; E9C6,DC7C,2d lookup for F7
 		.db  73h ; s
 		.db  38h ; 8
 		.db  4Fh ; O
@@ -1755,12 +1770,12 @@ unk_C2DB:	.db  12h		; data used by F070
 		.db 0D2h ; Ò
 		.db  00h
 		.db 0FFh
-		.db  1Eh
+		.db  1Eh		; DDB6,	2dlookup F0
 		.db 0FFh
 		.db  46h ; F
 		.db  9Ah ; š
 		.db 0FFh
-		.db  15h
+		.db  15h		; DC85,	2d lookup for F7
 		.db 0C0h ; À
 		.db  38h ; 8
 		.db  54h ; T
@@ -1771,7 +1786,7 @@ unk_C2DB:	.db  12h		; data used by F070
 		.db 0D2h ; Ò
 		.db  0Dh
 		.db 0FFh
-		.db  5Dh ; ]
+		.db  5Dh ; ]		; DCA6,	2d lookup for F7
 		.db  52h ; R
 		.db  79h ; y
 		.db  43h ; C
@@ -1780,7 +1795,7 @@ unk_C2DB:	.db  12h		; data used by F070
 		.db 0E4h ; ä
 		.db  0Dh
 		.db 0FFh
-		.db  15h
+		.db  15h		; EA21,	F7
 		.db  2Ch ; ,
 		.db  79h ; y
 		.db  1Ch
@@ -1789,46 +1804,44 @@ unk_C2DB:	.db  12h		; data used by F070
 		.db 0E4h ; ä
 		.db  0Dh
 		.db 0FFh
-		.db  0Bh
+		.db  0Bh		; DDAF,	2d lookup for F7
 		.db 0B0h ; °
 		.db 0EAh ; ê
 		.db  30h ; 0
 		.db 0FFh
-		.db  38h ; 8
+		.db  38h ; 8		; D95A,	2d lookup for F0
 		.db 0F0h ; ğ
 		.db  38h ; 8
 		.db  6Ch ; l
 		.db  68h ; h
 		.db  24h ; $
 		.db 0FFh
-		.db  26h ; &
+		.db  26h ; &		; E34F,	7A
 		.db  8Ch ; Œ
 		.db  4Dh ; M
 		.db  61h ; a
 		.db  86h ; †
 		.db  40h ; @
 		.db 0FFh
-		.db  26h ; &
+		.db  26h ; &		; E357,	7A
 		.db  69h ; i
 		.db  4Dh ; M
 		.db  49h ; I
 		.db  86h ; †
 		.db  31h ; 1
 		.db 0FFh
-		.db  24h ; $
+		.db  24h ; $		; D9E3,	2d lookup for F7
 		.db  2Eh ; .
 		.db 0E4h ; ä
 		.db  18h
 		.db 0FFh
-		.db  07h
-		.db  08h
-		.db  07h
-		.db  08h
+		.dw 0708h		; word data for	DD63
+		.dw 0708h
 		.db  0Fh
 		.db 0A0h ;  
 		.db  11h
 		.db  30h ; 0
-		.db  32h ; 2
+		.db  32h ; 2		; E4B0,	F0
 		.db  00h
 		.db  32h ; 2
 		.db  01h
@@ -2010,13 +2023,12 @@ unk_C2DB:	.db  12h		; data used by F070
 		.db  77h ; w
 		.db  80h ; €
 		.db  8Dh ; 
-		.db  28h ; (
+		.db  28h ; (		; E951,	F0
 		.db  2Bh ; +
 		.db  60h ; `
 		.db  80h ; €
 		.db 0FFh
-		.db  04h
-		.db  00h
+		.dw 0400h
 		.db  09h
 		.db  02h
 		.db  00h
@@ -2111,7 +2123,7 @@ unk_C2DB:	.db  12h		; data used by F070
 		.db  00h
 		.db  00h
 		.db  00h
-		.db  24h ; $
+		.db  24h ; $		; E85A,	F7
 		.db 0C0h ; À
 		.db  38h ; 8
 		.db  95h ; •
@@ -2120,7 +2132,7 @@ unk_C2DB:	.db  12h		; data used by F070
 		.db 0FFh
 		.db  00h
 		.db  00h
-		.db  24h ; $
+		.db  24h ; $		; E863,	F7
 		.db 0C0h ; À
 		.db  38h ; 8
 		.db  95h ; •
@@ -2133,7 +2145,7 @@ unk_C2DB:	.db  12h		; data used by F070
 		.db 0FFh
 		.db  00h
 		.db  00h
-		.db 0EEh ; î
+		.db 0EEh ; î		; E8DB,	F7
 		.db  00h
 		.db 0F0h ; ğ
 		.db  0Dh
@@ -2146,12 +2158,12 @@ unk_C2DB:	.db  12h		; data used by F070
 		.db 0ABh ; «
 		.db 0BCh ; ¼
 		.db 0CDh ; Í
-		.db  18h
+		.db  18h		; E8BA,	F2
 		.db  33h ; 3
 		.db  78h ; x
 		.db  00h
 		.db 0FFh
-		.db  86h ; †
+		.db  86h ; †		; DF60,	2d lookup for F7
 		.db  10h
 		.db  86h ; †
 		.db  0Ah
@@ -2160,7 +2172,7 @@ unk_C2DB:	.db  12h		; data used by F070
 		.db 0DCh ; Ü
 		.db  05h
 		.db 0FFh
-		.db  24h ; $
+		.db  24h ; $		; C4DA 2d table	for F7
 		.db  7Bh ; {
 		.db  6Bh ; k
 		.db  58h ; X
@@ -2169,12 +2181,12 @@ unk_C2DB:	.db  12h		; data used by F070
 		.db 0DCh ; Ü
 		.db  3Ah ; :
 		.db 0FFh
-		.db  33h ; 3
+		.db  33h ; 3		; C4F6,	unk_1A8
 		.db  08h
 		.db  80h ; €
 		.db  00h
 		.db 0FFh
-		.db  15h
+		.db  15h		; C4DF 2d table	for F7
 		.db  7Bh ; {
 		.db  38h ; 8
 		.db  58h ; X
@@ -2183,14 +2195,14 @@ unk_C2DB:	.db  12h		; data used by F070
 		.db 0DCh ; Ü
 		.db  3Ah ; :
 		.db 0FFh
-		.db  86h ; †
+		.db  86h ; †		; E0F6,	F7
 		.db 0A0h ;  
 		.db 0B3h ; ³
 		.db  90h ; 
 		.db 0DCh ; Ü
 		.db  64h ; d
 		.db 0FFh
-		.db  86h ; †
+		.db  86h ; †		; E0FE,	F7
 		.db  78h ; x
 		.db 0B3h ; ³
 		.db  6Ch ; l
@@ -2205,28 +2217,28 @@ unk_C2DB:	.db  12h		; data used by F070
 		.db  10h
 		.db  10h
 		.db  10h
-		.db  01h
+		.db  01h		; 8b constants for E0C8
 		.db  00h
 		.db  16h
 		.db  06h
-		.db  14h
+		.db  14h		; E052,	2d lookup for F0
 		.db  3Eh ; >
 		.db  3Ch ; <
 		.db  5Ch ; \
 		.db 0FFh
 		.db  00h
 		.db  00h
-		.db  34h ; 4
+		.db  34h ; 4		; E097,	word_F0	ish
 		.db  00h
 		.db  34h ; 4
 		.db  06h
 		.db 0FFh
-		.db  0Ch
+		.db  0Ch		; E072,	5E
 		.db  00h
 		.db  0Fh
 		.db  06h
 		.db 0FFh
-		.db  0Ch
+		.db  0Ch		; E06D,	5E
 		.db  00h
 		.db  11h
 		.db  0Ah
@@ -2252,7 +2264,7 @@ sub_C4DF:				; CODE XREF: __RESET+C8Bp
 		ld	y, #0C49Dh
 
 loc_C4E2:				; CODE XREF: sub_C4DA+3j
-		jsr	danger5
+		jsr	TwoD_F7		; lookup unk_F7, integer return	in Acca, fraction return in AccB
 		ld	b, unk_DA
 		shr	b
 		shr	b
@@ -2266,7 +2278,7 @@ loc_C4F0:				; CODE XREF: sub_C4DF+Dj
 		st	a, unk_51
 		ld	a, unk_1A8
 		ld	y, #0C498h
-		jsr	danger6
+		jsr	TwoDTable	; X value in AccA, integer return in Acca, fraction return in AccB
 		add	a, unk_51
 		cmp	a, #7Dh
 		ble	locret_C504
@@ -2350,7 +2362,7 @@ loc_C512:				; CODE XREF: sub_C505+9j
 		.db  02h
 		.db  04h
 		.db  08h
-		.db  02h
+		.db  02h		; data for f2b3
 		.db  04h
 		.db  06h
 		.db  03h
@@ -2463,7 +2475,7 @@ loc_C512:				; CODE XREF: sub_C505+9j
 		.db  33h ; 3
 		.db  33h ; 3
 		.db  33h ; 3
-		.db  0Ah
+		.db  0Ah		; EA32,F0
 		.db  50h ; P
 		.db  20h
 		.db  1Ch
@@ -2472,7 +2484,7 @@ loc_C512:				; CODE XREF: sub_C505+9j
 		.db 0FFh
 		.db  00h
 		.db  00h
-		.db  34h ; 4
+		.db  34h ; 4		; DC54,	2d lookup for 7A
 		.db 0A0h ;  
 		.db  3Dh ; =
 		.db  80h ; €
@@ -2487,7 +2499,7 @@ loc_C512:				; CODE XREF: sub_C505+9j
 		.db  9Bh ; ›
 		.db  00h
 		.db 0FFh
-		.db 0B3h ; ³
+		.db 0B3h ; ³		; DC5F,	2d lookup for F7
 		.db  00h
 		.db 0D2h ; Ò
 		.db  30h ; 0
@@ -2498,12 +2510,12 @@ loc_C512:				; CODE XREF: sub_C505+9j
 		.db 0E4h ; ä
 		.db 0A0h ;  
 		.db 0FFh
-		.db  00h
+		.db  00h		; D8B9 word_F2
 		.db  75h ; u
 		.db  50h ; P
 		.db  32h ; 2
 		.db 0FFh
-		.db  00h
+		.db  00h		; D8C1,	word_F2
 		.db  53h ; S
 		.db  30h ; 0
 		.db  00h
@@ -2512,41 +2524,41 @@ loc_C512:				; CODE XREF: sub_C505+9j
 ; ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ S U B	R O U T	I N E ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ
 
 
-sub_C5E7:				; CODE XREF: __RESET+177p __RESET+851p
+calcInjPW:				; CODE XREF: __RESET+177p __RESET+851p
 		jsr	sub_C619
-		st	y, unk_53
+		st	y, unk_53	; result of multiplication
 		ld	y, #0000h
-		cmp	#14h, unk_6A
-		ble	loc_C5FA
+		cmp	#020, word_6A
+		ble	loc_C5FA	; bounce if unk_6a is lower or equal to	20
 		ld	y, #0C2EAh
 		jsr	sub_C61C
 
-loc_C5FA:				; CODE XREF: sub_C5E7+Bj
-		mov	y, d
+loc_C5FA:				; CODE XREF: calcInjPW+Bj
+		mov	y, d		; MSW from multiplication is now in D, so table+5% of whatever was calculated before
 		add	d, unk_53
 		st	d, unk_51
-		ld	a, unk_114
+		ld	a, unk_114	; written from serial receive int
 		and	a, #02h
-		beq	loc_C60D
+		beq	loc_C60D	; bounce if bit	1 of unk_114 isnt set
 		ld	d, #00313
 		add	d, unk_51
 		st	d, unk_51
 
-loc_C60D:				; CODE XREF: sub_C5E7+1Dj
+loc_C60D:				; CODE XREF: calcInjPW+1Dj
 		ld	d, unk_51
 		shl	d
 		shl	d
-		st	d, word_164	; DoInjectors related
-		st	d, word_166	; DoInjectors related
+		st	d, InjectPW1	; =unk_51*4
+		st	d, InjectPW2	; =unk_51*4
 		ei
 		ret
-; End of function sub_C5E7
+; End of function calcInjPW
 
 
 ; ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ S U B	R O U T	I N E ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ
 
 
-sub_C619:				; CODE XREF: sub_C5E7p	sub_C634p
+sub_C619:				; CODE XREF: calcInjPWp sub_C634p
 		ld	y, #0C2DFh
 ; End of function sub_C619
 
@@ -2554,16 +2566,16 @@ sub_C619:				; CODE XREF: sub_C5E7p	sub_C634p
 ; ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ S U B	R O U T	I N E ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ
 
 
-sub_C61C:				; CODE XREF: sub_C5E7+10p
-		jsr	danger5
-		st	d, unk_51
+sub_C61C:				; CODE XREF: calcInjPW+10p
+		jsr	TwoD_F7		; lookup unk_F7, integer return	in Acca, fraction return in AccB
+		st	d, unk_51	; gets a base value
 		ld	a, unk_FA
 		ld	y, #0C2CCh
-		jsr	danger6
+		jsr	TwoDTable	; X value in AccA, integer return in Acca, fraction return in AccB
 		mul	a, #08h
-		add	d, #03280
+		add	d, #03280	; add 5.004%
 		ld	y, unk_51
-		jsr	MulDbyY
+		jsr	MulDbyY		; returns upper	16 bits	in Y, lower 16 bits in D
 		ret
 ; End of function sub_C61C
 
@@ -2655,7 +2667,7 @@ loc_C69D:				; CODE XREF: sub_C64D+46j
 		cmp	a, #0Dh
 		pull	a
 		bgt	loc_C6B7
-		ld	a, unk_44
+		ld	a, unk_44	; bits 543210 will all cause a branch past doinjectors
 		cmpb	a, #3Fh
 		bne	loc_C6B7
 		ld	a, word_94
@@ -3155,7 +3167,7 @@ loc_C918:				; CODE XREF: __RESET+FF7p
 loc_C926:				; CODE XREF: ROM:C920j
 		clrb	bit7, unk_4D
 		ld	d, unk_4E
-		and	a, #0EFh
+		and	a, #0EFh	; clear	bit 4 of unk_4e
 		and	b, #60h
 		st	d, unk_4E
 		ld	a, unk_146
@@ -3424,7 +3436,7 @@ loc_CAF1:				; CODE XREF: ROM:CADDj
 		and	a, unk_15D
 		and	a, #04h
 		beq	loc_CB03
-		cmp	#18h, unk_F2
+		cmp	#18h, word_F2
 		bcs	loc_CB03
 		tbbs	bit5, unk_4B, loc_CB1C
 
@@ -3614,7 +3626,7 @@ loc_CC1F:				; CODE XREF: ROM:CB19j	ROM:CB98j ...
 		tbbc	bit0, unk_41, loc_CC30
 		cmp	#02h, unk_5E
 		bcc	loc_CC30
-		cmp	#13h, unk_F0
+		cmp	#019, word_F0	; I think it's RPM/100
 		bcs	loc_CC3A
 
 loc_CC30:				; CODE XREF: ROM:CC20j	ROM:CC23j ...
@@ -3641,7 +3653,7 @@ loc_CC53:				; CODE XREF: ROM:CC38j	ROM:CC3Dj
 		ld	a, word_8E
 		and	a, #10h
 		bne	loc_CC7D
-		cmp	#1Eh, unk_F0
+		cmp	#030, word_F0	; I think it's RPM/100
 		bcs	loc_CC7D
 		ld	d, word_170
 		cmp	d, #0CCDh
@@ -3649,7 +3661,7 @@ loc_CC53:				; CODE XREF: ROM:CC38j	ROM:CC3Dj
 		ld	a, unk_A2
 		and	a, #50h
 		bne	loc_CC7D
-		ld	a, unk_44
+		ld	a, unk_44	; bits 543210 will all cause a branch past doinjectors
 		and	a, #3Fh
 		bne	loc_CC7D
 		tbbs	bit3, unk_43, loc_CC7D
@@ -3717,10 +3729,10 @@ loc_CCD9:				; CODE XREF: ROM:loc_CCCBj
 		ld	a, word_8E
 		and	a, #10h
 		bne	loc_CD09
-		cmp	#24h, unk_F2
+		cmp	#24h, word_F2
 		bcs	loc_CD09
 		tbbc	bit2, unk_4B, loc_CD09
-		cmp	#1Eh, unk_F0
+		cmp	#030, word_F0	; I think it's RPM/100
 		bcs	loc_CD09
 		cmp	#64h, unk_5E
 		bcs	loc_CD0F
@@ -3873,7 +3885,7 @@ loc_CE13:				; CODE XREF: ROM:CE22j	ROM:CE24j ...
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_CE1F:				; CODE XREF: ROM:CE0Bj
-		cmp	#38h, unk_F0
+		cmp	#38h, word_F0	; I think it's RPM/100
 		bcs	loc_CE13
 		tbbs	bit5, unk_45, loc_CE13
 		ld	a, unk_109
@@ -3899,25 +3911,28 @@ loc_CE41:				; CODE XREF: ROM:CE19j	ROM:CE1Dj ...
 
 loc_CE48:				; CODE XREF: ROM:CE45j
 		st	a, unk_1BB
-		tbbc	bit3, unk_4B, loc_CE6B+1
-		tbbc	bit6, unk_45, loc_CE6B+1
-		tbbs	bit0, unk_45, loc_CE6B+1
-		tbbs	bit7, unk_4C, loc_CE6B+1
+		tbbc	bit3, unk_4B, loc_CE6C
+		tbbc	bit6, unk_45, loc_CE6C
+		tbbs	bit0, unk_45, loc_CE6C
+		tbbs	bit7, unk_4C, loc_CE6C
 		cmp	#00h, NEcounts
-		beq	loc_CE6B+1
+		beq	loc_CE6C
 		cmp	a, #2Eh
 		bcs	loc_CE63
 		tbbc	bit0, unk_41, loc_CE69
 
 loc_CE63:				; CODE XREF: ROM:CE5Ej
 		tbbs	bit1, unk_45, loc_CE69
-		tbbs	bit5, unk_45, loc_CE6B+1
+		tbbs	bit5, unk_45, loc_CE6C
 
 loc_CE69:				; CODE XREF: ROM:CE60j	ROM:loc_CE63j
 		setb	bit5, unk_4D
+; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+		.db  8Ch ; Œ		; cmp x
+; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
-loc_CE6B:				; CODE XREF: ROM:CE4Bj	ROM:CE4Ej ...
-		cmp	x, #75BDh
+loc_CE6C:				; CODE XREF: ROM:CE4Bj	ROM:CE4Ej ...
+		clrb	bit5, unk_4D
 		tbbs	bit0, unk_45, loc_CE89
 		ld	a, unk_1C4
 		ld	b, unk_140
@@ -4246,12 +4261,15 @@ loc_D054:				; CODE XREF: ROM:D050j
 
 loc_D05A:				; CODE XREF: ROM:D056j
 		inc	b
-		beq	loc_D061+1	; ld b,#$7E
+		beq	loc_D062
 		bvc	loc_D064
 		ld	b, #0FEh
+; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+		.db  8Ch ; Œ		; cmp x
+; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
-loc_D061:				; CODE XREF: ROM:D05Bj
-		cmp	x, #0CB7Eh	; ld b,#$7E
+loc_D062:				; CODE XREF: ROM:D05Bj
+		ld	b, #7Eh
 
 loc_D064:				; CODE XREF: ROM:D05Dj
 		bra	loc_D0A0
@@ -4347,7 +4365,7 @@ loc_D0DB:				; CODE XREF: sub_D0B3+18j sub_D0B3+1Ej
 ; End of function sub_D0B3
 
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
-		.db  86h ; †
+		.db  86h ; †		; data d03a
 		.db  01h
 		.db  21h ; !
 		.db  88h ; ˆ
@@ -4614,7 +4632,7 @@ sub_D1EF:				; CODE XREF: ROM:CDD5p	ROM:CDE4p
 		beq	loc_D220
 		cmp	#64h, unk_5E
 		bcc	loc_D220
-		cmp	#1Eh, unk_F0
+		cmp	#1Eh, word_F0	; I think it's RPM/100
 		bcs	loc_D220
 		cmp	#0E4h, unk_F7
 		bcs	loc_D220
@@ -4674,7 +4692,7 @@ loc_D23D:				; CODE XREF: sub_D222+16j
 
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 		.db 0FEh ; ş
-		.db 0FDh ; ı
+		.db 0FDh ; ı		; data used by above sub
 		.db 0FBh ; û
 		.db 0D7h ; ×
 		.db 0AFh ; ¯
@@ -4736,7 +4754,7 @@ loc_D28B:				; CODE XREF: sub_D257+2Dj
 ; End of function sub_D257
 
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
-		.db  08h
+		.db  08h		; data d269
 		.db  61h ; a
 		.db  01h
 		.db 0C8h ; È
@@ -4764,11 +4782,11 @@ loc_D28B:				; CODE XREF: sub_D257+2Dj
 		.db 0C6h ; Æ
 		.db  00h
 		.db  00h
-		.db  4Dh ; M
+		.db  4Dh ; M		; data
 		.db  71h ; q
 		.db  8Fh ; 
 		.db 0B3h ; ³
-		.db 0FFh
+		.db 0FFh		; more data
 		.db  10h
 		.db  0Ch
 		.db  08h
@@ -4803,7 +4821,7 @@ loc_D2C8:				; CODE XREF: sub_D2B9+B5j
 
 loc_D2D6:				; CODE XREF: sub_D2B9+2Bj
 		ld	a, y + 00h
-		jsr	sub_D45F
+		jsr	sub_D45F	; blast	out a byte, set	unk_74,	receive	a byte and leave it in AccA
 		cmp	y, #0F774h
 		bcc	loc_D2E6
 		inc	y
@@ -4994,22 +5012,22 @@ loc_D3C4:				; CODE XREF: sub_D2B9+10Cj
 
 sub_D3D5:				; CODE XREF: sub_D2B9+D3p sub_D2B9+E8p ...
 		jsr	sub_D415
-		tbbc	bit4, PBCS, loc_D3DC ; Port B Control Register
+		tbbc	bit4, PBCS, ClearRAM ; Port B Control Register
 		ret
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
-loc_D3DC:				; CODE XREF: sub_D3D5+3j
+ClearRAM:				; CODE XREF: sub_D3D5+3j
 		ld	y, #0040h
 		clr	a
 		clr	b
 
-loc_D3E1:				; CODE XREF: sub_D3D5+10j
+ClearRAM_1:				; CODE XREF: sub_D3D5+10j
 		st	d, [y]
 		cmp	y, #01D9h
-		ble	loc_D3E1
-		ld	s, #02DFh
+		ble	ClearRAM_1
+		ld	s, #02DFh	; Re-init stack.. this is a bad	place
 		clrb	bit3, IRQLL
-		jmp	loc_D525
+		jmp	loc_D525	; jump into init before	main loop
 ; End of function sub_D3D5
 
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
@@ -5075,13 +5093,13 @@ locret_D41B:				; CODE XREF: sub_D415+2j
 ; ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ S U B	R O U T	I N E ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ
 
 
-sub_D41C:				; CODE XREF: __RESET+185p
+ReInitNEIGT:				; CODE XREF: __RESET+185p
 					; __RESET:loc_D6F9p
 		clrb	bit4, PORTAL
 		clrb	bit5, PORTAL
 		clrb	bit0, DOUT	; IGT off
 		clrb	bit0, DOM
-		jsr	sub_D448
+		jsr	ReInitCounters
 		ld	d, #2000h
 		st	d, deltaNE
 		st	d, deltaNE_1
@@ -5095,38 +5113,39 @@ sub_D41C:				; CODE XREF: __RESET+185p
 		clrb	bit1, unk_4C
 		st	a, unk_1B6
 		st	a, unk_1B7
-		st	d, unk_F0
+		st	d, word_F0	; re-init to 0000
 		clrb	bit4, unk_42
 		ret
-; End of function sub_D41C
+; End of function ReInitNEIGT
 
 
 ; ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ S U B	R O U T	I N E ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ
 
 
-sub_D448:				; CODE XREF: sub_D41C+8p
+ReInitCounters:				; CODE XREF: ReInitNEIGT+8p
 		ld	a, #0FFh
 		st	a, unk_112
 		ld	a, #12h
 		mov	a, b
 		st	d, unk_110
-		add	a, #0Dh
-		cmp	a, #18h
-		ble	loc_D45B
+		add	a, #013
+		cmp	a, #024
+		ble	ReInitCNT_1
 		sub	a, #18h
 
-loc_D45B:				; CODE XREF: sub_D448+Fj
+ReInitCNT_1:				; CODE XREF: ReInitCounters+Fj
 		st	a, unk_113
 		ret
-; End of function sub_D448
+; End of function ReInitCounters
 
 
 ; ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ S U B	R O U T	I N E ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ
 
+; blast	out a byte, set	unk_74,	receive	a byte and leave it in AccA
 
 sub_D45F:				; CODE XREF: sub_D2B9+1Fp __RESET+10Bp
 		clrb	bit3, SSD
-		st	a, unk_74
+		st	a, unk_74	; the last byte	intended for the SODR, while not restricted in value, will always be masked with 1F before TX
 		setb	bit1, SSD
 		and	a, #1Fh
 		st	a, SIDR_SODR	; Serial Input/Output Data Register
@@ -5269,17 +5288,17 @@ loc_D519:				; CODE XREF: __RESET+67j
 
 loc_D525:				; CODE XREF: sub_D3D5+17j __RESET+6Bj
 		ld	y, #0D58Dh
-		jsr	sub_C22D
+		jsr	InitRAM		; fill ram with	default	values
 		jsr	sub_D47F
 		setb	bit7, unk_4C
 		setb	bit6, unk_49
 		setb	bit3, unk_47
 		setb	bit7, unk_44
 		ld	d, #02825
-		st	d, word_164	; DoInjectors related
-		st	d, word_166	; DoInjectors related
+		st	d, InjectPW1	; reset	initialization of PW
+		st	d, InjectPW2	; reset	Initialization of PW
 		ld	d, #00393
-		st	d, word_168	; DoInjectors related
+		st	d, InjDeadtime	; init to 393
 		ld	d, #4000h
 		st	d, word_16A
 		st	d, word_16C
@@ -5308,7 +5327,7 @@ loc_D525:				; CODE XREF: sub_D3D5+17j __RESET+6Bj
 		st	a, unk_1B3
 		jmp	loc_D5B6
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
-		.db 0B9h ; ¹		; data for D525
+		.db 0B9h ; ¹		; data for D525	- ram init routine (addr:data, 00 address to quit
 		.db  86h ; †
 		.db  5Fh ; _
 		.db 0FFh
@@ -5359,7 +5378,7 @@ loc_D5B6:				; CODE XREF: __RESET+D4j
 
 loc_D5BE:				; CODE XREF: __RESET+111j
 		ld	a, unk_F767
-		jsr	sub_D45F
+		jsr	sub_D45F	; blast	out a byte, set	unk_74,	receive	a byte and leave it in AccA
 		inc	b
 		cmp	b, #02h
 		bcs	loc_D5BE
@@ -5413,17 +5432,17 @@ loc_D621:				; CODE XREF: __RESET+163j
 		st	a, unk_DC
 		jsr	sub_C505
 		jsr	sub_D499
-		jsr	sub_C5E7
+		jsr	calcInjPW	; do an	initial	calculation
 		jsr	sub_C634
 		jsr	sub_C003
 		setb	bit2, DOUT
+		nop			; user pre run function	space
 		nop
 		nop
-		nop
-		jsr	sub_D41C
+		jsr	ReInitNEIGT
 		clrb	bit6, IRQLL
 
-loc_D640:				; CODE XREF: __RESET+176Ej
+MainLoop:				; CODE XREF: __RESET:EndMainLoopj
 		ld	d, #116Eh
 		st	d, IMASK	; Interrupt Request Mask MSB
 		setb	bit2, unk_4A
@@ -5546,7 +5565,7 @@ loc_D6D6:				; CODE XREF: __RESET:loc_D665j
 		clrb	bit2, unk_4C
 
 loc_D6DB:				; CODE XREF: __RESET:loc_D6D6j
-		cmp	#14h, unk_F0
+		cmp	#14h, word_F0	; I think it's RPM/100
 		bcs	loc_D6EA
 		cmp	#07h, unk_B9
 		bcs	loc_D6EA
@@ -5564,7 +5583,7 @@ loc_D6F4:				; CODE XREF: __RESET+239j
 		clr	unk_B3
 
 loc_D6F9:				; CODE XREF: __RESET:loc_D6F4j
-		jsr	sub_D41C
+		jsr	ReInitNEIGT
 		bra	loc_D71F
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
@@ -5573,18 +5592,18 @@ loc_D6FE:				; CODE XREF: __RESET+237j
 		cmp	x, #00469
 		bgt	loc_D70A
 		ld	d, #0A000h
-		bra	loc_D711
+		bra	loc_D711	; the only meaningful time this	alue is	writ
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_D70A:				; CODE XREF: __RESET+24Dj
 		ld	d, #37500
-		jsr	sub_C0C1	; wicked awesome division interpolation	math with X and	D
+		jsr	divDbyX		; divide D by X, does some shifting to return ?? bits
 		shl	d
 
 loc_D711:				; CODE XREF: __RESET+252j
-		st	d, unk_F0
+		st	d, word_F0	; the only meaningful time this	alue is	writ
 		ld	y, #0C25Bh
-		jsr	danger6
+		jsr	TwoDTable	; X value in AccA, integer return in Acca, fraction return in AccB
 		shr	d
 		shr	d
 		shr	d
@@ -5605,20 +5624,20 @@ loc_D71F:				; CODE XREF: __RESET+246j
 loc_D72F:				; CODE XREF: __RESET+274j
 		ld	d, word_78
 		shr	d
-		ld	y, unk_F0
-		jsr	MulDbyY
-		cmp	y, #004Bh
+		ld	y, word_F0	; I think it's RPM/100
+		jsr	MulDbyY		; returns upper	16 bits	in Y, lower 16 bits in D
+		cmp	y, #00075
 		ble	loc_D757
 		st	y, unk_51
 		ld	d, word_78
 		shr	d
 		ld	y, #0C246h
-		jsr	danger2
-		ld	y, #214Bh
+		jsr	TwoD_AccD	; lookup AccD/64, integer return in Acca, fraction return in AccB
+		ld	y, #08523
 		jsr	MulAbyY		; returns upper	16b in AccD
-		add	d, #214Bh
+		add	d, #08523
 		ld	x, unk_51
-		jsr	sub_C0C1	; wicked awesome division interpolation	math with X and	D
+		jsr	divDbyX		; divide D by X, does some shifting to return ?? bits
 		bra	loc_D75A
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
@@ -5628,7 +5647,7 @@ loc_D757:				; CODE XREF: __RESET+284j
 loc_D75A:				; CODE XREF: __RESET+29Fj
 		st	d, unk_51
 		ld	y, #0C2B8h
-		jsr	danger4
+		jsr	TwoD_F0		; lookup unk_F0, integer return	in Acca, fraction return in AccB
 		cmp	d, unk_51
 		ble	loc_D768
 		ld	d, unk_51
@@ -5636,9 +5655,9 @@ loc_D75A:				; CODE XREF: __RESET+29Fj
 loc_D768:				; CODE XREF: __RESET+2AEj
 		mov	d, y
 		tbbs	bit0, unk_41, loc_D784
-		cmp	#1Eh, unk_F0
+		cmp	#1Eh, word_F0	; I think it's RPM/100
 		bcc	loc_D784
-		ld	a, unk_6A
+		ld	a, word_6A
 		cmp	a, #52h
 		bcs	loc_D784
 		cmp	#19h, unk_A7
@@ -5651,15 +5670,15 @@ loc_D784:				; CODE XREF: __RESET+2B3j __RESET+2B9j ...
 		st	y, unk_6E
 		ld	a, unk_FA
 		ld	y, #0C2CCh
-		jsr	danger6
+		jsr	TwoDTable	; X value in AccA, integer return in Acca, fraction return in AccB
 		mov	a, b
 		clr	a
-		add	d, #019Ah
+		add	d, #00410
 		mov	d, y
 		clr	a
 		ld	b, unk_5D
 		add	d, #00C8h
-		jsr	MulDbyY
+		jsr	MulDbyY		; returns upper	16 bits	in Y, lower 16 bits in D
 		st	y, unk_51
 		shr	unk_52
 		rorc	a
@@ -5670,15 +5689,15 @@ loc_D784:				; CODE XREF: __RESET+2B3j __RESET+2B9j ...
 		shr	unk_52
 		rorc	a
 		rorc	b
-		ld	x, #00BEh
-		jsr	sub_C0C1	; wicked awesome division interpolation	math with X and	D
+		ld	x, #00190
+		jsr	divDbyX		; divide D by X, does some shifting to return ?? bits
 		st	a, unk_1A8
 		push	d
 		ld	y, unk_6E
-		jsr	MulDbyY
+		jsr	MulDbyY		; returns upper	16 bits	in Y, lower 16 bits in D
 		mov	y, d
 		shl	d
-		st	d, unk_F2
+		st	d, word_F2	; only writ here
 		pull	d
 		shr	d
 		shr	d
@@ -5688,7 +5707,7 @@ loc_D784:				; CODE XREF: __RESET+2B3j __RESET+2B9j ...
 		shr	d
 		mov	d, x
 		ld	d, word_78
-		jsr	sub_C0C1	; wicked awesome division interpolation	math with X and	D
+		jsr	divDbyX		; divide D by X, does some shifting to return ?? bits
 		st	d, word_7A
 		cmp	d, #01D4h
 		bcs	loc_D7D5
@@ -5707,10 +5726,10 @@ loc_D7D5:				; CODE XREF: __RESET+31Aj
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_D7E5:				; CODE XREF: __RESET+32Aj
-		ld	d, unk_F2
+		ld	d, word_F2
 		tbbs	bit7, unk_4C, loc_D817
 		push	a
-		ld	a, unk_44
+		ld	a, unk_44	; bits 543210 will all cause a branch past doinjectors
 		cmpb	a, #3Fh
 		pull	a
 		bne	loc_D817
@@ -5744,7 +5763,7 @@ loc_D808:				; CODE XREF: __RESET+346j __RESET+34Bj ...
 
 loc_D817:				; CODE XREF: __RESET+331j __RESET+33Aj ...
 		st	d, unk_1A6
-		ld	d, unk_F2
+		ld	d, word_F2
 		sub	d, unk_1A6
 		bcc	loc_D82F
 		add	a, #80h
@@ -5778,7 +5797,7 @@ loc_D835:				; CODE XREF: __RESET+373j __RESET+377j ...
 
 loc_D847:				; CODE XREF: __RESET+388j
 		ld	a, #80h
-		ld	b, unk_114
+		ld	b, unk_114	; written from serial receive int
 		and	b, #0Ch
 		beq	loc_D858
 		ld	a, #9Ah
@@ -5840,9 +5859,9 @@ loc_D88D:				; CODE XREF: __RESET+3D2j
 loc_D899:				; CODE XREF: __RESET+3D9j
 		st	d, word_16C
 		ld	y, #0C54Ch
-		ld	d, unk_F2
+		ld	d, word_F2
 		jsr	sub_C197
-		ld	d, unk_F0
+		ld	d, word_F0	; I think it's RPM/100
 		jsr	sub_C1BB
 		tbbc	bit3, unk_45, loc_D8AE
 		add	a, #2Bh
@@ -5853,31 +5872,31 @@ loc_D8AE:				; CODE XREF: __RESET+3F3j
 loc_D8B1:				; CODE XREF: __RESET+276j __RESET+32Cj
 		tbbs	bit7, unk_4C, loc_D8E9
 		tbbs	bit0, unk_45, loc_D8E9
-		ld	a, unk_F2
+		ld	a, word_F2
 		ld	y, #0C5DDh
 		cmp	#0A0h, unk_F6
 		bcc	loc_D8C4
 		ld	y, #0C5E2h
 
 loc_D8C4:				; CODE XREF: __RESET+409j
-		jsr	danger6
+		jsr	TwoDTable	; X value in AccA, integer return in Acca, fraction return in AccB
 		st	d, unk_51
-		ld	d, word_164	; DoInjectors related
-		ld	y, unk_F0
-		jsr	MulDbyY
-		cmp	y, #0B66h
+		ld	d, InjectPW1	; pulsewidth for most cases/cylinders
+		ld	y, word_F0	; I think it's RPM/100
+		jsr	MulDbyY		; returns upper	16 bits	in Y, lower 16 bits in D
+		cmp	y, #02918
 		bcs	loc_D8DB
 		ld	d, #0FFFFh
 		bra	loc_D8E5
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_D8DB:				; CODE XREF: __RESET+41Ej
-		ld	d, #15EFh
-		jsr	MulDbyY
+		ld	d, #05615
+		jsr	MulDbyY		; returns upper	16 bits	in Y, lower 16 bits in D
 		push	a
 		mov	y, d
 		mov	b, a
-		pull	b
+		pull	b		; gets the middle 16 bits
 
 loc_D8E5:				; CODE XREF: __RESET+423j
 		cmp	d, unk_51
@@ -5902,13 +5921,13 @@ loc_D8F9:				; CODE XREF: __RESET:loc_D8EDj
 					; __RESET+43Dj
 		clr	a
 		tbbs	bit5, unk_45, loc_D91F
-		ld	b, unk_44
+		ld	b, unk_44	; bits 543210 will all cause a branch past doinjectors
 		and	b, #3Fh
 		bne	loc_D91F
 		ld	b, unk_6C
 		cmp	b, #3Ah
 		bcc	loc_D91F
-		cmp	#48h, unk_F0
+		cmp	#48h, word_F0	; I think it's RPM/100
 		bcc	loc_D921
 		ld	a, unk_109
 		cmpb	a, #08h
@@ -5945,7 +5964,7 @@ loc_D943:				; CODE XREF: __RESET+47Fj __RESET+486j
 loc_D944:				; CODE XREF: __RESET+46Cj __RESET+48Bj
 		st	a, unk_187
 		ld	b, unk_A2
-		ld	a, unk_6A
+		ld	a, word_6A
 		cmp	a, #7Bh
 		bcs	loc_D951
 		or	b, #10h
@@ -5959,31 +5978,31 @@ loc_D957:				; CODE XREF: __RESET+49Dj
 		and	b, #0BFh
 		push	b
 		ld	y, #0C321h
-		jsr	danger4
+		jsr	TwoD_F0		; lookup unk_F0, integer return	in Acca, fraction return in AccB
 		pull	b
-		cmp	a, unk_F2
+		cmp	a, word_F2
 		bcc	loc_D967
 		or	b, #40h
 
 loc_D967:				; CODE XREF: __RESET+4ADj
-		cmp	#25h, unk_6A
+		cmp	#25h, word_6A
 		bcc	loc_D96E
 		and	b, #7Fh
 
 loc_D96E:				; CODE XREF: __RESET+4B4j
-		cmp	#29h, unk_6A
+		cmp	#29h, word_6A
 		bcs	loc_D975
 		or	b, #80h
 
 loc_D975:				; CODE XREF: __RESET+4BBj
 		st	b, unk_A2
 		ld	b, unk_183
-		cmp	#1Ch, unk_F0
+		cmp	#1Ch, word_F0	; I think it's RPM/100
 		bcc	loc_D981
 		and	b, #0FCh
 
 loc_D981:				; CODE XREF: __RESET+4C7j
-		cmp	#1Fh, unk_F0
+		cmp	#1Fh, word_F0	; I think it's RPM/100
 		bcc	loc_D98A
 		and	b, #0FDh
 		bra	loc_D993
@@ -5991,7 +6010,7 @@ loc_D981:				; CODE XREF: __RESET+4C7j
 
 loc_D98A:				; CODE XREF: __RESET+4CEj
 		or	b, #01h
-		cmp	#22h, unk_F0
+		cmp	#22h, word_F0	; I think it's RPM/100
 		bcs	loc_D993
 		or	b, #02h
 
@@ -6044,7 +6063,7 @@ loc_D9DB:				; CODE XREF: __RESET+521j
 loc_D9E1:				; CODE XREF: __RESET+4F9j __RESET+4FEj
 		st	a, unk_D4
 		ld	y, #0C336h
-		jsr	danger5
+		jsr	TwoD_F7		; lookup unk_F7, integer return	in Acca, fraction return in AccB
 		clrb	bit0, unk_40
 		tbbc	bit1, unk_45, loc_D9F4
 		tbbs	bit5, unk_45, loc_D9F4
@@ -6073,7 +6092,7 @@ loc_DA12:				; CODE XREF: __RESET+54Fj __RESET+554j ...
 		add	a, b
 		st	a, unk_52
 		ld	a, unk_126
-		ld	b, unk_F0
+		ld	b, word_F0	; I think it's RPM/100
 		tbbc	bit0, unk_41, loc_DA5E
 		clr	unk_A7
 		cmp	a, #7Ah
@@ -6081,9 +6100,9 @@ loc_DA12:				; CODE XREF: __RESET+54Fj __RESET+554j ...
 		setb	bit7, unk_44
 
 loc_DA25:				; CODE XREF: __RESET+56Bj
-		tbbc	bit4, unk_44, loc_DA4D
+		tbbc	bit4, unk_44, loc_DA4D ; bits 543210 will all cause a branch past doinjectors
 		cmp	b, unk_51
-		bcc	loc_DA5A
+		bcc	loc_DA5A	; prevent gasso	among other things
 		clrb	bit6, unk_47
 		tbbs	bit3, unk_43, loc_DAA7
 		tbbc	bit4, unk_47, loc_DAA7
@@ -6112,12 +6131,12 @@ loc_DA55:				; CODE XREF: __RESET+599j
 		bcs	loc_DAAB
 
 loc_DA5A:				; CODE XREF: __RESET+574j
-		setb	bit4, unk_44
+		setb	bit4, unk_44	; prevent gasso	among other things
 		bra	loc_DAAB
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_DA5E:				; CODE XREF: __RESET+564j
-		tbbc	bit4, unk_44, loc_DA65
+		tbbc	bit4, unk_44, loc_DA65 ; bits 543210 will all cause a branch past doinjectors
 		setb	bit6, unk_47
 		bra	loc_DA6B
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
@@ -6129,13 +6148,13 @@ loc_DA65:				; CODE XREF: __RESET:loc_DA5Ej
 
 loc_DA6B:				; CODE XREF: __RESET+5ADj __RESET+5B1j
 		clrb	bit7, unk_47
-		tbbc	bit7, unk_44, loc_DA88
+		tbbc	bit7, unk_44, loc_DA88 ; bits 543210 will all cause a branch past doinjectors
 		cmp	a, #7Ah
 		bcs	loc_DA88
 		tbbs	bit7, unk_4C, loc_DA88
-		cmp	#28h, unk_F0
+		cmp	#28h, word_F0	; I think it's RPM/100
 		bcc	loc_DA88
-		ld	a, unk_44
+		ld	a, unk_44	; bits 543210 will all cause a branch past doinjectors
 		cmpb	a, #0Eh
 		bne	loc_DA88
 		ld	d, #00250
@@ -6147,7 +6166,7 @@ loc_DA88:				; CODE XREF: __RESET+5B7j __RESET+5BCj ...
 		clrb	bit7, unk_44
 		clr	unk_A3
 		clrb	bit4, unk_44
-		cmp	#24h, unk_F0
+		cmp	#24h, word_F0	; I think it's RPM/100
 		bcs	loc_DA99
 		setb	bit4, unk_42
 
@@ -6240,7 +6259,7 @@ loc_DB12:				; CODE XREF: __RESET+650j
 		setb	bit2, unk_4B
 		ld	a, unk_D8
 		ld	x, word_7A
-		tbbc	bit7, unk_44, loc_DB2A
+		tbbc	bit7, unk_44, loc_DB2A ; bits 543210 will all cause a branch past doinjectors
 		cmp	#02h, unk_5E
 		bcc	loc_DB0A
 		cmp	x, #1C19h
@@ -6422,7 +6441,7 @@ loc_DC08:				; CODE XREF: __RESET+74Fj
 
 loc_DC0D:				; CODE XREF: __RESET+659j __RESET+6C7j ...
 		ld	y, #0C246h
-		jsr	danger1
+		jsr	TwoD_7A		; Lookup unk_7A, integer return	in Acca, fraction return in AccB
 		setc
 		rorc	a
 		mul	a, #29h
@@ -6442,15 +6461,15 @@ loc_DC21:				; CODE XREF: __RESET+767j
 loc_DC2B:				; CODE XREF: __RESET+61Bj
 		st	a, unk_175
 		setb	bit2, unk_4A
-		ld	a, unk_F0
+		ld	a, word_F0	; I think it's RPM/100
 		di
 		ld	x, threeDeltaNE
-		cmp	x, #00568
-		bcs	loc_DC4A
+		cmp	x, #00568	; rev limit
+		bcs	loc_DC4A	; inhibit injection, rev limiter style
 		ld	b, unk_17D
 		bpz	loc_DC47
 		cmp	a, #32h
-		bcc	loc_DC4A
+		bcc	loc_DC4A	; inhibit injection, rev limiter style
 		cmp	a, #1Eh
 		bcc	loc_DC4C
 
@@ -6461,7 +6480,7 @@ loc_DC47:				; CODE XREF: __RESET+787j
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_DC4A:				; CODE XREF: __RESET+782j __RESET+78Bj
-		setb	bit3, unk_44
+		setb	bit3, unk_44	; inhibit injection, rev limiter style
 
 loc_DC4C:				; CODE XREF: __RESET+78Fj
 		ei
@@ -6469,10 +6488,10 @@ loc_DC4C:				; CODE XREF: __RESET+78Fj
 		tbbs	bit7, unk_4C, loc_DC6D
 		tbbs	bit0, unk_41, loc_DC6D
 		ld	y, #0C5C3h
-		jsr	danger1
+		jsr	TwoD_7A		; Lookup unk_7A, integer return	in Acca, fraction return in AccB
 		st	a, unk_51
 		ld	y, #0C5D2h
-		jsr	danger5
+		jsr	TwoD_F7		; lookup unk_F7, integer return	in Acca, fraction return in AccB
 		ld	b, unk_51
 		cmp	a, b
 		ble	loc_DC68
@@ -6487,19 +6506,19 @@ loc_DC68:				; CODE XREF: __RESET+7AFj
 loc_DC6D:				; CODE XREF: __RESET+798j __RESET+79Bj
 		st	a, unk_1B0
 		tbbc	bit7, unk_4C, loc_DCB3
-		cmp	#08h, unk_F0
+		cmp	#08h, word_F0	; I think it's RPM/100
 		bcs	loc_DCBA
 		clrb	bit7, unk_4C
 		clrb	bit2, DOUT
 		ld	y, #0C2EFh
-		jsr	danger5
+		jsr	TwoD_F7		; lookup unk_F7, integer return	in Acca, fraction return in AccB
 		st	d, word_170
 		ld	y, #0C2FFh
-		jsr	danger5
+		jsr	TwoD_F7		; lookup unk_F7, integer return	in Acca, fraction return in AccB
 		shr	d
 		shr	d
 		st	d, unk_172
-		cmp	#14h, unk_6A
+		cmp	#14h, word_6A
 		bcc	loc_DC99
 		mul	a, #80h
 		bra	loc_DC9B
@@ -6518,14 +6537,14 @@ loc_DC9B:				; CODE XREF: __RESET+7E1j
 loc_DCA3:				; CODE XREF: __RESET+7E9j
 		st	a, unk_174
 		ld	y, #0C30Ah
-		jsr	danger5
+		jsr	TwoD_F7		; lookup unk_F7, integer return	in Acca, fraction return in AccB
 		st	d, word_16E
 		setb	bit2, DOUT
 		bra	loc_DCD4
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_DCB3:				; CODE XREF: __RESET+7BAj
-		cmp	#06h, unk_F0
+		cmp	#06h, word_F0	; I think it's RPM/100
 		bcc	loc_DCC0
 		setb	bit7, unk_4C
 
@@ -6551,7 +6570,7 @@ loc_DCD1:				; CODE XREF: __RESET+812j
 loc_DCD4:				; CODE XREF: __RESET+7FBj
 		jsr	sub_C634
 		ld	y, #0C2B1h
-		jsr	danger5
+		jsr	TwoD_F7		; lookup unk_F7, integer return	in Acca, fraction return in AccB
 		st	a, unk_51
 		ld	d, unk_172
 		shl	d
@@ -6564,7 +6583,7 @@ loc_DCE9:				; CODE XREF: __RESET+82Dj
 
 loc_DCEB:				; CODE XREF: __RESET+831j
 		mul	a, unk_51
-		ld	b, unk_114
+		ld	b, unk_114	; written from serial receive int
 		shr	b
 		bcc	loc_DCF5
 		add	a, #08h
@@ -6575,48 +6594,48 @@ loc_DCF5:				; CODE XREF: __RESET+83Bj
 
 loc_DCF9:				; CODE XREF: __RESET+9C3j
 		tbbc	bit7, unk_4C, loc_DD0F
-		tbbs	bit3, unk_43, loc_DD05
-		tbbc	bit4, unk_47, loc_DD05
+		tbbs	bit3, unk_43, loc_DD05 ; is this an abnormal program path while	DD0F is	normal?
+		tbbc	bit4, unk_47, loc_DD05 ; is this an abnormal program path while	DD0F is	normal?
 		tbbc	bit0, unk_45, loc_DD0F
 
 loc_DD05:				; CODE XREF: __RESET+846j __RESET+849j ...
-		setb	bit1, unk_46
-		jsr	sub_C5E7
+		setb	bit1, unk_46	; is this an abnormal program path while DD0F is normal?
+		jsr	calcInjPW	; calculate the	pulsewidths
 		clr	unk_AB
-		jmp	loc_DE6B
+		jmp	loc_DE6B	; assign pulsewidth
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_DD0F:				; CODE XREF: __RESET:loc_DCF9j
 					; __RESET+84Cj
-		ld	y, unk_F2
+		ld	y, word_F2
 		tbbc	bit3, unk_43, loc_DD50
-		ld	d, unk_6A
-		cmp	d, #1062h
+		ld	d, word_6A
+		cmp	d, #04194
 		ble	loc_DD20
-		add	d, #3127h
+		add	d, #12583	; is around 4194*3
 		shr	d
 		shr	d
 
 loc_DD20:				; CODE XREF: __RESET+863j
 		ld	x, #0419h
-		jsr	sub_C0C1	; wicked awesome division interpolation	math with X and	D
+		jsr	divDbyX		; divide D by X, does some shifting to return ?? bits
 		st	d, unk_53
-		ld	d, unk_F0
+		ld	d, word_F0	; I think it's RPM/100
 		ld	y, #0C26Ch
 		jsr	sub_C1BA
 		st	d, unk_56
 		ld	y, #0C2A8h
 		ld	a, unk_DB
-		jsr	danger6
+		jsr	TwoDTable	; X value in AccA, integer return in Acca, fraction return in AccB
 		push	d
-		ld	d, unk_F0
+		ld	d, word_F0	; I think it's RPM/100
 		shr	d
 		shr	d
 		mov	d, x
 		pull	d
 		cmp	x, #0100h
-		bcs	loc_DD05
-		jsr	sub_C0C1	; wicked awesome division interpolation	math with X and	D
+		bcs	loc_DD05	; is this an abnormal program path while DD0F is normal?
+		jsr	divDbyX		; divide D by X, does some shifting to return ?? bits
 		shl	d
 		bcc	loc_DD4F
 		ld	d, #0FFFFh
@@ -6626,7 +6645,7 @@ loc_DD4F:				; CODE XREF: __RESET+894j
 
 loc_DD50:				; CODE XREF: __RESET+85Bj
 		ld	d, unk_C26A
-		jsr	MulDbyY
+		jsr	MulDbyY		; returns upper	16 bits	in Y, lower 16 bits in D
 		tbbc	bit3, unk_43, loc_DD62
 		mov	y, d
 		add	d, unk_56
@@ -6646,7 +6665,7 @@ loc_DD62:				; CODE XREF: __RESET+8A0j
 loc_DD6C:				; CODE XREF: __RESET+8B0j
 		cmp	y, x + 00h
 		bcc	loc_DD7E
-		cmp	#1Dh, unk_F0
+		cmp	#029, word_F0	; I think it's RPM/100
 		bcs	loc_DD7E
 		cmp	#62h, unk_AB
 		bcs	loc_DDAF
@@ -6657,11 +6676,11 @@ loc_DD6C:				; CODE XREF: __RESET+8B0j
 loc_DD7E:				; CODE XREF: __RESET+8B8j __RESET+8BDj
 		cmp	y, x + 02h
 		bcc	loc_DD87
-		cmp	#1Ch, unk_F0
+		cmp	#1Ch, word_F0	; I think it's RPM/100
 		bcc	loc_DDAF
 
 loc_DD87:				; CODE XREF: __RESET+8CAj
-		tbbc	bit0, unk_44, loc_DDAD
+		tbbc	bit0, unk_44, loc_DDAD ; bits 543210 will all cause a branch past doinjectors
 		clrb	bit0, unk_44
 		tbbc	bit6, unk_4A, loc_DDAD
 		cmp	y, x + 02h
@@ -6684,10 +6703,10 @@ loc_DDAD:				; CODE XREF: __RESET:loc_DD87j
 
 loc_DDAF:				; CODE XREF: __RESET+8C2j __RESET+8C6j ...
 		ld	y, #0C31Ch
-		jsr	danger5
+		jsr	TwoD_F7		; lookup unk_F7, integer return	in Acca, fraction return in AccB
 		push	a
 		ld	y, #0C2FAh
-		jsr	danger4
+		jsr	TwoD_F0		; lookup unk_F0, integer return	in Acca, fraction return in AccB
 		ld	y, word_170
 		jsr	MulAbyY		; returns upper	16b in AccD
 		add	a, #80h
@@ -6728,7 +6747,7 @@ loc_DDE7:				; CODE XREF: __RESET+92Aj __RESET+92Cj
 
 loc_DDF8:				; CODE XREF: __RESET+93Dj
 		xch	x, y
-		jsr	MulDbyY
+		jsr	MulDbyY		; returns upper	16 bits	in Y, lower 16 bits in D
 		pull	a
 		st	a, unk_51
 		mov	y, d
@@ -6767,14 +6786,14 @@ loc_DE12:				; CODE XREF: __RESET+957j
 
 loc_DE27:				; CODE XREF: __RESET+96Bj
 		jsr	sub_C8BB
-		jsr	MulDbyY
+		jsr	MulDbyY		; returns upper	16 bits	in Y, lower 16 bits in D
 		shl	d
 		mov	y, d
 		rolc	b
 		rolc	a
 		pull	y
 		bcs	loc_DE37
-		jsr	MulDbyY
+		jsr	MulDbyY		; returns upper	16 bits	in Y, lower 16 bits in D
 
 loc_DE37:				; CODE XREF: __RESET+97Cj
 		st	y, unk_51
@@ -6802,16 +6821,16 @@ loc_DE48:				; CODE XREF: __RESET+987j __RESET+98Aj ...
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_DE5B:				; CODE XREF: __RESET+9A0j
-		ld	y, word_164	; DoInjectors related
-		ld	a, #0E6h
+		ld	y, InjectPW1	; pulsewidth for most cases/cylinders
+		ld	a, #230		; fraction of 90% in this case
 		jsr	MulAbyY		; returns upper	16b in AccD
 		cmp	d, unk_51
-		bcc	loc_DE6B
+		bcc	loc_DE6B	; bounce if 90%	of word_164 is bigger than unk_51
 		clrb	bit1, unk_46
-		ld	d, unk_51
+		ld	d, unk_51	; select unk_51	because	it was bigger
 
 loc_DE6B:				; CODE XREF: __RESET+856j __RESET+9AFj
-		st	d, word_164	; DoInjectors related
+		st	d, InjectPW1	; pulsewidth for most cases/cylinders
 		bra	loc_DE7C
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
@@ -6819,19 +6838,19 @@ loc_DE70:				; CODE XREF: __RESET:loc_DE48j
 		ld	d, unk_51
 		tbs	bit0, unk_40
 		bne	loc_DE7C
-		st	d, word_164	; DoInjectors related
+		st	d, InjectPW1	; =unk_51
 		jmp	loc_DCF9
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_DE7C:				; CODE XREF: __RESET+9B8j __RESET+9BEj
-		st	d, word_166	; DoInjectors related
+		st	d, InjectPW2	; For the rest of the time
 
 loc_DE7F:				; CODE XREF: __RESET+9A2j
 		ld	b, #12h
 		tbbs	bit7, unk_4C, loc_DEA8
-		ld	d, word_168	; DoInjectors related
+		ld	d, InjDeadtime	; probably deadtime, have to chase out ADC code
 		add	d, #01618
-		add	d, word_164	; DoInjectors related
+		add	d, InjectPW1	; pulsewidth for most cases/cylinders
 		bcs	loc_DE92
 		shl	d
 		bcc	loc_DE95
@@ -6841,9 +6860,9 @@ loc_DE92:				; CODE XREF: __RESET+9D7j
 
 loc_DE95:				; CODE XREF: __RESET+9DAj
 		mov	d, y
-		ld	a, unk_F0
+		ld	a, word_F0	; I think it's RPM/100
 		jsr	MulAbyY		; returns upper	16b in AccD
-		sub	d, #122Fh
+		sub	d, #04655
 		bcs	loc_DEA2
 		clr	a
 		clr	b
@@ -6852,7 +6871,7 @@ loc_DEA2:				; CODE XREF: __RESET+9E8j
 		neg	a
 		neg	b
 		subc	a, #00h
-		div	d, #0C3h
+		div	d, #195
 
 loc_DEA8:				; CODE XREF: __RESET+9CBj
 		cmp	b, #07h
@@ -6957,7 +6976,7 @@ loc_DF31:				; CODE XREF: __RESET+A45j
 
 loc_DF3C:				; CODE XREF: __RESET:loc_DF31j
 		tbbs	bit0, unk_45, loc_DF54
-		cmp	#14h, unk_F0
+		cmp	#14h, word_F0	; I think it's RPM/100
 		bcs	loc_DF56
 		tbbc	bit3, unk_48, loc_DF56
 		jsr	sub_C4DA
@@ -6980,8 +6999,8 @@ loc_DF56:				; CODE XREF: __RESET+A8Cj __RESET+A8Ej
 
 loc_DF60:				; CODE XREF: __RESET+AA3j
 		ld	y, #0C486h
-		jsr	danger5
-		cmp	a, unk_F0
+		jsr	TwoD_F7		; lookup unk_F7, integer return	in Acca, fraction return in AccB
+		cmp	a, word_F0	; I think it's RPM/100
 		bgt	loc_DF83
 		cmp	#80h, unk_F6
 		bcs	loc_DF83
@@ -7019,7 +7038,7 @@ loc_DF9E:				; CODE XREF: __RESET+AE4j
 
 loc_DFA0:				; CODE XREF: __RESET+AA8j
 					; __RESET:loc_DF85j
-		cmp	#06h, unk_F0
+		cmp	#06h, word_F0	; I think it's RPM/100
 		bcc	loc_DFB3
 
 loc_DFA5:				; CODE XREF: __RESET:loc_DF2Fj
@@ -7139,9 +7158,9 @@ loc_E033:				; CODE XREF: __RESET+B54j __RESET+B59j ...
 		bcs	loc_E04F+1	; clrb
 		cmp	#14h, unk_DB
 		bcs	loc_E04F+1	; clrb
-		cmp	#20h, unk_F0
+		cmp	#20h, word_F0	; I think it's RPM/100
 		bcs	loc_E04F+1	; clrb
-		cmp	#24h, unk_F0
+		cmp	#24h, word_F0	; I think it's RPM/100
 		bcs	loc_E052
 		setb	bit0, unk_48
 
@@ -7151,7 +7170,7 @@ loc_E04F:				; CODE XREF: __RESET:loc_E033j
 
 loc_E052:				; CODE XREF: __RESET+B95j
 		ld	y, #0C4C0h
-		jsr	danger4
+		jsr	TwoD_F0		; lookup unk_F0, integer return	in Acca, fraction return in AccB
 		st	a, unk_E2
 		tbbs	bit3, unk_43, loc_E0AD
 		tbbc	bit4, unk_47, loc_E0AD
@@ -7169,7 +7188,7 @@ loc_E072:				; CODE XREF: __RESET+BB4j
 
 loc_E075:				; CODE XREF: __RESET+BBAj
 		ld	a, unk_5E
-		jsr	danger6
+		jsr	TwoDTable	; X value in AccA, integer return in Acca, fraction return in AccB
 		st	a, unk_51
 		tbbc	bit1, unk_42, loc_E091
 		clr	a
@@ -7186,11 +7205,11 @@ loc_E08F:				; CODE XREF: __RESET+BCFj __RESET+BD5j
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_E091:				; CODE XREF: __RESET+BC6j
-		ld	d, unk_F0
+		ld	d, word_F0	; I think it's RPM/100
 		jsr	sub_C221	; shift	D right	6 times, then saturate B if A>0
 		mov	b, a
 		ld	y, #0C4C7h
-		jsr	danger6
+		jsr	TwoDTable	; X value in AccA, integer return in Acca, fraction return in AccB
 
 loc_E09D:				; CODE XREF: __RESET:loc_E08Fj
 		cmp	a, unk_51
@@ -7217,7 +7236,7 @@ loc_E0B4:				; CODE XREF: __RESET+BF5j
 		ei
 		ld	a, unk_1A8
 		ld	y, #0C498h
-		jsr	danger6
+		jsr	TwoDTable	; X value in AccA, integer return in Acca, fraction return in AccB
 		ld	b, unk_DA
 		shr	b
 		shr	b
@@ -7256,9 +7275,9 @@ loc_E0EE:				; CODE XREF: __RESET+C30j
 
 loc_E103:				; CODE XREF: __RESET+C45j
 		st	a, unk_52
-		jsr	danger5
+		jsr	TwoD_F7		; lookup unk_F7, integer return	in Acca, fraction return in AccB
 		push	a
-		ld	d, unk_F0
+		ld	d, word_F0	; I think it's RPM/100
 		cmp	a, #40h
 		bcc	loc_E121
 		shl	d
@@ -7282,7 +7301,7 @@ loc_E121:				; CODE XREF: __RESET+C57j
 
 loc_E122:				; CODE XREF: __RESET+C65j
 		tbbs	bit0, unk_42, loc_E130
-		cmp	#1Ah, unk_F2
+		cmp	#1Ah, word_F2
 		bcs	loc_E134
 		ld	a, unk_7D
 		cmpb	a, #10h
@@ -7357,7 +7376,7 @@ loc_E17F:				; CODE XREF: __RESET+CC3j
 loc_E188:				; CODE XREF: __RESET+CCDj
 		cmp	a, #4Eh
 		bcc	loc_E1A3
-		ld	d, unk_F0
+		ld	d, word_F0	; I think it's RPM/100
 		sub	a, #08h
 		bcc	loc_E194
 		clr	a
@@ -7393,9 +7412,9 @@ loc_E1AD:				; CODE XREF: __RESET+CEFj __RESET+CF3j
 		ld	a, x + 00h
 		ld	x, #0C4B8h
 		add	x, b
-		ld	b, unk_115
+		ld	b, unk_115	; written from serial receive int
 		tbbc	bit1, unk_42, loc_E1C7
-		ld	b, unk_116
+		ld	b, unk_116	; written from serial receive int
 
 loc_E1C7:				; CODE XREF: __RESET+D0Bj
 		tbbc	bit0, unk_42, loc_E1CB
@@ -7534,7 +7553,7 @@ loc_E268:				; CODE XREF: __RESET+DAEj
 
 loc_E274:				; CODE XREF: __RESET+AFAj
 		setb	bit2, unk_4A
-		cmp	#06h, unk_F0
+		cmp	#06h, word_F0	; I think it's RPM/100
 		bcs	loc_E280
 		cmp	#4Dh, unk_F6
 		bcc	loc_E282
@@ -7547,7 +7566,7 @@ loc_E282:				; CODE XREF: __RESET+DC8j
 		bcc	loc_E2A4
 		tbbs	bit0, unk_4C, loc_E2A8
 		tbbs	bit3, unk_4E, loc_E2A8
-		cmp	#06h, unk_F0
+		cmp	#06h, word_F0	; I think it's RPM/100
 		bcs	loc_E2B8
 		cmp	#4Dh, unk_F6
 		bcs	loc_E2B8
@@ -7601,9 +7620,9 @@ loc_E2DC:				; CODE XREF: __RESET+E22j
 		ld	b, unk_109
 		cmpb	b, #01h
 		beq	loc_E306
-		cmp	#28h, unk_F0
+		cmp	#040, word_F0	; I think it's RPM/100
 		bcs	loc_E306
-		cmp	#2Eh, unk_F0
+		cmp	#046, word_F0	; I think it's RPM/100
 		bcs	loc_E308
 		cmp	a, #0F4h
 		bgt	loc_E308
@@ -7688,7 +7707,7 @@ loc_E34E:				; CODE XREF: __RESET+E80j __RESET+F29j
 		ld	y, #0C32Fh
 
 loc_E35A:				; CODE XREF: __RESET+E9Fj
-		jsr	danger1
+		jsr	TwoD_7A		; Lookup unk_7A, integer return	in Acca, fraction return in AccB
 		pull	y
 		mov	a, b
 		clr	a
@@ -7834,7 +7853,7 @@ loc_E439:				; CODE XREF: __RESET+F67j
 		jsr	sub_C23F
 
 loc_E43E:				; CODE XREF: __RESET+F75j
-		ld	a, unk_F0
+		ld	a, word_F0	; I think it's RPM/100
 		bne	loc_E453
 		ld	a, unk_45
 		and	a, #71h
@@ -7849,9 +7868,9 @@ loc_E43E:				; CODE XREF: __RESET+F75j
 loc_E453:				; CODE XREF: __RESET+F8Aj __RESET+F92j ...
 		ld	a, unk_F6
 		ld	y, #0C2BFh
-		jsr	danger6
+		jsr	TwoDTable	; X value in AccA, integer return in Acca, fraction return in AccB
 		jsr	divDby64	; shift	D right	6 times
-		st	d, word_168	; DoInjectors related
+		st	d, InjDeadtime	; set from table output	C2BF
 
 loc_E461:				; CODE XREF: __RESET+E17j
 		setb	bit2, unk_4A
@@ -7903,7 +7922,7 @@ loc_E4AC:				; CODE XREF: __RESET+FEEj __RESET+FF2j
 		ei
 		jsr	loc_C918
 		ld	y, #0C343h
-		jsr	danger4
+		jsr	TwoD_F0		; lookup unk_F0, integer return	in Acca, fraction return in AccB
 		ld	x, unk_17E
 		add	x, a
 		ld	a, word_8E
@@ -7985,7 +8004,7 @@ loc_E523:				; CODE XREF: __RESET+1068j
 		ld	y, #012Dh
 
 loc_E52F:				; CODE XREF: __RESET+117Dj
-		ld	a, unk_44
+		ld	a, unk_44	; bits 543210 will all cause a branch past doinjectors
 		cmpb	a, #3Fh
 		beq	loc_E538
 		ld	#2Eh, unk_C9
@@ -8018,7 +8037,7 @@ loc_E55A:				; CODE XREF: __RESET+109Dj
 		beq	loc_E585
 		ld	d, unk_51
 		tbbs	bit0, unk_41, loc_E585
-		cmp	#14h, unk_F2
+		cmp	#14h, word_F2
 		bcs	loc_E585
 		cmp	#00h, unk_C9
 		beq	loc_E5A8
@@ -8074,7 +8093,7 @@ loc_E5A8:				; CODE XREF: __RESET+10BCj
 		cmp	a, b
 		bne	loc_E5D4
 		ld	x, y + 0Dh
-		ld	b, unk_117
+		ld	b, unk_117	; written from serial receive int
 		cmpz	a
 		beq	loc_E5C6
 		shr	b
@@ -8361,7 +8380,7 @@ loc_E754:				; CODE XREF: __RESET+126Dj
 					; __RESET+1288j ...
 		ld	b, #96h
 		push	a
-		ld	a, unk_117
+		ld	a, unk_117	; written from serial receive int
 		cmpb	a, #04h
 		bne	loc_E765
 		cmp	#79h, unk_FA
@@ -8498,24 +8517,24 @@ loc_E818:				; CODE XREF: __RESET+135Ej
 		ld	y, #0C3FEh
 		ld	d, unk_6E
 		jsr	sub_C197
-		ld	d, unk_F0
+		ld	d, word_F0	; I think it's RPM/100
 		jsr	sub_C1B0
 
 loc_E82A:				; CODE XREF: __RESET+1365j
 		st	a, unk_18C
 		ld	a, unk_185
-		cmp	#68h, unk_F0
+		cmp	#68h, word_F0	; I think it's RPM/100
 		bcs	loc_E837
 		or	a, #01h
 
 loc_E837:				; CODE XREF: __RESET+137Dj
-		cmp	#64h, unk_F0
+		cmp	#64h, word_F0	; I think it's RPM/100
 		bcc	loc_E83E
 		and	a, #0FEh
 
 loc_E83E:				; CODE XREF: __RESET+1384j
 		tbbs	bit3, unk_43, loc_E84E
-		tbbc	bit7, unk_44, loc_E852
+		tbbc	bit7, unk_44, loc_E852 ; bits 543210 will all cause a branch past doinjectors
 		tbbs	bit5, unk_45, loc_E84E
 		ld	b, unk_103
 		cmpb	b, #02h
@@ -8536,16 +8555,16 @@ loc_E854:				; CODE XREF: __RESET+139Aj
 		ld	a, unk_F7
 		push	a
 		ld	y, #0C45Eh
-		jsr	danger6
+		jsr	TwoDTable	; X value in AccA, integer return in Acca, fraction return in AccB
 		st	a, unk_51
 		pull	a
 		ld	y, #0C467h
-		jsr	danger6
+		jsr	TwoDTable	; X value in AccA, integer return in Acca, fraction return in AccB
 		st	a, unk_52
 		ld	a, unk_185
 		cmpb	a, #80h
 		bne	loc_E878
-		ld	a, unk_F2
+		ld	a, word_F2
 		cmp	a, #6Ch
 		bcs	loc_E87C
 
@@ -8595,9 +8614,9 @@ loc_E8A7:				; CODE XREF: __RESET+13DEj
 		ld	a, unk_185
 		and	a, #80h
 		bne	loc_E8C9
-		ld	a, unk_F2
+		ld	a, word_F2
 		ld	y, #0C481h
-		jsr	danger6
+		jsr	TwoDTable	; X value in AccA, integer return in Acca, fraction return in AccB
 		ld	b, unk_51
 		sub	b, #80h
 		bcc	loc_E8CC
@@ -8617,12 +8636,12 @@ loc_E8CD:				; CODE XREF: __RESET+1411j
 					; __RESET+1414j
 		st	a, unk_18E
 		clr	a
-		cmp	#64h, unk_F0
+		cmp	#64h, word_F0	; I think it's RPM/100
 		bcs	loc_E8E1
-		cmp	#28h, unk_F2
+		cmp	#28h, word_F2
 		bcs	loc_E8E1
 		ld	y, #0C474h
-		jsr	danger5
+		jsr	TwoD_F7		; lookup unk_F7, integer return	in Acca, fraction return in AccB
 
 loc_E8E1:				; CODE XREF: __RESET+141Ej
 					; __RESET+1423j
@@ -8659,11 +8678,11 @@ loc_E900:				; CODE XREF: __RESET+1442j
 		cmpb	a, #80h
 		bne	loc_E930
 		ld	y, #0C34Eh
-		ld	d, unk_F2
+		ld	d, word_F2
 		jsr	sub_C197
-		ld	d, unk_F0
+		ld	d, word_F0	; I think it's RPM/100
 		jsr	sub_C1BB
-		ld	b, unk_115
+		ld	b, unk_115	; written from serial receive int
 		cmpb	b, #0Ch
 		beq	loc_E92E
 		cmpb	b, #08h
@@ -8706,13 +8725,13 @@ loc_E940:				; CODE XREF: __RESET+1485j
 
 loc_E94C:				; CODE XREF: __RESET:loc_E930j
 					; __RESET+1480j
-		ld	d, unk_F0
+		ld	d, word_F0	; I think it's RPM/100
 		bmi	loc_E951
 		shl	d
 
 loc_E951:				; CODE XREF: __RESET+1498j
 		ld	y, #0C3F9h
-		jsr	danger6
+		jsr	TwoDTable	; X value in AccA, integer return in Acca, fraction return in AccB
 		tbbc	bit5, unk_45, loc_E95D
 		tbbc	bit1, unk_45, loc_E963
 
@@ -8795,7 +8814,7 @@ loc_E9B9:				; CODE XREF: __RESET+134Dj
 		cmpb	b, #10h
 		bne	loc_EA30
 		ld	y, #0C2EFh
-		jsr	danger5
+		jsr	TwoD_F7		; lookup unk_F7, integer return	in Acca, fraction return in AccB
 		mul	a, #0E9h
 		sub	a, #0Ch
 		bcc	loc_E9D4
@@ -8825,7 +8844,7 @@ loc_E9F1:				; CODE XREF: __RESET+1537j
 		st	d, unk_172
 		ld	a, unk_174
 		ld	b, #03h
-		cmp	#14h, unk_6A
+		cmp	#14h, word_6A
 		ble	loc_EA05
 		cmp	#9Eh, unk_F7
 		bcs	loc_EA05
@@ -8855,7 +8874,7 @@ loc_EA13:				; CODE XREF: __RESET+155Aj
 loc_EA1F:				; CODE XREF: __RESET+1565j
 		st	d, unk_51
 		ld	y, #0C313h
-		jsr	danger5
+		jsr	TwoD_F7		; lookup unk_F7, integer return	in Acca, fraction return in AccB
 		cmp	d, unk_51
 		bcc	loc_EA2D
 		ld	d, unk_51
@@ -8866,7 +8885,7 @@ loc_EA2D:				; CODE XREF: __RESET+1573j
 loc_EA30:				; CODE XREF: __RESET+150Ej
 		setb	bit2, unk_4A
 		ld	y, #0C5BAh
-		jsr	danger4
+		jsr	TwoD_F0		; lookup unk_F0, integer return	in Acca, fraction return in AccB
 		st	a, unk_51
 		ld	a, unk_1CD
 		ld	b, unk_6C
@@ -8880,7 +8899,7 @@ loc_EA45:				; CODE XREF: __RESET+158Bj
 		and	a, #0FEh
 
 loc_EA4B:				; CODE XREF: __RESET+1591j
-		ld	b, unk_F0
+		ld	b, word_F0	; I think it's RPM/100
 		cmp	b, #4Ch
 		bcc	loc_EA53
 		and	a, #0FDh
@@ -8892,7 +8911,7 @@ loc_EA53:				; CODE XREF: __RESET+1599j
 
 loc_EA59:				; CODE XREF: __RESET+159Fj
 		tbbs	bit6, unk_45, loc_EA6C
-		ld	b, unk_F2
+		ld	b, word_F2
 		cmp	b, unk_51
 		bcc	loc_EA64
 		or	a, #04h
@@ -8974,7 +8993,7 @@ loc_EAD3:				; CODE XREF: __RESET+15F2j
 		clr	a
 		tbbs	bit7, unk_4C, loc_EAE2
 		tbbc	bit0, unk_47, loc_EAE2
-		ld	a, unk_116
+		ld	a, unk_116	; written from serial receive int
 		and	a, #04h
 		beq	loc_EAE8
 		clr	a
@@ -9039,7 +9058,7 @@ loc_EB30:				; CODE XREF: __RESET+165Aj
 
 loc_EB33:				; CODE XREF: __RESET+1674j
 					; __RESET+1678j
-		cmp	#14h, unk_F0
+		cmp	#14h, word_F0	; I think it's RPM/100
 		bcs	loc_EB3A
 		setb	bit7, unk_40
 
@@ -9129,10 +9148,10 @@ loc_EBB8:				; CODE XREF: __RESET:loc_EBB3j
 		st	a, unk_1C6
 		ld	b, unk_45
 		st	b, unk_F8
-		ld	d, word_164	; DoInjectors related
+		ld	d, InjectPW1	; pulsewidth for most cases/cylinders
 		jsr	sub_EC27
-		st	b, unk_1C8
-		ld	d, unk_F0
+		st	b, unk_1C8	; word_164+word_168 divided by 32 and saturated	at 8 bits
+		ld	d, word_F0	; I think it's RPM/100
 		shl	d
 		bcc	loc_EBCF
 		ld	a, #0FFh
@@ -9146,9 +9165,9 @@ loc_EBCF:				; CODE XREF: __RESET+1715j
 
 loc_EBD9:				; CODE XREF: __RESET+171Fj
 		st	a, unk_1C7
-		ld	a, unk_6A
+		ld	a, word_6A
 		st	a, unk_F4
-		ld	a, unk_124
+		ld	a, unk_124	; written from serial receive int
 		st	a, unk_F5
 		clr	a
 		tbbs	bit0, unk_4D, loc_EBEC
@@ -9157,10 +9176,10 @@ loc_EBD9:				; CODE XREF: __RESET+171Fj
 loc_EBEC:				; CODE XREF: __RESET+1730j
 		st	a, unk_5E
 		jsr	sub_D257
+		nop			; please insert	user subroutine	here in	the form of "jsr beepboop"
 		nop
 		nop
-		nop
-		ld	#33h, TAIT	; Timer	ASR Control
+		ld	#33h, TAIT	; re-init critical registers
 		ld	#0C3h, DDRA	; Port A i/o config
 		ld	#3Fh, DDRB	; Port B i/o config
 		ld	#1Eh, ASR0P	; ASR0 pos edge	counter	value MSB
@@ -9175,18 +9194,20 @@ loc_EBEC:				; CODE XREF: __RESET+1730j
 		di
 		ld	a, unk_11C
 		and	a, #0C0h
-		add	a, #34h
+		add	a, #34h		; isnt this always zero?
 		st	a, unk_11C
 		ei
 		ld	s, #02DFh
-		jmp	loc_D640
+
+EndMainLoop:
+		jmp	MainLoop
 ; END OF FUNCTION CHUNK	FOR __RESET
 
 ; ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ S U B	R O U T	I N E ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ
 
 
 sub_EC27:				; CODE XREF: __RESET+170Cp
-		add	d, word_168	; DoInjectors related
+		add	d, InjDeadtime	; probably deadtime, have to chase out ADC code
 		jsr	divDby32	; shift	D right	5 times
 		cmpz	a
 		beq	locret_EC32
@@ -9205,83 +9226,83 @@ intASR2:				; DATA XREF: ROM:FFFAo
 		clrb	bit6, IRQLL	; clear	interrupt flag
 		ld	b, NEcounts
 		mov	b, a
-		tbbc	bit4, PORTA, loc_EC6A ;	Low bit	indicates G1 pulse just	prior to this NE
-		tbbc	bit5, PORTA, loc_EC60 ;	Low bit	indicates G2 pulse just	prior to this NE
+		tbbc	bit4, PORTA, intASR2_4 ; Low bit indicates G1 pulse just prior to this NE
+		tbbc	bit5, PORTA, intASR2_3 ; Low bit indicates G2 pulse just prior to this NE
 		cmpz	b
-		beq	loc_EC72
+		beq	intASR2_5
 		cmp	b, #024		; 24 NE's to the Gn
-		bcc	loc_EC4D
+		bcc	intASR2_1
 		inc	b
 		cmp	b, #013
-		bne	loc_EC72
+		bne	intASR2_5
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 		.db  8Ch ; Œ		; cmp x, makes a three byte NOP
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
-loc_EC4D:				; CODE XREF: ROM:EC45j
+intASR2_1:				; CODE XREF: ROM:EC45j
 		ld	b, #001
 
-loc_EC4F:				; CODE XREF: ROM:EC66j	ROM:EC70j
-		tbbs	bit7, unk_4C, loc_EC72
+intASR2_2:				; CODE XREF: ROM:EC66j	ROM:EC70j
+		tbbs	bit7, unk_4C, intASR2_5
 		cmpz	a
-		beq	loc_EC72
+		beq	intASR2_5
 		setb	bit4, unk_46
-		tbbc	bit3, unk_4B, loc_EC72
+		tbbc	bit3, unk_4B, intASR2_5
 		setb	bit6, unk_4D
 		setb	bit7, unk_4F
-		bra	loc_EC72
+		bra	intASR2_5
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
-loc_EC60:				; CODE XREF: ROM:EC3Dj
+intASR2_3:				; CODE XREF: ROM:EC3Dj
 		ld	b, #001		; G2 triggered,	meaning	this NE	is 10DBTDC cyl #1
 		inc	unk_7F
 		cmp	a, #024
-		bne	loc_EC4F
-		bra	loc_EC72
+		bne	intASR2_2
+		bra	intASR2_5
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
-loc_EC6A:				; CODE XREF: ROM:EC3Aj
+intASR2_4:				; CODE XREF: ROM:EC3Aj
 		ld	b, #013		; G1 triggered,	meaning	this NE	is 10DBTDC cyl #6
 		inc	unk_7F
 		cmp	a, #012
-		bne	loc_EC4F
+		bne	intASR2_2
 
-loc_EC72:				; CODE XREF: ROM:EC41j	ROM:EC4Aj ...
+intASR2_5:				; CODE XREF: ROM:EC41j	ROM:EC4Aj ...
 		st	b, NEcounts
 		ld	d, ASR2		; ASR2 edge counter value MSB
 		mov	d, x
 		cmp	#08h, unk_B9
-		bcc	loc_EC83	; 305RPM
+		bcc	intASR2_6	; 305RPM
 		sub	d, lastASR2
 		cmp	a, #20h		; limit	timer counts since last	interrupt 8192,	so probably 16ms, ~305 RPM
-		bcs	loc_EC86
+		bcs	intASR2_7
 
-loc_EC83:				; CODE XREF: ROM:EC7Aj
+intASR2_6:				; CODE XREF: ROM:EC7Aj
 		ld	d, #2000h	; 305RPM
 
-loc_EC86:				; CODE XREF: ROM:EC81j
+intASR2_7:				; CODE XREF: ROM:EC81j
 		st	x, lastASR2
 		cmp	#02h, unk_7F
-		bcc	loc_EC97
+		bcc	intASR2_8
 		cmp	#06h, unk_B9
-		ble	loc_EC9A
+		ble	intASR2_9
 		clr	unk_7F
-		bra	loc_EC9A
+		bra	intASR2_9
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
-loc_EC97:				; CODE XREF: ROM:EC8Cj
+intASR2_8:				; CODE XREF: ROM:EC8Cj
 		ld	#02h, unk_7F
 
-loc_EC9A:				; CODE XREF: ROM:EC91j	ROM:EC95j
+intASR2_9:				; CODE XREF: ROM:EC91j	ROM:EC95j
 		clr	unk_B9
 		cmp	#00h, NEcounts
-		bne	loc_ECA4
-		jmp	loc_EE3F	; bomb out of interrupt	if NEcounts is zero
+		bne	intASR2_10
+		jmp	ASR2_reti	; bomb out of interrupt	if NEcounts is zero
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
-loc_ECA4:				; CODE XREF: ROM:EC9Fj
+intASR2_10:				; CODE XREF: ROM:EC9Fj
 		tbs	bit0, unk_4A
-		beq	loc_ECC2
+		beq	intASR2_11
 		ld	y, #0060h
 		xch	a, y + 02h	; word 62 (most	current	deltaNE	is here)
 		xch	b, y + 03h
@@ -9290,27 +9311,27 @@ loc_ECA4:				; CODE XREF: ROM:EC9Fj
 		add	d, deltaNE	; deltaNE from interrupt before	last is	now in D
 		add	d, deltaNE_1
 		st	d, threeDeltaNE
-		cmp	d, #00568	; either 6602 or 13204,	13 is right by my math but 6602	makes sense
-		bcc	loc_ECC2
-		setb	bit3, unk_44
+		cmp	d, #00568	; either 6602 or 13204,	13 is right by my math but 6602	makes sense, rev limit
+		bcc	intASR2_11
+		setb	bit3, unk_44	; smells like a	rev limiter
 		setb	bit4, unk_43
 
-loc_ECC2:				; CODE XREF: ROM:ECA6j	ROM:ECBCj
+intASR2_11:				; CODE XREF: ROM:ECA6j	ROM:ECBCj
 		ld	y, #00C0h
 		cmp	#013, NEcounts
-		beq	loc_ECD0
+		beq	intASR2_12
 		inc	y
 		cmp	#001, NEcounts
-		bne	loc_ED22	; asr3 irq flag	(G1)
+		bne	intASR2_17	; asr3 irq flag	(G1)
 
-loc_ECD0:				; CODE XREF: ROM:ECC8j
-		tbbc	bit0, unk_41, loc_ED1A
+intASR2_12:				; CODE XREF: ROM:ECC8j
+		tbbc	bit0, unk_41, intASR2_14
 		ld	d, threeDeltaNE
 		cmp	d, #01500
-		bcs	loc_ED1A
+		bcs	intASR2_14
 		cmp	d, #16384
-		bcc	loc_ED1A
-		tbbs	bit4, unk_46, loc_ED1C
+		bcc	intASR2_14
+		tbbs	bit4, unk_46, intASR2_15
 		clr	a
 		ld	b, threeDeltaNE
 		div	d, #026		; divide MSB
@@ -9319,7 +9340,7 @@ loc_ECD0:				; CODE XREF: ROM:ECC8j
 		div	d, #026		; divide LSB
 		pull	a		; now contains timer counts per	3.5 degrees (90/26)
 		sub	d, deltaNE_1	; which	shouldnt ever be smaller than d
-		bcc	loc_ED1C	; this branch would occur if there was problems
+		bcc	intASR2_15	; this branch would occur if there was problems
 		neg	a
 		neg	b
 		subc	a, #00h
@@ -9340,36 +9361,36 @@ loc_ECD0:				; CODE XREF: ROM:ECC8j
 		sub	d, ASR3		; last G1 edge
 		mov	s, x
 		cmp	d, x + 02h	; 26.5 degree time
-		bgt	loc_ED16
+		bgt	intASR2_13
 		cmp	d, x + 00h	; 4 degree time
-		bcs	loc_ED16
+		bcs	intASR2_13
 		clr	y + 00h		; clearing this	variable is proper operation
 
-loc_ED16:				; CODE XREF: ROM:ED0Ej	ROM:ED12j
+intASR2_13:				; CODE XREF: ROM:ED0Ej	ROM:ED12j
 		pull	x
 		pull	x		; tidy stack
-		bra	loc_ED1E
+		bra	intASR2_16
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
-loc_ED1A:				; CODE XREF: ROM:loc_ECD0j ROM:ECD8j ...
+intASR2_14:				; CODE XREF: ROM:intASR2_12j ROM:ECD8j ...
 		clr	y + 00h
 
-loc_ED1C:				; CODE XREF: ROM:ECDFj	ROM:ECEFj
+intASR2_15:				; CODE XREF: ROM:ECDFj	ROM:ECEFj
 		clr	unk_BF
 
-loc_ED1E:				; CODE XREF: ROM:ED18j
+intASR2_16:				; CODE XREF: ROM:ED18j
 		clrb	bit4, unk_46
-		bra	loc_ED27	; service G1 flag
+		bra	intASR2_18	; service G1 flag
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
-loc_ED22:				; CODE XREF: ROM:ECCEj
-		tbbc	bit7, IRQLL, loc_ED29 ;	asr3 irq flag (G1)
+intASR2_17:				; CODE XREF: ROM:ECCEj
+		tbbc	bit7, IRQLL, intASR2_19	; asr3 irq flag	(G1)
 		setb	bit4, unk_46
 
-loc_ED27:				; CODE XREF: ROM:ED20j
+intASR2_18:				; CODE XREF: ROM:ED20j
 		clrb	bit7, IRQLL	; service G1 flag
 
-loc_ED29:				; CODE XREF: ROM:loc_ED22j
+intASR2_19:				; CODE XREF: ROM:intASR2_17j
 		clr	a
 		ld	b, deltaNE_1	; one deltaNE is 30 degrees of crank rotation
 		div	d, #003
@@ -9382,191 +9403,191 @@ loc_ED29:				; CODE XREF: ROM:loc_ED22j
 		st	d, CPR1		; compare 1 is triggered 10 deg	after NE pulse
 		ld	b, NEcounts
 		cmp	b, #024
-		bne	loc_ED42
+		bne	intASR2_20
 		clrb	bit1, PORTA
 
-loc_ED42:				; CODE XREF: ROM:ED3Ej
+intASR2_20:				; CODE XREF: ROM:ED3Ej
 		clr	a
 		dec	b
 		div	d, #003
-		st	a, CylinderNum
+		st	a, ModuloNE	; will have a number from 0 to 7
 		cmpz	a
-		beq	loc_ED51
-		cmp	a, #002
-		bne	loc_ED6B
-		bra	loc_ED68
+		beq	intASR2_21
+		cmp	a, #002		; 2 would be 40	deg BTDC
+		bne	intASR2_26
+		bra	intASR2_25
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
-loc_ED51:				; CODE XREF: ROM:ED49j
+intASR2_21:				; CODE XREF: ROM:ED49j
 		clrb	bit1, DOUT
 		ld	b, unk_E5
 		and	b, #0FCh
-		tbbc	bit0, PORTC, loc_ED5C ;	Port C Data Register
+		tbbc	bit0, PORTC, intASR2_22	; Port C Data Register
 		or	b, #08h
 
-loc_ED5C:				; CODE XREF: ROM:ED57j
-		tbbs	bit7, PORTB, loc_ED61 ;	Port B Data Register
+intASR2_22:				; CODE XREF: ROM:ED57j
+		tbbs	bit7, PORTB, intASR2_23	; Port B Data Register
 		or	b, #02h
 
-loc_ED61:				; CODE XREF: ROM:loc_ED5Cj
-		tbbs	bit6, PORTB, loc_ED66 ;	Port B Data Register
+intASR2_23:				; CODE XREF: ROM:intASR2_22j
+		tbbs	bit6, PORTB, intASR2_24	; Port B Data Register
 		or	b, #01h
 
-loc_ED66:				; CODE XREF: ROM:loc_ED61j
+intASR2_24:				; CODE XREF: ROM:intASR2_23j
 		st	b, unk_E5
 
-loc_ED68:				; CODE XREF: ROM:ED4Fj
-		jmp	loc_EE10
+intASR2_25:				; CODE XREF: ROM:ED4Fj
+		jmp	intASR2_39
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
-loc_ED6B:				; CODE XREF: ROM:ED4Dj
+intASR2_26:				; CODE XREF: ROM:ED4Dj
 		setb	bit1, DOUT
 		setb	bit1, PORTA
-		tbbs	bit7, unk_4C, loc_EDB1
-		tbbc	bit5, RAMST, loc_EDB1 ;	Built-in RAM status
+		tbbs	bit7, unk_4C, intASR2_28
+		tbbc	bit5, RAMST, intASR2_28	; Built-in RAM status
 		ld	a, unk_E5
 		mov	a, b
-		tbbc	bit0, PORTC, loc_ED7D ;	Port C Data Register
+		tbbc	bit0, PORTC, intASR2_27	; Port C Data Register
 		add	b, #04h
 
-loc_ED7D:				; CODE XREF: ROM:ED78j
+intASR2_27:				; CODE XREF: ROM:ED78j
 		shr	b
 		shr	b
 		and	b, #03h
 		shr	b
 		rorc	b
-		bvc	loc_EDD2
-		bcs	loc_EDF8
-		tbbs	bit3, unk_43, loc_EDFC
-		cmp	#3Ch, unk_F2
-		bcs	loc_EDFC
+		bvc	intASR2_32
+		bcs	intASR2_34
+		tbbs	bit3, unk_43, intASR2_35
+		cmp	#3Ch, word_F2
+		bcs	intASR2_35
 		ld	a, unk_186
-		bne	loc_EDFC
+		bne	intASR2_35
 		ld	a, unk_103
 		cmpb	a, #40h
-		beq	loc_EDFC
-		tbbs	bit5, unk_4A, loc_EDFC
-		cmp	#20h, unk_F0
-		bcs	loc_EDFC
-		cmp	#68h, unk_F0
-		bcc	loc_EDFC
+		beq	intASR2_35
+		tbbs	bit5, unk_4A, intASR2_35
+		cmp	#20h, word_F0	; I think it's RPM/100
+		bcs	intASR2_35
+		cmp	#68h, word_F0	; I think it's RPM/100
+		bcc	intASR2_35
 		cmp	#0Bh, unk_E6
-		bcc	loc_EDB3
+		bcc	intASR2_29
 		inc	unk_E6
-		bra	loc_EE03
+		bra	intASR2_36
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
-loc_EDB1:				; CODE XREF: ROM:ED6Fj	ROM:ED72j
-		bra	loc_EE05
+intASR2_28:				; CODE XREF: ROM:ED6Fj	ROM:ED72j
+		bra	intASR2_37
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
-loc_EDB3:				; CODE XREF: ROM:EDABj
+intASR2_29:				; CODE XREF: ROM:EDABj
 		ld	b, #0Fh
-		tbbs	bit0, IRQLL, loc_EDBA ;	Interrupt Request Flag LSB
+		tbbs	bit0, IRQLL, intASR2_30	; Interrupt Request Flag LSB
 		ld	b, #0F0h
 
-loc_EDBA:				; CODE XREF: ROM:EDB5j
+intASR2_30:				; CODE XREF: ROM:EDB5j
 		ld	a, unk_19E
 		st	b, unk_19E
 		cmp	a, unk_19E
-		bne	loc_EE03
+		bne	intASR2_36
 		cmp	a, #0Fh
-		beq	loc_EDCC
+		beq	intASR2_31
 		setb	bit5, unk_4E
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 		.db  8Ch ; Œ		; cmp x, a three byte NOP
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
-loc_EDCC:				; CODE XREF: ROM:EDC7j
+intASR2_31:				; CODE XREF: ROM:EDC7j
 		setb	bit7, unk_4E
 		setb	bit0, unk_46
-		bra	loc_EE03
+		bra	intASR2_36
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
-loc_EDD2:				; CODE XREF: ROM:ED83j
+intASR2_32:				; CODE XREF: ROM:ED83j
 		ld	b, unk_E8
-		beq	loc_EDDA
+		beq	intASR2_33
 		ld	b, #0Bh
 		st	b, unk_E8
 
-loc_EDDA:				; CODE XREF: ROM:EDD4j
-		cmp	#0Dh, unk_F0
-		bcs	loc_EE03
-		cmp	#68h, unk_F0
-		bcc	loc_EE03
+intASR2_33:				; CODE XREF: ROM:EDD4j
+		cmp	#0Dh, word_F0	; I think it's RPM/100
+		bcs	intASR2_36
+		cmp	#68h, word_F0	; I think it's RPM/100
+		bcc	intASR2_36
 		and	a, #0E0h
 		add	a, #20h
-		bcc	loc_EE07
+		bcc	intASR2_38
 		clrb	bit2, DOUT
 		tbs	bit2, unk_41
-		beq	loc_EE05
+		beq	intASR2_37
 		setb	bit6, unk_4E
 		ld	a, #0Bh
 		st	a, unk_E8
-		bra	loc_EE05
+		bra	intASR2_37
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
-loc_EDF8:				; CODE XREF: ROM:ED85j
+intASR2_34:				; CODE XREF: ROM:ED85j
 		clr	unk_E8
 		clrb	bit6, unk_4E
 
-loc_EDFC:				; CODE XREF: ROM:ED87j	ROM:ED8Dj ...
+intASR2_35:				; CODE XREF: ROM:ED87j	ROM:ED8Dj ...
 		cmp	#0Bh, unk_E6
-		bcc	loc_EE03
+		bcc	intASR2_36
 		clr	unk_E6
 
-loc_EE03:				; CODE XREF: ROM:EDAFj	ROM:EDC3j ...
+intASR2_36:				; CODE XREF: ROM:EDAFj	ROM:EDC3j ...
 		clrb	bit2, unk_41
 
-loc_EE05:				; CODE XREF: ROM:loc_EDB1j ROM:EDEEj ...
+intASR2_37:				; CODE XREF: ROM:intASR2_28j ROM:EDEEj ...
 		ld	a, #40h
 
-loc_EE07:				; CODE XREF: ROM:EDE8j
+intASR2_38:				; CODE XREF: ROM:EDE8j
 		ld	b, unk_E5
 		and	b, #03h
 		add	a, b
 		st	a, unk_E5
 		setb	bit2, DOUT
 
-loc_EE10:				; CODE XREF: ROM:loc_ED68j
-		ld	a, CylinderNum
-		tbbc	bit2, unk_40, loc_EE2C
-		setb	bit0, DOM
+intASR2_39:				; CODE XREF: ROM:intASR2_25j
+		ld	a, ModuloNE	; contains modulo: NEcounts%3, represents 30 degree chunks after 10dBTDC cylinder NEcounts/3
+		tbbc	bit2, unk_40, intASR2_41
+		setb	bit0, DOM	; IGT bit related
 		cmpz	a
-		beq	loc_EE25
-		cmp	a, #02h
-		bne	loc_EE3F
-		setb	bit0, DOUT
-		jsr	sub_F69E
-		bra	loc_EE3F
+		beq	intASR2_40	; bounce if 10 deg BTDC, looks like failsafe timing, 30	degrees	dwell, 10 deg BTDC spark
+		cmp	a, #002
+		bne	ASR2_reti
+		setb	bit0, DOUT	; set IGT bit
+		jsr	Cmp0NOW
+		bra	ASR2_reti
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
-loc_EE25:				; CODE XREF: ROM:EE18j
-		clrb	bit0, DOUT
-		jsr	sub_F69E
-		bra	loc_EE35
+intASR2_40:				; CODE XREF: ROM:EE18j
+		clrb	bit0, DOUT	; clear	IGT bit, fire spark @ 10 deg BTDC
+		jsr	Cmp0NOW
+		bra	intASR2_42
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
-loc_EE2C:				; CODE XREF: ROM:EE12j
+intASR2_41:				; CODE XREF: ROM:EE12j
 		cmpz	a
-		bne	loc_EE3C
+		bne	intASR2_43
 		ld	a, unk_18F
-		jsr	sub_EF13
+		jsr	sub_EF13	; we end up here if we're late, which is why we're checking target NEcounts+1
 
-loc_EE35:				; CODE XREF: ROM:EE2Aj
+intASR2_42:				; CODE XREF: ROM:EE2Aj
 		setb	bit2, unk_40
-		tbbs	bit7, unk_4C, loc_EE3F
+		tbbs	bit7, unk_4C, ASR2_reti
 		clrb	bit2, unk_40
 
-loc_EE3C:				; CODE XREF: ROM:EE2Dj
+intASR2_43:				; CODE XREF: ROM:EE2Dj
 		jsr	NEsub1
 
-loc_EE3F:				; CODE XREF: ROM:ECA1j	ROM:EE1Cj ...
+ASR2_reti:				; CODE XREF: ROM:ECA1j	ROM:EE1Cj ...
 		clrb	bit5, unk_4F
 		clrb	bit4, PORTAL
 		clrb	bit5, PORTAL
 		setb	bit6, unk_44
-		setb	bit1, IRQLL
+		setb	bit1, IRQLL	; no idea what this flag does, but may trigger IV6
 		pull	y
 		pull	x
 		reti
@@ -9574,10 +9595,10 @@ loc_EE3F:				; CODE XREF: ROM:ECA1j	ROM:EE1Cj ...
 ; ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ S U B	R O U T	I N E ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ
 
 
-NEsub1:					; CODE XREF: ROM:loc_EE3Cp
-		ld	a, CylinderNum
-		beq	loc_EE53
-		jmp	loc_EF0C
+NEsub1:					; CODE XREF: ROM:intASR2_43p
+		ld	a, ModuloNE	; contains modulo: NEcounts%3, represents 30 degree chunks after 10dBTDC cylinder NEcounts/3
+		beq	loc_EE53	; bounce only if 10 deg	BTDC
+		jmp	loc_EF0C	; skip timing calculation?
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_EE53:				; CODE XREF: NEsub1+2j
@@ -9620,35 +9641,35 @@ loc_EE7A:				; CODE XREF: NEsub1+2Aj
 		cmpb	a, #01h
 		pull	a
 		beq	loc_EE9A
-		add	d, #001Ah
+		add	d, #00026
 		setb	bit4, unk_40
 
 loc_EE9A:				; CODE XREF: NEsub1+34j NEsub1+39j ...
-		cmp	d, #0300h
+		cmp	d, #00768
 		ble	loc_EEA2
-		ld	d, #0300h
+		ld	d, #00768	; saturate at 768 (300h)
 
 loc_EEA2:				; CODE XREF: NEsub1+51j
-		cmp	d, #0122h
+		cmp	d, #00290
 		bcc	loc_EEAA
-		ld	d, #0122h
+		ld	d, #00290	; saturate at 290 (122h)
 
 loc_EEAA:				; CODE XREF: NEsub1+59j
 		tbbc	bit6, unk_42, loc_EEE0
 		push	d
-		mov	s, x
+		mov	s, x		; stack	now points to limited value
 		ld	d, word_193
 		tbbs	bit0, unk_42, loc_EECF
-		cmp	#14h, unk_F0
+		cmp	#020, word_F0	; I think it's RPM/100
 		ble	loc_EECF
 		tbbs	bit5, unk_42, loc_EEC5
 		tbbc	bit0, unk_41, loc_EECF
-		add	d, #0002h
+		add	d, #00002
 		bra	loc_EED2
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_EEC5:				; CODE XREF: NEsub1+6Ej
-		cmp	#24h, unk_F2
+		cmp	#24h, word_F2
 		bcc	loc_EECF
 		add	d, #0002h
 		bra	loc_EED2
@@ -9677,33 +9698,33 @@ loc_EEE0:				; CODE XREF: NEsub1:loc_EEAAj
 		mov	x, d
 
 loc_EEEA:				; CODE XREF: NEsub1:loc_EEE0j
-		sub	d, #032Bh
+		sub	d, #00811
 		neg	a
 		neg	b
 		subc	a, #00h
 		shr	b
 		add	a, NEcounts
-		cmp	a, #18h
+		cmp	a, #024
 		ble	loc_EEFA
-		sub	a, #18h
+		sub	a, #024
 
 loc_EEFA:				; CODE XREF: NEsub1+AAj
 		cmp	a, NEcounts
-		beq	loc_EF09
-		cmp	b, unk_F0
-		bcc	loc_EF09
+		beq	loc_EF09	; only write to	18f, 190, 190 seems to be timing related
+		cmp	b, word_F0	; I think it's RPM/100
+		bcc	loc_EF09	; only write to	18f, 190, 190 seems to be timing related
 
 loc_EF02:				; CODE XREF: sub_EF13+2Fj
 		dec	a
-		add	b, #80h
-		bcc	loc_EF09
-		ld	b, #0FFh
+		add	b, #128
+		bcc	loc_EF09	; only write to	18f, 190, 190 seems to be timing related
+		ld	b, #0FFh	; saturate
 
 loc_EF09:				; CODE XREF: NEsub1+B0j NEsub1+B4j ...
-		st	d, unk_18F
+		st	d, unk_18F	; only write to	18f, 190, 190 seems to be timing related
 
 loc_EF0C:				; CODE XREF: NEsub1+4j
-		ld	a, unk_18F
+		ld	a, unk_18F	; 18f perhaps stores the necount modulo	to offset 190 from?
 		cmp	a, NEcounts
 		beq	loc_EF2A
 ; End of function NEsub1
@@ -9711,56 +9732,58 @@ loc_EF0C:				; CODE XREF: NEsub1+4j
 
 ; ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ S U B	R O U T	I N E ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ
 
+; we end up here if we're late, which is why we're checking target NEcounts+1
 
 sub_EF13:				; CODE XREF: ROM:EE32p
 		inc	a
-		cmp	a, #18h
+		cmp	a, #024
 		ble	loc_EF1A
 		ld	a, #01h
 
 loc_EF1A:				; CODE XREF: sub_EF13+3j
 		cmp	a, NEcounts
-		bne	locret_EF29
+		bne	NEsub1_ret2
 		ld	a, unk_190
-		bsr	calcIGT_time1
+		bsr	calcIGT_time	; accepts ratio	in AccA
 		clrc
-		tbbs	bit0, LDOUT, loc_EF4B ;	Latch DOUT
+		tbbs	bit0, LDOUT, NEsub1_divert ; bounces immediately to Cmp0IGTdwell
 		setb	bit5, unk_40
 
-locret_EF29:				; CODE XREF: sub_EF13+9j
+NEsub1_ret2:				; CODE XREF: sub_EF13+9j
 		ret
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_EF2A:				; CODE XREF: NEsub1+C5j
 		ld	a, unk_190
-		bsr	calcIGT_time1
-		cmp	#00h, CylinderNum
+		bsr	calcIGT_time	; accepts ratio	in AccA
+		cmp	#00h, ModuloNE	; contains modulo: NEcounts%3, represents 30 degree chunks after 10dBTDC cylinder NEcounts/3
 		setc
-		bne	loc_EF4B
+		bne	NEsub1_divert	; bounces immediately to Cmp0IGTdwell
 		ld	a, unk_190
-		cmp	a, unk_F0
-		bcc	loc_EF44
-		jsr	sub_F689
+		cmp	a, word_F0	; I think it's RPM/100
+		bcc	NEsub1_ret1
+		jsr	Cmp0IGTdwell
 		ld	d, unk_18F
 		bra	loc_EF02
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
-loc_EF44:				; CODE XREF: sub_EF13+27j
+NEsub1_ret1:				; CODE XREF: sub_EF13+27j
 		setc
-		tbbc	bit0, LDOUT, loc_EF4B ;	Latch DOUT
+		tbbc	bit0, LDOUT, NEsub1_divert ; bounces immediately to Cmp0IGTdwell
 		setb	bit6, unk_40
 		ret
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
-loc_EF4B:				; CODE XREF: sub_EF13+11j sub_EF13+20j ...
-		jmp	sub_F689
+NEsub1_divert:				; CODE XREF: sub_EF13+11j sub_EF13+20j ...
+		jmp	Cmp0IGTdwell	; bounces immediately to Cmp0IGTdwell
 ; End of function sub_EF13
 
 
 ; ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ S U B	R O U T	I N E ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ
 
+; accepts ratio	in AccA
 
-calcIGT_time1:				; CODE XREF: sub_EF13+Ep sub_EF13+1Ap
+calcIGT_time:				; CODE XREF: sub_EF13+Ep sub_EF13+1Ap
 		push	a
 		mul	a, threeDeltaNE
 		mov	d, y
@@ -9771,9 +9794,9 @@ calcIGT_time1:				; CODE XREF: sub_EF13+Ep sub_EF13+1Ap
 		ld	a, #171		; fraction 2/3
 		jsr	MulAbyY		; returns upper	16b in AccD
 		add	d, lastASR2
-		st	d, IGT_time1
+		st	d, IGT_time
 		ret
-; End of function calcIGT_time1
+; End of function calcIGT_time
 
 
 ; ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ S U B	R O U T	I N E ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ
@@ -9788,7 +9811,7 @@ IV6:					; DATA XREF: ROM:FFEAo
 		clrb	bit1, IRQLL
 		push	x
 		push	y
-		tbbc	bit6, unk_44, loc_EF70
+		tbbc	bit6, unk_44, loc_EF70 ; bits 543210 will all cause a branch past doinjectors
 		clrb	bit6, unk_44
 		jmp	loc_EF7B
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
@@ -9817,7 +9840,7 @@ loc_EF7B:				; CODE XREF: IV6+9j IV6+1CEj
 		beq	loc_EFA7
 		dec	a
 		bne	loc_EF8D
-		ld	a, #18h
+		ld	a, #024
 
 loc_EF8D:				; CODE XREF: IV6+25j
 		cmp	a, b
@@ -9915,7 +9938,7 @@ loc_F011:				; CODE XREF: IV6+9Fj
 loc_F013:				; CODE XREF: IV6+75j
 		ei
 		clr	a
-		cmp	#52h, unk_6A
+		cmp	#52h, word_6A
 		bcs	loc_F023
 		ld	a, unk_E9
 		inc	a
@@ -9946,7 +9969,7 @@ loc_F02A:				; CODE XREF: IV6+4Ej
 		cmpz	a
 		bne	loc_F05C
 		setb	bit1, unk_41
-		cmp	#50h, unk_F0
+		cmp	#50h, word_F0	; I think it's RPM/100
 		bcc	loc_F051
 		clrb	bit1, unk_41
 
@@ -9973,28 +9996,28 @@ loc_F05D:				; CODE XREF: IV6+DDj IV6+F6j
 		st	a, unk_186
 
 loc_F060:				; CODE XREF: IV6+C4j IV6+C7j
-		ld	a, unk_44
+		ld	a, unk_44	; bits 543210 will all cause a branch past doinjectors
 		and	a, #3Fh
-		beq	loc_F06E
+		beq	loc_F06E	; on the right path
 		ld	a, #0FFh
 		st	a, unk_112
 		jmp	loc_F0B4	; bounces past doinjectors
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_F06E:				; CODE XREF: IV6+100j
-		ld	a, unk_67
+		ld	a, unk_67	; on the right path
 		ld	y, #0C2DBh
 
-loc_F073:				; CODE XREF: IV6+126j
-		cmp	y, #0C2DFh
+loop_F073:				; CODE XREF: IV6+126j
+		cmp	y, #0C2DFh	; this value is	too high, carry	should always be set
 		bcs	loc_F07B
-		jmp	loc_F0DA	; bounces past doinjectors
+		jmp	loc_F0DA	; bounces past doinjectors because this	loop has failed	somehow
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_F07B:				; CODE XREF: IV6+112j
 		ld	b, y + 00h
 		add	b, unk_113
-		cmp	b, #18h
+		cmp	b, #024
 		ble	loc_F086
 		sub	b, #18h
 
@@ -10004,7 +10027,7 @@ loc_F086:				; CODE XREF: IV6+11Ej
 
 loc_F089:				; CODE XREF: IV6+131j
 		inc	y
-		bra	loc_F073
+		bra	loop_F073	; this value is	too high, carry	should always be set
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_F08C:				; CODE XREF: IV6+123j
@@ -10018,7 +10041,7 @@ loc_F08C:				; CODE XREF: IV6+123j
 		sub	d, #0C2DBh
 		st	b, unk_112
 		ld	y, #InjBits	; data used by DoInjectors
-		shl	b
+		shl	b		; double b
 		add	y, b
 		ld	a, y + 10h	; either 00 or 02
 		ld	x, #0164h	; choose either	word_164 or word_166
@@ -10075,7 +10098,7 @@ loc_F0EB:				; CODE XREF: IV6+181j
 		st	a, unk_E3
 
 loc_F0F2:				; CODE XREF: IV6+18Aj
-		ld	b, unk_44
+		ld	b, unk_44	; bits 543210 will all cause a branch past doinjectors
 		and	b, #3Fh
 		bne	loc_F0FE
 		ld	a, unk_77
@@ -10097,7 +10120,7 @@ loc_F10D:				; CODE XREF: IV6+1A5j
 
 loc_F111:				; CODE XREF: IV6:loc_F0FEj
 		clr	unk_B4
-		cmp	#06h, unk_F0
+		cmp	#06h, word_F0	; I think it's RPM/100
 		bcs	loc_F123
 		cmp	#30h, unk_EA
 		bcc	loc_F121
@@ -10165,26 +10188,26 @@ DoInjectors:				; CODE XREF: IV6+147p DoAllInj+4p
 		di
 		push	d
 		ld	a, LDOUT	; Latch	DOUT
-		cmpb	a, y + 00h
-		bne	DoInj2
+		cmpb	a, y + 00h	; compare BITS,	it's an AND, not a subtraction
+		bne	DoInj_ison	; not equal when injector is already on
 		pull	d
-		add	d, word_168	; DoInjectors related
+		add	d, InjDeadtime	; probably deadtime, have to chase out ADC code
 		bra	DoInj6
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
-DoInj2:					; CODE XREF: DoInjectors+6j
+DoInj_ison:				; CODE XREF: DoInjectors+6j
 		ld	x, y + 18h
-		ld	d, x + 00h
+		ld	d, x + 00h	; load compare time (off time)
 		mov	s, x
-		sub	d, TIMER	; Timer	MSB (bit11~bit18)
-		cmp	a, #0FFh
+		sub	d, TIMER	; subtract timer from scheduled	off time
+		cmp	a, #0FFh	; a rigid assumption, but reasonably valid
 		bne	DoInj3		; data was pushed at start of sub, then	stack was copied into x
-		clr	a
+		clr	a		; we did exceed	injector off time, and it's not off...
 		clr	b
 
 DoInj3:					; CODE XREF: DoInjectors+17j
 		add	d, x + 00h	; data was pushed at start of sub, then	stack was copied into x
-		bcs	DoInj4
+		bcs	DoInj4		; on overflow, cap pw to 7FEE
 		cmp	d, #7FEEh
 		ble	DoInj5		; tidy up stack
 
@@ -10260,12 +10283,12 @@ loc_F1C7:				; CODE XREF: sub_F1A9+16j
 		st	a, unk_1CC
 
 loc_F1CA:				; CODE XREF: sub_F1A9+1Cj
-		cmp	#67h, unk_F0
+		cmp	#67h, word_F0	; I think it's RPM/100
 		bcc	loc_F1D1
 		setb	bit5, unk_46
 
 loc_F1D1:				; CODE XREF: sub_F1A9+24j
-		cmp	#69h, unk_F0
+		cmp	#69h, word_F0	; I think it's RPM/100
 		bcs	loc_F1D8
 		clrb	bit5, unk_46
 
@@ -10275,10 +10298,10 @@ loc_F1D8:				; CODE XREF: sub_F1A9+2Bj
 		shl	a
 		and	a, #0Ch
 		tbbs	bit3, unk_43, loc_F1EE
-		cmp	#18h, unk_F2
+		cmp	#18h, word_F2
 		bcs	loc_F1EE
 		or	a, #80h
-		cmp	#0Dh, unk_F0
+		cmp	#0Dh, word_F0	; I think it's RPM/100
 		bcc	loc_F1F2
 
 loc_F1EE:				; CODE XREF: sub_F1A9+36j sub_F1A9+3Cj
@@ -10287,7 +10310,7 @@ loc_F1EE:				; CODE XREF: sub_F1A9+36j sub_F1A9+3Cj
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_F1F2:				; CODE XREF: sub_F1A9+43j
-		cmp	#3Ch, unk_F0
+		cmp	#3Ch, word_F0	; I think it's RPM/100
 		bcs	loc_F200
 		tbbc	bit5, unk_46, loc_F1FE
 		or	a, #02h
@@ -10567,7 +10590,7 @@ loc_F378:				; CODE XREF: IVc+33j
 loc_F37F:				; CODE XREF: IVc+48j
 		cmp	a, #18h
 		bgt	loc_F397
-		cmp	#14h, unk_F0
+		cmp	#14h, word_F0	; I think it's RPM/100
 		bcc	loc_F38A
 
 loc_F388:				; CODE XREF: IVc+3Bj IVc+56j ...
@@ -10617,7 +10640,7 @@ loc_F3A7:				; CODE XREF: IVc+81j
 loc_F3C2:				; CODE XREF: IVc+9Cj
 		jsr	sub_D47F
 		setb	bit3, unk_4A
-		setb	bit1, IRQLL
+		setb	bit1, IRQLL	; no idea, but may trigger IV6
 		reti
 ; End of function IVc
 
@@ -10646,7 +10669,7 @@ loc_F3DE:				; CODE XREF: IV6+472j
 
 loc_F3E2:				; CODE XREF: IV6+478j
 		ld	a, x + 00h
-		st	a, unk_74
+		st	a, unk_74	; the last byte	intended for the SODR, while not restricted in value, will always be masked with 1F before TX
 		setb	bit1, SSD
 		and	a, #1Fh
 		di
@@ -10906,8 +10929,10 @@ loc_F52E:				; CODE XREF: IV6+5C4j
 loc_F53B:				; CODE XREF: IV6+5CEj
 		clr	unk_C5
 		ld	x, #0F52Ah
-		cmp	#50h, unk_F0
+		cmp	#50h, word_F0	; I think it's RPM/100
 		bcs	loc_F546
+
+loc_F545:
 		inc	a
 
 loc_F546:				; CODE XREF: IV6+5DFj
@@ -11098,7 +11123,7 @@ loc_F649:				; CODE XREF: IV6+6A9j IV6+6D6j ...
 		bcc	loc_F65A
 		cmp	b, #08h
 		bne	loc_F65D
-		cmp	#48h, unk_F0
+		cmp	#48h, word_F0	; I think it's RPM/100
 		bcs	loc_F65D
 
 loc_F65A:				; CODE XREF: IV6+6EBj
@@ -11121,31 +11146,31 @@ loc_F666:				; CODE XREF: IV6:loc_F516j IV6+5BBj ...
 		; public intCPR0
 intCPR0:				; DATA XREF: ROM:FFF0o
 		clrb	bit0, IRQL
-		tbbc	bit0, LDOUT, loc_F67B ;	branch if IGT low
+		tbbc	bit0, LDOUT, intCPR0_1 ; branch	if IGT low
 		push	x
 		push	y
-		jsr	sub_F6AC
+		jsr	CPR0_sub	; gets called if IGT was high, seems to	handle some housekeeping, IGF counters and bitflags
 		pull	y
 		pull	x
-		tbbc	bit5, unk_40, locret_F688
+		tbbc	bit5, unk_40, intCPR0_end
 		clrc
-		bra	loc_F686
+		bra	intCPR0_3
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
-loc_F67B:				; CODE XREF: intCPR0+2j
+intCPR0_1:				; CODE XREF: intCPR0+2j
 		setb	bit1, unk_4C
-		tbbs	bit0, unk_45, loc_F682
+		tbbs	bit0, unk_45, intCPR0_2
 		setb	bit2, unk_4C
 
-loc_F682:				; CODE XREF: intCPR0+14j
-		tbbc	bit6, unk_40, locret_F688
+intCPR0_2:				; CODE XREF: intCPR0+14j
+		tbbc	bit6, unk_40, intCPR0_end
 		setc
 
-loc_F686:				; CODE XREF: intCPR0+10j
-		bsr	sub_F689
+intCPR0_3:				; CODE XREF: intCPR0+10j
+		bsr	Cmp0IGTdwell
 
-locret_F688:				; CODE XREF: intCPR0+Cj
-					; intCPR0:loc_F682j
+intCPR0_end:				; CODE XREF: intCPR0+Cj
+					; intCPR0:intCPR0_2j
 		reti
 ; End of function intCPR0
 
@@ -11153,128 +11178,128 @@ locret_F688:				; CODE XREF: intCPR0+Cj
 ; ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ S U B	R O U T	I N E ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ
 
 
-sub_F689:				; CODE XREF: sub_EF13+29p
-					; sub_EF13:loc_EF4Bj ...
-		ld	d, IGT_time1
+Cmp0IGTdwell:				; CODE XREF: sub_EF13+29p
+					; sub_EF13:NEsub1_divertj ...
+		ld	d, IGT_time
 		st	d, CPR0		; Timer	comparison #0 MSB
 		setb	bit0, DOM
-		bcc	loc_F696	; IGT output
+		bcc	IGTdwell1	; IGT output
 		setb	bit0, DOUT	; IGT output
-		bra	loc_F698
+		bra	IGTdwell2
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
-loc_F696:				; CODE XREF: sub_F689+7j
+IGTdwell1:				; CODE XREF: Cmp0IGTdwell+7j
 		clrb	bit0, DOUT	; IGT output
 
-loc_F698:				; CODE XREF: sub_F689+Bj
+IGTdwell2:				; CODE XREF: Cmp0IGTdwell+Bj
 		sub	d, TIMER	; Timer	MSB (bit11~bit18)
-		bmi	sub_F69E
-		bne	loc_F6A6
-; End of function sub_F689
+		bmi	Cmp0NOW		; oops we missed it!
+		bne	IGTdwell_ret
+; End of function Cmp0IGTdwell
 
 
 ; ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ S U B	R O U T	I N E ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ
 
 
-sub_F69E:				; CODE XREF: ROM:EE20p	ROM:EE27p ...
+Cmp0NOW:				; CODE XREF: ROM:EE20p	ROM:EE27p ...
 		ld	d, #0002h
 		di
 		add	d, TIMER	; Timer	MSB (bit11~bit18)
 		st	d, CPR0		; Timer	comparison #0 MSB
 
-loc_F6A6:				; CODE XREF: sub_F689+13j
+IGTdwell_ret:				; CODE XREF: Cmp0IGTdwell+13j
 		clrb	bit5, unk_40
 		clrb	bit6, unk_40
 		ei
 		ret
-; End of function sub_F69E
+; End of function Cmp0NOW
 
 
 ; ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ S U B	R O U T	I N E ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ
 
 
-sub_F6AC:				; CODE XREF: intCPR0+7p
+CPR0_sub:				; CODE XREF: intCPR0+7p
 		clr	a
 		ld	b, NEcounts
-		sub	b, #01h
-		div	d, #06h
+		sub	b, #001
+		div	d, #006
 		ld	x, #01B7h
 		ld	y, #01B9h
-		cmp	a, #03h
-		bcc	loc_F6C0
+		cmp	a, #003		; a is the modulo from that necounts/6,	24/3 is	8..
+		bcc	CPR0_sub_1
 		clr	a
 		dec	x
 		dec	y
 
-loc_F6C0:				; CODE XREF: sub_F6AC+Fj
+CPR0_sub_1:				; CODE XREF: CPR0_sub+Fj
 		ld	b, NEcounts
-		beq	loc_F6E0
-		tbbc	bit1, unk_4C, loc_F6E0
+		beq	CPR0_sub_3
+		tbbc	bit1, unk_4C, CPR0_sub_3
 		clrb	bit1, unk_4C
 		cmpz	a
-		bne	loc_F6D7
-		tbbc	bit4, IRQLL, loc_F6E3 ;	Interrupt Request Flag LSB
+		bne	CPR0_sub_2	; IGF2 flag
+		tbbc	bit4, IRQLL, CPR0_sub_4	; IGF1 flag
 		clrb	bit1, unk_4E
 		clrb	bit1, unk_44
-		clrb	bit4, IRQLL
-		bra	loc_F6E0
+		clrb	bit4, IRQLL	; clear	IGF1 flag
+		bra	CPR0_sub_3
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
-loc_F6D7:				; CODE XREF: sub_F6AC+1Ej
-		tbbc	bit6, IRQL, loc_F6E3 ; Interrupt Request Flag MSB
+CPR0_sub_2:				; CODE XREF: CPR0_sub+1Ej
+		tbbc	bit6, IRQL, CPR0_sub_4 ; IGF2 flag
 		clrb	bit2, unk_4E
 		clrb	bit2, unk_44
-		clrb	bit6, IRQL
+		clrb	bit6, IRQL	; clear	IGF2 flag
 
-loc_F6E0:				; CODE XREF: sub_F6AC+16j sub_F6AC+18j ...
+CPR0_sub_3:				; CODE XREF: CPR0_sub+16j CPR0_sub+18j ...
 		clr	b
-		bra	loc_F6ED
+		bra	CPR0_sub_6
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
-loc_F6E3:				; CODE XREF: sub_F6AC+20j
-					; sub_F6AC:loc_F6D7j
+CPR0_sub_4:				; CODE XREF: CPR0_sub+20j
+					; CPR0_sub:CPR0_sub_2j
 		ld	b, x + 00h
-		bne	loc_F6E9
+		bne	CPR0_sub_5
 		st	b, y + 00h
 
-loc_F6E9:				; CODE XREF: sub_F6AC+39j
+CPR0_sub_5:				; CODE XREF: CPR0_sub+39j
 		inc	b
-		bne	loc_F6ED
+		bne	CPR0_sub_6
 		dec	b
 
-loc_F6ED:				; CODE XREF: sub_F6AC+35j sub_F6AC+3Ej
+CPR0_sub_6:				; CODE XREF: CPR0_sub+35j CPR0_sub+3Ej
 		st	b, x + 00h
 		cmp	b, #05h
-		bcs	locret_F714
+		bcs	CPR0_sub_RET
 		cmpz	a
-		bne	loc_F6FA
+		bne	CPR0_sub_7
 		setb	bit1, unk_44
-		bra	loc_F6FC
+		bra	CPR0_sub_8
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
-loc_F6FA:				; CODE XREF: sub_F6AC+48j
+CPR0_sub_7:				; CODE XREF: CPR0_sub+48j
 		setb	bit2, unk_44
 
-loc_F6FC:				; CODE XREF: sub_F6AC+4Cj
+CPR0_sub_8:				; CODE XREF: CPR0_sub+4Cj
 		cmp	b, #09h
-		bcs	locret_F714
+		bcs	CPR0_sub_RET
 		ld	b, y + 00h
 		cmp	b, #3Fh
-		bcs	locret_F714
+		bcs	CPR0_sub_RET
 		cmp	#3Fh, unk_B0
-		bcs	locret_F714
+		bcs	CPR0_sub_RET
 		cmpz	a
-		bne	loc_F712
+		bne	CPR0_sub_9
 		setb	bit1, unk_4E
-		bra	locret_F714
+		bra	CPR0_sub_RET
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
-loc_F712:				; CODE XREF: sub_F6AC+60j
+CPR0_sub_9:				; CODE XREF: CPR0_sub+60j
 		setb	bit2, unk_4E
 
-locret_F714:				; CODE XREF: sub_F6AC+45j sub_F6AC+52j ...
+CPR0_sub_RET:				; CODE XREF: CPR0_sub+45j CPR0_sub+52j ...
 		ret
-; End of function sub_F6AC
+; End of function CPR0_sub
 
 
 ; ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ S U B	R O U T	I N E ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ
@@ -11351,11 +11376,11 @@ unk_F767:	.db  4Fh ; O		; DATA XREF: __RESET:loc_D5BEr
 		.db  5Bh ; [
 		.db  5Dh ; ]
 		.db  5Fh ; _
-		.db  07h		; data for F7DD
+		.db  07h		; byet data for	F7DD
 		.db  09h
 		.db  0Bh
 		.db  0Dh
-		.dw 0FA0Ch		; vector table
+		.dw 0FA0Ch		; vector table for F7F5
 		.dw 0FBB0h
 		.dw 0F95Fh
 		.dw 0FBD6h
@@ -11385,7 +11410,7 @@ intSIN0:				; DATA XREF: ROM:FFE0o
 
 loc_F79D:				; CODE XREF: intSIN0+2j
 		ld	a, SIDR_SODR	; Serial Input/Output Data Register
-		ld	b, unk_74
+		ld	b, unk_74	; the last byte	intended for the SODR, while not restricted in value, will always be masked with 1F before TX
 		bpz	loc_F7B5	; branch if not	msb
 		setb	bit1, SSD
 		ld	#02h, SIDR_SODR	; transmit 02
@@ -11400,7 +11425,7 @@ loc_F7AA:				; CODE XREF: intSIN0+18j
 
 loc_F7B5:				; CODE XREF: intSIN0+Cj
 		mov	d, y
-		ld	b, unk_74
+		ld	b, unk_74	; the last byte	intended for the SODR, while not restricted in value, will always be masked with 1F before TX
 		push	b
 		setb	bit7, unk_46
 		ld	a, unk_73
@@ -11426,12 +11451,12 @@ loc_F7C9:				; CODE XREF: intSIN0+2Fj
 
 loc_F7DB:				; CODE XREF: intSIN0+39j
 		and	a, #03h
-		ld	x, #0F771h
+		ld	x, #0F771h	; 7,9,b	or D
 		add	x, a
 		ld	a, x + 00h
 
 loc_F7E3:				; CODE XREF: intSIN0+44j
-		st	a, unk_74
+		st	a, unk_74	; the last byte	intended for the SODR, while not restricted in value, will always be masked with 1F before TX
 		clrb	bit7, unk_46
 		di
 		ld	#30h, SMRC_SIR	; Serial Master	Register Control
@@ -11457,7 +11482,7 @@ loc_F800:				; CODE XREF: intSIN0+5j intSIN0+16j ...
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_F805:				; CODE XREF: ROM:F95Cj	ROM:loc_F98Fj ...
-		tbbs	bit7, unk_46, loc_F80B
+		tbbs	bit7, unk_46, loc_F80B ; test bit7 of unk_46, read more	data from serial port if set, otherwise	terminate interrupt
 		jmp	retSerIRQ2
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
@@ -11648,7 +11673,7 @@ retSerIRQ2:				; CODE XREF: intSIN0+73j
 ; End of function intSIN0
 
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
-		jsr	SaturateData
+		jsr	SaturateData	; called from F7FE
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 		.db 0FBh ; û
 		.db  0Fh
@@ -11715,9 +11740,9 @@ loc_F94D:				; CODE XREF: ROM:F944j
 
 loc_F95A:				; CODE XREF: ROM:F937j
 		st	b, unk_5D
-		jmp	loc_F805
+		jmp	loc_F805	; test bit7 of unk_46, read more data from serial port if set, otherwise terminate interrupt
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
-		cmp	a, #66h
+		cmp	a, #66h		; called from F7FE
 		bgt	loc_F965
 		clr	unk_AD
 
@@ -11757,9 +11782,9 @@ loc_F989:				; CODE XREF: ROM:F982j
 		setb	bit4, unk_4B
 
 loc_F98F:				; CODE XREF: ROM:F987j	ROM:F98Bj
-		jmp	loc_F805
+		jmp	loc_F805	; test bit7 of unk_46, read more data from serial port if set, otherwise terminate interrupt
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
-		jsr	SaturateData
+		jsr	SaturateData	; called from F7FE
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 		.db 0FBh ; û
 		.db  07h
@@ -11797,9 +11822,9 @@ loc_F9B6:				; CODE XREF: ROM:F9AEj
 loc_F9B8:				; CODE XREF: ROM:loc_F9A0j
 		xor	a, #0FFh
 		st	a, unk_FA
-		jmp	loc_F805
+		jmp	loc_F805	; test bit7 of unk_46, read more data from serial port if set, otherwise terminate interrupt
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
-		jsr	SaturateData
+		jsr	SaturateData	; called from F7FE
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 		.db 0FBh ; û
 		.db  07h
@@ -11837,14 +11862,14 @@ loc_F9E3:				; CODE XREF: ROM:F9DBj
 loc_F9E5:				; CODE XREF: ROM:loc_F9CDj
 		xor	a, #0FFh
 		st	a, unk_F7
-		jmp	loc_F805
+		jmp	loc_F805	; test bit7 of unk_46, read more data from serial port if set, otherwise terminate interrupt
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
-		ld	y, #0F9F7h
-		jsr	danger6
+		ld	y, #0F9F7h	; called from F7FE
+		jsr	TwoDTable	; X value in AccA, integer return in Acca, fraction return in AccB
 		st	a, unk_5C
-		jmp	loc_F805
+		jmp	loc_F805	; test bit7 of unk_46, read more data from serial port if set, otherwise terminate interrupt
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
-		.db  0Dh
+		.db  0Dh		; F9EC
 		.db 0DCh ; Ü
 		.db  13h
 		.db 0C8h ; È
@@ -11866,12 +11891,12 @@ loc_F9E5:				; CODE XREF: ROM:loc_F9CDj
 		.db  00h
 		.db 0FFh
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
-		clrb	bit1, unk_40
+		clrb	bit1, unk_40	; called from F7FE
 		ld	y, #0122h
 		jsr	loc_FAB3
-		ld	y, unk_124
-		ld	a, unk_122
-		or	a, unk_128
+		ld	y, unk_124	; written from serial receive int
+		ld	a, unk_122	; written from serial receive int
+		or	a, unk_128	; written from serial receive int
 		cmpb	a, #08h
 		bne	loc_FA29
 		cmp	y, unk_12A
@@ -11879,9 +11904,9 @@ loc_F9E5:				; CODE XREF: ROM:loc_F9CDj
 		ld	y, unk_12A
 
 loc_FA29:				; CODE XREF: ROM:FA1Fj	ROM:FA24j
-		ld	d, unk_6A
-		st	y, unk_6A
-		sub	d, unk_6A
+		ld	d, word_6A
+		st	y, word_6A
+		sub	d, word_6A
 		bcc	loc_FA35
 		bpz	loc_FA47
 		bra	loc_FA3A
@@ -11889,7 +11914,7 @@ loc_FA29:				; CODE XREF: ROM:FA1Fj	ROM:FA24j
 
 loc_FA35:				; CODE XREF: ROM:FA2Fj
 		cmp	d, #0CC0h
-		bcc	loc_FA49+1	; clr b
+		bcc	loc_FA4A
 
 loc_FA3A:				; CODE XREF: ROM:FA33j
 		neg	a
@@ -11902,12 +11927,15 @@ loc_FA3A:				; CODE XREF: ROM:FA33j
 
 loc_FA47:				; CODE XREF: ROM:FA31j
 		ld	b, #0FFh
+; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+		.db  41h ; A		; brn
+; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
-loc_FA49:				; CODE XREF: ROM:FA38j
-		brn	#53h		; clr b
+loc_FA4A:				; CODE XREF: ROM:FA38j
+		clr	b
 
 loc_FA4B:				; CODE XREF: ROM:FA45j
-		ld	a, unk_122
+		ld	a, unk_122	; written from serial receive int
 		cmpb	a, #40h
 		bne	loc_FA56
 		cmpb	a, #08h
@@ -11919,7 +11947,7 @@ loc_FA56:				; CODE XREF: ROM:FA50j
 loc_FA58:				; CODE XREF: ROM:FA54j
 		st	b, unk_6C
 		tbbs	bit7, unk_4C, loc_FA63
-		ld	a, unk_44
+		ld	a, unk_44	; here bits 5321 prevent a doallinj call
 		cmpb	a, #2Eh
 		beq	loc_FA67
 
@@ -11938,7 +11966,7 @@ loc_FA67:				; CODE XREF: ROM:FA61j
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_FA74:				; CODE XREF: ROM:FA69j
-		cmp	#48h, unk_F0
+		cmp	#072, word_F0	; I think it's RPM/100
 		bcc	loc_FA8C
 		cmp	#03h, unk_D6
 		bcc	loc_FA8C
@@ -11960,14 +11988,14 @@ loc_FA8C:				; CODE XREF: ROM:FA65j	ROM:FA6Ej ...
 
 loc_FA93:				; CODE XREF: ROM:FA90j
 		ld	a, #01h
-		cmp	#48h, unk_F0
+		cmp	#48h, word_F0	; I think it's RPM/100
 		ble	loc_FA9E
 		ld	a, #04h
 		bra	loc_FAA5
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_FA9E:				; CODE XREF: ROM:FA98j
-		cmp	#52h, unk_6A
+		cmp	#52h, word_6A
 		bcs	loc_FAA5
 		ld	a, #02h
 
@@ -11981,7 +12009,7 @@ loc_FAAE:				; CODE XREF: ROM:FAA6j	ROM:FAA8j
 		clr	unk_69
 
 loc_FAB0:				; CODE XREF: ROM:FAABj
-		jmp	loc_F805
+		jmp	loc_F805	; test bit7 of unk_46, read more data from serial port if set, otherwise terminate interrupt
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_FAB3:				; CODE XREF: ROM:FA11p	ROM:FBB5p
@@ -12020,7 +12048,7 @@ loc_FAD6:				; CODE XREF: ROM:FACCj	ROM:loc_FAD1j
 		cmp	x, #4CCDh
 		bgt	loc_FB08
 		cmp	x, #30A4h
-		bgt	loc_FB03+1
+		bgt	loc_FB04
 		cmpb	a, #02h
 		beq	loc_FAF6
 		and	a, #0F7h
@@ -12028,14 +12056,20 @@ loc_FAD6:				; CODE XREF: ROM:FACCj	ROM:loc_FAD1j
 loc_FAF6:				; CODE XREF: ROM:FAF2j
 		or	a, #02h
 		tbbs	bit3, unk_4B, loc_FB27
-		tbbs	bit1, unk_40, loc_FB00+1
+		tbbs	bit1, unk_40, loc_FB01
 		clrb	bit3, unk_4F
+; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+		.db  8Ch ; Œ		; cmp x
+; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
-loc_FB00:				; CODE XREF: ROM:FAFBj
-		cmp	x, #759Fh
+loc_FB01:				; CODE XREF: ROM:FAFBj
+		clrb	bit4, unk_4F
+; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+		.db  8Ch ; Œ		; cmp x
+; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
-loc_FB03:				; CODE XREF: ROM:FAEEj	ROM:FB2Fj
-		cmp	x, #0C2F9h
+loc_FB04:				; CODE XREF: ROM:FAEEj	ROM:FB2Fj
+		and	a, #0F9h
 		bra	loc_FB27
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
@@ -12075,7 +12109,7 @@ loc_FB29:				; CODE XREF: ROM:FB10j
 
 loc_FB2D:				; CODE XREF: ROM:FAD9j
 		cmpb	a, #40h
-		bne	loc_FB03+1
+		bne	loc_FB04
 
 loc_FB31:				; CODE XREF: ROM:FADEj	ROM:FB0Aj
 		or	a, #08h
@@ -12096,11 +12130,14 @@ loc_FB47:				; CODE XREF: ROM:loc_FB3Dj
 		setb	bit6, unk_4D
 
 loc_FB49:				; CODE XREF: ROM:FB45j
-		tbbs	bit1, unk_40, loc_FB4E+1
+		tbbs	bit1, unk_40, loc_FB4F
 		setb	bit3, unk_4F
+; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+		.db  8Ch ; Œ		; cmp x, three byte NOP
+; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
-loc_FB4E:				; CODE XREF: ROM:loc_FB49j
-		cmp	x, #779Fh
+loc_FB4F:				; CODE XREF: ROM:loc_FB49j
+		setb	bit4, unk_4F
 
 loc_FB51:				; CODE XREF: ROM:FB2Bj	ROM:FB43j
 		st	a, y + 00h
@@ -12174,30 +12211,30 @@ loc_FBAD:				; CODE XREF: ROM:FB5Dj	ROM:loc_FBA2j ...
 		st	d, y + 02h
 		ret
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
-		setb	bit1, unk_40
+		setb	bit1, unk_40	; called from F7FE
 		ld	y, #0128h
 		jsr	loc_FAB3
-		jmp	loc_F805
+		jmp	loc_F805	; test bit7 of unk_46, read more data from serial port if set, otherwise terminate interrupt
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
-		ld	x, #0114h
+		ld	x, #0114h	; called from F7FE
 		bra	loc_FBCD
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
-		ld	x, #0115h
+		ld	x, #0115h	; called from F7FE
 		bra	loc_FBCD
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
-		ld	x, #0116h
+		ld	x, #0116h	; called from F7FE
 		bra	loc_FBCD
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
-		ld	x, #0117h
+		ld	x, #0117h	; called from F7FE
 
 loc_FBCD:				; CODE XREF: ROM:FBBEj	ROM:FBC3j ...
 		mov	a, b
 		clr	a
-		div	d, #15h
+		div	d, #021
 		st	b, x + 00h
-		jmp	loc_F805
+		jmp	loc_F805	; test bit7 of unk_46, read more data from serial port if set, otherwise terminate interrupt
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
-		setb	bit1, unk_49
+		setb	bit1, unk_49	; called from F7FE
 		jsr	SaturateData
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 		.db  24h ; $
@@ -12207,7 +12244,7 @@ loc_FBCD:				; CODE XREF: ROM:FBBEj	ROM:FBC3j ...
 		clrb	bit1, unk_49
 		bra	loc_FBEE
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
-		setb	bit3, unk_49
+		setb	bit3, unk_49	; called from F7FE
 		jsr	SaturateData
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 		.db  24h ; $
@@ -12217,25 +12254,25 @@ loc_FBCD:				; CODE XREF: ROM:FBBEj	ROM:FBC3j ...
 		clrb	bit3, unk_49
 
 loc_FBEE:				; CODE XREF: ROM:FBDDj	ROM:FBE1j ...
-		jmp	loc_F805
+		jmp	loc_F805	; test bit7 of unk_46, read more data from serial port if set, otherwise terminate interrupt
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
-		clrb	bit5, unk_49
+		clrb	bit5, unk_49	; called from F7FE
 		cmp	a, #17h
 		bcs	loc_FC03
 		setb	bit5, unk_49
 		bra	loc_FC03
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
-		clrb	bit4, unk_49
+		clrb	bit4, unk_49	; called from F7FE
 		cmp	a, #17h
 		bcs	loc_FC03
 		setb	bit4, unk_49
 
 loc_FC03:				; CODE XREF: ROM:FBF5j	ROM:FBF9j ...
-		jmp	loc_F805
+		jmp	loc_F805	; test bit7 of unk_46, read more data from serial port if set, otherwise terminate interrupt
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
-		xor	a, #0FFh
+		xor	a, #0FFh	; called from F7FE
 		st	a, unk_FB
-		jmp	loc_F805
+		jmp	loc_F805	; test bit7 of unk_46, read more data from serial port if set, otherwise terminate interrupt
 
 ; ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ S U B	R O U T	I N E ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ
 
@@ -13058,7 +13095,7 @@ loc_FC4C:				; CODE XREF: sub_FC0D+6j sub_FC0D+13j	...
 		.db  5Fh ; _
 		.db  5Fh ; _
 		.db  5Fh ; _
-		.db  5Fh ; _
+unk_FF49:	.db  5Fh ; _
 		.db  5Fh ; _
 		.db  5Fh ; _
 		.db  5Fh ; _

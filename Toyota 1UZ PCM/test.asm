@@ -67,35 +67,17 @@ reset:
 	ld    	#$02, _OMODE	; change to mode 6
 	di    			; disable interrupts
 	ld    	s, #$01bf	; set stack near top of RAM
-	ld    	#18h, _SMRC_SIR	; set SMRC cintrol reg to 0001 1000
-
-	clr	_IRQL
-	clr	_IRQLL
-	clr	_IMASK	;danger! danger! high voltage!
-	ld	#40h,_IMASKL
-	ld      #0FFh, _TAIT
-	ld      #0fFh, _TIMER3
-	
-	ei
-infloop bra	infloop
+	ld    	#17h, _SMRC_SIR	; set SMRC cintrol reg to 0001 1000
+	ld      #08h, $1d
 
 start	ld	d,_TIMER
 delay	cmp	d,_TIMER
 	ble	delay
-
-
-	ld	a,_IRQL
-	jsr	putch
-	ld	a,_IRQLL
-	jsr	putch
-	ld	a,_TAIT
-	jsr	putch
-	ld	a,_TIMER3
-	jsr	putch
+	clrb    bit1, _SSD
 	ld	a,#$55
 	jsr	putch
 
-	ei
+	
 
 	bra	start
 
