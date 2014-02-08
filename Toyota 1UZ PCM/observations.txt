@@ -176,7 +176,7 @@ tx to adc	pin value returned
 ===================================
 01		28 VTA1
 03		27 VTA2
-05		26
+05		26 +B/4
 07		25 OXL1
 09		24 OXL2
 0B		23 OXR1
