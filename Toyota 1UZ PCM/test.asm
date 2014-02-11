@@ -67,18 +67,23 @@ reset:
 	ld    	#$02, _OMODE	; change to mode 6
 	di    			; disable interrupts
 	ld    	s, #$01bf	; set stack near top of RAM
-	ld    	#17h, _SMRC_SIR	; set SMRC cintrol reg to 0001 1000
-	ld      #08h, $1d
+	ld    	#18h, _SMRC_SIR	; set SMRC cintrol reg to 0001 1000
 
-start	ld	d,_TIMER
+crap	ld	a,#$0FF
+	clr	b
+	st	a,_DOUT
+	st	b,_DOUT	
+
+
+
+start	ld	#$0FF,_DOUT
+	ld	d,_TIMER
+	add	d, #1000
 delay	cmp	d,_TIMER
-	ble	delay
-	clrb    bit1, _SSD
-	ld	a,#$55
-	jsr	putch
-
-	
-
+	bgt	delay		;delay while D>Timer (D-Timer !=0), must hit it precisly.
+	clr	_DOUT
+;	ld	a,#$55
+;	jsr	putch
 	bra	start
 
 ;=========================================================================putch

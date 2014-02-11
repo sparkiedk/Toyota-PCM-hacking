@@ -1,8 +1,12 @@
 IC's are 64 pin Plastic Dual inline package, 0.070" pin pitch, 0.750 row pitch
 
 d151803-1320 (IC501)
+======================
 closest to d151802-7140 presumed knock sensing microprocessor
 12MHz input clock
+Bus rate is Xin/6
+CCLK is Xin/12
+
 1	NCO+ (tranny od clutch)
 2	/SPD
 3	high to vcc
@@ -34,6 +38,10 @@ closest to d151802-7140 presumed knock sensing microprocessor
 
 d151803-9260 (IC502)
 16MHz input clock
+Bus rate is Xin/6
+CCLK is Xin/16
+Timer word increment rate is 250kHz
+
 1	/KS (air flow meter signal) (ASR1)
 2	IGF1 (ASR0)
 3	high to vcc
@@ -125,8 +133,8 @@ d151803-9260 (IC502)
 55 DOUT6 
 54 DOUT7 
 53 WDC 
-52 INIT 
-51 HALT 
+52 /INIT (/RESET)
+51 /HALT 
 50 WI 
 49 TEST 
 48 PC0 
