@@ -69,18 +69,21 @@ reset:
 	ld    	s, #$01bf	; set stack near top of RAM
 	ld    	#18h, _SMRC_SIR	; set SMRC cintrol reg to 0001 1000
 
-crap	ld	a,#$0FF
-	clr	b
-	st	a,_DOUT
-	st	b,_DOUT	
-
+	ld	#08,$1d
+crap	ld	#$55,$1e
+	
+	ld	d,_TIMER
+	add	d, #1000
+delay	cmp	d,_TIMER
+	bgt	delay		;delay while D>Timer (D-Timer !=0), must hit it precisly.
+	bra 	crap
 
 
 start	ld	#$0FF,_DOUT
 	ld	d,_TIMER
 	add	d, #1000
-delay	cmp	d,_TIMER
-	bgt	delay		;delay while D>Timer (D-Timer !=0), must hit it precisly.
+delay1	cmp	d,_TIMER
+	bgt	delay1		;delay while D>Timer (D-Timer !=0), must hit it precisly.
 	clr	_DOUT
 ;	ld	a,#$55
 ;	jsr	putch

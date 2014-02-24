@@ -18,6 +18,17 @@ CCLK is Xin/12
 10	low
 11	400ns low pulses
 12	high to vcc
+13	CLK	1MHz
+14	output	20us high pulse every 4ms, which occasionally expands in duty cycle. (SIN3), same signal at pin 15 of 1320
+15	input	20us high pulse every 4ms, which occasionally expands in duty cycle. (SIN2), same signal at pin 14 of 1320
+16	SIN1
+17	SIN0	input from IC301
+18	SOUT1
+19	SOUT0
+
+43		data input 1Mbit to 45 of 9260
+44	clk 1MHz to 44 of 1320
+45	data ouput 1Mbit to 43 of 9260
 
 49	high to vcc
 50	high
@@ -51,40 +62,58 @@ Timer word increment rate is 250kHz
 8 	1MHz sq. wave
 9	low
 10	high
-11	400ns low pulses
+11	OS	400ns low pulses
 12	high to vcc
-13	1MHz square wave - to 1k then to 9+10 of ADC
-14	20us high pulse every 4ms, which occasionally expands in duty cycle. (SIN3)
-15	20us high pulse every 4ms, which occasionally expands in duty cycle. (SIN2)
-16	serial 500kBit min (SIN1)
-17	serial 1MBit min to 1k then to pin 8 of ADC (SIN0)
-18	high (SOUT1)
-19	serial 1MBit min to 750 ohm then to pin 7 of ADC (SOUT0)
-20	high	
-21	high
-22	1.5us pulse every 4ms
-23	high
-24	/ISC4
-25	/ISC3
-26	/ISC2
-27	/ISC1
-28	high
-29	high
-30	A5 to pin 7 of MP908, short low pulse beginning at next NE trailing edge after g2 trailing edge, ends at subsequent NE trailing edge
-31	A4 to pin 6 of MP908, short low pulse beginning at next NE trailing edge after g1 trailing edge, ends at subsequent NE trailing edge
-32	low
-38	/FPU
-49	high to vcc
-50	high
-51	high
-52	high
-53	low
-54	#40 output
-55	#30 output
-56	#20 output
-57	#10 output
-
-61	looks like IGT output for all sparks, multiplexed by MP908 (iHope)
+13	CLK	1MHz square wave - to 1k then to 9+10 of ADC
+14	output	20us high pulse every 4ms, which occasionally expands in duty cycle. (SIN3), same signal at pin 15 of 1320
+15	input 	20us high pulse every 4ms, which occasionally expands in duty cycle. (SIN2), same signal at pin 14 of 1320
+16	SIN1	serial probably 1MBit
+17	SIN0	serial 1MBit min to 1k then to pin 8 of ADC
+18	SOUT1
+19	SOUT0	serial 1MBit min to 750 ohm then to pin 7 of ADC
+20	PORTB7	high	
+21		high
+22	PORTB5	1.5us pulse every 4ms to pin 3 of 6336
+23		high
+24		/ISC4
+25		/ISC3
+26		/ISC2
+27	PORTB0	/ISC1
+28	PORTA7	high
+29		high
+30		A5 to pin 7 of MP908, short low pulse beginning at next NE trailing edge after g2 trailing edge, ends at subsequent NE trailing edge
+31		A4 to pin 6 of MP908, short low pulse beginning at next NE trailing edge after g1 trailing edge, ends at subsequent NE trailing edge
+32		GND
+-------
+33
+34
+35
+36	PORTA0	~8ms square wave to mp908 pin 8
+37	PORTD3
+38		/FPU
+39		30us pulse every ~4ms to pin 7 of IC302, NOT of signal to IC 303
+40	PORTD0
+41	PORTC7
+42	PORTC6
+43	PORTC5	data input 1Mbit to 45 of 1320
+44	PORTC4	clk 1MHz to 44 of 1320
+45	PORTC3	data ouput 1Mbit to 43 of 1320
+46	PORTC2	pin 14 of 6336 8 rising edge clock burst @ 1MHz every ~4ms
+47	PORTC1
+48	PORTC0
+49	TEST	high to vcc
+50	WI	high
+51	/HALT	high
+52	/RESET	high
+53	WDC	low
+54	DOUT7	#40 output
+55		#30 output
+56		#20 output
+57		#10 output
+58
+59
+60
+61	DOUT0	IGT output for all sparks, multiplexed by MP908
 62	/G1
 63	/NE
 
@@ -202,3 +231,13 @@ tx to adc	pin value returned
 06:0B
 1E:00	presumably converts pins tied to gnd on low side of chip
 1F:00	presumably converts pins tied to gnd on low side of chip
+
+d151821-0090
+
+1	+12 vcc
+
+7	/cs ?
+8	+5 vcc
+10	sout
+11	clk
+12	gnd
