@@ -26,7 +26,7 @@ CCLK is Xin/12
 18	SOUT1
 19	SOUT0
 
-43		data input 1Mbit to 45 of 9260
+43	data input 1Mbit to 45 of 9260
 44	clk 1MHz to 44 of 1320
 45	data ouput 1Mbit to 43 of 9260
 
@@ -99,7 +99,7 @@ Timer word increment rate is 250kHz
 44	PORTC4	clk 1MHz to 44 of 1320
 45	PORTC3	data ouput 1Mbit to 43 of 1320
 46	PORTC2	pin 14 of 6336 8 rising edge clock burst @ 1MHz every ~4ms
-47	PORTC1
+47	PORTC1	tx data from unk_1e
 48	PORTC0
 49	TEST	high to vcc
 50	WI	high
