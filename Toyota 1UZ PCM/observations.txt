@@ -221,10 +221,10 @@ tx to adc	pin value returned
 0F		21 THW
 11		20 THA
 13		19 THG
-15		18
-17		17
-19		16 
-1B		15
+15		18 10k to ground (R097)
+17		17 ABS pressure sensor inside PCM
+19		16 10K to ground (R420)
+1B		15 10K to ground (R421)
 
 
 02:EB
@@ -233,7 +233,7 @@ tx to adc	pin value returned
 1F:00	presumably converts pins tied to gnd on low side of chip
 
 d151821-0090
-
+=============
 1	+12 vcc
 
 7	/cs ?
@@ -241,3 +241,7 @@ d151821-0090
 10	sout
 11	clk
 12	gnd
+
+d IS121
+========
+absolute pressure sensor.

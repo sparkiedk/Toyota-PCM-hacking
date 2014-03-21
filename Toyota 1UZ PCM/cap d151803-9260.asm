@@ -51,15 +51,17 @@ ASR1N:		.block 1		; DATA XREF: __RESET+28r intASR1r ...
 					; ASR1 neg edge	counter	value MSB
 ASR1NL:		.block 1		; DATA XREF: __RESET+2Br
 					; ASR1 neg edge	counter	value LSB
-ASR2:		.block 2		; DATA XREF: sub_C010+52w IV0+14w ...
+ASR2:		.block 2		; DATA XREF: sub_C010+52w intSINx+14w	...
 					; ASR2 edge counter value MSB
 ASR3:		.block 1		; DATA XREF: sub_C010+31w __RESET+26w	...
 					; ASR3 edge counter value MSB
 ASR3L:		.block 1		; ASR3 edge counter value LSB
-unk_1C:		.block 1		; DATA XREF: IV0+2r
-unk_1D:		.block 1		; DATA XREF: sub_D47F:loc_D489r
+unk_1C:		.block 1		; DATA XREF: intSINx+2r
+unk_1D:		.block 1		; DATA XREF: write6336:loc_D489r
 					; __RESET+15r ...
-unk_1E:		.block 1		; DATA XREF: sub_D47F+6w
+					; bit3 seems to	be a uart global clock output enable
+SIDR_SODR2:	.block 1		; DATA XREF: write6336+6w
+					; write	data is	tx'd on pin 47, read data is from pin 48
 OMODE:		.block 1		; DATA XREF: __RESETr
 					; Mode control Register
 PORTA:		.block 1		; DATA XREF: sub_D2B9+61r sub_D415r ...
@@ -82,7 +84,7 @@ PORTC:		.block 1		; DATA XREF: sub_D2B9+72r sub_D2B9+90r ...
 					; Port C Data Register
 PORTD_ASRIN:	.block 1		; DATA XREF: __RESET+31r __RESET+645r	...
 					; Port D Data Register / ASR Input Data
-RAMST:		.block 1		; DATA XREF: IV0r ROM:CE8Er ...
+RAMST:		.block 1		; DATA XREF: intSINxr ROM:CE8Er ...
 					; Built-in RAM status
 SSD:		.block 1		; DATA XREF: sub_D2B9:loc_D3B5r
 					; sub_D45F+16r	...
@@ -97,12 +99,12 @@ IMASK:		.block 1		; DATA XREF: sub_D2B9+Aw __RESET+50w ...
 IMASKL:		.block 1		; Interrupt Request Mask LSB
 unk_30:		.block 1
 unk_31:		.block 1
-		.block 1
+unk_32:		.block 1
 		.block 1
 unk_34:		.block 1
 		.block 1
 		.block 1
-		.block 1
+unk_37:		.block 1
 CPR4:		.block 2		; Only written to in DoInjectors
 CPR5:		.block 2
 CPR6:		.block 2
@@ -114,37 +116,39 @@ CPR7:		.block 2
 ; Segment type:	Pure data
 		;.segment RAM
 		.org 40h
-unk_40:		.block 1		; DATA XREF: sub_C64D+28r sub_C64D+A6r ...
-unk_41:		.block 1		; DATA XREF: sub_C64D+19Ar ROM:CC23r ...
-unk_42:		.block 1		; DATA XREF: __RESET+57Er __RESET+581r ...
-unk_43:		.block 1		; DATA XREF: sub_C64D+67r ROM:CC77r ...
-unk_44:		.block 1		; DATA XREF: sub_C64D+59r ROM:CC71r ...
-					; bits 543210 will all cause a branch past doinjectors
-unk_45:		.block 1		; DATA XREF: ROM:loc_C918r
+flags_40:	.block 1		; DATA XREF: sub_C64D+28r sub_C64D+A6r ...
+flags_41:	.block 1		; DATA XREF: sub_C64D+19Ar ROM:CC23r ...
+flags_42:	.block 1		; DATA XREF: __RESET+57Er __RESET+581r ...
+flags_43:	.block 1		; DATA XREF: sub_C64D+67r ROM:CC77r ...
+					; bit3:	AFM bad	bit4: rev limiter
+flags_44:	.block 1		; DATA XREF: sub_C64D+59r ROM:CC71r ...
+					; bit3:	rev limiter, bits 543210 will all cause	a branch past doinjectors
+flags_45:	.block 1		; DATA XREF: ROM:loc_C918r
 					; ROM:loc_C952r ...
-unk_46:		.block 1		; DATA XREF: __RESET:loc_DE48r
+flags_46:	.block 1		; DATA XREF: __RESET:loc_DE48r
 					; __RESET+B2Cr	...
-unk_47:		.block 1		; DATA XREF: sub_C64D+4Dr sub_C64D+84r ...
-unk_48:		.block 1		; DATA XREF: __RESET+A49r
+flags_47:	.block 1		; DATA XREF: sub_C64D+4Dr sub_C64D+84r ...
+flags_48:	.block 1		; DATA XREF: __RESET+A49r
 					; __RESET:loc_DF31r ...
-unk_49:		.block 1		; DATA XREF: sub_C64D:loc_C666r
+flags_49:	.block 1		; DATA XREF: sub_C64D:loc_C666r
 					; sub_C64D+1Cr	...
 					; bits 1-3-4-5 are oxl1-oxr1-oxl2-oxr2
-unk_4A:		.block 1		; DATA XREF: __RESET:loc_D9FCr
+flags_4A:	.block 1		; DATA XREF: __RESET:loc_D9FCr
 					; __RESET+8B0r	...
-unk_4B:		.block 1		; DATA XREF: ROM:C91Br	ROM:C95Er ...
-unk_4C:		.block 1		; DATA XREF: sub_C64D+2r ROM:C965r ...
+flags_4B:	.block 1		; DATA XREF: ROM:C91Br	ROM:C95Er ...
+flags_4C:	.block 1		; DATA XREF: sub_C64D+2r ROM:C965r ...
 					; bit 7	demands	a sampling of the oxygen sensors
-unk_4D:		.block 1		; DATA XREF: ROM:C920r	ROM:C923r ...
-unk_4E:		.block 1		; DATA XREF: ROM:C928r	ROM:C92Ew ...
-unk_4F:		.block 1		; DATA XREF: ROM:loc_C946r ROM:C94Aw ...
-unk_50:		.block 1		; DATA XREF: sub_C23A+1r sub_C23F+1r ...
-unk_51:		.block 1		; DATA XREF: divDbyXw divDbyX+9r ...
-unk_52:		.block 1		; DATA XREF: sub_C64D+10Cw
+flags_4D:	.block 1		; DATA XREF: ROM:C920r	ROM:C923r ...
+flags_4E:	.block 1		; DATA XREF: ROM:C928r	ROM:C92Ew ...
+flags_4F:	.block 1		; DATA XREF: ROM:loc_C946r ROM:C94Aw ...
+flags_50:	.block 1		; DATA XREF: sub_C23A+1r sub_C23F+1r ...
+					; could	be bits	for 6336 output	chip
+temp_51:	.block 1		; DATA XREF: divDbyXw divDbyX+9r ...
+temp_52:	.block 1		; DATA XREF: sub_C64D+10Cw
 					; sub_C64D+15Br ...
-unk_53:		.block 1		; DATA XREF: DivDby12+6w
+temp_53:	.block 1		; DATA XREF: DivDby12+6w
 					; ThreeDtable+Br ...
-unk_54:		.block 1		; DATA XREF: DivDby12w	DivDby12+8r ...
+temp_54:	.block 1		; DATA XREF: DivDby12w	DivDby12+8r ...
 unk_55:		.block 1		; DATA XREF: ROM:CEE4w	ROM:loc_CEF3r ...
 unk_56:		.block 1		; DATA XREF: ROM:CEE8w	ROM:CF2Fr ...
 unk_57:		.block 1		; DATA XREF: ROM:CEFAw	ROM:CF01r ...
@@ -156,10 +160,11 @@ ModuloNE:	.block 1		; DATA XREF: ROM:ED46w	ROM:intASR2_39r ...
 THG:		.block 1		; DATA XREF: sub_D2B9+46r
 					; __RESET:loc_E6D5r ...
 					; THG lookup table output from exhaust gas temp	sensor ADC reading
-unk_5D:		.block 1		; DATA XREF: ROM:CAB0r	__RESET+2DFr ...
-					; adc pin 17 related
+ATM_press:	.block 1		; DATA XREF: ROM:CAB0r	__RESET+2DFr ...
+					; adc pin 17 - PCM atmospheric pressure	sensor,	debiased and scaled
 unk_5E:		.block 1		; DATA XREF: sub_C64D:loc_C826r
 					; ROM:CA72r ...
+					; could	be last	unk_100, or 0
 unk_5F:		.block 1		; DATA XREF: __RESET:loc_D826r
 					; __RESET+FE8r	...
 deltaNE:	.block 1		; DATA XREF: ReInitNEIGT+Ew ROM:ECB3r
@@ -172,31 +177,34 @@ threeDeltaNEl:	.block 1		; DATA XREF: ROM:ECE8r	calcIGT_time+5r
 NEcounts:	.block 1		; DATA XREF: ROM:C961r	ROM:CE57r ...
 unk_67:		.block 1		; DATA XREF: IV6+1Aw IV6+2Ew ...
 KS_count:	.block 1		; DATA XREF: IV6+73r IV6+7Br ...
-					; deltaKS related
+					; counts KS interrupts,	reset in IV6
 unk_69:		.block 1		; DATA XREF: IV6+98r IV6+9Dw ...
 VTA_net:	.block 2		; DATA XREF: calcInjPW+8r __RESET+2BBr ...
 unk_6C:		.block 1		; DATA XREF: __RESET+B3w __RESET+44Dr	...
 					; sort of a filtered, saturated	VTA_net
-unk_6D:		.block 1		; DATA XREF: sub_C64D+48r
+byte_6D:	.block 1		; DATA XREF: sub_C64D+48r
 					; sub_C64D:loc_C702r ...
-word_6E:	.block 2		; DATA XREF: __RESET:loc_D784w
+					; signed change	in load	from average
+LOAD:		.block 2		; DATA XREF: __RESET:loc_D784w
 					; __RESET+2FFr	...
-					; load-ish
+					; Load,	uncompensated for ThA
 unk_70:		.block 1		; DATA XREF: ROM:CFE2r	ROM:D01Ew ...
 unk_71:		.block 1		; DATA XREF: ROM:CFE7r	ROM:loc_CFFAw ...
 unk_72:		.block 1		; DATA XREF: ROM:loc_CFDDr ROM:CFFCr ...
 ADC_count:	.block 1		; DATA XREF: IV6:loc_F3D0r intSIN0+26r ...
 ADC_TXed:	.block 1		; DATA XREF: sub_D45F+2w IV6+480w ...
 					; MSb signifies	next TX	value is 02
-unk_75:		.block 1		; DATA XREF: IV6:loc_F3CAr
+unk_75:		.block 1		; DATA XREF: IV6:IV6_TXadcr
 					; IV6:loc_F3F6w ...
 unk_76:		.block 1		; DATA XREF: IV6+4B5r IV6:loc_F433w ...
 unk_77:		.block 1		; DATA XREF: __RESET+26Ar __RESET+26Fw ...
-word_78:	.block 2		; DATA XREF: __RESET:loc_D72Fr
+meanKSint:	.block 2		; DATA XREF: __RESET:loc_D72Fr
 					; __RESET+288r	...
-					; deltaKS/unk_68, filtered
+					; deltaKS/KS_count, filtered
 word_7A:	.block 2		; DATA XREF: TwoD_7Ar __RESET+315w ...
+					; meanKSint divided by a air temp comp factor
 unk_7C:		.block 1		; DATA XREF: sub_D257+3r sub_D257+Dr ...
+					; counter
 unk_7D:		.block 1		; DATA XREF: ROM:C940r	ROM:C944w ...
 unk_7E:		.block 1		; DATA XREF: ROM:CDC0r	__RESET+132Er ...
 unk_7F:		.block 1		; DATA XREF: __RESET+1653w
@@ -235,7 +243,7 @@ word_9E:	.block 2		; DATA XREF: sub_D688+3Fw
 		.org 0A0h
 unk_A0:		.block 1		; DATA XREF: sub_D688+41w
 		.block 1
-unk_A2:		.block 1		; DATA XREF: sub_C64D+3Cr ROM:C972r ...
+flags_A2:	.block 1		; DATA XREF: sub_C64D+3Cr ROM:C972r ...
 					; contains bitflags, bit7 VTA_net related
 unk_A3:		.block 1		; DATA XREF: __RESET:loc_DA55r
 					; __RESET+5D8w	...
@@ -262,7 +270,7 @@ unk_B1:		.block 1		; DATA XREF: IVc+44r IVc:loc_F388w ...
 unk_B2:		.block 1		; DATA XREF: intASR1+5r
 					; intASR1:loc_F726r ...
 unk_B3:		.block 1		; DATA XREF: __RESET+241w __RESET+DE1r ...
-unk_B4:		.block 1		; DATA XREF: IV6+19Dr IV6:loc_F10Dw ...
+unk_B4:		.block 1		; DATA XREF: IV6+19Dr IV6:IV6_38w ...
 		.block 1
 		.block 1
 unk_B7:		.block 1		; DATA XREF: ROM:F925w	ROM:F92Ar ...
@@ -317,10 +325,10 @@ unk_D4:		.block 1		; DATA XREF: sub_D1EF+17r
 unk_D5:		.block 1		; DATA XREF: __RESET+463r
 					; __RESET:loc_D91Fw ...
 unk_D6:		.block 1		; DATA XREF: ROM:loc_FA63w ROM:FA70w ...
-unk_D7:		.block 1		; DATA XREF: IV6:loc_F0DAr IV6+17Bw ...
+unk_D7:		.block 1		; DATA XREF: IV6:IV6_33r IV6+17Bw ...
 unk_D8:		.block 1		; DATA XREF: sub_C64D+E8r
 					; sub_C64D:loc_C755w ...
-		.block 1
+unk_D9:		.block 1
 unk_DA:		.block 1		; DATA XREF: sub_C4DF+6r
 					; sub_C505:loc_C512w ...
 unk_DB:		.block 1		; DATA XREF: __RESET:loc_D621w
@@ -329,8 +337,7 @@ unk_DC:		.block 1		; DATA XREF: __RESET+16Fw __RESET+A1Fw ...
 unk_DD:		.block 1		; DATA XREF: __RESET+A47w __RESET+B76r ...
 unk_DE:		.block 1		; DATA XREF: __RESET+AF3r
 					; __RESET:loc_E175r ...
-unk_DF:		.block 1		; DATA XREF: __RESET+AF8w __RESET+CDFr ...
-		.block 1
+word_DF:	.block 2		; DATA XREF: __RESET+AF8w __RESET+CDFr ...
 unk_E1:		.block 1		; DATA XREF: __RESET:loc_DEE7r
 					; __RESET+A70r	...
 unk_E2:		.block 1		; DATA XREF: __RESET+BA2w IV6+678r ...
@@ -340,8 +347,9 @@ unk_E5:		.block 1		; DATA XREF: ROM:ED53r	ROM:intASR2_24w ...
 unk_E6:		.block 1		; DATA XREF: ROM:EDA8r	ROM:EDADw ...
 		.block 1
 unk_E8:		.block 1		; DATA XREF: ROM:intASR2_32r ROM:EDD8w ...
-unk_E9:		.block 1		; DATA XREF: IV6+B6r IV6:loc_F023w ...
-unk_EA:		.block 1		; DATA XREF: IV6+1B4r IV6+1B9w ...
+unk_E9:		.block 1		; DATA XREF: IV6+B6r IV6:IV6_13w ...
+badKScount:	.block 1		; DATA XREF: IV6+1B4r IV6+1B9w ...
+					; Incremented by IV6, cleared by KS interrupt
 unk_EB:		.block 1		; DATA XREF: IV6+1A2r IV6+1C1w ...
 		.block 1
 		.block 1
@@ -349,7 +357,8 @@ unk_EB:		.block 1		; DATA XREF: IV6+1A2r IV6+1C1w ...
 		.block 1
 RPM:		.block 2		; DATA XREF: ROM:TwoD_RPMr ThreeD_RPMr ...
 					; MSB is RPM/50, LSB is	fraction of 50
-word_F2:	.block 2		; DATA XREF: ROM:CAFBr	ROM:CCF7r ...
+compLOAD:	.block 2		; DATA XREF: ROM:CAFBr	ROM:CCF7r ...
+					; air temp compensated Load
 unk_F4:		.block 1		; DATA XREF: __RESET+1728w
 					; last VTA_net
 unk_F5:		.block 1		; DATA XREF: __RESET+172Dw
@@ -363,8 +372,8 @@ unk_F8:		.block 1		; DATA XREF: __RESET+1707w
 unk_F9:		.block 1		; DATA XREF: __RESET+488r IV6+5EAr ...
 rawTHA:		.block 1		; DATA XREF: sub_C61C+5r __RESET+2D0r	...
 					; Contains the NOT of air temp reading from ADC, sensor	is tied	to ground on other side
-unk_FB:		.block 1		; DATA XREF: ROM:FC08w
-					; adc converter	pin 18 NOT'ed
+ADC_pin18:	.block 1		; DATA XREF: ROM:FC08w
+					; 0V NOT'ed, so 255
 		.block 1
 		.block 1
 		.block 1
@@ -388,33 +397,38 @@ unk_109:	.block 1		; DATA XREF: ROM:CE27r	__RESET+458r ...
 		.block 1
 unk_110:	.block 1		; DATA XREF: ReInitCounters+8w
 					; __RESET:loc_DEAEw ...
+					; related to pulsewidth*RPM/195, fuel flow for pump controller?
 unk_111:	.block 1		; DATA XREF: IV6+153r IV6+168w
 unk_112:	.block 1		; DATA XREF: ReInitCounters+2w
 					; IV6+104w ...
 unk_113:	.block 1		; DATA XREF: ReInitCounters:ReInitCNT_1w
 					; IV6+119r ...
-unk_114:	.block 1		; DATA XREF: calcInjPW+18r
+ADC_pin16:	.block 1		; DATA XREF: calcInjPW+18r
 					; __RESET+393r	...
-					; adc pin 16
-unk_115:	.block 1		; DATA XREF: __RESET+D08r
+					; adc pin 16 (0V)
+ADC_pin15:	.block 1		; DATA XREF: __RESET+D08r
 					; __RESET+1464r
-					; adc pin 15
-unk_116:	.block 1		; DATA XREF: __RESET+D0Er
+					; adc pin 15 (0V)
+ADC_rq1D:	.block 1		; DATA XREF: __RESET+D0Er
 					; __RESET+1624r
-					; adc request 1D
-unk_117:	.block 1		; DATA XREF: __RESET+10FBr
+					; adc request 1D (probably pin 14, 0V)
+ADC_rq1F:	.block 1		; DATA XREF: __RESET+10FBr
 					; __RESET+12A1r
-					; adc request 1F
+					; adc request 1F (probably pin 13, 0V)
 lastASR1N:	.block 2		; DATA XREF: intASR1+2r intASR1+4Aw
 deltaKS:	.block 1		; DATA XREF: IV6+70r IV6+8Cw ...
-					; Cumulative sum of KS intervals, counted by unk_68
+					; Cumulative sum of KS intervals, counted by KS_count, reset in	IV6
 deltaKSl:	.block 1		; DATA XREF: IV6+78r IV6+8Fw
-unk_11C:	.block 1		; DATA XREF: sub_C003+7w sub_C010+8r ...
+asr0n_shadow:	.block 1		; DATA XREF: sub_C003+7w sub_C010+8r ...
+					; stores configuration information written to asr0n
 unk_11D:	.block 1		; DATA XREF: __RESET+120Er
 					; __RESET:loc_E6CDw
+					; some kind of counter
 unk_11E:	.block 1		; DATA XREF: IV6+622r IV6:loc_F5A0w
 unk_11F:	.block 1		; DATA XREF: __RESET+C4w __RESET+A61r	...
-unk_120:	.block 1		; DATA XREF: IVc:loc_F3A7r IVc+9Fw ...
+					; ISC related
+unk_120:	.block 1		; DATA XREF: IVc:ISC_altr IVc+9Fw ...
+					; ISC output bits is lsN
 unk_121:	.block 1		; DATA XREF: __RESET+ACAw __RESET+BEEr ...
 unk_122:	.block 1		; DATA XREF: ROM:FA17r	ROM:loc_FA4Br
 					; VTA1 Flags
@@ -460,7 +474,7 @@ unk_145:	.block 1		; DATA XREF: ROM:CFC0w	__RESET+C9w
 unk_146:	.block 1		; DATA XREF: ROM:C930r	ROM:C93Aw ...
 unk_147:	.block 1		; DATA XREF: ROM:CBD9r	ROM:CBDEw ...
 		.block 1
-		.block 1
+unk_149:	.block 1
 unk_14A:	.block 1		; DATA XREF: ROM:CAD5r	ROM:CB28r ...
 		.block 1
 unk_14C:	.block 1		; DATA XREF: sub_C64D+DFr ROM:CB1Fr
@@ -489,19 +503,21 @@ unk_161:	.block 1		; DATA XREF: ROM:CFC5w	__RESET+CCw
 unk_162:	.block 1		; DATA XREF: ROM:C933r	ROM:C93Dw ...
 unk_163:	.block 1		; DATA XREF: ROM:CBE1r	ROM:CBE6w ...
 InjectPW1:	.block 2		; DATA XREF: calcInjPW+2Aw __RESET+83w ...
-					; pulsewidth for most cases/cylinders
+					; pulsewidth for most cases/cylinders, 4us/bit
 InjectPW2:	.block 2		; DATA XREF: calcInjPW+2Dw __RESET+86w ...
 					; For the rest of the time
 InjDeadtime:	.block 2		; DATA XREF: __RESET+8Cw __RESET+9CEr	...
-					; probably deadtime, have to chase out ADC code
+					; injector deadtime, 4us/bit
 word_16A:	.block 2		; DATA XREF: __RESET+92w __RESET+3DBw	...
 word_16C:	.block 2		; DATA XREF: __RESET+95w
 					; __RESET:loc_D899w ...
 word_16E:	.block 2		; DATA XREF: __RESET:loc_D858r
 					; __RESET+7F6w	...
+					; inversely temp dependant, additional math elsewhere
 word_170:	.block 2		; DATA XREF: sub_C64D+51r ROM:CABFr ...
-unk_172:	.block 1		; DATA XREF: ROM:CAC2r	__RESET+7D7w ...
-		.block 1
+					; inversely temp dependant, additional math elsewhere
+word_172:	.block 2		; DATA XREF: ROM:CAC2r	__RESET+7D7w ...
+					; inversely temp dependant, additional math elsewhere
 unk_174:	.block 1		; DATA XREF: __RESET:loc_DCA3w
 					; __RESET+936r	...
 unk_175:	.block 1		; DATA XREF: sub_C64D+218r sub_C8BB+Fr ...
@@ -567,6 +583,7 @@ unk_19D:	.block 1		; DATA XREF: sub_F1A9:loc_F1B2r
 					; sub_F1A9+Fw ...
 unk_19E:	.block 1		; DATA XREF: ROM:intASR2_30r ROM:EDBDw ...
 unk_19F:	.block 1		; DATA XREF: IVc+3Dr IVc+51w ...
+					; ISC related
 unk_1A0:	.block 1		; DATA XREF: __RESET+BCw __RESET+F42r	...
 unk_1A1:	.block 1		; DATA XREF: __RESET+BFw
 					; __RESET:loc_E403r ...
@@ -575,15 +592,16 @@ unk_1A2:	.block 1		; DATA XREF: __RESET+166Fr
 unk_1A3:	.block 1		; DATA XREF: __RESET+165Cw
 					; __RESET:loc_EB3Ar
 lastASR2:	.block 2		; DATA XREF: ROM:EC7Cr	ROM:intASR2_7w	...
-unk_1A6:	.block 1		; DATA XREF: __RESET+341r __RESET+35Er ...
+avgCompLoad:	.block 1		; DATA XREF: __RESET+341r __RESET+35Er ...
 		.block 1
 unk_1A8:	.block 1		; DATA XREF: sub_C4DF+14r __RESET+2FBw ...
+					; looks	like air temp compensation for load
 unk_1A9:	.block 1		; DATA XREF: intSIN0+96r intSIN0+9Fw
 unk_1AA:	.block 1		; DATA XREF: ROM:C987r	ROM:C9ABr ...
 unk_1AB:	.block 1		; DATA XREF: __RESET:loc_EB0Br	IVc+36r ...
 word_1AC:	.block 2		; DATA XREF: __RESET+266w intASR1+2Br
 					; something deltaKS related
-unk_1AE:	.block 1		; DATA XREF: __RESET+DF7r __RESET+E05w ...
+KS_count2:	.block 1		; DATA XREF: __RESET+DF7r __RESET+E05w ...
 unk_1AF:	.block 1		; DATA XREF: __RESET:loc_E2D0r
 					; __RESET:loc_E308w
 unk_1B0:	.block 1		; DATA XREF: __RESET:loc_DC6Dw
@@ -931,11331 +949,13 @@ unk_2DF:	.block 1
 ; Segment type:	Regular
 		;.segment badaddress
 		.org 300h
-unk_300:	.block 1
-		.block 1
+word_300:	.block 2
 word_302:	.block 2
 word_304:	.block 2
 word_306:	.block 2
 unk_308:	.block 1
 ; end of 'badaddress'
 
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
 ; File Name   :	C:\Documents and Settings\Sparkie\Desktop\Toyota PCM hacking\Toyota 1UZ PCM\cap d151803-9260.bin
 ; Format      :	Binary file
 ; Base Address:	0000h Range: C000h - 10000h Loaded length: 4000h
@@ -12275,7 +975,7 @@ sub_C003:				; CODE XREF: __RESET+17Dp
 		ld	#0FEh, unk_A9
 		ld	a, #34h
 		or	a, #0C0h	; kinbda straightforward, =F4
-		st	a, unk_11C
+		st	a, asr0n_shadow	; stores configuration information written to asr0n
 		st	a, ASR0N	; ASR0 neg edge	counter	value MSB
 		ret
 ; End of function sub_C003
@@ -12289,9 +989,9 @@ sub_C010:				; CODE XREF: IV6:loc_F4DEp
 		ble	loc_C025
 		clr	unk_AA
 		di
-		ld	a, unk_11C
+		ld	a, asr0n_shadow	; stores configuration information written to asr0n
 		and	a, #0BFh
-		st	a, unk_11C
+		st	a, asr0n_shadow	; stores configuration information written to asr0n
 		ei
 		st	a, ASR0N	; ASR0 neg edge	counter	value MSB
 		bra	loc_C034
@@ -12307,9 +1007,9 @@ loc_C025:				; CODE XREF: sub_C010+3j
 		clr	unk_AA
 
 loc_C034:				; CODE XREF: sub_C010+13j sub_C010+20j
-		ld	a, unk_11C
+		ld	a, asr0n_shadow	; stores configuration information written to asr0n
 		or	a, #40h
-		st	a, unk_11C
+		st	a, asr0n_shadow	; stores configuration information written to asr0n
 		st	a, ASR0N	; ASR0 neg edge	counter	value MSB
 		ld	d, #38F0h
 		st	d, ASR3		; ASR3 edge counter value MSB
@@ -12318,13 +1018,13 @@ loc_C034:				; CODE XREF: sub_C010+13j sub_C010+20j
 loc_C046:				; CODE XREF: sub_C010+1Cj
 		cmp	#04h, unk_A9
 		ble	locret_C069
-		ld	a, unk_11C
+		ld	a, asr0n_shadow	; stores configuration information written to asr0n
 		and	a, #7Fh
-		st	a, unk_11C
+		st	a, asr0n_shadow	; stores configuration information written to asr0n
 		st	a, ASR0N	; ASR0 neg edge	counter	value MSB
-		ld	a, unk_11C
+		ld	a, asr0n_shadow	; stores configuration information written to asr0n
 		or	a, #80h
-		st	a, unk_11C
+		st	a, asr0n_shadow	; stores configuration information written to asr0n
 		st	a, ASR0N	; ASR0 neg edge	counter	value MSB
 		ld	d, #3900h
 		st	d, ASR2		; ASR2 edge counter value MSB
@@ -12339,8 +1039,8 @@ locret_C069:				; CODE XREF: sub_C010+39j
 ; ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ S U B	R O U T	I N E ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ
 
 
-		; public IV0
-IV0:					; DATA XREF: ROM:FFDEo
+		; public intSINx
+intSINx:				; DATA XREF: ROM:FFDEo
 		ld	b, RAMST	; Built-in RAM status
 		ld	b, unk_1C
 		clrb	bit2, IRQLL	; serial input bit
@@ -12350,12 +1050,12 @@ IV0:					; DATA XREF: ROM:FFDEo
 		bne	iv0part2
 		clr	unk_A9
 
-iv0part2:				; CODE XREF: IV0+Dj
+iv0part2:				; CODE XREF: intSINx+Dj
 		ld	d, #3900h
 		st	d, ASR2		; ASR2 is NE
 		ld	#4Fh, TIMER3	; Timer	LSB (bit0~bit2)
 		reti
-; End of function IV0
+; End of function intSINx
 
 
 ; ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ S U B	R O U T	I N E ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ
@@ -12439,14 +1139,14 @@ MulDbyY3:				; CODE XREF: MulDbyY+1Fj
 ; divide D by X, does some shifting to return ?? bits
 
 divDbyX:				; CODE XREF: __RESET+257p __RESET+29Cp ...
-		st	x, unk_51
+		st	x, temp_51
 		beq	divDbyX_end	; if zero return
 		shr	d
 		mov	d, y
 		clr	a		; clear	d
 		clr	b
 		mov	d, x		; clear	x
-		ld	d, unk_51
+		ld	d, temp_51
 
 divDbyX1:				; CODE XREF: divDbyX+Fj
 		bmi	divDbyX2	; shift	left until msb is 1
@@ -12456,7 +1156,7 @@ divDbyX1:				; CODE XREF: divDbyX+Fj
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 divDbyX2:				; CODE XREF: divDbyX:divDbyX1j
-		st	x, unk_51	; 51 now stores	the number of times we shifted left
+		st	x, temp_51	; 51 now stores	the number of times we shifted left
 		inc	a		; because....?
 		push	d		; push shifted input x onto stack
 		mov	s, x
@@ -12495,7 +1195,7 @@ divDbyX3:				; CODE XREF: divDbyX+1Bj
 divDbyX4:				; CODE XREF: divDbyX+31j
 		pull	y
 		pull	y		; tidy stack
-		ld	x, unk_51	; x now	contains number	of shifts we did to get	divisor
+		ld	x, temp_51	; x now	contains number	of shifts we did to get	divisor
 
 divDbyX5:				; CODE XREF: divDbyX+4Bj divDbyX+51j
 		cmp	x, #0007h
@@ -12602,7 +1302,7 @@ sat16_3:				; CODE XREF: SaturateD16b+Bj
 ; Lookup unk_7A, integer return	in Acca, fraction return in AccB
 
 TwoD_7A:				; CODE XREF: __RESET+75Ap __RESET+7A1p ...
-		ld	d, word_7A
+		ld	d, word_7A	; meanKSint divided by a air temp comp factor
 ; End of function TwoD_7A
 
 
@@ -12698,14 +1398,14 @@ TwoD4:					; CODE XREF: TwoDTable+5j
 
 DivDby12:				; CODE XREF: __RESET+3EBp
 					; __RESET+136Cp ...
-		st	b, unk_54
+		st	b, temp_54
 		mov	a, b
 		clr	a
 		div	d, #012
-		st	b, unk_53
-		ld	b, unk_54
+		st	b, temp_53
+		ld	b, temp_54
 		div	d, #012
-		st	b, unk_54
+		st	b, temp_54
 		ret
 ; End of function DivDby12
 
@@ -12723,7 +1423,7 @@ DivDby12:				; CODE XREF: __RESET+3EBp
 
 ; ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ S U B	R O U T	I N E ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ
 
-; called with C3FE in mind
+; called with C3FE in mind, other parameter in temp_53:temp_54
 
 ThreeD_RPM:				; CODE XREF: __RESET+1371p
 		ld	d, RPM		; MSB is RPM/50, LSB is	fraction of 50
@@ -12736,6 +1436,7 @@ ThreeD_RPM:				; CODE XREF: __RESET+1371p
 
 ; ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ S U B	R O U T	I N E ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ
 
+; inputs in D and temp_53:temp_54
 
 ThreeDtable2:				; CODE XREF: __RESET+877p
 		shr	d
@@ -12744,6 +1445,7 @@ ThreeDtable2:				; CODE XREF: __RESET+877p
 
 ; ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ S U B	R O U T	I N E ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ
 
+; inputs in D and temp_53:temp_54
 
 ThreeDtable:				; CODE XREF: ThreeD_RPM+8j
 					; __RESET+3F0p	...
@@ -12753,30 +1455,30 @@ threeDtable_1:				; CODE XREF: ThreeD_RPM+4j
 		shr	d
 		shr	d
 		bsr	SubtAndBound
-		st	d, unk_51	; rpm subtbounded
+		st	d, temp_51	; rpm subtbounded
 		mov	y, d
 		mov	d, x		; x now	holds original y ptr
 		inc	y
 		inc	y
-		ld	d, unk_53	; load MSB:LSB
+		ld	d, temp_53	; load MSB:LSB
 		bsr	SubtAndBound
 		push	b
 		ld	b, x + 01h	; should be input y pointer + 2
 		inc	b
-		st	b, unk_53
-		mul	a, unk_53
+		st	b, temp_53
+		mul	a, temp_53
 		add	y, b		; offset into table. y is +4 from root +b
 		push	y
-		ld	d, unk_51
+		ld	d, temp_51
 		bsr	Interpolate	; some kind of interpolation dance
-		st	a, unk_54	; low row value
+		st	a, temp_54	; low row value
 		pull	y
-		ld	b, unk_53
+		ld	b, temp_53
 		add	y, b		; offset one more row
-		ld	d, unk_51
+		ld	d, temp_51
 		bsr	Interpolate	; some kind of interpolation dance
-		xch	a, unk_54	; exchange high	row value for low row value
-		st	a, unk_53	; store	low row	value
+		xch	a, temp_54	; exchange high	row value for low row value
+		st	a, temp_53	; store	low row	value
 		ld	y, #0053h	; interpolating	along column values
 		pull	b
 		bra	Interp_1
@@ -12915,7 +1617,7 @@ locret_C239:				; CODE XREF: InitRAM+1j
 sub_C23A:				; CODE XREF: __RESET+F72p
 					; __RESET+11CDp ...
 		di
-		or	b, unk_50
+		or	b, flags_50	; could	be bits	for 6336 output	chip
 		bra	loc_C242
 ; End of function sub_C23A
 
@@ -12926,10 +1628,10 @@ sub_C23A:				; CODE XREF: __RESET+F72p
 sub_C23F:				; CODE XREF: __RESET+F85p
 					; __RESET+11C4p ...
 		di
-		and	b, unk_50
+		and	b, flags_50	; could	be bits	for 6336 output	chip
 
 loc_C242:				; CODE XREF: sub_C23A+3j
-		st	b, unk_50
+		st	b, flags_50	; could	be bits	for 6336 output	chip
 		ei
 		ret
 ; End of function sub_C23F
@@ -12971,9 +1673,8 @@ unk_C246:	.db  03h		; D741 2d lookup for word_78, also DC0D	for 7A
 		.db  68h ; h
 		.db  17h
 		.db 0FFh
-unk_C26A:	.db 0A5h ; ¥		; DATA XREF: __RESET:loc_DD50r
-		.db  80h ; €
-		.dw 0180h		; data refrenced at DD2A
+word_C26A:	.dw 0A580h		; DATA XREF: __RESET:loc_DD50r
+		.dw 0180h		; 3d table TPS vs RPM
 		.db  05h
 		.db  00h
 		.db  00h
@@ -13181,10 +1882,8 @@ unk_C2EA:	.db  86h ; †		; C5F4,	lookup for F7
 		.db 0FFh
 		.dw 0708h		; word data for	DD63
 		.dw 0708h
-		.db  0Fh
-		.db 0A0h ;  
-		.db  11h
-		.db  30h ; 0
+		.dw 0FA0h
+		.dw 1130h
 		.db  32h ; 2		; E4B0,	F0
 		.db  00h
 		.db  32h ; 2
@@ -13620,11 +2319,11 @@ loc_C4E2:				; CODE XREF: sub_C4DA+3j
 
 loc_C4F0:				; CODE XREF: sub_C4DF+Dj
 		add	a, b
-		st	a, unk_51
-		ld	a, unk_1A8
+		st	a, temp_51
+		ld	a, unk_1A8	; looks	like air temp compensation for load
 		ld	y, #0C498h
 		jsr	TwoDTable	; X value in AccA, integer return in Acca, fraction return in AccB
-		add	a, unk_51
+		add	a, temp_51
 		cmp	a, #7Dh
 		ble	locret_C504
 		ld	a, #7Dh
@@ -13871,7 +2570,7 @@ loc_C512:				; CODE XREF: sub_C505+9j
 
 calcInjPW:				; CODE XREF: __RESET+177p __RESET+851p
 		jsr	sub_C619
-		st	y, unk_53	; result of multiplication
+		st	y, temp_53	; result of multiplication
 		ld	y, #0000h
 		cmp	#020, VTA_net
 		ble	loc_C5FA	; bounce if unk_6a is lower or equal to	20
@@ -13880,17 +2579,17 @@ calcInjPW:				; CODE XREF: __RESET+177p __RESET+851p
 
 loc_C5FA:				; CODE XREF: calcInjPW+Bj
 		mov	y, d		; MSW from multiplication is now in D, so table+5% of whatever was calculated before
-		add	d, unk_53
-		st	d, unk_51
-		ld	a, unk_114	; adc pin 16
+		add	d, temp_53
+		st	d, temp_51
+		ld	a, ADC_pin16	; adc pin 16 (0V)
 		and	a, #02h
 		beq	loc_C60D	; bounce if bit	1 of unk_114 isnt set
 		ld	d, #00313
-		add	d, unk_51
-		st	d, unk_51
+		add	d, temp_51
+		st	d, temp_51
 
 loc_C60D:				; CODE XREF: calcInjPW+1Dj
-		ld	d, unk_51
+		ld	d, temp_51
 		shl	d
 		shl	d
 		st	d, InjectPW1	; =unk_51*4
@@ -13913,13 +2612,13 @@ sub_C619:				; CODE XREF: calcInjPWp sub_C634p
 
 sub_C61C:				; CODE XREF: calcInjPW+10p
 		jsr	TwoD_rawTHW	; lookup Raw Water Temp, integer return	in Acca, fraction return in AccB
-		st	d, unk_51	; gets a base value
+		st	d, temp_51	; gets a base value
 		ld	a, rawTHA	; Contains the NOT of air temp reading from ADC, sensor	is tied	to ground on other side
 		ld	y, #0C2CCh
 		jsr	TwoDTable	; X value in AccA, integer return in Acca, fraction return in AccB
 		mul	a, #08h
 		add	d, #03280	; add 5.004%
-		ld	y, unk_51
+		ld	y, temp_51
 		jsr	MulDbyY		; returns upper	16 bits	in Y, lower 16 bits in D
 		ret
 ; End of function sub_C61C
@@ -13959,7 +2658,7 @@ sub_C64D:				; CODE XREF: __RESET+5FAp __RESET+602p
 ; FUNCTION CHUNK AT C6EB SIZE 000001AA BYTES
 
 		ld	b, y + 13h
-		tbbc	bit7, unk_4C, loc_C656 ; bit 7 demands a sampling of the oxygen	sensors
+		tbbc	bit7, flags_4C,	loc_C656 ; bit 7 demands a sampling of the oxygen sensors
 		and	b, #0F7h
 		bra	loc_C6B7
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
@@ -13974,15 +2673,15 @@ loc_C656:				; CODE XREF: sub_C64D+2j
 		bcc	loc_C66E
 
 loc_C666:				; CODE XREF: sub_C64D+12j
-		tbbc	bit0, unk_49, loc_C6B7 ; bits 1-3-4-5 are oxl1-oxr1-oxl2-oxr2
-		tbbc	bit2, unk_49, loc_C6B7 ; bits 1-3-4-5 are oxl1-oxr1-oxl2-oxr2
+		tbbc	bit0, flags_49,	loc_C6B7 ; bits	1-3-4-5	are oxl1-oxr1-oxl2-oxr2
+		tbbc	bit2, flags_49,	loc_C6B7 ; bits	1-3-4-5	are oxl1-oxr1-oxl2-oxr2
 		or	b, #80h
 
 loc_C66E:				; CODE XREF: sub_C64D+17j
 		or	b, #08h
 		st	b, y + 13h
 		ld	x, #0304h
-		tbbc	bit0, unk_40, loc_C67B
+		tbbc	bit0, flags_40,	loc_C67B
 		ld	x, #0306h
 
 loc_C67B:				; CODE XREF: sub_C64D+28j
@@ -13996,30 +2695,30 @@ loc_C67B:				; CODE XREF: sub_C64D+28j
 
 loc_C687:				; CODE XREF: sub_C64D+Bj
 		ld	b, y + 13h
-		ld	a, unk_A2	; contains bitflags, bit7 VTA_net related
+		ld	a, flags_A2	; contains bitflags, bit7 VTA_net related
 		and	a, #50h
 		bne	loc_C6B7
 		ld	a, y + 01h
 		cmp	a, #66h
 		bgt	loc_C69D
-		cmp	#94h, unk_6D
+		cmp	#94h, byte_6D	; signed change	in load	from average
 		bcc	loc_C6B7
-		tbbs	bit2, unk_47, loc_C6B7
+		tbbs	bit2, flags_47,	loc_C6B7
 
 loc_C69D:				; CODE XREF: sub_C64D+46j
 		push	a
-		ld	a, word_170
+		ld	a, word_170	; inversely temp dependant, additional math elsewhere
 		cmp	a, #0Dh
 		pull	a
 		bgt	loc_C6B7
-		ld	a, unk_44	; bits 543210 will all cause a branch past doinjectors
+		ld	a, flags_44	; bit3:	rev limiter, bits 543210 will all cause	a branch past doinjectors
 		cmpb	a, #3Fh
 		bne	loc_C6B7
 		ld	a, word_94
 		or	a, word_96
 		cmpb	a, #04h
 		bne	loc_C6B7
-		tbbc	bit3, unk_43, loc_C6EB
+		tbbc	bit3, flags_43,	loc_C6EB ; bit3: AFM bad bit4: rev limiter
 
 loc_C6B7:				; CODE XREF: sub_C64D+7j
 					; sub_C64D:loc_C666j ...
@@ -14036,8 +2735,8 @@ loc_C6B7:				; CODE XREF: sub_C64D+7j
 		ld	a, y + 14h
 		and	a, #0FBh
 		st	a, y + 14h
-		tbbc	bit2, unk_47, sub_C6E0
-		clrb	bit2, unk_47
+		tbbc	bit2, flags_47,	sub_C6E0
+		clrb	bit2, flags_47
 		jsr	sub_C6E0
 		ld	y, #0149h
 		ld	b, y + 13h
@@ -14062,17 +2761,17 @@ sub_C6E0:				; CODE XREF: sub_C64D+84j sub_C64D+89p ...
 ; START	OF FUNCTION CHUNK FOR sub_C64D
 
 loc_C6EB:				; CODE XREF: sub_C64D+67j
-		clrb	bit2, unk_47
+		clrb	bit2, flags_47
 		cmpb	b, #02h
 		bne	loc_C702
 		or	b, #06h
-		tbbs	bit0, unk_40, loc_C6FB
-		tbbs	bit0, unk_49, loc_C700 ; bits 1-3-4-5 are oxl1-oxr1-oxl2-oxr2
+		tbbs	bit0, flags_40,	loc_C6FB
+		tbbs	bit0, flags_49,	loc_C700 ; bits	1-3-4-5	are oxl1-oxr1-oxl2-oxr2
 		bra	loc_C6FE
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_C6FB:				; CODE XREF: sub_C64D+A6j
-		tbbs	bit2, unk_49, loc_C700 ; bits 1-3-4-5 are oxl1-oxr1-oxl2-oxr2
+		tbbs	bit2, flags_49,	loc_C700 ; bits	1-3-4-5	are oxl1-oxr1-oxl2-oxr2
 
 loc_C6FE:				; CODE XREF: sub_C64D+ACj
 		and	b, #0FBh
@@ -14082,7 +2781,7 @@ loc_C700:				; CODE XREF: sub_C64D+A9j
 		st	b, y + 13h
 
 loc_C702:				; CODE XREF: sub_C64D+A2j
-		cmp	#7Eh, unk_6D
+		cmp	#7Eh, byte_6D	; signed change	in load	from average
 		bcc	loc_C709
 		bsr	sub_C6E0
 
@@ -14117,12 +2816,12 @@ loc_C712:				; CODE XREF: sub_C64D+C1j
 		ld	a, unk_D8
 		cmpb	a, #0C0h
 		beq	loc_C757
-		st	a, unk_51
-		tbbs	bit0, unk_40, loc_C74B
+		st	a, temp_51
+		tbbs	bit0, flags_40,	loc_C74B
 		and	a, #03h
 		cmp	a, #03h
 		bcc	loc_C757
-		ld	a, unk_51
+		ld	a, temp_51
 		inc	a
 		bra	loc_C755
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
@@ -14131,7 +2830,7 @@ loc_C74B:				; CODE XREF: sub_C64D+F0j
 		and	a, #18h
 		cmp	a, #18h
 		bcc	loc_C757
-		ld	a, unk_51
+		ld	a, temp_51
 		add	a, #08h
 
 loc_C755:				; CODE XREF: sub_C64D+FCj
@@ -14139,7 +2838,7 @@ loc_C755:				; CODE XREF: sub_C64D+FCj
 
 loc_C757:				; CODE XREF: sub_C64D+ECj sub_C64D+F7j ...
 		ld	b, y + 0Ch
-		st	b, unk_52
+		st	b, temp_52
 		ld	a, y + 13h
 		cmpb	a, #04h
 		beq	loc_C768
@@ -14150,7 +2849,7 @@ loc_C757:				; CODE XREF: sub_C64D+ECj sub_C64D+F7j ...
 
 loc_C768:				; CODE XREF: sub_C64D+112j
 		ld	x, #0133h
-		tbbc	bit0, unk_40, loc_C771
+		tbbc	bit0, flags_40,	loc_C771
 		ld	x, #014Fh
 
 loc_C771:				; CODE XREF: sub_C64D+11Ej
@@ -14190,9 +2889,9 @@ loc_C79E:				; CODE XREF: sub_C64D+14Ej
 		ld	b, y + 0Ah
 		cmp	b, #03h
 		bcc	loc_C7B2
-		cmp	#25h, unk_52
+		cmp	#25h, temp_52
 		bcs	loc_C7B2
-		cmp	#7Ah, unk_52
+		cmp	#7Ah, temp_52
 		ble	loc_C7B4
 
 loc_C7B2:				; CODE XREF: sub_C64D+127j
@@ -14237,7 +2936,7 @@ loc_C7DA:				; CODE XREF: sub_C64D+188j
 		xch	b, x + 02h
 		xch	b, x + 03h
 		ld	d, #051Fh
-		tbbs	bit0, unk_41, loc_C826
+		tbbs	bit0, flags_41,	loc_C826
 		ld	x, y + 0Dh
 		ld	b, y + 13h
 		cmpb	b, #04h
@@ -14251,7 +2950,7 @@ loc_C7F8:				; CODE XREF: sub_C64D+1A3j
 		cmpb	b, #02h
 		bne	loc_C823
 		ld	x, #0304h
-		tbbc	bit0, unk_40, loc_C807
+		tbbc	bit0, flags_40,	loc_C807
 		ld	x, #0306h
 
 loc_C807:				; CODE XREF: sub_C64D+1B4j
@@ -14259,20 +2958,20 @@ loc_C807:				; CODE XREF: sub_C64D+1B4j
 		clr	b
 		shr	d
 		shr	d
-		st	d, unk_51
+		st	d, temp_51
 		ld	a, y + 13h
 		cmpb	a, #04h
 		beq	loc_C81C
 		ld	d, #3333h
-		sub	d, unk_51
+		sub	d, temp_51
 		bra	loc_C81E
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_C81C:				; CODE XREF: sub_C64D+1C6j
-		ld	d, unk_51
+		ld	d, temp_51
 
 loc_C81E:				; CODE XREF: sub_C64D+1CDj
-		tbbs	bit4, unk_47, loc_C84E
+		tbbs	bit4, flags_47,	loc_C84E
 		shr	d
 		mov	d, x
 
@@ -14282,7 +2981,7 @@ loc_C823:				; CODE XREF: sub_C64D+1AFj
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_C826:				; CODE XREF: sub_C64D+19Aj
-		cmp	#0Fh, unk_5E
+		cmp	#0Fh, unk_5E	; could	be last	unk_100, or 0
 		bgt	loc_C84E
 		ld	x, unk_17A
 		bmi	loc_C84E
@@ -14328,11 +3027,11 @@ loc_C84E:				; CODE XREF: sub_C64D:loc_C81Ej
 
 loc_C861:				; CODE XREF: sub_C64D+20Cj
 		add	d, y + 01h
-		st	a, unk_51
+		st	a, temp_51
 		ld	b, unk_175
 		clr	a
 		add	b, #80h
-		add	b, unk_51
+		add	b, temp_51
 		addc	a, #00h
 		add	b, word_98
 		addc	a, #00h
@@ -14350,7 +3049,7 @@ loc_C861:				; CODE XREF: sub_C64D+20Cj
 		st	a, y + 16h
 		ld	b, #01h
 		ld	y, #01D0h
-		tbbc	bit0, unk_40, loc_C891
+		tbbc	bit0, flags_40,	loc_C891
 		ld	y, #01D4h
 
 loc_C891:				; CODE XREF: sub_C64D+23Ej
@@ -14375,11 +3074,11 @@ sub_C895:				; CODE XREF: sub_C64D+202p
 		subc	a, #00h
 
 loc_C8A3:				; CODE XREF: sub_C895+8j
-		st	d, unk_51
+		st	d, temp_51
 		ld	d, y + 01h
 		shr	d
 		add	d, #4000h
-		add	d, unk_51
+		add	d, temp_51
 		jsr	SaturateD16b
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 		.dw 0B333h
@@ -14407,14 +3106,14 @@ sub_C8BB:				; CODE XREF: ROM:CB2Dp	ROM:CB34p ...
 		.db  26h ; &
 		.db  66h ; f
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
-		st	d, unk_51
+		st	d, temp_51
 		clr	b
 		ld	a, unk_175
 		shra	a
 		rorc	b
 		shra	a
 		rorc	b
-		add	d, unk_51
+		add	d, temp_51
 		add	a, #40h
 		ret
 ; End of function sub_C8BB
@@ -14435,8 +3134,8 @@ sub_C8D6:				; CODE XREF: sub_C64D:loc_C7D0p
 sub_C8D9:				; CODE XREF: sub_C64D:loc_C7B4p
 					; __RESET:loc_D861p
 		push	x
-		ld	d, unk_300
-		tbbc	bit0, unk_40, loc_C8E3
+		ld	d, word_300
+		tbbc	bit0, flags_40,	loc_C8E3
 		ld	d, word_302
 
 loc_C8E3:				; CODE XREF: sub_C8D9+4j
@@ -14454,7 +3153,7 @@ loc_C8E9:				; CODE XREF: sub_C8D6+1j sub_C8D9+Dj
 		mov	a, b
 		xor	b, #0FFh
 		ld	x, #0300h
-		tbbc	bit0, unk_40, loc_C8FA
+		tbbc	bit0, flags_40,	loc_C8FA
 		ld	x, #0302h
 
 loc_C8FA:				; CODE XREF: sub_C8D9+1Bj
@@ -14503,18 +3202,18 @@ loc_C912:				; CODE XREF: sub_C907+7j
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_C918:				; CODE XREF: __RESET+FF7p
-		tbbs	bit7, unk_45, loc_C952
-		tbbc	bit3, unk_4B, loc_C946
-		clrb	bit3, unk_4B
-		tbbs	bit6, unk_4D, loc_C926
-		tbbc	bit7, unk_4D, loc_C946
+		tbbs	bit7, flags_45,	loc_C952
+		tbbc	bit3, flags_4B,	loc_C946
+		clrb	bit3, flags_4B
+		tbbs	bit6, flags_4D,	loc_C926
+		tbbc	bit7, flags_4D,	loc_C946
 
 loc_C926:				; CODE XREF: ROM:C920j
-		clrb	bit7, unk_4D
-		ld	d, unk_4E
+		clrb	bit7, flags_4D
+		ld	d, flags_4E
 		and	a, #0EFh	; clear	bit 4 of unk_4e
 		and	b, #60h
-		st	d, unk_4E
+		st	d, flags_4E
 		ld	a, unk_146
 		ld	b, unk_162
 		and	a, #00h
@@ -14526,36 +3225,36 @@ loc_C926:				; CODE XREF: ROM:C920j
 		st	a, unk_7D
 
 loc_C946:				; CODE XREF: ROM:C91Bj	ROM:C923j
-		ld	a, unk_4F
+		ld	a, flags_4F
 		and	a, #7Fh
-		st	a, unk_4F
-		ld	a, unk_4D
+		st	a, flags_4F
+		ld	a, flags_4D
 		and	a, #81h
-		st	a, unk_4D
+		st	a, flags_4D
 
 loc_C952:				; CODE XREF: ROM:loc_C918j
-		tbbs	bit0, unk_45, loc_C959
-		clrb	bit4, unk_4C
+		tbbs	bit0, flags_45,	loc_C959
+		clrb	bit4, flags_4C
 		clr	unk_BE
 
 loc_C959:				; CODE XREF: ROM:loc_C952j
 		cmp	#1Fh, unk_BE
 		bcs	loc_C96A
-		tbbc	bit4, unk_4B, loc_C96A
+		tbbc	bit4, flags_4B,	loc_C96A
 		ld	a, NEcounts
 		beq	loc_C968
-		tbbs	bit4, unk_4C, loc_C96A ; bit 7 demands a sampling of the oxygen	sensors
+		tbbs	bit4, flags_4C,	loc_C96A ; bit 7 demands a sampling of the oxygen sensors
 
 loc_C968:				; CODE XREF: ROM:C963j
-		setb	bit0, unk_4E
+		setb	bit0, flags_4E
 
 loc_C96A:				; CODE XREF: ROM:C95Cj	ROM:C95Ej ...
 		ld	b, unk_7D
-		tbbc	bit6, unk_49, loc_C981 ; bits 1-3-4-5 are oxl1-oxr1-oxl2-oxr2
+		tbbc	bit6, flags_49,	loc_C981 ; bits	1-3-4-5	are oxl1-oxr1-oxl2-oxr2
 		ld	#0FFh, unk_CA
-		ld	a, unk_A2	; contains bitflags, bit7 VTA_net related
+		ld	a, flags_A2	; contains bitflags, bit7 VTA_net related
 		and	a, #0FAh
-		st	a, unk_A2	; contains bitflags, bit7 VTA_net related
+		st	a, flags_A2	; contains bitflags, bit7 VTA_net related
 		clr	a
 		st	a, unk_1C0
 		st	a, unk_1C1
@@ -14563,7 +3262,7 @@ loc_C96A:				; CODE XREF: ROM:C95Cj	ROM:C95Ej ...
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_C981:				; CODE XREF: ROM:C96Cj
-		ld	a, unk_50
+		ld	a, flags_50	; could	be bits	for 6336 output	chip
 		cmpb	a, #01h
 		bne	loc_C99B
 		ld	a, unk_1AA
@@ -14580,14 +3279,14 @@ loc_C992:				; CODE XREF: ROM:C98Cj
 		or	b, #01h
 
 loc_C99B:				; CODE XREF: ROM:C985j	ROM:C990j
-		ld	a, unk_A2	; contains bitflags, bit7 VTA_net related
+		ld	a, flags_A2	; contains bitflags, bit7 VTA_net related
 		or	a, #01h
-		st	a, unk_A2	; contains bitflags, bit7 VTA_net related
+		st	a, flags_A2	; contains bitflags, bit7 VTA_net related
 		clr	a
 		st	a, unk_1C0
 
 loc_C9A5:				; CODE XREF: ROM:C997j
-		ld	a, unk_50
+		ld	a, flags_50	; could	be bits	for 6336 output	chip
 		cmpb	a, #01h
 		bne	loc_C9BF
 		ld	a, unk_1AA
@@ -14604,20 +3303,20 @@ loc_C9B6:				; CODE XREF: ROM:C9B0j
 		or	b, #04h
 
 loc_C9BF:				; CODE XREF: ROM:C9A9j	ROM:C9B4j
-		ld	a, unk_A2	; contains bitflags, bit7 VTA_net related
+		ld	a, flags_A2	; contains bitflags, bit7 VTA_net related
 		or	a, #04h
-		st	a, unk_A2	; contains bitflags, bit7 VTA_net related
+		st	a, flags_A2	; contains bitflags, bit7 VTA_net related
 		clr	a
 		st	a, unk_1C1
 
 loc_C9C9:				; CODE XREF: ROM:C97Fj	ROM:C9BBj
 		st	b, unk_7D
 		ld	b, unk_7D
-		tbbc	bit6, unk_49, loc_C9E2 ; bits 1-3-4-5 are oxl1-oxr1-oxl2-oxr2
+		tbbc	bit6, flags_49,	loc_C9E2 ; bits	1-3-4-5	are oxl1-oxr1-oxl2-oxr2
 		ld	#0FFh, unk_CB
-		ld	a, unk_A2	; contains bitflags, bit7 VTA_net related
+		ld	a, flags_A2	; contains bitflags, bit7 VTA_net related
 		and	a, #0F5h
-		st	a, unk_A2	; contains bitflags, bit7 VTA_net related
+		st	a, flags_A2	; contains bitflags, bit7 VTA_net related
 		clr	a
 		st	a, unk_1C2
 		st	a, unk_1C3
@@ -14625,7 +3324,7 @@ loc_C9C9:				; CODE XREF: ROM:C97Fj	ROM:C9BBj
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_C9E2:				; CODE XREF: ROM:C9CDj
-		ld	a, unk_50
+		ld	a, flags_50	; could	be bits	for 6336 output	chip
 		cmpb	a, #02h
 		bne	loc_C9FC
 		ld	a, unk_1AA
@@ -14642,14 +3341,14 @@ loc_C9F3:				; CODE XREF: ROM:C9EDj
 		or	b, #02h
 
 loc_C9FC:				; CODE XREF: ROM:C9E6j	ROM:C9F1j
-		ld	a, unk_A2	; contains bitflags, bit7 VTA_net related
+		ld	a, flags_A2	; contains bitflags, bit7 VTA_net related
 		or	a, #02h
-		st	a, unk_A2	; contains bitflags, bit7 VTA_net related
+		st	a, flags_A2	; contains bitflags, bit7 VTA_net related
 		clr	a
 		st	a, unk_1C2
 
 loc_CA06:				; CODE XREF: ROM:C9F8j
-		ld	a, unk_50
+		ld	a, flags_50	; could	be bits	for 6336 output	chip
 		cmpb	a, #02h
 		bne	loc_CA20
 		ld	a, unk_1AA
@@ -14666,9 +3365,9 @@ loc_CA17:				; CODE XREF: ROM:CA11j
 		or	b, #08h
 
 loc_CA20:				; CODE XREF: ROM:CA0Aj	ROM:CA15j
-		ld	a, unk_A2	; contains bitflags, bit7 VTA_net related
+		ld	a, flags_A2	; contains bitflags, bit7 VTA_net related
 		or	a, #08h
-		st	a, unk_A2	; contains bitflags, bit7 VTA_net related
+		st	a, flags_A2	; contains bitflags, bit7 VTA_net related
 		clr	a
 		st	a, unk_1C3
 
@@ -14707,16 +3406,16 @@ loc_CA5D:				; CODE XREF: ROM:CA3Dj	ROM:CA53j
 		st	a, unk_15E
 
 loc_CA6D:				; CODE XREF: ROM:CA31j
-		clrb	bit5, unk_4B
-		tbbc	bit6, unk_4B, loc_CAC9
-		cmp	#82h, unk_5E
+		clrb	bit5, flags_4B
+		tbbc	bit6, flags_4B,	loc_CAC9
+		cmp	#82h, unk_5E	; could	be last	unk_100, or 0
 		bcc	loc_CAC9
-		ld	a, unk_4E
+		ld	a, flags_4E
 		and	a, #06h
 		bne	loc_CAC9
-		ld	a, unk_4F
+		ld	a, flags_4F
 
-loc_CA7F:				; 0x07 is enable interrupts, ei
+loc_CA7F:
 		and	a, #07h
 		bne	loc_CAC9
 		ld	a, word_86
@@ -14739,19 +3438,19 @@ loc_CA7F:				; 0x07 is enable interrupts, ei
 		ld	b, unk_1D8
 		cmp	b, #3Bh
 		ble	loc_CAC9
-		cmp	#5Ah, unk_5D	; adc pin 17 related
+		cmp	#5Ah, ATM_press	; adc pin 17 - PCM atmospheric pressure	sensor,	debiased and scaled
 		bcs	loc_CAC9
 		cmp	#0D2h, rawTHW	; Contains the NOT of CTS reading from ADC, sensor is tied to ground on	other side
 		bcs	loc_CAC9
 		cmp	#0ECh, rawTHW	; Contains the NOT of CTS reading from ADC, sensor is tied to ground on	other side
 		bgt	loc_CAC9
-		ld	a, word_170
-		or	a, unk_172
+		ld	a, word_170	; inversely temp dependant, additional math elsewhere
+		or	a, word_172	; inversely temp dependant, additional math elsewhere
 		bne	loc_CAC9
-		setb	bit5, unk_4B
+		setb	bit5, flags_4B
 
 loc_CAC9:				; CODE XREF: ROM:CA6Fj	ROM:CA75j ...
-		clrb	bit0, unk_40
+		clrb	bit0, flags_40
 		ld	a, unk_12E
 		jsr	SaturateData
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
@@ -14768,7 +3467,7 @@ loc_CAC9:				; CODE XREF: ROM:CA6Fj	ROM:CA75j ...
 		bcc	loc_CAF1
 
 loc_CADF:				; CODE XREF: ROM:CAD3j
-		setb	bit0, unk_40
+		setb	bit0, flags_40
 		ld	a, unk_141
 		or	a, #04h
 		st	a, unk_141
@@ -14781,9 +3480,9 @@ loc_CAF1:				; CODE XREF: ROM:CADDj
 		and	a, unk_15D
 		and	a, #04h
 		beq	loc_CB03
-		cmp	#18h, word_F2
+		cmp	#18h, compLOAD	; air temp compensated Load
 		bcs	loc_CB03
-		tbbs	bit5, unk_4B, loc_CB1C
+		tbbs	bit5, flags_4B,	loc_CB1C
 
 loc_CB03:				; CODE XREF: ROM:CAF9j	ROM:CAFEj
 		ld	a, #0FFh
@@ -14807,7 +3506,7 @@ loc_CB16:				; CODE XREF: ROM:CB13j
 loc_CB1C:				; CODE XREF: ROM:CB00j
 		ld	a, unk_130
 		ld	b, unk_14C
-		tbbc	bit0, unk_40, loc_CB2B
+		tbbc	bit0, flags_40,	loc_CB2B
 		ld	a, unk_12E
 		ld	b, unk_14A
 
@@ -14821,14 +3520,14 @@ loc_CB2B:				; CODE XREF: ROM:CB22j
 		clr	b
 		jsr	sub_C8BB
 		pull	b
-		st	a, unk_52
-		st	b, unk_51
+		st	a, temp_52
+		st	b, temp_51
 		sub	a, b
 		bcc	loc_CB40
 		neg	a
 
 loc_CB40:				; CODE XREF: ROM:CB3Dj
-		clrb	bit0, unk_40
+		clrb	bit0, flags_40
 		cmp	a, #0Dh
 		bcc	loc_CB5A
 		ld	a, unk_1CE
@@ -14857,7 +3556,7 @@ loc_CB63:				; CODE XREF: ROM:CB5Ej
 		ld	a, unk_142
 		and	a, #80h
 		beq	loc_CB75
-		setb	bit0, unk_40
+		setb	bit0, flags_40
 		inc	b
 		beq	loc_CB75
 		st	b, unk_1CF
@@ -14880,30 +3579,30 @@ loc_CB75:				; CODE XREF: ROM:CB58j	ROM:CB6Bj ...
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_CB9B:				; CODE XREF: ROM:CB78j
-		ld	a, unk_51
+		ld	a, temp_51
 		sub	a, #80h
 		bcc	loc_CBA2
 		neg	a
 
 loc_CBA2:				; CODE XREF: ROM:CB9Fj
-		ld	b, unk_52
+		ld	b, temp_52
 		sub	b, #80h
 		bcc	loc_CBA9
 		neg	b
 
 loc_CBA9:				; CODE XREF: ROM:CBA6j
-		clr	unk_53
+		clr	temp_53
 		cmp	a, b
 		bcc	loc_CBB4
-		inc	unk_53
-		ld	a, unk_52
-		st	a, unk_51
+		inc	temp_53
+		ld	a, temp_52
+		st	a, temp_51
 
 loc_CBB4:				; CODE XREF: ROM:CBACj
 		ld	a, unk_1CE
 		cmp	a, #99h
 		bne	loc_CBEB
-		tbbs	bit3, unk_4B, loc_CBD7
+		tbbs	bit3, flags_4B,	loc_CBD7
 		ld	a, unk_142
 		and	a, #80h
 		bne	loc_CBEB
@@ -14917,7 +3616,7 @@ loc_CBB4:				; CODE XREF: ROM:CBACj
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_CBD7:				; CODE XREF: ROM:CBBBj
-		setb	bit6, unk_4D
+		setb	bit6, flags_4D
 		ld	a, unk_147
 		or	a, #28h
 		st	a, unk_147
@@ -14931,12 +3630,12 @@ loc_CBEB:				; CODE XREF: ROM:CBB9j	ROM:CBC3j
 		ld	a, unk_1CF
 		cmp	a, #99h
 		bne	loc_CC1F
-		tbbc	bit0, unk_40, loc_CC1F
+		tbbc	bit0, flags_40,	loc_CC1F
 
 loc_CBF5:				; CODE XREF: ROM:CBE9j
-		ld	a, unk_51
+		ld	a, temp_51
 		ld	b, unk_146
-		cmp	#00h, unk_53
+		cmp	#00h, temp_53
 		beq	loc_CC02
 		ld	b, unk_162
 
@@ -14956,7 +3655,7 @@ loc_CC10:				; CODE XREF: ROM:CC04j
 		or	b, #08h
 
 loc_CC12:				; CODE XREF: ROM:CC0Cj
-		cmp	#00h, unk_53
+		cmp	#00h, temp_53
 		bne	loc_CC1C
 		st	b, unk_146
 		bra	loc_CC1F
@@ -14967,9 +3666,9 @@ loc_CC1C:				; CODE XREF: ROM:CC15j
 
 loc_CC1F:				; CODE XREF: ROM:CB19j	ROM:CB98j ...
 		clr	a
-		tbbc	bit5, unk_4B, loc_CC30
-		tbbc	bit0, unk_41, loc_CC30
-		cmp	#02h, unk_5E
+		tbbc	bit5, flags_4B,	loc_CC30
+		tbbc	bit0, flags_41,	loc_CC30
+		cmp	#02h, unk_5E	; could	be last	unk_100, or 0
 		bcc	loc_CC30
 		cmp	#019, RPM	; 950RPM
 		bcs	loc_CC3A
@@ -14993,24 +3692,24 @@ loc_CC3A:				; CODE XREF: ROM:CC2Ej
 		jsr	sub_D159
 
 loc_CC53:				; CODE XREF: ROM:CC38j	ROM:CC3Dj
-		cmp	#82h, unk_5E
+		cmp	#82h, unk_5E	; could	be last	unk_100, or 0
 		bcc	loc_CC7D
 		ld	a, word_8E
 		and	a, #10h
 		bne	loc_CC7D
 		cmp	#030, RPM	; 1500RPM
 		bcs	loc_CC7D
-		ld	d, word_170
+		ld	d, word_170	; inversely temp dependant, additional math elsewhere
 		cmp	d, #0CCDh
 		bcc	loc_CC7D
-		ld	a, unk_A2	; contains bitflags, bit7 VTA_net related
+		ld	a, flags_A2	; contains bitflags, bit7 VTA_net related
 		and	a, #50h
 		bne	loc_CC7D
-		ld	a, unk_44	; bits 543210 will all cause a branch past doinjectors
+		ld	a, flags_44	; bit3:	rev limiter, bits 543210 will all cause	a branch past doinjectors
 		and	a, #3Fh
 		bne	loc_CC7D
-		tbbs	bit3, unk_43, loc_CC7D
-		tbbc	bit3, unk_4E, loc_CC83
+		tbbs	bit3, flags_43,	loc_CC7D ; bit3: AFM bad bit4: rev limiter
+		tbbc	bit3, flags_4E,	loc_CC83
 
 loc_CC7D:				; CODE XREF: ROM:CC56j	ROM:CC5Cj ...
 		clr	unk_D0
@@ -15019,40 +3718,40 @@ loc_CC7D:				; CODE XREF: ROM:CC56j	ROM:CC5Cj ...
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_CC83:				; CODE XREF: ROM:CC7Aj
-		tbbs	bit0, unk_49, loc_CCA0 ; bits 1-3-4-5 are oxl1-oxr1-oxl2-oxr2
+		tbbs	bit0, flags_49,	loc_CCA0 ; bits	1-3-4-5	are oxl1-oxr1-oxl2-oxr2
 		cmp	#2Dh, unk_D0
 		bcs	loc_CCA0
 		ld	a, unk_146
 		or	a, #04h
 		st	a, unk_146
-		tbbc	bit3, unk_4B, loc_CCA0
-		setb	bit6, unk_4D
+		tbbc	bit3, flags_4B,	loc_CCA0
+		setb	bit6, flags_4D
 		ld	a, unk_147
 		or	a, #04h
 		st	a, unk_147
 
 loc_CCA0:				; CODE XREF: ROM:loc_CC83j ROM:CC89j ...
-		tbbs	bit2, unk_49, loc_CCBD ; bits 1-3-4-5 are oxl1-oxr1-oxl2-oxr2
+		tbbs	bit2, flags_49,	loc_CCBD ; bits	1-3-4-5	are oxl1-oxr1-oxl2-oxr2
 		cmp	#2Dh, unk_D1
 		bcs	loc_CCBD
 		ld	a, unk_162
 		or	a, #04h
 		st	a, unk_162
-		tbbc	bit3, unk_4B, loc_CCBD
-		setb	bit6, unk_4D
+		tbbc	bit3, flags_4B,	loc_CCBD
+		setb	bit6, flags_4D
 		ld	a, unk_163
 		or	a, #04h
 		st	a, unk_163
 
 loc_CCBD:				; CODE XREF: ROM:CC81j	ROM:loc_CCA0j ...
-		tbbc	bit0, unk_49, loc_CCCB ; bits 1-3-4-5 are oxl1-oxr1-oxl2-oxr2
+		tbbc	bit0, flags_49,	loc_CCCB ; bits	1-3-4-5	are oxl1-oxr1-oxl2-oxr2
 		ld	x, #0D252h
 		ld	y, #012Dh
 		jsr	sub_D222
 		clr	unk_D0
 
 loc_CCCB:				; CODE XREF: ROM:loc_CCBDj
-		tbbc	bit2, unk_49, loc_CCD9 ; bits 1-3-4-5 are oxl1-oxr1-oxl2-oxr2
+		tbbc	bit2, flags_49,	loc_CCD9 ; bits	1-3-4-5	are oxl1-oxr1-oxl2-oxr2
 		ld	x, #0D252h
 		ld	y, #0149h
 		jsr	sub_D222
@@ -15074,12 +3773,12 @@ loc_CCD9:				; CODE XREF: ROM:loc_CCCBj
 		ld	a, word_8E
 		and	a, #10h
 		bne	loc_CD09
-		cmp	#24h, word_F2
+		cmp	#24h, compLOAD	; air temp compensated Load
 		bcs	loc_CD09
-		tbbc	bit2, unk_4B, loc_CD09
+		tbbc	bit2, flags_4B,	loc_CD09
 		cmp	#030, RPM	; 1500RPM
 		bcs	loc_CD09
-		cmp	#64h, unk_5E
+		cmp	#64h, unk_5E	; could	be last	unk_100, or 0
 		bcs	loc_CD0F
 
 loc_CD09:				; CODE XREF: ROM:CCDDj	ROM:CCE3j ...
@@ -15089,7 +3788,7 @@ loc_CD09:				; CODE XREF: ROM:CCDDj	ROM:CCE3j ...
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_CD0F:				; CODE XREF: ROM:CD07j
-		tbbc	bit1, unk_49, loc_CD3D ; bits 1-3-4-5 are oxl1-oxr1-oxl2-oxr2
+		tbbc	bit1, flags_49,	loc_CD3D ; bits	1-3-4-5	are oxl1-oxr1-oxl2-oxr2
 		ld	d, unk_143
 		cmp	b, #03h
 		ble	loc_CD3D
@@ -15103,8 +3802,8 @@ loc_CD0F:				; CODE XREF: ROM:CD07j
 		ld	a, unk_146
 		or	a, #01h
 		st	a, unk_146
-		tbbc	bit3, unk_4B, loc_CD3D
-		setb	bit6, unk_4D
+		tbbc	bit3, flags_4B,	loc_CD3D
+		setb	bit6, flags_4D
 		ld	a, unk_147
 		or	a, #01h
 		st	a, unk_147
@@ -15114,7 +3813,7 @@ loc_CD3D:				; CODE XREF: ROM:loc_CD0Fj ROM:CD17j ...
 
 loc_CD3E:				; CODE XREF: ROM:CD26j
 		st	a, unk_1BC
-		tbbc	bit3, unk_49, loc_CD6F ; bits 1-3-4-5 are oxl1-oxr1-oxl2-oxr2
+		tbbc	bit3, flags_49,	loc_CD6F ; bits	1-3-4-5	are oxl1-oxr1-oxl2-oxr2
 		ld	d, unk_15F
 		cmp	b, #03h
 		ble	loc_CD6F
@@ -15128,8 +3827,8 @@ loc_CD3E:				; CODE XREF: ROM:CD26j
 		ld	a, unk_162
 		or	a, #01h
 		st	a, unk_162
-		tbbc	bit3, unk_4B, loc_CD6F
-		setb	bit6, unk_4D
+		tbbc	bit3, flags_4B,	loc_CD6F
+		setb	bit6, flags_4D
 		ld	a, unk_163
 		or	a, #01h
 		st	a, unk_163
@@ -15139,11 +3838,11 @@ loc_CD6F:				; CODE XREF: ROM:CD0Dj	ROM:CD41j ...
 
 loc_CD70:				; CODE XREF: ROM:CD58j
 		st	a, unk_1BE
-		clrb	bit0, unk_40
+		clrb	bit0, flags_40
 		cmp	#99h, unk_C4
 		bcs	loc_CD7E
 		clr	unk_C4
-		setb	bit0, unk_40
+		setb	bit0, flags_40
 
 loc_CD7E:				; CODE XREF: ROM:CD78j
 		ld	b, unk_1BD
@@ -15187,13 +3886,13 @@ loc_CDCB:				; CODE XREF: ROM:CDC3j
 		ld	a, unk_C2
 		ld	b, unk_140
 		ld	y, #012Dh
-		clrb	bit0, unk_40
+		clrb	bit0, flags_40
 		jsr	sub_D1EF
 		st	a, unk_C2
 		ld	a, unk_C3
 		ld	b, unk_15C
 		ld	y, #0149h
-		setb	bit0, unk_40
+		setb	bit0, flags_40
 		jsr	sub_D1EF
 		st	a, unk_C3
 
@@ -15214,7 +3913,7 @@ loc_CDF9:				; CODE XREF: ROM:CDEEj
 		jsr	sub_D222
 
 loc_CE09:				; CODE XREF: ROM:CDFEj
-		ld	b, unk_5E
+		ld	b, unk_5E	; could	be last	unk_100, or 0
 		beq	loc_CE1F	; 2800RPM
 		ld	a, unk_7D
 		and	a, #0EFh
@@ -15225,14 +3924,14 @@ loc_CE13:				; CODE XREF: ROM:CE22j	ROM:CE24j ...
 		st	a, unk_1B5
 		cmp	b, #05h
 		bcs	loc_CE41
-		clrb	bit3, unk_4D
+		clrb	bit3, flags_4D
 		bra	loc_CE41
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_CE1F:				; CODE XREF: ROM:CE0Bj
 		cmp	#056, RPM	; 2800RPM
 		bcs	loc_CE13
-		tbbs	bit5, unk_45, loc_CE13
+		tbbs	bit5, flags_45,	loc_CE13
 		ld	a, unk_109
 		and	a, #02h
 		bne	loc_CE13
@@ -15256,29 +3955,29 @@ loc_CE41:				; CODE XREF: ROM:CE19j	ROM:CE1Dj ...
 
 loc_CE48:				; CODE XREF: ROM:CE45j
 		st	a, unk_1BB
-		tbbc	bit3, unk_4B, loc_CE6C
-		tbbc	bit6, unk_45, loc_CE6C
-		tbbs	bit0, unk_45, loc_CE6C
-		tbbs	bit7, unk_4C, loc_CE6C ; bit 7 demands a sampling of the oxygen	sensors
+		tbbc	bit3, flags_4B,	loc_CE6C
+		tbbc	bit6, flags_45,	loc_CE6C
+		tbbs	bit0, flags_45,	loc_CE6C
+		tbbs	bit7, flags_4C,	loc_CE6C ; bit 7 demands a sampling of the oxygen sensors
 		cmp	#00h, NEcounts
 		beq	loc_CE6C
 		cmp	a, #2Eh
 		bcs	loc_CE63
-		tbbc	bit0, unk_41, loc_CE69
+		tbbc	bit0, flags_41,	loc_CE69
 
 loc_CE63:				; CODE XREF: ROM:CE5Ej
-		tbbs	bit1, unk_45, loc_CE69
-		tbbs	bit5, unk_45, loc_CE6C
+		tbbs	bit1, flags_45,	loc_CE69
+		tbbs	bit5, flags_45,	loc_CE6C
 
 loc_CE69:				; CODE XREF: ROM:CE60j	ROM:loc_CE63j
-		setb	bit5, unk_4D
+		setb	bit5, flags_4D
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 		.db  8Ch ; Œ		; cmp x
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_CE6C:				; CODE XREF: ROM:CE4Bj	ROM:CE4Ej ...
-		clrb	bit5, unk_4D
-		tbbs	bit0, unk_45, loc_CE89
+		clrb	bit5, flags_4D
+		tbbs	bit0, flags_45,	loc_CE89
 		ld	a, unk_1C4
 		ld	b, unk_140
 		cmpb	b, #01h
@@ -15295,9 +3994,9 @@ loc_CE86:				; CODE XREF: ROM:CE82j
 		st	a, unk_1C4
 
 loc_CE89:				; CODE XREF: ROM:CE6Ej
-		ld	a, unk_4D
+		ld	a, flags_4D
 		push	a
-		ld	d, unk_4E
+		ld	d, flags_4E
 		tbbc	bit5, RAMST, loc_CEA7 ;	Built-in RAM status
 		cmp	#7Ah, unk_AE
 		ble	loc_CEA7
@@ -15314,10 +4013,10 @@ loc_CEA7:				; CODE XREF: ROM:CE8Ej	ROM:CE94j ...
 		clr	a
 		st	a, unk_1B6
 		st	a, unk_1B7
-		clrb	bit1, unk_4C
-		clrb	bit1, unk_44
-		clrb	bit2, unk_44
-		clrb	bit0, unk_4C
+		clrb	bit1, flags_4C
+		clrb	bit1, flags_44
+		clrb	bit2, flags_44
+		clrb	bit0, flags_4C
 		bra	loc_CEC3
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
@@ -15337,26 +4036,26 @@ loc_CEC3:				; CODE XREF: ROM:CEA5j	ROM:CEB6j
 		st	a, unk_162
 		st	a, unk_7D
 		pull	a
-		st	d, unk_4E
+		st	d, flags_4E
 		mov	s, x
 		xch	a, x + 00h
 		and	a, #18h
-		st	a, unk_4D
+		st	a, flags_4D
 		xch	a, x + 00h
 
 loc_CEDA:				; CODE XREF: ROM:CEBFj
-		st	d, unk_52
+		st	d, temp_52
 		ld	a, unk_146
 		ld	b, unk_162
-		st	a, unk_54
+		st	a, temp_54
 		st	b, unk_55
 		ld	a, unk_7D
 		st	a, unk_56
 		pull	a
-		st	a, unk_51
+		st	a, temp_51
 		cmpb	a, #40h
 		beq	loc_CEF3
-		setb	bit7, unk_4D
+		setb	bit7, flags_4D
 
 loc_CEF3:				; CODE XREF: ROM:CEEFj
 		ld	b, unk_55
@@ -15368,7 +4067,7 @@ loc_CEF3:				; CODE XREF: ROM:CEEFj
 		ld	b, unk_57
 		ld	x, #0092h
 		bsr	sub_CF4C
-		ld	b, unk_54
+		ld	b, temp_54
 		and	b, unk_147
 		and	b, #0FFh
 		st	b, unk_57
@@ -15377,11 +4076,11 @@ loc_CEF3:				; CODE XREF: ROM:CEEFj
 		ld	b, unk_57
 		ld	x, #0090h
 		bsr	sub_CF4C
-		ld	b, unk_52
+		ld	b, temp_52
 		and	b, #0AFh
 		ld	x, #0086h
 		bsr	sub_CF4C
-		ld	b, unk_53
+		ld	b, temp_53
 		and	b, #0FFh
 		ld	x, #0088h
 		bsr	sub_CF4C
@@ -15389,7 +4088,7 @@ loc_CEF3:				; CODE XREF: ROM:CEEFj
 		and	b, #1Fh
 		ld	x, #008Eh
 		bsr	sub_CF4C
-		ld	b, unk_54
+		ld	b, temp_54
 		and	b, #0FFh
 		ld	x, #0094h
 		bsr	sub_CF4C
@@ -15434,8 +4133,8 @@ loc_CF65:				; CODE XREF: ROM:CF61j
 		st	b, unk_1C6
 		ld	x, #0D2ABh
 		ld	y, #0D2ABh
-		tbbc	bit6, unk_45, loc_CF96
-		tbbc	bit0, unk_41, loc_CF88
+		tbbc	bit6, flags_45,	loc_CF96
+		tbbc	bit0, flags_41,	loc_CF88
 		ld	b, unk_1C6
 		bmi	loc_CFBE
 		ld	b, unk_1C4
@@ -15447,11 +4146,11 @@ loc_CF65:				; CODE XREF: ROM:CF61j
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_CF88:				; CODE XREF: ROM:CF71j
-		tbbc	bit0, unk_49, loc_CF8E ; bits 1-3-4-5 are oxl1-oxr1-oxl2-oxr2
+		tbbc	bit0, flags_49,	loc_CF8E ; bits	1-3-4-5	are oxl1-oxr1-oxl2-oxr2
 		ld	x, #0D2AFh
 
 loc_CF8E:				; CODE XREF: ROM:loc_CF88j
-		tbbc	bit2, unk_49, loc_CFAA ; bits 1-3-4-5 are oxl1-oxr1-oxl2-oxr2
+		tbbc	bit2, flags_49,	loc_CFAA ; bits	1-3-4-5	are oxl1-oxr1-oxl2-oxr2
 		ld	y, #0D2AFh
 		bra	loc_CFAA
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
@@ -15505,8 +4204,8 @@ loc_CFD1:				; CODE XREF: ROM:CFCCj
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_CFD7:				; CODE XREF: ROM:loc_CFD1j
-		tbbs	bit6, unk_45, loc_CFDD
-		tbbc	bit0, unk_4B, loc_D046
+		tbbs	bit6, flags_45,	loc_CFDD
+		tbbc	bit0, flags_4B,	loc_D046
 
 loc_CFDD:				; CODE XREF: ROM:loc_CFD7j
 		ld	a, unk_72
@@ -15558,8 +4257,8 @@ loc_D01A:				; CODE XREF: ROM:loc_D015j
 		ld	a, unk_71
 		bne	loc_D040
 		st	a, unk_70
-		tbbc	bit6, unk_45, loc_D046
-		setb	bit0, unk_4B
+		tbbc	bit6, flags_45,	loc_D046
+		setb	bit0, flags_4B
 		ld	a, unk_72
 		bmi	loc_D030
 		bne	loc_D038
@@ -15592,8 +4291,8 @@ loc_D042:				; CODE XREF: ROM:CFF2j	ROM:CFF8j
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_D046:				; CODE XREF: ROM:CFDAj	ROM:D020j
-		tbbc	bit3, unk_4B, loc_D066
-		tbbc	bit7, unk_4C, loc_D066 ; bit 7 demands a sampling of the oxygen	sensors
+		tbbc	bit3, flags_4B,	loc_D066
+		tbbc	bit7, flags_4C,	loc_D066 ; bit 7 demands a sampling of the oxygen sensors
 		ld	b, unk_70
 		cmp	b, #7Eh
 		bcc	loc_D054
@@ -15621,19 +4320,19 @@ loc_D064:				; CODE XREF: ROM:D05Dj
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_D066:				; CODE XREF: ROM:loc_D046j ROM:D049j
-		tbbc	bit3, unk_4B, loc_D06E
+		tbbc	bit3, flags_4B,	loc_D06E
 		ld	b, #0FEh
-		tbbs	bit7, unk_4D, loc_D0A0
+		tbbs	bit7, flags_4D,	loc_D0A0
 
 loc_D06E:				; CODE XREF: ROM:loc_D066j
 		ld	b, #0B4h
-		ld	a, unk_51
+		ld	a, temp_51
 		and	a, #01h
 		bne	loc_D0A0
-		ld	a, unk_52
+		ld	a, temp_52
 		and	a, #0EFh
 		bne	loc_D0A0
-		ld	a, unk_53
+		ld	a, temp_53
 		and	a, #6Fh
 		bne	loc_D0A0
 		ld	a, unk_56
@@ -15652,11 +4351,11 @@ loc_D06E:				; CODE XREF: ROM:loc_D066j
 
 loc_D09B:				; CODE XREF: ROM:CFD4j	ROM:D097j
 		clr	b
-		tbbc	bit7, unk_4C, loc_D0A0 ; bit 7 demands a sampling of the oxygen	sensors
+		tbbc	bit7, flags_4C,	loc_D0A0 ; bit 7 demands a sampling of the oxygen sensors
 		dec	b
 
 loc_D0A0:				; CODE XREF: ROM:CFCEj	ROM:loc_D064j ...
-		clrb	bit0, unk_4B
+		clrb	bit0, flags_4B
 		ld	#0FFh, unk_72
 		clr	unk_71
 
@@ -15852,8 +4551,8 @@ sub_D159:				; CODE XREF: ROM:CC47p	ROM:CC50p
 loc_D164:				; CODE XREF: sub_D159+8j
 		cmp	b, #02h
 		bcs	loc_D190
-		tbbc	bit3, unk_4B, loc_D17B
-		setb	bit6, unk_4D
+		tbbc	bit3, flags_4B,	loc_D17B
+		setb	bit6, flags_4D
 		ld	a, y + 19h
 		or	a, #50h
 		st	a, y + 19h
@@ -15928,8 +4627,8 @@ sub_D1BC:				; CODE XREF: ROM:CD87p	ROM:CD96p
 		ld	a, y + 13h
 		and	a, #02h
 		beq	loc_D1E9
-		tbbs	bit0, unk_40, loc_D1DF
-		ld	a, unk_49	; bits 1-3-4-5 are oxl1-oxr1-oxl2-oxr2
+		tbbs	bit0, flags_40,	loc_D1DF
+		ld	a, flags_49	; bits 1-3-4-5 are oxl1-oxr1-oxl2-oxr2
 		cmpb	a, x + 01h
 		bne	locret_D1D1
 		cmpb	a, x + 00h
@@ -15975,7 +4674,7 @@ loc_D1E9:				; CODE XREF: sub_D1BC+4j sub_D1BC+25j
 sub_D1EF:				; CODE XREF: ROM:CDD5p	ROM:CDE4p
 		cmpb	b, #80h
 		beq	loc_D220
-		cmp	#64h, unk_5E
+		cmp	#64h, unk_5E	; could	be last	unk_100, or 0
 		bcc	loc_D220
 		cmp	#1Eh, RPM	; MSB is RPM/50, LSB is	fraction of 50
 		bcs	loc_D220
@@ -15990,8 +4689,8 @@ sub_D1EF:				; CODE XREF: ROM:CDD5p	ROM:CDE4p
 		ld	b, y + 19h
 		or	b, #02h
 		st	b, y + 19h
-		tbbc	bit3, unk_4B, loc_D220
-		setb	bit6, unk_4D
+		tbbc	bit3, flags_4B,	loc_D220
+		setb	bit6, flags_4D
 		ld	b, y + 1Ah
 		or	b, #02h
 		st	b, y + 1Ah
@@ -16048,15 +4747,15 @@ loc_D23D:				; CODE XREF: sub_D222+16j
 
 
 sub_D257:				; CODE XREF: __RESET+1738p
-		tbbs	bit7, unk_45, loc_D25F
-		ld	#0DEh, unk_7C
+		tbbs	bit7, flags_45,	loc_D25F
+		ld	#222, unk_7C	; counter
 		bra	loc_D289
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_D25F:				; CODE XREF: sub_D257j
 		ld	x, unk_1CA
 		bne	locret_D268
-		ld	b, unk_7C
+		ld	b, unk_7C	; counter
 		bpz	loc_D269
 
 locret_D268:				; CODE XREF: sub_D257+Bj
@@ -16067,7 +4766,7 @@ loc_D269:				; CODE XREF: sub_D257+Fj
 		ld	y, #0D28Fh
 		add	y, b
 		add	b, #02h
-		st	b, unk_7C
+		st	b, unk_7C	; counter
 		cmp	b, #02h
 		bgt	loc_D27B
 		ld	d, y + 00h
@@ -16087,7 +4786,7 @@ loc_D283:				; CODE XREF: sub_D257+22j
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_D286:				; CODE XREF: sub_D257+26j
-		ld	#0F0h, unk_7C
+		ld	#0F0h, unk_7C	; counter
 
 loc_D289:				; CODE XREF: sub_D257+6j
 		clr	a
@@ -16166,7 +4865,7 @@ loc_D2C8:				; CODE XREF: sub_D2B9+B5j
 
 loc_D2D6:				; CODE XREF: sub_D2B9+2Bj
 		ld	a, y + 00h
-		jsr	sub_D45F	; blast	out a byte, set	unk_74,	receive	a byte and leave it in AccA
+		jsr	sub_D45F	; blast	out a byte, set	unk_74,	read SIDR and SSD for 300 iterations
 		cmp	y, #0F774h
 		bcc	loc_D2E6
 		inc	y
@@ -16186,40 +4885,40 @@ loc_D2F1:				; CODE XREF: sub_D2B9+32j
 		setb	bit2, PORTD_ASRIN
 
 loc_D2F3:				; CODE XREF: sub_D2B9+36j
-		tbbc	bit7, unk_45, loc_D2F9
+		tbbc	bit7, flags_45,	loc_D2F9
 		jmp	loc_D371
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_D2F9:				; CODE XREF: sub_D2B9:loc_D2F3j
-		tbbs	bit2, unk_45, loc_D347
+		tbbs	bit2, flags_45,	loc_D347
 		ld	a, unk_12A	; VTA2-offset (unk_129)
 		cmp	#80h, THG	; THG lookup table output from exhaust gas temp	sensor ADC reading
-		bcc	loc_D35B
-		ld	a, unk_49	; bits 1-3-4-5 are oxl1-oxr1-oxl2-oxr2
-		and	a, #3Ah
+		bcc	ISC1
+		ld	a, flags_49	; bits 1-3-4-5 are oxl1-oxr1-oxl2-oxr2
+		and	a, #3Ah		; mask out everything but the oxy sensors
 		cmp	a, #0Ah
 		beq	loc_D33D
 		cmp	a, #30h
 		bne	loc_D36B
 		ld	a, #55h
-		ld	#55h, unk_52
+		ld	#55h, temp_52
 
 loc_D315:				; CODE XREF: sub_D2B9+89j
-		st	a, unk_50
-		jsr	sub_D47F
+		st	a, flags_50	; could	be bits	for 6336 output	chip
+		jsr	write6336
 		ld	a, PORTA	; Port A Data Register
 		and	a, #0Ch
 		shl	a
 		shl	a
-		st	a, unk_51
+		st	a, temp_51
 		ld	b, unk_1AA
 		and	b, #0Fh
-		or	b, unk_51
-		st	b, unk_51
+		or	b, temp_51
+		st	b, temp_51
 		ld	a, PORTC	; Port C Data Register
-		and	a, #0C0h
-		or	a, unk_51
-		cmp	a, unk_52
+		and	a, #11000000b
+		or	a, temp_51
+		cmp	a, temp_52
 		beq	loc_D339	; SOUT0
 		setb	bit2, SSD	; SOUT1
 		bra	loc_D36B
@@ -16232,7 +4931,7 @@ loc_D339:				; CODE XREF: sub_D2B9+7Aj
 
 loc_D33D:				; CODE XREF: sub_D2B9+51j
 		ld	a, #0AAh
-		ld	#0AAh, unk_52
+		ld	#0AAh, temp_52
 		bra	loc_D315
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
@@ -16251,19 +4950,19 @@ loc_D347:				; CODE XREF: sub_D2B9:loc_D2F9j
 		jmp	loc_D3C1
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
-loc_D35B:				; CODE XREF: sub_D2B9+49j
+ISC1:					; CODE XREF: sub_D2B9+49j
 		ld	b, PORTB	; Port B Data Register
 		and	b, #0F0h
 		cmp	a, #14h
-		bcc	loc_D367
-		or	b, #05h
-		bra	loc_D369
+		bcc	ISC2		; drive	other pair
+		or	b, #05h		; drive	one pair
+		bra	ISC3
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
-loc_D367:				; CODE XREF: sub_D2B9+A8j
-		or	b, #0Ah
+ISC2:					; CODE XREF: sub_D2B9+A8j
+		or	b, #0Ah		; drive	other pair
 
-loc_D369:				; CODE XREF: sub_D2B9+ACj
+ISC3:					; CODE XREF: sub_D2B9+ACj
 		st	b, PORTB	; Port B Data Register
 
 loc_D36B:				; CODE XREF: sub_D2B9+55j sub_D2B9+7Ej ...
@@ -16452,14 +5151,14 @@ ReInitNEIGT:				; CODE XREF: __RESET+185p
 		st	d, threeDeltaNE
 		clr	a
 		st	d, NEcounts
-		clrb	bit0, unk_4A
-		clrb	bit1, unk_44
-		clrb	bit2, unk_44
-		clrb	bit1, unk_4C
+		clrb	bit0, flags_4A
+		clrb	bit1, flags_44
+		clrb	bit2, flags_44
+		clrb	bit1, flags_4C
 		st	a, unk_1B6
 		st	a, unk_1B7
 		st	d, RPM		; re-init to 0000
-		clrb	bit4, unk_42
+		clrb	bit4, flags_42
 		ret
 ; End of function ReInitNEIGT
 
@@ -16472,7 +5171,7 @@ ReInitCounters:				; CODE XREF: ReInitNEIGT+8p
 		st	a, unk_112
 		ld	a, #12h
 		mov	a, b
-		st	d, unk_110
+		st	d, unk_110	; related to pulsewidth*RPM/195, fuel flow for pump controller?
 		add	a, #013
 		cmp	a, #024
 		ble	ReInitCNT_1
@@ -16486,7 +5185,7 @@ ReInitCNT_1:				; CODE XREF: ReInitCounters+Fj
 
 ; ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ S U B	R O U T	I N E ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ
 
-; blast	out a byte, set	unk_74,	receive	a byte and leave it in AccA
+; blast	out a byte, set	unk_74,	read SIDR and SSD for 300 iterations
 
 sub_D45F:				; CODE XREF: sub_D2B9+1Fp __RESET+10Bp
 		clrb	bit3, SSD
@@ -16514,29 +5213,29 @@ loc_D479:				; CODE XREF: sub_D45F+11j
 ; ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ S U B	R O U T	I N E ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ
 
 
-sub_D47F:				; CODE XREF: sub_D2B9+5Ep __RESET+75p	...
+write6336:				; CODE XREF: sub_D2B9+5Ep __RESET+75p	...
 		clrb	bit5, PORTB
-		ld	a, unk_50
+		ld	a, flags_50	; could	be bits	for 6336 output	chip
 		xor	a, #00h
-		st	a, unk_1E
-		ld	a, #05h
+		st	a, SIDR_SODR2	; write	data is	tx'd on pin 47, read data is from pin 48
+		ld	a, #005
 
-loc_D489:				; CODE XREF: sub_D47F+11j
-		ld	b, unk_1D
-		and	b, #04h
-		bne	loc_D494
+loc_D489:				; CODE XREF: write6336+11j
+		ld	b, unk_1D	; bit3 seems to	be a uart global clock output enable
+		and	b, #04h		; probably "txempty" bit
+		bne	loc_D494	; set pin 22 - latch data from rx hold buffer into output buffer of 6336
 		dec	a
 		bne	loc_D489
 		bra	locret_D498
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
-loc_D494:				; CODE XREF: sub_D47F+Ej
-		setb	bit5, PORTB
-		clrb	bit5, PORTB
+loc_D494:				; CODE XREF: write6336+Ej
+		setb	bit5, PORTB	; set pin 22 - latch data from rx hold buffer into output buffer of 6336
+		clrb	bit5, PORTB	; clear	pin 22
 
-locret_D498:				; CODE XREF: sub_D47F+13j
+locret_D498:				; CODE XREF: write6336+13j
 		ret
-; End of function sub_D47F
+; End of function write6336
 
 
 ; ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ S U B	R O U T	I N E ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ
@@ -16545,25 +5244,25 @@ locret_D498:				; CODE XREF: sub_D47F+13j
 sub_D499:				; CODE XREF: __RESET+174p
 					; __RESET+104Bp
 		ld	a, rawTHW	; Contains the NOT of CTS reading from ADC, sensor is tied to ground on	other side
-		cmp	a, #0D9h
-		bcc	loc_D4A1
-		clrb	bit4, unk_47
+		cmp	a, #217
+		bcc	loc_D4A1	; bounce if higher
+		clrb	bit4, flags_47
 
 loc_D4A1:				; CODE XREF: sub_D499+4j
-		cmp	a, #0DFh
-		ble	loc_D4A7
-		setb	bit4, unk_47
+		cmp	a, #223
+		ble	loc_D4A7	; bounce if lower
+		setb	bit4, flags_47
 
 loc_D4A7:				; CODE XREF: sub_D499+Aj
-		ld	a, unk_5E
-		cmp	a, #2Dh
+		ld	a, unk_5E	; could	be last	unk_100, or 0
+		cmp	a, #045
 		bgt	loc_D4AF
-		clrb	bit7, unk_41
+		clrb	bit7, flags_41
 
 loc_D4AF:				; CODE XREF: sub_D499+12j
-		cmp	a, #37h
+		cmp	a, #055
 		bcs	locret_D4B5
-		setb	bit7, unk_41
+		setb	bit7, flags_41
 
 locret_D4B5:				; CODE XREF: sub_D499+18j
 		ret
@@ -16588,7 +5287,7 @@ __RESET:				; DATA XREF: __NMI+3o ROM:FFFEo
 		ld	#3Fh, DDRB	; Port B i/o config
 		clr	PBCS		; Port B Control Register
 		ld	#1Eh, ASR0P	; ASR0 pos edge	counter	value MSB
-		ld	#08h, unk_1D
+		ld	#08h, unk_1D	; bit3 seems to	be a uart global clock output enable
 		ld	#30h, ASR0NL	; ASR0 neg edge	counter	value LSB
 		ld	#34h, ASR0N	; ASR0 neg edge	counter	value MSB
 		ld	d, #3900h
@@ -16629,16 +5328,16 @@ loc_D519:				; CODE XREF: __RESET+67j
 		bcs	loc_D519
 		tbs	bit6, RAMST	; Built-in RAM status
 		bne	loc_D525
-		setb	bit5, unk_41
+		setb	bit5, flags_41
 
 loc_D525:				; CODE XREF: sub_D3D5+17j __RESET+6Bj
 		ld	y, #0D58Dh
 		jsr	InitRAM		; fill ram with	default	values
-		jsr	sub_D47F
-		setb	bit7, unk_4C
-		setb	bit6, unk_49
-		setb	bit3, unk_47
-		setb	bit7, unk_44
+		jsr	write6336
+		setb	bit7, flags_4C
+		setb	bit6, flags_49
+		setb	bit3, flags_47
+		setb	bit7, flags_44
 		ld	d, #02825
 		st	d, InjectPW1	; reset	initialization of PW
 		st	d, InjectPW2	; reset	Initialization of PW
@@ -16664,7 +5363,7 @@ loc_D525:				; CODE XREF: sub_D3D5+17j __RESET+6Bj
 		st	a, unk_1A0
 		st	a, unk_1A1
 		ld	a, #08h
-		st	a, unk_11F
+		st	a, unk_11F	; ISC related
 		ld	a, #10h
 		st	a, unk_145
 		st	a, unk_161
@@ -16722,16 +5421,16 @@ loc_D5B6:				; CODE XREF: __RESET+D4j
 		clr	b
 
 loc_D5BE:				; CODE XREF: __RESET+111j
-		ld	a, unk_F767
-		jsr	sub_D45F	; blast	out a byte, set	unk_74,	receive	a byte and leave it in AccA
+		ld	a, unk_F767	; data for f3d8
+		jsr	sub_D45F	; blast	out a byte, set	unk_74,	read SIDR and SSD for 300 iterations
 		inc	b
 		cmp	b, #02h
 		bcs	loc_D5BE
-		tbbs	bit6, unk_45, loc_D5D5
-		tbbc	bit7, unk_45, loc_D5D5
-		setb	bit3, unk_4B
-		setb	bit4, unk_4D
-		setb	bit3, unk_4D
+		tbbs	bit6, flags_45,	loc_D5D5
+		tbbc	bit7, flags_45,	loc_D5D5
+		setb	bit3, flags_4B
+		setb	bit4, flags_4D
+		setb	bit3, flags_4D
 
 loc_D5D5:				; CODE XREF: __RESET+113j __RESET+116j
 		ld	a, #03h
@@ -16768,8 +5467,8 @@ loc_D614:				; CODE XREF: __RESET+124j __RESET+12Aj ...
 		cmp	a, b
 		beq	loc_D621
 		ld	a, #7Dh
-		setb	bit3, unk_48
-		setb	bit4, unk_48
+		setb	bit3, flags_48
+		setb	bit4, flags_48
 
 loc_D621:				; CODE XREF: __RESET+163j
 		st	a, unk_DB
@@ -16790,9 +5489,9 @@ loc_D621:				; CODE XREF: __RESET+163j
 MainLoop:				; CODE XREF: __RESET:EndMainLoopj
 		ld	d, #116Eh
 		st	d, IMASK	; Interrupt Request Mask MSB
-		setb	bit2, unk_4A
-		tbbc	bit0, unk_45, loc_D64C
-		clrb	bit4, unk_4D
+		setb	bit2, flags_4A
+		tbbc	bit0, flags_45,	loc_D64C
+		clrb	bit4, flags_4D
 
 loc_D64C:				; CODE XREF: __RESET+191j
 		tbbc	bit5, RAMST, loc_D665 ;	Built-in RAM status
@@ -16804,11 +5503,11 @@ loc_D64C:				; CODE XREF: __RESET+191j
 		bcc	loc_D660
 
 loc_D65D:				; CODE XREF: __RESET+19Bj __RESET+1A0j
-		jsr	sub_D688
+		jsr	sub_D688	; plays	with lots of the undefined regions of memory
 
 loc_D660:				; CODE XREF: __RESET+1A5j
 		tbbc	bit5, RAMST, loc_D665 ;	Built-in RAM status
-		setb	bit1, unk_4B
+		setb	bit1, flags_4B
 
 loc_D665:				; CODE XREF: __RESET:loc_D64Cj
 					; __RESET:loc_D660j
@@ -16858,20 +5557,21 @@ locret_D687:				; CODE XREF: sub_D667+1Dj
 
 ; ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ S U B	R O U T	I N E ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ
 
+; plays	with lots of the undefined regions of memory
 
 sub_D688:				; CODE XREF: __RESET:loc_D65Dp
-		ld	a, unk_4D
+		ld	a, flags_4D
 		and	a, #18h
-		st	a, unk_4D
+		st	a, flags_4D
 		clr	a
 		clr	b
-		st	d, unk_4E
+		st	d, flags_4E
 		st	a, unk_146
 		st	a, unk_162
 		st	a, unk_7D
 		dec	b
 		ld	y, #0086h
-		st	d, [y]
+		st	d, [y]		; write	out 00FF
 		st	d, [y]
 		st	d, [y]
 		st	d, [y]
@@ -16891,14 +5591,14 @@ sub_D688:				; CODE XREF: __RESET:loc_D65Dp
 		st	d, word_304
 		st	d, word_306
 		ld	d, #00FFh
-		st	d, unk_300
+		st	d, word_300
 		st	d, word_302
 		st	d, word_9E
 		st	d, unk_A0
 		st	d, unk_308
 		ld	d, #5AA5h
 		st	d, word_84
-		clrb	bit1, unk_4B
+		clrb	bit1, flags_4B
 		ret
 ; End of function sub_D688
 
@@ -16906,25 +5606,25 @@ sub_D688:				; CODE XREF: __RESET:loc_D65Dp
 ; START	OF FUNCTION CHUNK FOR __RESET
 
 loc_D6D6:				; CODE XREF: __RESET:loc_D665j
-		tbbc	bit0, unk_45, loc_D6DB
-		clrb	bit2, unk_4C
+		tbbc	bit0, flags_45,	loc_D6DB
+		clrb	bit2, flags_4C
 
 loc_D6DB:				; CODE XREF: __RESET:loc_D6D6j
 		cmp	#14h, RPM	; MSB is RPM/50, LSB is	fraction of 50
 		bcs	loc_D6EA
 		cmp	#07h, unk_B9
 		bcs	loc_D6EA
-		tbbc	bit2, unk_4C, loc_D6EA ; bit 7 demands a sampling of the oxygen	sensors
-		setb	bit5, unk_4F
+		tbbc	bit2, flags_4C,	loc_D6EA ; bit 7 demands a sampling of the oxygen sensors
+		setb	bit5, flags_4F
 
 loc_D6EA:				; CODE XREF: __RESET+228j __RESET+22Dj ...
 		cmp	#92h, unk_B9
 		bcs	loc_D6FE
-		tbbc	bit0, unk_4C, loc_D6F4 ; bit 7 demands a sampling of the oxygen	sensors
-		setb	bit3, unk_4E
+		tbbc	bit0, flags_4C,	loc_D6F4 ; bit 7 demands a sampling of the oxygen sensors
+		setb	bit3, flags_4E
 
 loc_D6F4:				; CODE XREF: __RESET+239j
-		tbbs	bit3, unk_4E, loc_D6F9
+		tbbs	bit3, flags_4E,	loc_D6F9
 		clr	unk_B3
 
 loc_D6F9:				; CODE XREF: __RESET:loc_D6F4j
@@ -16967,43 +5667,43 @@ loc_D71F:				; CODE XREF: __RESET+246j
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_D72F:				; CODE XREF: __RESET+274j
-		ld	d, word_78	; deltaKS/unk_68, filtered
+		ld	d, meanKSint	; deltaKS/KS_count, filtered
 		shr	d
 		ld	y, RPM		; MSB is RPM/50, LSB is	fraction of 50
 		jsr	MulDbyY		; returns upper	16 bits	in Y, lower 16 bits in D
-		cmp	y, #00075	; Y:D now holds	Load
-		ble	loc_D757
-		st	y, unk_51
-		ld	d, word_78	; deltaKS/unk_68, filtered
+		cmp	y, #00075	; Y:D now holds	K*1/Load, but what is K? who cares.
+		ble	loc_D757	; bounce if Y is less or equal to 75, which skips taking the scaled reciprocal of word_51
+		st	y, temp_51	; this is the desirable	program	path
+		ld	d, meanKSint	; deltaKS/KS_count, filtered
 		shr	d
-		ld	y, #0C246h
+		ld	y, #0C246h	; this could be	a compensation for AFM nonlinearities
 		jsr	TwoD_AccD	; lookup AccD/64, integer return in Acca, fraction return in AccB
 		ld	y, #08523
 		jsr	MulAbyY		; returns upper	16b in AccD
 		add	d, #08523
-		ld	x, unk_51	; load MSW
-		jsr	divDbyX		; divide D by X, does some shifting to return ?? bits
-		bra	loc_D75A
+		ld	x, temp_51	; load MSW
+		jsr	divDbyX		; takes	a scaled reciprocal to compensate for RPM*meanKSint decreasing with increasing load
+		bra	loc_D75A	; temp_51 now holds load.
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_D757:				; CODE XREF: __RESET+284j
-		ld	d, #0A000h
+		ld	d, #0A000h	; absolute load	limiter
 
 loc_D75A:				; CODE XREF: __RESET+29Fj
-		st	d, unk_51
-		ld	y, #0C2B8h	; load limiting	table?
+		st	d, temp_51	; temp_51 now holds load.
+		ld	y, #0C2B8h	; load limiting	table
 		jsr	TwoD_RPM	; lookup unk_F0, integer return	in Acca, fraction return in AccB
-		cmp	d, unk_51
+		cmp	d, temp_51
 		ble	loc_D768	; choose smallest.
-		ld	d, unk_51
+		ld	d, temp_51
 
 loc_D768:				; CODE XREF: __RESET+2AEj
 		mov	d, y
-		tbbs	bit0, unk_41, loc_D784 ; only time this	is writ
-		cmp	#030, RPM	; MSB is RPM/50, LSB is	fraction of 50
+		tbbs	bit0, flags_41,	loc_D784 ; only	time this is writ
+		cmp	#030, RPM	; 1500RPM
 		bcc	loc_D784	; only time this is writ
 		ld	a, VTA_net
-		cmp	a, #52h
+		cmp	a, #082
 		bcs	loc_D784	; only time this is writ
 		cmp	#19h, unk_A7
 		bcs	loc_D784	; only time this is writ
@@ -17012,37 +5712,37 @@ loc_D768:				; CODE XREF: __RESET+2AEj
 		ld	y, #7800h	; default value, smaller than table output
 
 loc_D784:				; CODE XREF: __RESET+2B3j __RESET+2B9j ...
-		st	y, word_6E	; only time this is writ
+		st	y, LOAD		; only time this is writ
 		ld	a, rawTHA	; Contains the NOT of air temp reading from ADC, sensor	is tied	to ground on other side
 		ld	y, #0C2CCh
 		jsr	TwoDTable	; X value in AccA, integer return in Acca, fraction return in AccB
 		mov	a, b
 		clr	a
 		add	d, #00410
-		mov	d, y
+		mov	d, y		; Y holds conerted and offset air temp
 		clr	a
-		ld	b, unk_5D	; adc pin 17 related
+		ld	b, ATM_press	; adc pin 17 - PCM atmospheric pressure	sensor,	debiased and scaled
 		add	d, #00200
 		jsr	MulDbyY		; returns upper	16 bits	in Y, lower 16 bits in D
-		st	y, unk_51
-		shr	unk_52
+		st	y, temp_51	; temp_51 contains air temp scaled by atmoshperic pressure
+		shr	temp_52
 		rorc	a
 		rorc	b
-		shr	unk_52
+		shr	temp_52
 		rorc	a
 		rorc	b
-		shr	unk_52
+		shr	temp_52
 		rorc	a
 		rorc	b
 		ld	x, #00190
 		jsr	divDbyX		; divide D by X, does some shifting to return ?? bits
-		st	a, unk_1A8
+		st	a, unk_1A8	; looks	like air temp compensation for load
 		push	d
-		ld	y, word_6E	; load-ish
+		ld	y, LOAD		; Load,	uncompensated for ThA
 		jsr	MulDbyY		; returns upper	16 bits	in Y, lower 16 bits in D
 		mov	y, d
 		shl	d
-		st	d, word_F2	; only writ here
+		st	d, compLOAD	; only writ here
 		pull	d
 		shr	d
 		shr	d
@@ -17051,9 +5751,9 @@ loc_D784:				; CODE XREF: __RESET+2B3j __RESET+2B9j ...
 		shr	d
 		shr	d
 		mov	d, x
-		ld	d, word_78	; deltaKS/unk_68, filtered
+		ld	d, meanKSint	; deltaKS/KS_count, filtered
 		jsr	divDbyX		; divide D by X, does some shifting to return ?? bits
-		st	d, word_7A
+		st	d, word_7A	; meanKSint divided by a air temp comp factor
 		cmp	d, #00468
 		bcs	loc_D7D5
 		ld	#7Ah, unk_BA
@@ -17071,16 +5771,16 @@ loc_D7D5:				; CODE XREF: __RESET+31Aj
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_D7E5:				; CODE XREF: __RESET+32Aj
-		ld	d, word_F2
-		tbbs	bit7, unk_4C, loc_D817 ; bit 7 demands a sampling of the oxygen	sensors
+		ld	d, compLOAD	; air temp compensated Load
+		tbbs	bit7, flags_4C,	loc_D817 ; bit 7 demands a sampling of the oxygen sensors
 		push	a
-		ld	a, unk_44	; bits 543210 will all cause a branch past doinjectors
+		ld	a, flags_44	; bit3:	rev limiter, bits 543210 will all cause	a branch past doinjectors
 		cmpb	a, #3Fh
 		pull	a
 		bne	loc_D817
 		cmp	#00h, unk_BA
 		beq	loc_D817
-		sub	d, unk_1A6
+		sub	d, avgCompLoad
 		bcc	loc_D803
 		bmi	loc_D808
 		ld	d, #8000h
@@ -17104,12 +5804,12 @@ loc_D808:				; CODE XREF: __RESET+346j __RESET+34Bj ...
 		rorc	b
 		shra	a
 		rorc	b
-		add	d, unk_1A6
+		add	d, avgCompLoad
 
 loc_D817:				; CODE XREF: __RESET+331j __RESET+33Aj ...
-		st	d, unk_1A6
-		ld	d, word_F2
-		sub	d, unk_1A6
+		st	d, avgCompLoad
+		ld	d, compLOAD	; air temp compensated Load
+		sub	d, avgCompLoad
 		bcc	loc_D82F
 		add	a, #80h
 		bcs	loc_D826
@@ -17133,7 +5833,7 @@ loc_D835:				; CODE XREF: __RESET+373j __RESET+377j ...
 		.db 0E8h ; è
 		.db  30h ; 0
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
-		st	a, unk_6D
+		st	a, byte_6D	; signed change	in load	from average
 		cmp	a, #84h
 		bcs	loc_D847
 		clr	a
@@ -17142,7 +5842,7 @@ loc_D835:				; CODE XREF: __RESET+373j __RESET+377j ...
 
 loc_D847:				; CODE XREF: __RESET+388j
 		ld	a, #80h
-		ld	b, unk_114	; adc pin 16
+		ld	b, ADC_pin16	; adc pin 16 (0V)
 		and	b, #0Ch
 		beq	loc_D858
 		ld	a, #9Ah
@@ -17151,17 +5851,17 @@ loc_D847:				; CODE XREF: __RESET+388j
 		ld	a, #73h
 
 loc_D858:				; CODE XREF: __RESET+398j __RESET+39Ej
-		mul	a, word_16E
+		mul	a, word_16E	; inversely temp dependant, additional math elsewhere
 		shl	d
-		st	a, unk_51
+		st	a, temp_51
 		push	a
-		clrb	bit0, unk_40
+		clrb	bit0, flags_40
 
 loc_D861:				; CODE XREF: __RESET+3E1j
 		jsr	sub_C8D9
 		cmp	#0E3h, rawTHW	; Contains the NOT of CTS reading from ADC, sensor is tied to ground on	other side
 		rorc	a
-		mul	a, unk_51
+		mul	a, temp_51
 		shl	d
 		bcc	loc_D86F
 		ld	a, #0FFh
@@ -17170,10 +5870,10 @@ loc_D86F:				; CODE XREF: __RESET+3B5j
 		push	a
 		clr	b
 		shr	d
-		st	d, unk_51
+		st	d, temp_51
 		pull	a
-		mul	a, unk_6D
-		sub	d, unk_51
+		mul	a, byte_6D	; signed change	in load	from average
+		sub	d, temp_51
 		bcc	loc_D884
 		shl	d
 		add	a, #20h
@@ -17193,40 +5893,40 @@ loc_D887:				; CODE XREF: __RESET+3C8j __RESET+3CCj
 		ld	d, #0FFFFh
 
 loc_D88D:				; CODE XREF: __RESET+3D2j
-		tbs	bit0, unk_40
+		tbs	bit0, flags_40
 		bne	loc_D899
 		st	d, word_16A
 		pull	a
-		st	a, unk_51
+		st	a, temp_51
 		bra	loc_D861
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_D899:				; CODE XREF: __RESET+3D9j
 		st	d, word_16C
 		ld	y, #0C54Ch
-		ld	d, word_F2
+		ld	d, compLOAD	; air temp compensated Load
 		jsr	DivDby12	; divides D by 12, returns 16b result in unks 53:54
 		ld	d, RPM		; MSB is RPM/50, LSB is	fraction of 50
-		jsr	ThreeDtable
-		tbbc	bit3, unk_45, loc_D8AE
+		jsr	ThreeDtable	; inputs in D and temp_53:temp_54
+		tbbc	bit3, flags_45,	loc_D8AE
 		add	a, #2Bh
 
 loc_D8AE:				; CODE XREF: __RESET+3F3j
 		st	a, unk_199
 
 loc_D8B1:				; CODE XREF: __RESET+276j __RESET+32Cj
-		tbbs	bit7, unk_4C, loc_D8E9 ; bit 7 demands a sampling of the oxygen	sensors
-		tbbs	bit0, unk_45, loc_D8E9
-		ld	a, word_F2
-		ld	y, #0C5DDh
+		tbbs	bit7, flags_4C,	loc_D8E9 ; bit 7 demands a sampling of the oxygen sensors
+		tbbs	bit0, flags_45,	loc_D8E9
+		ld	a, compLOAD	; air temp compensated Load
+		ld	y, #0C5DDh	; high voltage table
 		cmp	#160, Bvolts	; 12.5V
 		bcc	loc_D8C4
-		ld	y, #0C5E2h
+		ld	y, #0C5E2h	; low voltage table
 
 loc_D8C4:				; CODE XREF: __RESET+409j
 		jsr	TwoDTable	; X value in AccA, integer return in Acca, fraction return in AccB
-		st	d, unk_51
-		ld	d, InjectPW1	; pulsewidth for most cases/cylinders
+		st	d, temp_51	; load table output
+		ld	d, InjectPW1	; pulsewidth for most cases/cylinders, 4us/bit
 		ld	y, RPM		; MSB is RPM/50, LSB is	fraction of 50
 		jsr	MulDbyY		; returns upper	16 bits	in Y, lower 16 bits in D
 		cmp	y, #02918
@@ -17244,20 +5944,20 @@ loc_D8DB:				; CODE XREF: __RESET+41Ej
 		pull	b		; gets the middle 16 bits
 
 loc_D8E5:				; CODE XREF: __RESET+423j
-		cmp	d, unk_51
+		cmp	d, temp_51
 		bcs	loc_D8ED
 
 loc_D8E9:				; CODE XREF: __RESET:loc_D8B1j
 					; __RESET+3FEj
-		clrb	bit7, unk_4B
+		clrb	bit7, flags_4B
 		bra	loc_D8F7
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_D8ED:				; CODE XREF: __RESET+431j
-		tbbs	bit7, unk_4B, loc_D8F9
+		tbbs	bit7, flags_4B,	loc_D8F9
 		cmp	#0C3h, unk_A6
 		bcs	loc_D8F9
-		setb	bit7, unk_4B
+		setb	bit7, flags_4B
 
 loc_D8F7:				; CODE XREF: __RESET+435j
 		clr	unk_A6
@@ -17265,14 +5965,14 @@ loc_D8F7:				; CODE XREF: __RESET+435j
 loc_D8F9:				; CODE XREF: __RESET:loc_D8EDj
 					; __RESET+43Dj
 		clr	a
-		tbbs	bit5, unk_45, loc_D91F
-		ld	b, unk_44	; bits 543210 will all cause a branch past doinjectors
+		tbbs	bit5, flags_45,	loc_D91F
+		ld	b, flags_44	; bit3:	rev limiter, bits 543210 will all cause	a branch past doinjectors
 		and	b, #3Fh
 		bne	loc_D91F
 		ld	b, unk_6C	; sort of a filtered, saturated	VTA_net
 		cmp	b, #3Ah
 		bcc	loc_D91F
-		cmp	#48h, RPM	; MSB is RPM/50, LSB is	fraction of 50
+		cmp	#072, RPM	; 3600 RPM
 		bcc	loc_D921
 		ld	a, unk_109
 		cmpb	a, #08h
@@ -17288,7 +5988,7 @@ loc_D91F:				; CODE XREF: __RESET+444j __RESET+44Bj ...
 
 loc_D921:				; CODE XREF: __RESET+456j __RESET+45Dj ...
 		clr	a
-		tbbs	bit0, unk_4D, loc_D944
+		tbbs	bit0, flags_4D,	loc_D944
 		ld	a, unk_102
 		and	a, #07h
 		ld	x, #0C479h
@@ -17308,16 +6008,16 @@ loc_D943:				; CODE XREF: __RESET+47Fj __RESET+486j
 
 loc_D944:				; CODE XREF: __RESET+46Cj __RESET+48Bj
 		st	a, unk_187
-		ld	b, unk_A2	; contains bitflags, bit7 VTA_net related
+		ld	b, flags_A2	; contains bitflags, bit7 VTA_net related
 		ld	a, VTA_net
-		cmp	a, #7Bh
+		cmp	a, #123
 		bcs	loc_D951
-		or	b, #10h
+		or	b, #10h		; set bit 4
 
 loc_D951:				; CODE XREF: __RESET+497j
-		cmp	a, #77h
+		cmp	a, #119
 		bcc	loc_D957
-		and	b, #0EFh
+		and	b, #0EFh	; clear	bit 4
 
 loc_D957:				; CODE XREF: __RESET+49Dj
 		and	b, #0BFh
@@ -17325,29 +6025,29 @@ loc_D957:				; CODE XREF: __RESET+49Dj
 		ld	y, #0C321h
 		jsr	TwoD_RPM	; lookup unk_F0, integer return	in Acca, fraction return in AccB
 		pull	b
-		cmp	a, word_F2
+		cmp	a, compLOAD	; air temp compensated Load
 		bcc	loc_D967
 		or	b, #40h
 
 loc_D967:				; CODE XREF: __RESET+4ADj
-		cmp	#25h, VTA_net
+		cmp	#037, VTA_net
 		bcc	loc_D96E
 		and	b, #7Fh
 
 loc_D96E:				; CODE XREF: __RESET+4B4j
-		cmp	#29h, VTA_net
+		cmp	#041, VTA_net
 		bcs	loc_D975
 		or	b, #80h
 
 loc_D975:				; CODE XREF: __RESET+4BBj
-		st	b, unk_A2	; contains bitflags, bit7 VTA_net related
+		st	b, flags_A2	; contains bitflags, bit7 VTA_net related
 		ld	b, unk_183
 		cmp	#028, RPM	; MSB is RPM/50, LSB is	fraction of 50
 		bcc	loc_D981
 		and	b, #0FCh
 
 loc_D981:				; CODE XREF: __RESET+4C7j
-		cmp	#1Fh, RPM	; MSB is RPM/50, LSB is	fraction of 50
+		cmp	#031, RPM	; MSB is RPM/50, LSB is	fraction of 50
 		bcc	loc_D98A
 		and	b, #0FDh
 		bra	loc_D993
@@ -17355,17 +6055,17 @@ loc_D981:				; CODE XREF: __RESET+4C7j
 
 loc_D98A:				; CODE XREF: __RESET+4CEj
 		or	b, #01h
-		cmp	#22h, RPM	; MSB is RPM/50, LSB is	fraction of 50
+		cmp	#034, RPM	; MSB is RPM/50, LSB is	fraction of 50
 		bcs	loc_D993
 		or	b, #02h
 
 loc_D993:				; CODE XREF: __RESET+4D2j __RESET+4D9j
 		st	b, unk_183
 		ld	a, unk_104
-		ld	x, word_170
+		ld	x, word_170	; inversely temp dependant, additional math elsewhere
 		cmp	x, #11ECh
 		bcc	loc_D9AD
-		ld	b, unk_A2	; contains bitflags, bit7 VTA_net related
+		ld	b, flags_A2	; contains bitflags, bit7 VTA_net related
 		cmpb	b, #10h
 		beq	loc_D9AD
 		cmp	a, #0Fh
@@ -17373,91 +6073,91 @@ loc_D993:				; CODE XREF: __RESET+4D2j __RESET+4D9j
 		ld	a, #0Fh
 
 loc_D9AD:				; CODE XREF: __RESET+4E9j __RESET+4EFj ...
-		st	a, unk_51
+		st	a, temp_51
 		beq	loc_D9E1
 		cmp	#0D2h, rawTHW	; Contains the NOT of CTS reading from ADC, sensor is tied to ground on	other side
 		bcs	loc_D9E1
 		ld	a, unk_186
 		cmp	a, unk_187
-		bcc	loc_D9C1
+		bcc	loc_D9C1	; select largest
 		ld	a, unk_187
 
 loc_D9C1:				; CODE XREF: __RESET+506j
 		cmp	a, unk_197
-		bcc	loc_D9C9
+		bcc	loc_D9C9	; select largest
 		ld	a, unk_197
 
 loc_D9C9:				; CODE XREF: __RESET+50Ej
 		shr	a
 		cmp	a, unk_18A
-		bcc	loc_D9D2
+		bcc	loc_D9D2	; select largest
 		ld	a, unk_18A
 
 loc_D9D2:				; CODE XREF: __RESET+517j
 		ld	b, unk_18D	; im thinking it's a net retard, summed from a number of positive vales then negated
-		sub	b, #80h
+		sub	b, #128		; 15 degrees
 		bcc	loc_D9DB
 		neg	b
 		add	a, b
 
 loc_D9DB:				; CODE XREF: __RESET+521j
-		mul	a, #8Ah
+		mul	a, #138
 		addc	a, #00h
-		add	a, unk_51
+		add	a, temp_51
 
 loc_D9E1:				; CODE XREF: __RESET+4F9j __RESET+4FEj
 		st	a, unk_D4
 		ld	y, #0C336h
 		jsr	TwoD_rawTHW	; lookup Raw Water Temp, integer return	in Acca, fraction return in AccB
-		clrb	bit0, unk_40
-		tbbc	bit1, unk_45, loc_D9F4
-		tbbs	bit5, unk_45, loc_D9F4
-		tbbs	bit7, unk_41, loc_D9FC
+		clrb	bit0, flags_40
+		tbbc	bit1, flags_45,	loc_D9F4
+		tbbs	bit5, flags_45,	loc_D9F4
+		tbbs	bit7, flags_41,	loc_D9FC
 
 loc_D9F4:				; CODE XREF: __RESET+535j __RESET+538j
-		setb	bit0, unk_40
+		setb	bit0, flags_40
 		cmp	a, #1Ch
 		bcc	loc_D9FC
-		ld	a, #1Ch
+		ld	a, #028
 
 loc_D9FC:				; CODE XREF: __RESET+53Bj __RESET+542j
-		tbbc	bit6, unk_4A, loc_DA01
-		add	a, #14h
+		tbbc	bit6, flags_4A,	loc_DA01
+		add	a, #020
 
 loc_DA01:				; CODE XREF: __RESET:loc_D9FCj
-		st	a, unk_51
+		st	a, temp_51
 		ld	b, #0Ch
-		tbbc	bit0, unk_40, loc_DA12
+		tbbc	bit0, flags_40,	loc_DA12
 		ld	b, #08h
-		tbbs	bit6, unk_47, loc_DA12
-		tbbs	bit7, unk_47, loc_DA12
+		tbbs	bit6, flags_47,	loc_DA12
+		tbbs	bit7, flags_47,	loc_DA12
 		ld	b, #04h
 
 loc_DA12:				; CODE XREF: __RESET+54Fj __RESET+554j ...
 		add	a, b
-		st	a, unk_52
+		st	a, temp_52
 		ld	a, word_126
 		ld	b, RPM		; MSB is RPM/50, LSB is	fraction of 50
-		tbbc	bit0, unk_41, loc_DA5E
+		tbbc	bit0, flags_41,	loc_DA5E
 		clr	unk_A7
 		cmp	a, #7Ah
 		bcs	loc_DA25
-		setb	bit7, unk_44
+		setb	bit7, flags_44
 
 loc_DA25:				; CODE XREF: __RESET+56Bj
-		tbbc	bit4, unk_44, loc_DA4D ; bits 543210 will all cause a branch past doinjectors
-		cmp	b, unk_51
+		tbbc	bit4, flags_44,	loc_DA4D ; bit3: rev limiter, bits 543210 will all cause a branch past doinjectors
+		cmp	b, temp_51
 		bcc	loc_DA5A	; prevent gasso	among other things
-		clrb	bit6, unk_47
-		tbbs	bit3, unk_43, loc_DAA7
-		tbbc	bit4, unk_47, loc_DAA7
-		tbbc	bit1, unk_42, loc_DAA7
-		tbbs	bit0, unk_42, loc_DAA7
-		cmp	#05h, unk_5E
+		clrb	bit6, flags_47
+		tbbs	bit3, flags_43,	loc_DAA7 ; bit3: AFM bad bit4: rev limiter
+		tbbc	bit4, flags_47,	loc_DAA7
+		tbbc	bit1, flags_42,	loc_DAA7
+		tbbs	bit0, flags_42,	loc_DAA7
+		cmp	#05h, unk_5E	; could	be last	unk_100, or 0
 		bcs	loc_DAA7
 		di
-		setb	bit6, unk_42
-		clrb	bit5, unk_42
+		setb	bit6, flags_42
+		clrb	bit5, flags_42
 		ld	d, #00FEh
 		st	d, word_193
 		ei
@@ -17465,9 +6165,9 @@ loc_DA25:				; CODE XREF: __RESET+56Bj
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_DA4D:				; CODE XREF: __RESET:loc_DA25j
-		cmp	b, unk_52
+		cmp	b, temp_52
 		bcc	loc_DA55
-		setb	bit7, unk_47
+		setb	bit7, flags_47
 		bra	loc_DAA7
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
@@ -17476,48 +6176,48 @@ loc_DA55:				; CODE XREF: __RESET+599j
 		bcs	loc_DAAB
 
 loc_DA5A:				; CODE XREF: __RESET+574j
-		setb	bit4, unk_44	; prevent gasso	among other things
+		setb	bit4, flags_44	; prevent gasso	among other things
 		bra	loc_DAAB
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_DA5E:				; CODE XREF: __RESET+564j
-		tbbc	bit4, unk_44, loc_DA65 ; bits 543210 will all cause a branch past doinjectors
-		setb	bit6, unk_47
+		tbbc	bit4, flags_44,	loc_DA65 ; bit3: rev limiter, bits 543210 will all cause a branch past doinjectors
+		setb	bit6, flags_47
 		bra	loc_DA6B
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_DA65:				; CODE XREF: __RESET:loc_DA5Ej
-		cmp	b, unk_51
+		cmp	b, temp_51
 		bcc	loc_DA6B
-		clrb	bit6, unk_47
+		clrb	bit6, flags_47
 
 loc_DA6B:				; CODE XREF: __RESET+5ADj __RESET+5B1j
-		clrb	bit7, unk_47
-		tbbc	bit7, unk_44, loc_DA88 ; bits 543210 will all cause a branch past doinjectors
+		clrb	bit7, flags_47
+		tbbc	bit7, flags_44,	loc_DA88 ; bit3: rev limiter, bits 543210 will all cause a branch past doinjectors
 		cmp	a, #7Ah
 		bcs	loc_DA88
-		tbbs	bit7, unk_4C, loc_DA88 ; bit 7 demands a sampling of the oxygen	sensors
-		cmp	#28h, RPM	; MSB is RPM/50, LSB is	fraction of 50
+		tbbs	bit7, flags_4C,	loc_DA88 ; bit 7 demands a sampling of the oxygen sensors
+		cmp	#040, RPM	; MSB is RPM/50, LSB is	fraction of 50
 		bcc	loc_DA88
-		ld	a, unk_44	; bits 543210 will all cause a branch past doinjectors
-		cmpb	a, #0Eh
+		ld	a, flags_44	; bit3:	rev limiter, bits 543210 will all cause	a branch past doinjectors
+		cmpb	a, #00001110b
 		bne	loc_DA88
-		ld	d, #00250
+		ld	d, #00250	; 1ms burst
 		jsr	DoAllInj
 
 loc_DA88:				; CODE XREF: __RESET+5B7j __RESET+5BCj ...
 		clr	a
 		st	a, word_126
-		clrb	bit7, unk_44
+		clrb	bit7, flags_44
 		clr	unk_A3
-		clrb	bit4, unk_44
+		clrb	bit4, flags_44
 		cmp	#24h, RPM	; MSB is RPM/50, LSB is	fraction of 50
 		bcs	loc_DA99
-		setb	bit4, unk_42
+		setb	bit4, flags_42
 
 loc_DA99:				; CODE XREF: __RESET+5DFj
 		ld	d, #0FF49h
-		cmp	#19h, unk_5E
+		cmp	#19h, unk_5E	; could	be last	unk_100, or 0
 		bcs	loc_DAA4
 		ld	d, #0F545h
 
@@ -17526,13 +6226,13 @@ loc_DAA4:				; CODE XREF: __RESET+5E9j
 
 loc_DAA7:				; CODE XREF: __RESET+578j __RESET+57Bj ...
 		clr	unk_A3
-		clrb	bit4, unk_44
+		clrb	bit4, flags_44
 
 loc_DAAB:				; CODE XREF: __RESET+5A2j __RESET+5A6j
-		clrb	bit0, unk_40
+		clrb	bit0, flags_40
 		ld	y, #012Dh
 		jsr	sub_C64D
-		setb	bit0, unk_40
+		setb	bit0, flags_40
 		ld	y, #0149h
 		jsr	sub_C64D
 		ld	y, #0098h
@@ -17580,7 +6280,7 @@ loc_DAEC:				; CODE XREF: __RESET+618j
 		and	a, unk_15C
 		cmpb	a, #02h
 		beq	loc_DB08
-		ld	d, word_170
+		ld	d, word_170	; inversely temp dependant, additional math elsewhere
 		bne	loc_DB08
 		tbbs	bit2, PORTD_ASRIN, loc_DB08 ; Port D Data Register / ASR Input Data
 		cmp	#0DCh, rawTHW	; Contains the NOT of CTS reading from ADC, sensor is tied to ground on	other side
@@ -17589,11 +6289,11 @@ loc_DAEC:				; CODE XREF: __RESET+618j
 		ble	loc_DB12
 
 loc_DB08:				; CODE XREF: __RESET+63Ej __RESET+643j ...
-		clrb	bit2, unk_4B
+		clrb	bit2, flags_4B
 
 loc_DB0A:				; CODE XREF: __RESET+668j __RESET+66Dj ...
 		clr	a
-		clrb	bit2, unk_42
+		clrb	bit2, flags_42
 
 loc_DB0D:				; CODE XREF: __RESET+693j
 		st	a, unk_D8
@@ -17601,32 +6301,32 @@ loc_DB0D:				; CODE XREF: __RESET+693j
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_DB12:				; CODE XREF: __RESET+650j
-		setb	bit2, unk_4B
+		setb	bit2, flags_4B
 		ld	a, unk_D8
-		ld	x, word_7A
-		tbbc	bit7, unk_44, loc_DB2A ; bits 543210 will all cause a branch past doinjectors
-		cmp	#02h, unk_5E
+		ld	x, word_7A	; meanKSint divided by a air temp comp factor
+		tbbc	bit7, flags_44,	loc_DB2A ; bit3: rev limiter, bits 543210 will all cause a branch past doinjectors
+		cmp	#02h, unk_5E	; could	be last	unk_100, or 0
 		bcc	loc_DB0A
 		cmp	x, #1C19h
 		bcs	loc_DB0A
-		ld	#40h, unk_51
+		ld	#40h, temp_51
 		bra	loc_DB3C
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_DB2A:				; CODE XREF: __RESET+662j
-		cmp	#02h, unk_5E
+		cmp	#02h, unk_5E	; could	be last	unk_100, or 0
 		bcs	loc_DB0A
 		cmp	x, #0A76h
 		bgt	loc_DB0A
 		cmp	x, #056Eh
 		bcs	loc_DB0A
-		ld	#80h, unk_51
+		ld	#80h, temp_51
 
 loc_DB3C:				; CODE XREF: __RESET+672j
-		cmpb	a, unk_51
+		cmpb	a, temp_51
 		bne	loc_DB43
 		clr	a
-		or	a, unk_51
+		or	a, temp_51
 
 loc_DB43:				; CODE XREF: __RESET+688j
 		push	a
@@ -17639,19 +6339,22 @@ loc_DB43:				; CODE XREF: __RESET+688j
 		shl	a
 		ld	d, unk_176
 		bcc	loc_DB89
-		clrb	bit2, unk_42
+		clrb	bit2, flags_42
 		cmp	a, b
-		bgt	loc_DB5B+1
+		bgt	loc_DB5C
 		inc	a
+; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+		.db  41h ; A		; brn
+; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
-loc_DB5B:				; CODE XREF: __RESET+6A2j
-		brn	#50h
+loc_DB5C:				; CODE XREF: __RESET+6A2j
+		dec	a
 		st	a, unk_176
 		mov	b, a
 		clr	b
 		jsr	SaturateData
+		st	d, [y]
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
-		.db  8Ah ; Š
 		.db  76h ; v
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 		bcc	loc_DB6E
@@ -17694,7 +6397,7 @@ sub_DB80:				; CODE XREF: __RESET:loc_DB79p
 ; START	OF FUNCTION CHUNK FOR __RESET
 
 loc_DB89:				; CODE XREF: __RESET+69Dj
-		tbs	bit2, unk_42
+		tbs	bit2, flags_42
 		bne	loc_DBA4
 		mov	d, y
 		ld	a, word_98
@@ -17709,10 +6412,10 @@ loc_DB89:				; CODE XREF: __RESET+69Dj
 		mov	y, d
 
 loc_DBA4:				; CODE XREF: __RESET+6D5j
-		ld	#01h, unk_51
+		ld	#01h, temp_51
 		cmp	a, #76h
 		bcs	loc_DBCF
-		neg	unk_51
+		neg	temp_51
 		cmp	a, #8Ah
 		bgt	loc_DBCF
 		mov	b, a
@@ -17742,14 +6445,14 @@ loc_DBC9:				; CODE XREF: __RESET+710j
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_DBCF:				; CODE XREF: __RESET+6F3j __RESET+6F9j
-		xor	b, unk_51
+		xor	b, temp_51
 		bmi	loc_DC0D
 		ld	a, unk_176
-		add	a, unk_51
+		add	a, temp_51
 		st	a, unk_176
-		neg	unk_51
+		neg	temp_51
 		ld	a, word_98
-		add	a, unk_51
+		add	a, temp_51
 		ld	b, unk_180
 		cmp	a, b
 		bcc	loc_DBE8
@@ -17759,7 +6462,7 @@ loc_DBE8:				; CODE XREF: __RESET+72Fj
 		bsr	sub_DB80
 		st	d, word_98
 		mov	a, b
-		shl	unk_51
+		shl	temp_51
 		bcs	loc_DBF7
 		sub	b, word_9C
 		bcs	loc_DC0D
@@ -17790,22 +6493,22 @@ loc_DC0D:				; CODE XREF: __RESET+659j __RESET+6C7j ...
 		setc
 		rorc	a
 		mul	a, #29h
-		st	a, unk_51
-		ld	d, word_7A
-		div	d, unk_51
+		st	a, temp_51
+		ld	d, word_7A	; meanKSint divided by a air temp comp factor
+		div	d, temp_51
 		bcc	loc_DC21
 		ld	b, #0FFh
 
 loc_DC21:				; CODE XREF: __RESET+767j
-		st	b, unk_51
+		st	b, temp_51
 		ld	a, word_9A
-		mul	a, unk_51
-		shr	unk_51
-		sub	a, unk_51
+		mul	a, temp_51
+		shr	temp_51
+		sub	a, temp_51
 
 loc_DC2B:				; CODE XREF: __RESET+61Bj
 		st	a, unk_175
-		setb	bit2, unk_4A
+		setb	bit2, flags_4A
 		ld	a, RPM		; MSB is RPM/50, LSB is	fraction of 50
 		di
 		ld	x, threeDeltaNE
@@ -17813,31 +6516,31 @@ loc_DC2B:				; CODE XREF: __RESET+61Bj
 		bcs	loc_DC4A	; inhibit injection, rev limiter style
 		ld	b, unk_17D
 		bpz	loc_DC47
-		cmp	a, #32h
+		cmp	a, #050		; 2500 RPM
 		bcc	loc_DC4A	; inhibit injection, rev limiter style
-		cmp	a, #1Eh
-		bcc	loc_DC4C
+		cmp	a, #030
+		bcc	loc_DC4C	; 1500 RPM
 
 loc_DC47:				; CODE XREF: __RESET+787j
-		clrb	bit3, unk_44
+		clrb	bit3, flags_44
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 		.db  8Ch ; Œ		; three	byte NOP
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_DC4A:				; CODE XREF: __RESET+782j __RESET+78Bj
-		setb	bit3, unk_44	; inhibit injection, rev limiter style
+		setb	bit3, flags_44	; inhibit injection, rev limiter style
 
 loc_DC4C:				; CODE XREF: __RESET+78Fj
 		ei
 		clr	a
-		tbbs	bit7, unk_4C, loc_DC6D ; bit 7 demands a sampling of the oxygen	sensors
-		tbbs	bit0, unk_41, loc_DC6D
+		tbbs	bit7, flags_4C,	loc_DC6D ; bit 7 demands a sampling of the oxygen sensors
+		tbbs	bit0, flags_41,	loc_DC6D
 		ld	y, #0C5C3h
 		jsr	TwoD_7A		; Lookup unk_7A, integer return	in Acca, fraction return in AccB
-		st	a, unk_51
+		st	a, temp_51
 		ld	y, #0C5D2h
 		jsr	TwoD_rawTHW	; lookup Raw Water Temp, integer return	in Acca, fraction return in AccB
-		ld	b, unk_51
+		ld	b, temp_51
 		cmp	a, b
 		ble	loc_DC68
 		mov	b, a
@@ -17850,19 +6553,19 @@ loc_DC68:				; CODE XREF: __RESET+7AFj
 
 loc_DC6D:				; CODE XREF: __RESET+798j __RESET+79Bj
 		st	a, unk_1B0
-		tbbc	bit7, unk_4C, loc_DCB3 ; bit 7 demands a sampling of the oxygen	sensors
+		tbbc	bit7, flags_4C,	loc_DCB3 ; bit 7 demands a sampling of the oxygen sensors
 		cmp	#08h, RPM	; MSB is RPM/50, LSB is	fraction of 50
 		bcs	loc_DCBA
-		clrb	bit7, unk_4C
+		clrb	bit7, flags_4C
 		clrb	bit2, DOUT
 		ld	y, #0C2EFh
 		jsr	TwoD_rawTHW	; lookup Raw Water Temp, integer return	in Acca, fraction return in AccB
-		st	d, word_170
+		st	d, word_170	; inversely temp dependant, additional math elsewhere
 		ld	y, #0C2FFh
 		jsr	TwoD_rawTHW	; lookup Raw Water Temp, integer return	in Acca, fraction return in AccB
 		shr	d
 		shr	d
-		st	d, unk_172
+		st	d, word_172	; inversely temp dependant, additional math elsewhere
 		cmp	#14h, VTA_net
 		bcc	loc_DC99
 		mul	a, #80h
@@ -17883,7 +6586,7 @@ loc_DCA3:				; CODE XREF: __RESET+7E9j
 		st	a, unk_174
 		ld	y, #0C30Ah
 		jsr	TwoD_rawTHW	; lookup Raw Water Temp, integer return	in Acca, fraction return in AccB
-		st	d, word_16E
+		st	d, word_16E	; inversely temp dependant, additional math elsewhere
 		setb	bit2, DOUT
 		bra	loc_DCD4
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
@@ -17891,7 +6594,7 @@ loc_DCA3:				; CODE XREF: __RESET+7E9j
 loc_DCB3:				; CODE XREF: __RESET+7BAj
 		cmp	#06h, RPM	; MSB is RPM/50, LSB is	fraction of 50
 		bcc	loc_DCC0	; 10V
-		setb	bit7, unk_4C
+		setb	bit7, flags_4C
 
 loc_DCBA:				; CODE XREF: __RESET+7C0j
 		clr	unk_CD
@@ -17901,50 +6604,53 @@ loc_DCBA:				; CODE XREF: __RESET+7C0j
 loc_DCC0:				; CODE XREF: __RESET+800j
 		cmp	#128, Bvolts	; 10V
 		bcs	loc_DCCB
-		tbbs	bit0, unk_45, loc_DCCB
-		tbbc	bit7, unk_4C, loc_DCD1+1 ; clrb
+		tbbs	bit0, flags_45,	loc_DCCB
+		tbbc	bit7, flags_4C,	loc_DCD2 ; bit 7 demands a sampling of the oxygen sensors
 
 loc_DCCB:				; CODE XREF: __RESET+80Dj __RESET+80Fj
-		setb	bit6, unk_49
+		setb	bit6, flags_49
 		clr	a
 		st	a, unk_178
+; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+		.db  8Ch ; Œ		; cmpx
+; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
-loc_DCD1:				; CODE XREF: __RESET+812j
-		cmp	x, #75D9h	; clrb
+loc_DCD2:				; CODE XREF: __RESET+812j
+		clrb	bit6, flags_49
 
 loc_DCD4:				; CODE XREF: __RESET+7FBj
 		jsr	sub_C634
 		ld	y, #0C2B1h
 		jsr	TwoD_rawTHW	; lookup Raw Water Temp, integer return	in Acca, fraction return in AccB
-		st	a, unk_51
-		ld	d, unk_172
+		st	a, temp_51
+		ld	d, word_172	; inversely temp dependant, additional math elsewhere
 		shl	d
 		bcs	loc_DCE9
-		add	a, #80h
+		add	a, #128
 		bcc	loc_DCEB
 
 loc_DCE9:				; CODE XREF: __RESET+82Dj
 		ld	a, #0FFh
 
 loc_DCEB:				; CODE XREF: __RESET+831j
-		mul	a, unk_51
-		ld	b, unk_114	; adc pin 16
+		mul	a, temp_51
+		ld	b, ADC_pin16	; adc pin 16 (0V)
 		shr	b
 		bcc	loc_DCF5
 		add	a, #008		; add a	bit more to D3 fuel addition
 
 loc_DCF5:				; CODE XREF: __RESET+83Bj
 		st	a, unk_D3	; multiplied by	16 and used for	injectors
-		clrb	bit0, unk_40
+		clrb	bit0, flags_40
 
 loc_DCF9:				; CODE XREF: __RESET+9C3j
-		tbbc	bit7, unk_4C, loc_DD0F ; bit 7 demands a sampling of the oxygen	sensors
-		tbbs	bit3, unk_43, loc_DD05 ; is this an abnormal program path while	DD0F is	normal?
-		tbbc	bit4, unk_47, loc_DD05 ; is this an abnormal program path while	DD0F is	normal?
-		tbbc	bit0, unk_45, loc_DD0F
+		tbbc	bit7, flags_4C,	loc_DD0F ; bit 7 demands a sampling of the oxygen sensors
+		tbbs	bit3, flags_43,	loc_DD05 ; is this an abnormal program path while DD0F is normal?
+		tbbc	bit4, flags_47,	loc_DD05 ; is this an abnormal program path while DD0F is normal?
+		tbbc	bit0, flags_45,	loc_DD0F
 
 loc_DD05:				; CODE XREF: __RESET+846j __RESET+849j ...
-		setb	bit1, unk_46	; is this an abnormal program path while DD0F is normal?
+		setb	bit1, flags_46	; is this an abnormal program path while DD0F is normal?
 		jsr	calcInjPW	; calculate the	pulsewidths
 		clr	unk_AB
 		jmp	loc_DE6B	; assign pulsewidth
@@ -17952,8 +6658,8 @@ loc_DD05:				; CODE XREF: __RESET+846j __RESET+849j ...
 
 loc_DD0F:				; CODE XREF: __RESET:loc_DCF9j
 					; __RESET+84Cj
-		ld	y, word_F2
-		tbbc	bit3, unk_43, loc_DD50
+		ld	y, compLOAD	; air temp compensated Load
+		tbbc	bit3, flags_43,	loc_DD50 ; about 65 percent
 		ld	d, VTA_net
 		cmp	d, #04194
 		ble	loc_DD20
@@ -17962,12 +6668,12 @@ loc_DD0F:				; CODE XREF: __RESET:loc_DCF9j
 		shr	d
 
 loc_DD20:				; CODE XREF: __RESET+863j
-		ld	x, #0419h
+		ld	x, #01049
 		jsr	divDbyX		; divide D by X, does some shifting to return ?? bits
-		st	d, unk_53
+		st	d, temp_53
 		ld	d, RPM		; MSB is RPM/50, LSB is	fraction of 50
 		ld	y, #0C26Ch
-		jsr	ThreeDtable2
+		jsr	ThreeDtable2	; inputs in D and temp_53:temp_54
 		st	d, unk_56
 		ld	y, #0C2A8h
 		ld	a, unk_DB
@@ -17978,8 +6684,8 @@ loc_DD20:				; CODE XREF: __RESET+863j
 		shr	d
 		mov	d, x
 		pull	d
-		cmp	x, #0100h
-		bcs	loc_DD05	; is this an abnormal program path while DD0F is normal?
+		cmp	x, #00256
+		bcs	loc_DD05	; bounce if barely running
 		jsr	divDbyX		; divide D by X, does some shifting to return ?? bits
 		shl	d
 		bcc	loc_DD4F
@@ -17989,11 +6695,11 @@ loc_DD4F:				; CODE XREF: __RESET+894j
 		mov	d, y
 
 loc_DD50:				; CODE XREF: __RESET+85Bj
-		ld	d, unk_C26A
+		ld	d, word_C26A	; about	65 percent
 		jsr	MulDbyY		; returns upper	16 bits	in Y, lower 16 bits in D
-		tbbc	bit3, unk_43, loc_DD62
+		tbbc	bit3, flags_43,	loc_DD62 ; push	the load based pulsewidth
 		mov	y, d
-		add	d, unk_56
+		add	d, unk_56	; add value from TPS/RPM 3d table
 		bcc	loc_DD61
 		ld	d, #0FFFFh
 
@@ -18001,43 +6707,43 @@ loc_DD61:				; CODE XREF: __RESET+8A6j
 		mov	d, y
 
 loc_DD62:				; CODE XREF: __RESET+8A0j
-		push	y
+		push	y		; push the load	based pulsewidth
 		ld	x, #0C33Bh
-		tbbc	bit6, unk_4A, loc_DD6C
+		tbbc	bit6, flags_4A,	loc_DD6C ; branch to limit pw to 7.2ms
 		ld	b, #04h
-		add	x, b
+		add	x, b		; limit	pw to 16ms
 
 loc_DD6C:				; CODE XREF: __RESET+8B0j
 		cmp	y, x + 00h
 		bcc	loc_DD7E
-		cmp	#029, RPM	; MSB is RPM/50, LSB is	fraction of 50
+		cmp	#029, RPM	; 1450 RPM
 		bcs	loc_DD7E
 		cmp	#62h, unk_AB
 		bcs	loc_DDAF
-		setb	bit0, unk_44
+		setb	bit0, flags_44
 		bra	loc_DDAF
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_DD7E:				; CODE XREF: __RESET+8B8j __RESET+8BDj
 		cmp	y, x + 02h
 		bcc	loc_DD87
-		cmp	#1Ch, RPM	; MSB is RPM/50, LSB is	fraction of 50
+		cmp	#028, RPM	; 1400 RPM
 		bcc	loc_DDAF
 
 loc_DD87:				; CODE XREF: __RESET+8CAj
-		tbbc	bit0, unk_44, loc_DDAD ; bits 543210 will all cause a branch past doinjectors
-		clrb	bit0, unk_44
-		tbbc	bit6, unk_4A, loc_DDAD
+		tbbc	bit0, flags_44,	loc_DDAD ; bit3: rev limiter, bits 543210 will all cause a branch past doinjectors
+		clrb	bit0, flags_44
+		tbbc	bit6, flags_4A,	loc_DDAD
 		cmp	y, x + 02h
 		bcs	loc_DDAD
-		tbbs	bit3, unk_43, loc_DDAD
-		tbbc	bit4, unk_47, loc_DDAD
-		tbbs	bit0, unk_42, loc_DDAD
-		cmp	#05h, unk_5E
+		tbbs	bit3, flags_43,	loc_DDAD ; bit3: AFM bad bit4: rev limiter
+		tbbc	bit4, flags_47,	loc_DDAD
+		tbbs	bit0, flags_42,	loc_DDAD
+		cmp	#05h, unk_5E	; could	be last	unk_100, or 0
 		bcs	loc_DDAD
 		di
-		setb	bit6, unk_42
-		setb	bit5, unk_42
+		setb	bit6, flags_42
+		setb	bit5, flags_42
 		ld	d, #00D3h
 		st	d, word_193
 		ei
@@ -18052,57 +6758,57 @@ loc_DDAF:				; CODE XREF: __RESET+8C2j __RESET+8C6j ...
 		push	a
 		ld	y, #0C2FAh
 		jsr	TwoD_RPM	; lookup unk_F0, integer return	in Acca, fraction return in AccB
-		ld	y, word_170
+		ld	y, word_170	; inversely temp dependant, additional math elsewhere
 		jsr	MulAbyY		; returns upper	16b in AccD
 		add	a, #80h
 		mov	d, x
 		ld	a, unk_D5
 		clr	b
 		shr	d
-		st	d, unk_51
+		st	d, temp_51
 		ld	d, word_16A
-		tbbc	bit0, unk_40, loc_DDD4
+		tbbc	bit0, flags_40,	loc_DDD4
 		ld	d, word_16C
 
 loc_DDD4:				; CODE XREF: __RESET+918j
-		add	d, unk_51
+		add	d, temp_51
 		bcc	loc_DDDB
 		ld	d, #0FFFFh
 
 loc_DDDB:				; CODE XREF: __RESET+920j
 		shr	d
-		st	d, unk_51
+		st	d, temp_51
 		ld	a, unk_D4
 		beq	loc_DDE7
-		tbbs	bit0, unk_40, loc_DDE7
+		tbbs	bit0, flags_40,	loc_DDE7
 		add	a, #03h
 
 loc_DDE7:				; CODE XREF: __RESET+92Aj __RESET+92Cj
 		clr	b
 		shr	d
-		add	d, unk_172
+		add	d, word_172	; inversely temp dependant, additional math elsewhere
 		add	a, unk_174
 		rorc	a
 		rorc	b
-		add	d, unk_51
+		add	d, temp_51
 		bcc	loc_DDF8
-		pull	a
+		pull	a		; pushed from ddb5
 		bra	loc_DE09
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_DDF8:				; CODE XREF: __RESET+93Dj
 		xch	x, y
 		jsr	MulDbyY		; returns upper	16 bits	in Y, lower 16 bits in D
-		pull	a
-		st	a, unk_51
+		pull	a		; pushed from ddb5
+		st	a, temp_51
 		mov	y, d
 		shl	d
 		bcs	loc_DE07
-		cmp	a, unk_51
+		cmp	a, temp_51
 		bcs	loc_DE0A
 
 loc_DE07:				; CODE XREF: __RESET+94Bj
-		ld	a, unk_51
+		ld	a, temp_51
 
 loc_DE09:				; CODE XREF: __RESET+940j
 		clr	b
@@ -18126,7 +6832,7 @@ loc_DE12:				; CODE XREF: __RESET+957j
 		nop
 		nop
 		ld	d, unk_12E
-		tbbc	bit0, unk_40, loc_DE27
+		tbbc	bit0, flags_40,	loc_DE27
 		ld	d, unk_14A
 
 loc_DE27:				; CODE XREF: __RESET+96Bj
@@ -18136,24 +6842,24 @@ loc_DE27:				; CODE XREF: __RESET+96Bj
 		mov	y, d
 		rolc	b
 		rolc	a
-		pull	y
+		pull	y		; pushed from dd62
 		bcs	loc_DE37
 		jsr	MulDbyY		; returns upper	16 bits	in Y, lower 16 bits in D
 
 loc_DE37:				; CODE XREF: __RESET+97Cj
-		st	y, unk_51
+		st	y, temp_51
 		ld	d, threeDeltaNE
 		shl	d
 		shl	d
 		bcs	loc_DE48
-		shl	d
+		shl	d		; 24 delta NE, 1 otto cycle
 		bcs	loc_DE48
-		cmp	d, unk_51
+		cmp	d, temp_51
 		bcc	loc_DE48
-		st	d, unk_51
+		st	d, temp_51	; limit	injector pw to 2 crank revolutions
 
 loc_DE48:				; CODE XREF: __RESET+987j __RESET+98Aj ...
-		tbbc	bit1, unk_46, loc_DE70
+		tbbc	bit1, flags_46,	loc_DE70
 		di
 		ld	a, unk_77	; set bit 5, make a decision on	bit 5
 		mov	a, b
@@ -18161,27 +6867,27 @@ loc_DE48:				; CODE XREF: __RESET+987j __RESET+98Aj ...
 		st	a, unk_77	; set bit 5
 		ei
 		cmpb	b, #20h
-		beq	loc_DE5B
-		jmp	loc_DE7F
+		beq	loc_DE5B	; weird	90% test, keepin' it rich baby!
+		jmp	loc_DE7F	; skip applying	newly calulated	value
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_DE5B:				; CODE XREF: __RESET+9A0j
-		ld	y, InjectPW1	; pulsewidth for most cases/cylinders
+		ld	y, InjectPW1	; pulsewidth for most cases/cylinders, 4us/bit
 		ld	a, #230		; fraction of 90% in this case
 		jsr	MulAbyY		; returns upper	16b in AccD
-		cmp	d, unk_51
+		cmp	d, temp_51
 		bcc	loc_DE6B	; bounce if 90%	of word_164 is bigger than unk_51
-		clrb	bit1, unk_46
-		ld	d, unk_51	; select unk_51	because	it was bigger
+		clrb	bit1, flags_46
+		ld	d, temp_51	; select unk_51	because	it was bigger
 
 loc_DE6B:				; CODE XREF: __RESET+856j __RESET+9AFj
-		st	d, InjectPW1	; pulsewidth for most cases/cylinders
+		st	d, InjectPW1	; pulsewidth for most cases/cylinders, 4us/bit
 		bra	loc_DE7C
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_DE70:				; CODE XREF: __RESET:loc_DE48j
-		ld	d, unk_51
-		tbs	bit0, unk_40
+		ld	d, temp_51
+		tbs	bit0, flags_40
 		bne	loc_DE7C
 		st	d, InjectPW1	; =unk_51
 		jmp	loc_DCF9
@@ -18192,10 +6898,10 @@ loc_DE7C:				; CODE XREF: __RESET+9B8j __RESET+9BEj
 
 loc_DE7F:				; CODE XREF: __RESET+9A2j
 		ld	b, #12h
-		tbbs	bit7, unk_4C, loc_DEA8 ; bit 7 demands a sampling of the oxygen	sensors
-		ld	d, InjDeadtime	; probably deadtime, have to chase out ADC code
-		add	d, #01618
-		add	d, InjectPW1	; pulsewidth for most cases/cylinders
+		tbbs	bit7, flags_4C,	loc_DEA8 ; bit 7 demands a sampling of the oxygen sensors
+		ld	d, InjDeadtime	; injector deadtime, 4us/bit
+		add	d, #01618	; 6472us
+		add	d, InjectPW1	; pulsewidth for most cases/cylinders, 4us/bit
 		bcs	loc_DE92
 		shl	d
 		bcc	loc_DE95
@@ -18224,9 +6930,9 @@ loc_DEA8:				; CODE XREF: __RESET+9CBj
 		ld	b, #07h
 
 loc_DEAE:				; CODE XREF: __RESET+9F4j
-		st	b, unk_110
+		st	b, unk_110	; related to pulsewidth*RPM/195, fuel flow for pump controller?
 		tbbc	bit5, RAMST, loc_DEE7 ;	Built-in RAM status
-		di
+		di			; =====================interrupt sensitive
 		ld	d, word_80
 		xor	b, #0FFh
 		cmp	a, b
@@ -18237,8 +6943,8 @@ loc_DEAE:				; CODE XREF: __RESET+9F4j
 		cmp	a, unk_DB
 		beq	loc_DECB
 		ld	a, unk_DB
-		setb	bit3, unk_48
-		setb	bit4, unk_48
+		setb	bit3, flags_48
+		setb	bit4, flags_48
 
 loc_DECB:				; CODE XREF: __RESET+A04j __RESET+A08j ...
 		cmp	a, #7Dh
@@ -18247,8 +6953,8 @@ loc_DECB:				; CODE XREF: __RESET+A04j __RESET+A08j ...
 		mov	a, b
 		add	b, #20h
 		st	b, unk_DC
-		setb	bit3, unk_48
-		setb	bit4, unk_48
+		setb	bit3, flags_48
+		setb	bit4, flags_48
 
 loc_DEDB:				; CODE XREF: __RESET+A17j
 		st	a, unk_DB
@@ -18256,7 +6962,7 @@ loc_DEDB:				; CODE XREF: __RESET+A17j
 		xor	b, #0FFh
 		st	d, word_80
 		cmp	d, word_80
-		ei
+		ei			; ======================end interrupt sensitive
 		beq	loc_DEF0
 
 loc_DEE7:				; CODE XREF: __RESET+9FBj
@@ -18276,10 +6982,10 @@ loc_DEF0:				; CODE XREF: __RESET+A2Fj
 		cmp	#3Dh, unk_B9
 		bcs	loc_DF31
 		clr	unk_DD
-		tbbc	bit2, unk_48, loc_DF0D
-		clrb	bit2, unk_48
-		clrb	bit1, unk_48
-		clrb	bit2, unk_46
+		tbbc	bit2, flags_48,	loc_DF0D
+		clrb	bit2, flags_48
+		clrb	bit1, flags_48
+		clrb	bit2, flags_46
 		ld	#0ACh, unk_DC
 		bra	loc_DF2D
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
@@ -18289,7 +6995,7 @@ loc_DF0D:				; CODE XREF: __RESET+A49j
 		bgt	loc_DF2D
 		cmp	#7Dh, unk_DB
 		bne	loc_DF1E
-		ld	a, unk_11F
+		ld	a, unk_11F	; ISC related
 		cmpb	a, #03h
 		beq	loc_DF22
 
@@ -18306,24 +7012,24 @@ loc_DF22:				; CODE XREF: __RESET+A66j
 		setb	bit0, PORTD_ASRIN
 
 loc_DF2D:				; CODE XREF: __RESET+A55j __RESET+A5Aj ...
-		setb	bit7, unk_48
+		setb	bit7, flags_48
 
 loc_DF2F:				; CODE XREF: __RESET:loc_DEEEj
 		bra	loc_DFA5
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_DF31:				; CODE XREF: __RESET+A45j
-		tbbc	bit7, unk_48, loc_DF3C
-		clrb	bit7, unk_48
+		tbbc	bit7, flags_48,	loc_DF3C
+		clrb	bit7, flags_48
 		ld	a, unk_DB
 		add	a, #20h
 		st	a, unk_DC
 
 loc_DF3C:				; CODE XREF: __RESET:loc_DF31j
-		tbbs	bit0, unk_45, loc_DF54
+		tbbs	bit0, flags_45,	loc_DF54
 		cmp	#14h, RPM	; MSB is RPM/50, LSB is	fraction of 50
 		bcs	loc_DF56
-		tbbc	bit3, unk_48, loc_DF56
+		tbbc	bit3, flags_48,	loc_DF56
 		jsr	sub_C4DA
 		mov	a, b
 		add	b, #20h
@@ -18333,11 +7039,11 @@ loc_DF3C:				; CODE XREF: __RESET:loc_DF31j
 		st	d, word_80
 
 loc_DF54:				; CODE XREF: __RESET:loc_DF3Cj
-		clrb	bit3, unk_48
+		clrb	bit3, flags_48
 
 loc_DF56:				; CODE XREF: __RESET+A8Cj __RESET+A8Ej
-		tbbs	bit2, unk_48, loc_DF85
-		tbbc	bit3, unk_48, loc_DF60
+		tbbs	bit2, flags_48,	loc_DF85
+		tbbc	bit3, flags_48,	loc_DF60
 		clr	unk_C8
 		bra	loc_DFA0	; 300RPM
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
@@ -18349,14 +7055,14 @@ loc_DF60:				; CODE XREF: __RESET+AA3j
 		bgt	loc_DF83
 		cmp	#80h, Bvolts	; 10V
 		bcs	loc_DF83
-		clrb	bit1, unk_48
-		setb	bit2, unk_48
+		clrb	bit1, flags_48
+		setb	bit2, flags_48
 		jsr	sub_C4DA
-		clrb	bit1, unk_42
+		clrb	bit1, flags_42
 		clr	b
 		add	a, #20h
 		st	d, unk_DC
-		setb	bit0, unk_42
+		setb	bit0, flags_42
 		clr	a
 		st	a, unk_121
 
@@ -18365,13 +7071,13 @@ loc_DF83:				; CODE XREF: __RESET+AB2j __RESET+AB7j
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_DF85:				; CODE XREF: __RESET:loc_DF56j
-		tbbs	bit1, unk_48, loc_DFA0 ; 300RPM
+		tbbs	bit1, flags_48,	loc_DFA0 ; 300RPM
 		ld	d, unk_DB
 		add	a, #20h
 		cmp	a, b
 		bne	loc_DFA5
-		setb	bit1, unk_48
-		setb	bit2, unk_46
+		setb	bit1, flags_48
+		setb	bit2, flags_46
 		clr	unk_E3
 		ld	a, #1Fh
 		cmp	#86h, rawTHW	; Contains the NOT of CTS reading from ADC, sensor is tied to ground on	other side
@@ -18388,32 +7094,32 @@ loc_DFA0:				; CODE XREF: __RESET+AA8j
 
 loc_DFA5:				; CODE XREF: __RESET:loc_DF2Fj
 					; __RESET:loc_DF83j ...
-		clrb	bit0, unk_47
-		setb	bit5, unk_48
+		clrb	bit0, flags_47
+		setb	bit5, flags_48
 		ld	#1Eh, unk_DE
 		clr	a
 		clr	b
-		st	d, unk_DF
+		st	d, word_DF
 		jmp	loc_E274
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_DFB3:				; CODE XREF: __RESET+AEDj
-		tbbs	bit1, unk_45, loc_DFC0
-		tbbc	bit1, unk_42, loc_DFD0
-		clrb	bit1, unk_42
+		tbbs	bit1, flags_45,	loc_DFC0
+		tbbc	bit1, flags_42,	loc_DFD0
+		clrb	bit1, flags_42
 		ld	#00h, unk_BC
 		bra	loc_DFC8
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_DFC0:				; CODE XREF: __RESET:loc_DFB3j
-		tbbs	bit1, unk_42, loc_DFD0
-		setb	bit1, unk_42
+		tbbs	bit1, flags_42,	loc_DFD0
+		setb	bit1, flags_42
 		ld	#25h, unk_BC
 
 loc_DFC8:				; CODE XREF: __RESET+B08j
-		tbs	bit1, unk_43
+		tbs	bit1, flags_43	; bit3:	AFM bad	bit4: rev limiter
 		beq	loc_DFCE
-		clrb	bit1, unk_43
+		clrb	bit1, flags_43
 
 loc_DFCE:				; CODE XREF: __RESET+B14j
 		bra	loc_E007
@@ -18421,21 +7127,21 @@ loc_DFCE:				; CODE XREF: __RESET+B14j
 
 loc_DFD0:				; CODE XREF: __RESET+B00j
 					; __RESET:loc_DFC0j
-		tbbc	bit1, unk_43, loc_DFEC
+		tbbc	bit1, flags_43,	loc_DFEC ; bit3: AFM bad bit4: rev limiter
 		ld	a, unk_BC
 		bne	loc_DFEC
-		clrb	bit1, unk_43
+		clrb	bit1, flags_43
 		ld	y, #0C4D6h
-		tbbs	bit0, unk_42, loc_DFE0
+		tbbs	bit0, flags_42,	loc_DFE0
 		inc	y
 
 loc_DFE0:				; CODE XREF: __RESET+B26j
 		ld	a, y + 00h
-		tbbc	bit2, unk_46, loc_DFE6
+		tbbc	bit2, flags_46,	loc_DFE6
 		shr	a
 
 loc_DFE6:				; CODE XREF: __RESET+B2Cj
-		tbbs	bit1, unk_42, loc_DFEA
+		tbbs	bit1, flags_42,	loc_DFEA
 		neg	a
 
 loc_DFEA:				; CODE XREF: __RESET:loc_DFE6j
@@ -18444,22 +7150,22 @@ loc_DFEA:				; CODE XREF: __RESET:loc_DFE6j
 
 loc_DFEC:				; CODE XREF: __RESET:loc_DFD0j
 					; __RESET+B1Fj
-		tbbs	bit5, unk_45, loc_DFF9
-		tbbc	bit0, unk_42, loc_E011
-		clrb	bit0, unk_42
+		tbbs	bit5, flags_45,	loc_DFF9
+		tbbc	bit0, flags_42,	loc_E011
+		clrb	bit0, flags_42
 		ld	#00h, unk_BB
 		bra	loc_E001
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_DFF9:				; CODE XREF: __RESET:loc_DFECj
-		tbbs	bit0, unk_42, loc_E011
-		setb	bit0, unk_42
+		tbbs	bit0, flags_42,	loc_E011
+		setb	bit0, flags_42
 		ld	#06h, unk_BB
 
 loc_E001:				; CODE XREF: __RESET+B41j
-		tbs	bit0, unk_43
+		tbs	bit0, flags_43	; bit3:	AFM bad	bit4: rev limiter
 		beq	loc_E007
-		clrb	bit0, unk_43
+		clrb	bit0, flags_43
 
 loc_E007:				; CODE XREF: __RESET:loc_DFCEj
 					; __RESET+B4Dj
@@ -18471,21 +7177,21 @@ loc_E007:				; CODE XREF: __RESET:loc_DFCEj
 
 loc_E011:				; CODE XREF: __RESET+B39j
 					; __RESET:loc_DFF9j
-		tbbc	bit0, unk_43, loc_E033
+		tbbc	bit0, flags_43,	loc_E033 ; bit3: AFM bad bit4: rev limiter
 		ld	a, unk_BB
 		bne	loc_E033
-		clrb	bit0, unk_43
+		clrb	bit0, flags_43
 		ld	y, #0C4D8h
-		tbbs	bit1, unk_42, loc_E021
+		tbbs	bit1, flags_42,	loc_E021
 		inc	y
 
 loc_E021:				; CODE XREF: __RESET+B67j
 		ld	a, y + 00h
-		tbbc	bit2, unk_46, loc_E027
+		tbbc	bit2, flags_46,	loc_E027
 		shr	a
 
 loc_E027:				; CODE XREF: __RESET+B6Dj
-		tbbc	bit0, unk_42, loc_E02B
+		tbbc	bit0, flags_42,	loc_E02B
 		neg	a
 
 loc_E02B:				; CODE XREF: __RESET:loc_DFEAj
@@ -18494,12 +7200,12 @@ loc_E02B:				; CODE XREF: __RESET:loc_DFEAj
 		add	a, unk_DD
 		st	a, unk_DD
 		ei
-		setb	bit5, unk_48
+		setb	bit5, flags_48
 
 loc_E033:				; CODE XREF: __RESET+B54j __RESET+B59j ...
-		tbbc	bit4, unk_44, loc_E050 ; bits 543210 will all cause a branch past doinjectors
-		tbbs	bit5, unk_45, loc_E050
-		cmp	#37h, unk_5E
+		tbbc	bit4, flags_44,	loc_E050 ; bit3: rev limiter, bits 543210 will all cause a branch past doinjectors
+		tbbs	bit5, flags_45,	loc_E050
+		cmp	#37h, unk_5E	; could	be last	unk_100, or 0
 		bcs	loc_E050
 		cmp	#14h, unk_DB
 		bcs	loc_E050
@@ -18507,26 +7213,26 @@ loc_E033:				; CODE XREF: __RESET+B54j __RESET+B59j ...
 		bcs	loc_E050
 		cmp	#24h, RPM	; MSB is RPM/50, LSB is	fraction of 50
 		bcs	loc_E052
-		setb	bit0, unk_48
+		setb	bit0, flags_48
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 		.db  8Ch ; Œ		; cmp x
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_E050:				; CODE XREF: __RESET:loc_E033j
 					; __RESET+B80j	...
-		clrb	bit0, unk_48
+		clrb	bit0, flags_48
 
 loc_E052:				; CODE XREF: __RESET+B95j
 		ld	y, #0C4C0h
 		jsr	TwoD_RPM	; lookup unk_F0, integer return	in Acca, fraction return in AccB
 		st	a, unk_E2
-		tbbs	bit3, unk_43, loc_E0AD
-		tbbc	bit4, unk_47, loc_E0AD
-		tbbs	bit0, unk_42, loc_E0AD
+		tbbs	bit3, flags_43,	loc_E0AD ; bit3: AFM bad bit4: rev limiter
+		tbbc	bit4, flags_47,	loc_E0AD
+		tbbs	bit0, flags_42,	loc_E0AD
 		ld	a, unk_103
 		and	a, #01h
 		beq	loc_E0AD
-		tbbc	bit1, unk_42, loc_E072
+		tbbc	bit1, flags_42,	loc_E072
 		ld	y, #0C4D1h
 		bra	loc_E075
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
@@ -18535,10 +7241,10 @@ loc_E072:				; CODE XREF: __RESET+BB4j
 		ld	y, #0C4CCh
 
 loc_E075:				; CODE XREF: __RESET+BBAj
-		ld	a, unk_5E
+		ld	a, unk_5E	; could	be last	unk_100, or 0
 		jsr	TwoDTable	; X value in AccA, integer return in Acca, fraction return in AccB
-		st	a, unk_51
-		tbbc	bit1, unk_42, loc_E091
+		st	a, temp_51
+		tbbc	bit1, flags_42,	loc_E091
 		clr	a
 		ld	b, unk_183
 		cmpb	b, #01h
@@ -18560,9 +7266,9 @@ loc_E091:				; CODE XREF: __RESET+BC6j
 		jsr	TwoDTable	; X value in AccA, integer return in Acca, fraction return in AccB
 
 loc_E09D:				; CODE XREF: __RESET:loc_E08Fj
-		cmp	a, unk_51
+		cmp	a, temp_51
 		ble	loc_E0A3
-		ld	a, unk_51
+		ld	a, temp_51
 
 loc_E0A3:				; CODE XREF: __RESET+BE9j
 		mov	a, b
@@ -18582,7 +7288,7 @@ loc_E0B4:				; CODE XREF: __RESET+BF5j
 		add	a, unk_DD
 		st	a, unk_DD
 		ei
-		ld	a, unk_1A8
+		ld	a, unk_1A8	; looks	like air temp compensation for load
 		ld	y, #0C498h
 		jsr	TwoDTable	; X value in AccA, integer return in Acca, fraction return in AccB
 		ld	b, unk_DA
@@ -18590,15 +7296,15 @@ loc_E0B4:				; CODE XREF: __RESET+BF5j
 		shr	b
 		add	a, b
 		ld	y, #0C4BCh
-		ld	b, unk_42
+		ld	b, flags_42
 		and	b, #03h
 		add	y, b
 		ld	b, y + 00h
-		st	b, unk_52
+		st	b, temp_52
 		add	b, #3Bh
 		add	a, b
-		st	a, unk_51
-		tbbs	bit0, unk_41, loc_E0E4
+		st	a, temp_51
+		tbbs	bit0, flags_41,	loc_E0E4
 		cmp	#1Fh, unk_C8
 		bcc	loc_E0E4
 		ld	#1Fh, unk_C8
@@ -18612,17 +7318,17 @@ loc_E0E4:				; CODE XREF: __RESET+C23j __RESET+C29j
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_E0EE:				; CODE XREF: __RESET+C30j
-		cmp	#02h, unk_5E
+		cmp	#02h, unk_5E	; could	be last	unk_100, or 0
 		bcc	loc_E134
 		ld	#03h, unk_C8
 		ld	y, #0C4A6h
 		ld	a, #30h
-		tbbs	bit0, unk_42, loc_E103
+		tbbs	bit0, flags_42,	loc_E103
 		ld	y, #0C4ADh
 		ld	a, #2Ah
 
 loc_E103:				; CODE XREF: __RESET+C45j
-		st	a, unk_52
+		st	a, temp_52
 		jsr	TwoD_rawTHW	; lookup Raw Water Temp, integer return	in Acca, fraction return in AccB
 		push	a
 		ld	d, RPM		; MSB is RPM/50, LSB is	fraction of 50
@@ -18631,7 +7337,7 @@ loc_E103:				; CODE XREF: __RESET+C45j
 		shl	d
 		shl	d
 		pull	b
-		cmp	a, unk_52
+		cmp	a, temp_52
 		bcc	loc_E11A
 		inc	unk_DC
 		bra	loc_E134
@@ -18640,7 +7346,7 @@ loc_E103:				; CODE XREF: __RESET+C45j
 loc_E11A:				; CODE XREF: __RESET+C5Ej
 		cmp	a, b
 		bgt	loc_E122
-		setb	bit0, unk_47
+		setb	bit0, flags_47
 		bra	loc_E136
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
@@ -18648,8 +7354,8 @@ loc_E121:				; CODE XREF: __RESET+C57j
 		pull	b
 
 loc_E122:				; CODE XREF: __RESET+C65j
-		tbbs	bit0, unk_42, loc_E130
-		cmp	#1Ah, word_F2
+		tbbs	bit0, flags_42,	loc_E130
+		cmp	#1Ah, compLOAD	; air temp compensated Load
 		bcs	loc_E134
 		ld	a, unk_7D
 		cmpb	a, #10h
@@ -18660,14 +7366,14 @@ loc_E130:				; CODE XREF: __RESET:loc_E122j
 		bra	loc_E134
 
 loc_E134:				; CODE XREF: __RESET+C34j __RESET+C3Bj ...
-		clrb	bit0, unk_47
+		clrb	bit0, flags_47
 
 loc_E136:				; CODE XREF: __RESET+C36j __RESET+C69j
 		ei
 		cmp	#1Eh, unk_E3
 		bcs	loc_E151
 		clr	unk_E3
-		tbbs	bit4, unk_47, loc_E151
+		tbbs	bit4, flags_47,	loc_E151
 		jsr	sub_C4DF
 		add	a, #20h
 		cmp	a, unk_DC
@@ -18694,12 +7400,12 @@ loc_E15C:				; CODE XREF: __RESET+CA0j
 		or	a, #02h
 		st	a, unk_77	; set bit 1
 		ei
-		tbbc	bit4, unk_47, loc_E172
-		tbbc	bit0, unk_41, loc_E172
+		tbbc	bit4, flags_47,	loc_E172
+		tbbc	bit0, flags_41,	loc_E172
 		ld	a, unk_7D
 		cmpb	a, #10h
 		bne	loc_E172
-		cmp	#02h, unk_5E
+		cmp	#02h, unk_5E	; could	be last	unk_100, or 0
 		bcs	loc_E175
 
 loc_E172:				; CODE XREF: __RESET+CABj __RESET+CAEj ...
@@ -18718,7 +7424,7 @@ loc_E17C:				; CODE XREF: __RESET+CBDj
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_E17F:				; CODE XREF: __RESET+CC3j
-		clrb	bit2, unk_46
+		clrb	bit2, flags_46
 		cmp	a, #2Eh
 		bcc	loc_E188
 		jmp	loc_E245
@@ -18728,47 +7434,47 @@ loc_E188:				; CODE XREF: __RESET+CCDj
 		cmp	a, #4Eh
 		bcc	loc_E1A3
 		ld	d, RPM		; MSB is RPM/50, LSB is	fraction of 50
-		sub	a, #08h
-		bcc	loc_E194
+		sub	a, #008		; subtract 400 RPM
+		bcc	loc_E194	; =RPM/100
 		clr	a
 		clr	b
 
 loc_E194:				; CODE XREF: __RESET+CDAj
-		shr	d
-		add	d, unk_DF
+		shr	d		; =RPM/100
+		add	d, word_DF
 		bcc	loc_E19B
 		ld	a, #0FFh
 
 loc_E19B:				; CODE XREF: __RESET+CE1j
-		st	d, unk_DF
+		st	d, word_DF
 		ld	a, unk_DE
 		inc	a
 		jmp	loc_E255
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_E1A3:				; CODE XREF: __RESET+CD4j
-		ld	a, unk_DF
-		tbbc	bit6, unk_48, loc_E1AD
+		ld	a, word_DF
+		tbbc	bit6, flags_48,	loc_E1AD
 		shl	a
 		bcc	loc_E1AD
 		ld	a, #0FFh
 
 loc_E1AD:				; CODE XREF: __RESET+CEFj __RESET+CF3j
-		st	a, unk_52
+		st	a, temp_52
 		ld	x, #0C4B4h
-		ld	a, unk_42
+		ld	a, flags_42
 		and	a, #03h
 		mov	a, b
 		add	x, a
 		ld	a, x + 00h
 		ld	x, #0C4B8h
 		add	x, b
-		ld	b, unk_115	; adc pin 15
-		tbbc	bit1, unk_42, loc_E1C7
-		ld	b, unk_116	; adc request 1D
+		ld	b, ADC_pin15	; adc pin 15 (0V)
+		tbbc	bit1, flags_42,	loc_E1C7
+		ld	b, ADC_rq1D	; adc request 1D (probably pin 14, 0V)
 
 loc_E1C7:				; CODE XREF: __RESET+D0Bj
-		tbbc	bit0, unk_42, loc_E1CB
+		tbbc	bit0, flags_42,	loc_E1CB
 		shr	b
 
 loc_E1CB:				; CODE XREF: __RESET:loc_E1C7j
@@ -18777,7 +7483,7 @@ loc_E1CB:				; CODE XREF: __RESET:loc_E1C7j
 		add	a, x + 00h
 
 loc_E1D0:				; CODE XREF: __RESET+D16j
-		sub	a, unk_52
+		sub	a, temp_52
 		bcs	loc_E1E3
 		cmp	a, #07h
 		ble	loc_E214
@@ -18797,7 +7503,7 @@ loc_E1E3:				; CODE XREF: __RESET+D1Cj
 		ld	b, unk_E4
 		shr	b
 		shr	b
-		sub	b, unk_51
+		sub	b, temp_51
 		bcs	loc_E1F1
 		clr	b
 
@@ -18825,9 +7531,9 @@ loc_E212:				; CODE XREF: __RESET+D44j __RESET+D4Ej
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_E214:				; CODE XREF: __RESET+D20j __RESET+D30j
-		clrb	bit5, unk_48
-		tbbs	bit4, unk_48, loc_E245
-		ld	a, unk_51
+		clrb	bit5, flags_48
+		tbbs	bit4, flags_48,	loc_E245
+		ld	a, temp_51
 		sub	a, #20h
 		sub	a, unk_DB
 		beq	loc_E245
@@ -18863,15 +7569,15 @@ loc_E23E:				; CODE XREF: __RESET+D78j
 loc_E245:				; CODE XREF: __RESET+CCFj
 					; __RESET:loc_E1E0j ...
 		ld	a, #2Eh
-		clrb	bit6, unk_48
-		tbbc	bit5, unk_48, loc_E250
+		clrb	bit6, flags_48
+		tbbc	bit5, flags_48,	loc_E250
 		ld	a, #3Eh
-		setb	bit6, unk_48
+		setb	bit6, flags_48
 
 loc_E250:				; CODE XREF: __RESET:loc_E17Cj
 					; __RESET+D93j
 		ld	x, #0000h
-		st	x, unk_DF
+		st	x, word_DF
 
 loc_E255:				; CODE XREF: __RESET+CEAj
 		st	a, unk_DE
@@ -18903,7 +7609,7 @@ loc_E268:				; CODE XREF: __RESET+DAEj
 		ei
 
 loc_E274:				; CODE XREF: __RESET+AFAj
-		setb	bit2, unk_4A
+		setb	bit2, flags_4A
 		cmp	#06h, RPM	; MSB is RPM/50, LSB is	fraction of 50
 		bcs	loc_E280
 		cmp	#077, Bvolts	; 6V
@@ -18915,40 +7621,40 @@ loc_E280:				; CODE XREF: __RESET+DC3j
 loc_E282:				; CODE XREF: __RESET+DC8j
 		cmp	#4Ch, unk_C6
 		bcc	loc_E2A4
-		tbbs	bit0, unk_4C, loc_E2A8 ; bit 7 demands a sampling of the oxygen	sensors
-		tbbs	bit3, unk_4E, loc_E2A8
+		tbbs	bit0, flags_4C,	loc_E2A8 ; bit 7 demands a sampling of the oxygen sensors
+		tbbs	bit3, flags_4E,	loc_E2A8
 		cmp	#06h, RPM	; MSB is RPM/50, LSB is	fraction of 50
 		bcs	loc_E2B8
 		cmp	#077, Bvolts	; 6V
 		bcs	loc_E2B8
 		cmp	#9Fh, unk_B3
 		bcs	loc_E2BE
-		setb	bit0, unk_4C
+		setb	bit0, flags_4C
 		ld	a, word_86
 		and	a, #08h
 		beq	loc_E2B8
 
 loc_E2A4:				; CODE XREF: __RESET+DCFj
-		setb	bit3, unk_4E
+		setb	bit3, flags_4E
 		bra	loc_E2B8
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_E2A8:				; CODE XREF: __RESET+DD1j __RESET+DD4j
 		cmp	#7Ah, unk_B3
 		bcs	loc_E2BE
-		ld	a, unk_1AE
+		ld	a, KS_count2
 		cmp	a, #0Fh
 		bcs	loc_E2B8
-		clrb	bit3, unk_4E
-		clrb	bit0, unk_4C
+		clrb	bit3, flags_4E
+		clrb	bit0, flags_4C
 
 loc_E2B8:				; CODE XREF: __RESET+DDAj __RESET+DDFj ...
 		clr	a
 		st	a, unk_B3
-		st	a, unk_1AE
+		st	a, KS_count2
 
 loc_E2BE:				; CODE XREF: __RESET+DE4j __RESET+DF5j
-		setb	bit2, unk_4A
+		setb	bit2, flags_4A
 		di
 		ld	a, unk_77	; set bit 3, make a decision on	bit 3
 		mov	a, b
@@ -18962,7 +7668,7 @@ loc_E2BE:				; CODE XREF: __RESET+DE4j __RESET+DF5j
 
 loc_E2D0:				; CODE XREF: __RESET+E15j
 		ld	a, unk_1AF
-		tbbs	bit5, unk_45, loc_E305
+		tbbs	bit5, flags_45,	loc_E305
 		cmp	a, #0FEh
 		bcc	loc_E2DC
 		add	a, #02h
@@ -18984,7 +7690,7 @@ loc_E2DC:				; CODE XREF: __RESET+E22j
 		or	a, #01h
 
 loc_E2FB:				; CODE XREF: __RESET+E4Bj
-		setb	bit5, unk_44
+		setb	bit5, flags_44
 		bra	loc_E308
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
@@ -18998,13 +7704,13 @@ loc_E305:				; CODE XREF: __RESET+E1Dj
 		clr	a
 
 loc_E306:				; CODE XREF: __RESET+E2Bj __RESET+E30j
-		clrb	bit5, unk_44
+		clrb	bit5, flags_44
 
 loc_E308:				; CODE XREF: __RESET+E35j __RESET+E39j ...
 		st	a, unk_1AF
 		ld	a, unk_E1
 		shl	a
-		tbbc	bit4, unk_45, loc_E318
+		tbbc	bit4, flags_45,	loc_E318
 		clrb	bit0, PORTD_ASRIN
 		bcc	loc_E322
 		clr	a
@@ -19032,7 +7738,7 @@ loc_E327:				; CODE XREF: __RESET+E60j __RESET+E68j
 
 loc_E329:				; CODE XREF: __RESET+E6Ej
 		ld	y, #012Dh
-		clrb	bit0, unk_40
+		clrb	bit0, flags_40
 		ld	a, unk_140
 		and	a, unk_15C
 		cmpb	a, #02h
@@ -19062,30 +7768,30 @@ loc_E35A:				; CODE XREF: __RESET+E9Fj
 		pull	y
 		mov	a, b
 		clr	a
-		st	d, unk_51
+		st	d, temp_51
 		ld	x, #0000h
 		ld	d, y + 13h
-		tbbc	bit0, unk_41, loc_E3C0
-		cmp	#05h, unk_5E
+		tbbc	bit0, flags_41,	loc_E3C0
+		cmp	#05h, unk_5E	; could	be last	unk_100, or 0
 		bgt	loc_E379
-		ld	#2Bh, unk_52
+		ld	#2Bh, temp_52
 		cmpb	a, #04h
 		bne	loc_E379
-		ld	#15h, unk_52
+		ld	#15h, temp_52
 
 loc_E379:				; CODE XREF: __RESET+EB7j __RESET+EBEj
 		ld	x, unk_17A
-		tbbc	bit4, unk_42, loc_E39D
-		cmp	#0Fh, unk_5E
+		tbbc	bit4, flags_42,	loc_E39D
+		cmp	#0Fh, unk_5E	; could	be last	unk_100, or 0
 		bcc	loc_E3A6
 		inc	x
 		bmi	loc_E3A0
 		tbbs	bit2, PORTD_ASRIN, loc_E39D ; Port D Data Register / ASR Input Data
-		tbbs	bit6, unk_45, loc_E39D
-		tbbc	bit4, unk_47, loc_E39D
+		tbbs	bit6, flags_45,	loc_E39D
+		tbbc	bit4, flags_47,	loc_E39D
 		cmp	x, #55D5h
 		bgt	loc_E3A6
-		tbbc	bit0, unk_40, loc_E39B
+		tbbc	bit0, flags_40,	loc_E39B
 		st	x, unk_17A
 
 loc_E39B:				; CODE XREF: __RESET+EDFj
@@ -19096,7 +7802,7 @@ loc_E39D:				; CODE XREF: __RESET+EC6j __RESET+ED1j ...
 		ld	x, #0FFFFh
 
 loc_E3A0:				; CODE XREF: __RESET+ECFj
-		tbbc	bit0, unk_40, loc_E3A6
+		tbbc	bit0, flags_40,	loc_E3A6
 		st	x, unk_17A
 
 loc_E3A6:				; CODE XREF: __RESET+ECCj __RESET+EDDj ...
@@ -19110,7 +7816,7 @@ loc_E3AC:				; CODE XREF: __RESET:loc_E39Bj
 		ld	a, y + 13h
 		cmpb	a, #04h
 		bne	loc_E3CF
-		clr	unk_52
+		clr	temp_52
 		dec	x
 		bne	loc_E3CF
 		ld	d, #051Fh
@@ -19124,10 +7830,10 @@ loc_E3C0:				; CODE XREF: __RESET+EB1j
 		cmpb	a, #04h
 		bne	loc_E3CF
 		ld	d, #0F5Ch
-		st	d, unk_51
+		st	d, temp_51
 
 loc_E3CF:				; CODE XREF: __RESET+EF3j __RESET+EF8j ...
-		ld	d, unk_51
+		ld	d, temp_51
 
 loc_E3D1:				; CODE XREF: __RESET+F08j
 		push	x
@@ -19135,21 +7841,21 @@ loc_E3D1:				; CODE XREF: __RESET+F08j
 		pull	x
 		st	x, y + 11h
 		ld	y, #0149h
-		tbs	bit0, unk_40
+		tbs	bit0, flags_40
 		bne	loc_E3E2
 		jmp	loc_E34E
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_E3E2:				; CODE XREF: __RESET:loc_E34Bj
 					; __RESET+F27j
-		tbbc	bit1, unk_45, loc_E42D
+		tbbc	bit1, flags_45,	loc_E42D
 		cmp	#92h, unk_A4
 		bcs	loc_E42F
-		tbbs	bit5, unk_45, loc_E41F
-		ld	a, unk_A2	; contains bitflags, bit7 VTA_net related
+		tbbs	bit5, flags_45,	loc_E41F
+		ld	a, flags_A2	; contains bitflags, bit7 VTA_net related
 		cmpb	a, #10h
 		beq	loc_E41F
-		cmp	#64h, unk_5E
+		cmp	#64h, unk_5E	; could	be last	unk_100, or 0
 		bgt	loc_E41F
 		ld	a, unk_1A0
 		cmp	a, #0FFh
@@ -19206,11 +7912,11 @@ loc_E439:				; CODE XREF: __RESET+F67j
 loc_E43E:				; CODE XREF: __RESET+F75j
 		ld	a, RPM		; MSB is RPM/50, LSB is	fraction of 50
 		bne	loc_E453
-		ld	a, unk_45
+		ld	a, flags_45
 		and	a, #71h
 		cmp	a, #61h
 		bne	loc_E453
-		tbbs	bit0, unk_41, loc_E453
+		tbbs	bit0, flags_41,	loc_E453
 		jsr	sub_D2B9
 		nop
 		nop
@@ -19224,7 +7930,7 @@ loc_E453:				; CODE XREF: __RESET+F8Aj __RESET+F92j ...
 		st	d, InjDeadtime	; set from table output	C2BF
 
 loc_E461:				; CODE XREF: __RESET+E17j
-		setb	bit2, unk_4A
+		setb	bit2, flags_4A
 		di
 		ld	a, unk_77	; set bit 2, make a decision on	bit 2
 		mov	a, b
@@ -19262,7 +7968,7 @@ loc_E49D:				; CODE XREF: __RESET+FE2j
 		ld	a, unk_5F
 		cmp	a, #03h
 		bcs	loc_E4A7
-		tbbs	bit0, unk_45, loc_E4AC
+		tbbs	bit0, flags_45,	loc_E4AC
 
 loc_E4A7:				; CODE XREF: __RESET+FECj
 		inc	a
@@ -19279,10 +7985,10 @@ loc_E4AC:				; CODE XREF: __RESET+FEEj __RESET+FF2j
 		ld	a, word_8E
 		cmpb	a, #10h
 		bne	loc_E4CB
-		cmp	#05h, unk_5E
+		cmp	#05h, unk_5E	; could	be last	unk_100, or 0
 		bcc	loc_E4CB
-		tbbs	bit0, unk_41, loc_E4CB
-		tbbs	bit5, unk_45, loc_E4D2
+		tbbs	bit0, flags_41,	loc_E4CB
+		tbbs	bit5, flags_45,	loc_E4D2
 
 loc_E4CB:				; CODE XREF: __RESET+1008j
 					; __RESET+100Dj ...
@@ -19296,8 +8002,8 @@ loc_E4D2:				; CODE XREF: __RESET+1012j
 		ld	d, unk_17C
 		add	a, #10h
 		bcc	loc_E4EE
-		tbbc	bit4, unk_43, loc_E4E8
-		clrb	bit4, unk_43
+		tbbc	bit4, flags_43,	loc_E4E8 ; bit3: AFM bad bit4: rev limiter
+		clrb	bit4, flags_43
 		add	b, #06h
 		cmp	b, #5Ah
 		bcs	loc_E4EE
@@ -19328,7 +8034,7 @@ loc_E4FB:				; CODE XREF: __RESET+101Aj
 		jsr	sub_D499
 
 loc_E504:				; CODE XREF: __RESET+FBAj
-		tbs	bit7, unk_42
+		tbs	bit7, flags_42
 		beq	loc_E50B
 		jmp	loc_E636
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
@@ -19337,43 +8043,43 @@ loc_E50B:				; CODE XREF: __RESET+1050j
 		di
 		ld	a, unk_140
 		and	a, #0FEh
-		tbbc	bit4, unk_49, loc_E516 ; bits 1-3-4-5 are oxl1-oxr1-oxl2-oxr2
+		tbbc	bit4, flags_49,	loc_E516 ; bits	1-3-4-5	are oxl1-oxr1-oxl2-oxr2
 		or	a, #21h
 
 loc_E516:				; CODE XREF: __RESET+105Bj
 		st	a, unk_140
 		ld	a, unk_15C
 		and	a, #0FEh
-		tbbc	bit5, unk_49, loc_E523 ; bits 1-3-4-5 are oxl1-oxr1-oxl2-oxr2
+		tbbc	bit5, flags_49,	loc_E523 ; bits	1-3-4-5	are oxl1-oxr1-oxl2-oxr2
 		or	a, #21h
 
 loc_E523:				; CODE XREF: __RESET+1068j
 		st	a, unk_15C
 		ei
-		clrb	bit0, unk_40
+		clrb	bit0, flags_40
 		ld	x, #0090h
 		ld	y, #012Dh
 
 loc_E52F:				; CODE XREF: __RESET+117Dj
-		ld	a, unk_44	; bits 543210 will all cause a branch past doinjectors
+		ld	a, flags_44	; bit3:	rev limiter, bits 543210 will all cause	a branch past doinjectors
 		cmpb	a, #3Fh
 		beq	loc_E538
 		ld	#2Eh, unk_C9
 
 loc_E538:				; CODE XREF: __RESET+107Dj
 		ld	d, y + 13h
-		st	d, unk_51
+		st	d, temp_51
 		ld	b, x + 00h
 		and	b, #03h
 		bne	loc_E581
 		ld	b, unk_7D
-		st	b, unk_53
+		st	b, temp_53
 		ld	b, #03h
-		tbbc	bit0, unk_40, loc_E54D
+		tbbc	bit0, flags_40,	loc_E54D
 		ld	b, #0Ch
 
 loc_E54D:				; CODE XREF: __RESET+1092j
-		and	b, unk_53
+		and	b, temp_53
 		bne	loc_E581
 		cmpb	a, #20h
 		bne	loc_E55A
@@ -19386,9 +8092,9 @@ loc_E55A:				; CODE XREF: __RESET+109Dj
 		beq	loc_E576
 		cmpb	a, #02h
 		beq	loc_E585
-		ld	d, unk_51
-		tbbs	bit0, unk_41, loc_E585
-		cmp	#14h, word_F2
+		ld	d, temp_51
+		tbbs	bit0, flags_41,	loc_E585
+		cmp	#14h, compLOAD	; air temp compensated Load
 		bcs	loc_E585
 		cmp	#00h, unk_C9
 		beq	loc_E5A8
@@ -19397,11 +8103,11 @@ loc_E55A:				; CODE XREF: __RESET+109Dj
 
 loc_E576:				; CODE XREF: __RESET+10A2j
 					; __RESET+10A9j
-		ld	d, unk_51
+		ld	d, temp_51
 		and	a, #01h
 		and	b, #0FEh
 		add	a, b
-		st	b, unk_52
+		st	b, temp_52
 		bra	loc_E585
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
@@ -19414,7 +8120,7 @@ loc_E581:				; CODE XREF: __RESET+108Aj
 loc_E585:				; CODE XREF: __RESET+10ADj
 					; __RESET+10B1j ...
 		ld	b, #02h
-		tbbc	bit0, unk_40, loc_E58C
+		tbbc	bit0, flags_40,	loc_E58C
 		ld	b, #20h
 
 loc_E58C:				; CODE XREF: __RESET+10D1j
@@ -19426,14 +8132,14 @@ loc_E58C:				; CODE XREF: __RESET+10D1j
 
 loc_E595:				; CODE XREF: __RESET+10CDj
 		ld	x, #0304h
-		tbbc	bit0, unk_40, loc_E59E
+		tbbc	bit0, flags_40,	loc_E59E
 		ld	x, #0306h
 
 loc_E59E:				; CODE XREF: __RESET+10E2j
 		jsr	sub_C907
 
 loc_E5A1:				; CODE XREF: __RESET+10D9j
-		ld	b, unk_52
+		ld	b, temp_52
 		and	b, #0FDh
 		jmp	loc_E627
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
@@ -19444,7 +8150,7 @@ loc_E5A8:				; CODE XREF: __RESET+10BCj
 		cmp	a, b
 		bne	loc_E5D4
 		ld	x, y + 0Dh
-		ld	b, unk_117	; should always	be zero	for this particular pcm
+		ld	b, ADC_rq1F	; should always	be zero	for this particular pcm
 		cmpz	a
 		beq	loc_E5C6
 		shr	b
@@ -19475,7 +8181,7 @@ loc_E5CF:				; CODE XREF: __RESET+1112j
 
 loc_E5D4:				; CODE XREF: __RESET+10F7j
 		ld	a, unk_179
-		tbbs	bit0, unk_40, loc_E5E1
+		tbbs	bit0, flags_40,	loc_E5E1
 		and	a, #03h
 		inc	a
 		ld	b, #03h
@@ -19495,11 +8201,11 @@ loc_E5E7:				; CODE XREF: __RESET+1129j
 loc_E5EB:				; CODE XREF: __RESET+1132j
 		or	a, unk_179
 		st	a, unk_179
-		ld	d, unk_51
+		ld	d, temp_51
 		cmpb	a, #01h
 		bne	loc_E602
 		and	b, #0FEh
-		st	b, unk_52
+		st	b, temp_52
 		ld	d, y + 0Dh
 		add	d, #0106h
 		bra	loc_E60B
@@ -19507,7 +8213,7 @@ loc_E5EB:				; CODE XREF: __RESET+1132j
 
 loc_E602:				; CODE XREF: __RESET+113Fj
 		or	b, #01h
-		st	b, unk_52
+		st	b, temp_52
 		ld	d, y + 0Dh
 		sub	d, #0106h
 
@@ -19531,13 +8237,13 @@ loc_E61B:				; CODE XREF: __RESET+1161j
 		st	a, y + 10h
 
 loc_E621:				; CODE XREF: __RESET+1167j
-		ld	b, unk_52
+		ld	b, temp_52
 		or	b, #02h
 		st	x, y + 0Dh
 
 loc_E627:				; CODE XREF: __RESET+10EFj
 		st	b, y + 14h
-		tbs	bit0, unk_40
+		tbs	bit0, flags_40
 		bne	loc_E636
 		ld	x, #0092h
 		ld	y, #0149h
@@ -19568,7 +8274,7 @@ loc_E657:				; CODE XREF: __RESET+1199j
 		st	a, unk_1D3
 
 loc_E65A:				; CODE XREF: __RESET+119Fj
-		ld	a, unk_A2	; contains bitflags, bit7 VTA_net related
+		ld	a, flags_A2	; contains bitflags, bit7 VTA_net related
 		and	a, #05h
 		cmp	a, #05h
 		bne	loc_E678
@@ -19576,7 +8282,7 @@ loc_E65A:				; CODE XREF: __RESET+119Fj
 		bcs	loc_E678
 		cmp	#6Bh, rawTHW	; Contains the NOT of CTS reading from ADC, sensor is tied to ground on	other side
 		bcs	loc_E678
-		ld	d, word_7A
+		ld	d, word_7A	; meanKSint divided by a air temp comp factor
 		cmp	d, #084Dh
 		bcc	loc_E67F
 		cmp	#2Eh, unk_CA
@@ -19602,7 +8308,7 @@ loc_E681:				; CODE XREF: __RESET+11C0j
 
 loc_E68F:				; CODE XREF: __RESET+11C7j
 					; __RESET+11D4j
-		ld	a, unk_A2	; contains bitflags, bit7 VTA_net related
+		ld	a, flags_A2	; contains bitflags, bit7 VTA_net related
 		and	a, #0Ah
 		cmp	a, #0Ah
 		bne	loc_E6AD
@@ -19610,7 +8316,7 @@ loc_E68F:				; CODE XREF: __RESET+11C7j
 		bcs	loc_E6AD
 		cmp	#0B3h, rawTHW	; Contains the NOT of CTS reading from ADC, sensor is tied to ground on	other side
 		bcs	loc_E6AD
-		ld	d, word_7A
+		ld	d, word_7A	; meanKSint divided by a air temp comp factor
 		cmp	d, #084Dh
 		bcc	loc_E6BB
 		cmp	#2Eh, unk_CB
@@ -19636,15 +8342,15 @@ loc_E6BD:				; CODE XREF: __RESET+11F5j
 		jsr	sub_C23A
 
 loc_E6C2:				; CODE XREF: __RESET:loc_E6B9j
-		st	b, unk_50
-		ld	a, unk_11D
+		st	b, flags_50	; could	be bits	for 6336 output	chip
+		ld	a, unk_11D	; some kind of counter
 		inc	a
 		cmp	a, #04h
 		bcs	loc_E6CD
 		clr	a
 
 loc_E6CD:				; CODE XREF: __RESET+1214j
-		st	a, unk_11D
+		st	a, unk_11D	; some kind of counter
 		beq	loc_E6D5
 		jmp	loc_E79D
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
@@ -19655,12 +8361,12 @@ loc_E6D5:				; CODE XREF: __RESET+121Aj
 		clr	unk_CE
 
 loc_E6DC:				; CODE XREF: __RESET+1222j
-		tbbc	bit6, unk_4B, loc_E722
+		tbbc	bit6, flags_4B,	loc_E722
 		cmp	#0F0h, rawTHW	; Contains the NOT of CTS reading from ADC, sensor is tied to ground on	other side
 		bcc	loc_E722
 		cmp	#38h, rawTHA	; Contains the NOT of air temp reading from ADC, sensor	is tied	to ground on other side
 		bcs	loc_E722
-		cmp	#5Ah, unk_5D	; adc pin 17 related
+		cmp	#5Ah, ATM_press	; adc pin 17 - PCM atmospheric pressure	sensor,	debiased and scaled
 		bcs	loc_E722
 		ld	a, unk_12E
 		jsr	SaturateData
@@ -19678,9 +8384,9 @@ loc_E6DC:				; CODE XREF: __RESET+1222j
 		bcs	loc_E722
 		cmp	#58h, unk_CE
 		bcs	loc_E722
-		tbbs	bit0, unk_4F, loc_E722
-		tbbs	bit1, unk_4F, loc_E722
-		tbbs	bit2, unk_4F, loc_E722
+		tbbs	bit0, flags_4F,	loc_E722
+		tbbs	bit1, flags_4F,	loc_E722
+		tbbs	bit2, flags_4F,	loc_E722
 		ld	a, word_90
 		and	a, #7Bh
 		bne	loc_E722
@@ -19699,13 +8405,13 @@ loc_E722:				; CODE XREF: __RESET:loc_E6DCj
 
 loc_E726:				; CODE XREF: __RESET+126Aj
 		ld	a, unk_1D7
-		ld	b, unk_50
+		ld	b, flags_50	; could	be bits	for 6336 output	chip
 		and	b, #10h
 		bne	loc_E74F
-		ld	x, word_78	; deltaKS/unk_68, filtered
+		ld	x, meanKSint	; deltaKS/KS_count, filtered
 		cmp	x, #05250
 		bgt	loc_E74F
-		cmp	#60h, word_6E	; 24576	word value
+		cmp	#60h, LOAD	; 24576	word value
 		bcc	loc_E74F
 		cmp	x, #04500
 		bcc	loc_E754
@@ -19731,7 +8437,7 @@ loc_E754:				; CODE XREF: __RESET+126Dj
 					; __RESET+1288j ...
 		ld	b, #96h
 		push	a
-		ld	a, unk_117	; should always	be zero	for this particular PCM
+		ld	a, ADC_rq1F	; should always	be zero	for this particular PCM
 		cmpb	a, #04h
 		bne	loc_E765
 		cmp	#121, rawTHA	; Contains the NOT of air temp reading from ADC, sensor	is tied	to ground on other side
@@ -19762,8 +8468,8 @@ loc_E775:				; CODE XREF: __RESET+12B8j
 		ld	a, unk_146
 		or	a, #80h
 		st	a, unk_146
-		tbbc	bit3, unk_4B, loc_E792
-		setb	bit6, unk_4D
+		tbbc	bit3, flags_4B,	loc_E792
+		setb	bit6, flags_4D
 		ld	a, unk_147
 		or	a, #80h
 		st	a, unk_147
@@ -19815,7 +8521,7 @@ loc_E7D0:				; CODE XREF: __RESET+1312j
 		cmp	#3Bh, unk_CD
 		ble	loc_E7F4
 		inc	b
-		ld	y, word_78	; deltaKS/unk_68, filtered
+		ld	y, meanKSint	; deltaKS/KS_count, filtered
 		cmp	y, #07550
 		bcs	loc_E7EC
 		cmp	y, #10700
@@ -19838,7 +8544,7 @@ loc_E7F4:				; CODE XREF: __RESET+131Fj
 
 loc_E7F6:				; CODE XREF: __RESET+12E9j
 					; __RESET+132Cj ...
-		setb	bit2, unk_4A
+		setb	bit2, flags_4A
 		ld	a, unk_77	; set bit 7, make a decision on	bit 7
 		mov	a, b
 		or	b, #80h
@@ -19850,11 +8556,11 @@ loc_E7F6:				; CODE XREF: __RESET+12E9j
 
 loc_E806:				; CODE XREF: __RESET+134Bj
 		clr	a
-		tbbs	bit0, unk_41, loc_E816
+		tbbs	bit0, flags_41,	loc_E816
 		ld	b, word_94
 		cmpb	b, #80h
 		bne	loc_E816
-		ld	b, unk_50
+		ld	b, flags_50	; could	be bits	for 6336 output	chip
 		cmpb	b, #10h
 		beq	loc_E818
 
@@ -19866,7 +8572,7 @@ loc_E818:				; CODE XREF: __RESET+135Ej
 		cmp	#62h, unk_B8
 		ble	loc_E82A
 		ld	y, #0C3FEh
-		ld	d, word_6E	; load-ish
+		ld	d, LOAD		; Load,	uncompensated for ThA
 		jsr	DivDby12	; divides D by 12, returns 16b result in unks 53:54
 		ld	d, RPM		; MSB is RPM/50, LSB is	fraction of 50
 		jsr	ThreeD_RPM	; returns 8b value from	3d table lookup	in AccA
@@ -19884,9 +8590,9 @@ loc_E837:				; CODE XREF: __RESET+137Dj
 		and	a, #0FEh
 
 loc_E83E:				; CODE XREF: __RESET+1384j
-		tbbs	bit3, unk_43, loc_E84E
-		tbbc	bit7, unk_44, loc_E852 ; bits 543210 will all cause a branch past doinjectors
-		tbbs	bit5, unk_45, loc_E84E
+		tbbs	bit3, flags_43,	loc_E84E ; bit3: AFM bad bit4: rev limiter
+		tbbc	bit7, flags_44,	loc_E852 ; bit3: rev limiter, bits 543210 will all cause a branch past doinjectors
+		tbbs	bit5, flags_45,	loc_E84E
 		ld	b, unk_103
 		cmpb	b, #02h
 		bne	loc_E852
@@ -19907,46 +8613,46 @@ loc_E854:				; CODE XREF: __RESET+139Aj
 		push	a
 		ld	y, #0C45Eh
 		jsr	TwoDTable	; X value in AccA, integer return in Acca, fraction return in AccB
-		st	a, unk_51	; 51 has decreasing with temp 8b value
+		st	a, temp_51	; 51 has decreasing with temp 8b value
 		pull	a
 		ld	y, #0C467h
 		jsr	TwoDTable	; X value in AccA, integer return in Acca, fraction return in AccB
-		st	a, unk_52
+		st	a, temp_52
 		ld	a, unk_185
 		cmpb	a, #80h
 		bne	loc_E878
-		ld	a, word_F2
+		ld	a, compLOAD	; air temp compensated Load
 		cmp	a, #108
 		bcs	loc_E87C
 
 loc_E878:				; CODE XREF: __RESET+13BAj
-		ld	b, unk_51
+		ld	b, temp_51
 		bra	loc_E891
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_E87C:				; CODE XREF: __RESET+13C0j
 		sub	a, #028
 		bgt	loc_E884
-		ld	b, unk_52
+		ld	b, temp_52
 		bra	loc_E891
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_E884:				; CODE XREF: __RESET+13C8j
 		push	a
 		mov	s, x
-		ld	a, unk_51
-		sub	a, unk_52
+		ld	a, temp_51
+		sub	a, temp_52
 		mul	a, x + 00h
 		div	d, #080
-		add	b, unk_52
+		add	b, temp_52
 		inc	s
 
 loc_E891:				; CODE XREF: __RESET+13C4j
 					; __RESET+13CCj
 		mov	b, a
-		st	a, unk_51	; something dependant on temp, other maths could have been dont
-		tbbc	bit1, unk_48, loc_E8A7
-		ld	d, unk_172
+		st	a, temp_51	; something dependant on temp, other maths could have been done
+		tbbc	bit1, flags_48,	loc_E8A7
+		ld	d, word_172	; inversely temp dependant, additional math elsewhere
 		shl	d
 		mul	a, #171
 		cmp	a, #038
@@ -19954,21 +8660,21 @@ loc_E891:				; CODE XREF: __RESET+13C4j
 		ld	a, #038
 
 loc_E8A3:				; CODE XREF: __RESET+13E9j
-		add	a, unk_51
-		st	a, unk_51
+		add	a, temp_51
+		st	a, temp_51
 
 loc_E8A7:				; CODE XREF: __RESET+13DEj
 		ld	a, unk_109
 		cmpb	a, #002
 		beq	loc_E8C9
-		tbbs	bit5, unk_45, loc_E8C9
+		tbbs	bit5, flags_45,	loc_E8C9
 		ld	a, unk_185
 		and	a, #80h
 		bne	loc_E8C9
-		ld	a, word_F2
+		ld	a, compLOAD	; air temp compensated Load
 		ld	y, #0C481h
 		jsr	TwoDTable	; X value in AccA, integer return in Acca, fraction return in AccB
-		ld	b, unk_51
+		ld	b, temp_51
 		sub	b, #128
 		bcc	loc_E8CC
 		add	a, b
@@ -19989,14 +8695,14 @@ loc_E8CD:				; CODE XREF: __RESET+1411j
 		clr	a
 		cmp	#100, RPM	; 5000RPM
 		bcs	loc_E8E1
-		cmp	#040, word_F2
+		cmp	#040, compLOAD	; air temp compensated Load
 		bcs	loc_E8E1
 		ld	y, #0C474h
 		jsr	TwoD_rawTHW	; lookup Raw Water Temp, integer return	in Acca, fraction return in AccB
 
 loc_E8E1:				; CODE XREF: __RESET+141Ej
 					; __RESET+1423j
-		sub	a, unk_51
+		sub	a, temp_51
 		neg	a
 		st	a, unk_18D	; im thinking it's a net retard, summed from a number of positive vales then negated
 		ld	a, unk_18B
@@ -20024,21 +8730,21 @@ loc_E8FF:				; CODE XREF: __RESET+1440j
 loc_E900:				; CODE XREF: __RESET+1442j
 					; __RESET+1447j
 		st	a, unk_18B
-		tbbs	bit7, unk_4C, loc_E93D ; 35degrees of offset
+		tbbs	bit7, flags_4C,	loc_E93D ; 35degrees of	offset
 		ld	a, unk_185
 		cmpb	a, #80h
 		bne	loc_E930
 		ld	y, #0C34Eh
-		ld	d, word_F2
+		ld	d, compLOAD	; air temp compensated Load
 		jsr	DivDby12	; divides D by 12, returns 16b result in unks 53:54
 		ld	d, RPM		; MSB is RPM/50, LSB is	fraction of 50
-		jsr	ThreeDtable
-		ld	b, unk_115	; adc pin 15
+		jsr	ThreeDtable	; inputs in D and temp_53:temp_54
+		ld	b, ADC_pin15	; adc pin 15 (0V)
 		cmpb	b, #0Ch
 		beq	loc_E92E
 		cmpb	b, #08h
 		bne	loc_E929
-		sub	a, #09h
+		sub	a, #009
 		bra	loc_E92B
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
@@ -20055,8 +8761,8 @@ loc_E92E:				; CODE XREF: __RESET+1469j
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_E930:				; CODE XREF: __RESET+1455j
-		tbbc	bit6, unk_45, loc_E94C
-		cmp	#02h, unk_5E
+		tbbc	bit6, flags_45,	loc_E94C
+		cmp	#02h, unk_5E	; could	be last	unk_100, or 0
 		bcc	loc_E94C
 		ld	d, #00341	; 40 deg
 		bra	loc_E940
@@ -20067,7 +8773,7 @@ loc_E93D:				; CODE XREF: __RESET+144Dj
 
 loc_E940:				; CODE XREF: __RESET+1485j
 					; __RESET+14B4j
-		setb	bit3, unk_40
+		setb	bit3, flags_40
 		st	d, unk_188
 		clr	a
 		st	a, unk_18A
@@ -20083,8 +8789,8 @@ loc_E94C:				; CODE XREF: __RESET:loc_E930j
 loc_E951:				; CODE XREF: __RESET+1498j
 		ld	y, #0C3F9h
 		jsr	TwoDTable	; X value in AccA, integer return in Acca, fraction return in AccB
-		tbbc	bit5, unk_45, loc_E95D ; saturate around 10 deg
-		tbbc	bit1, unk_45, loc_E963
+		tbbc	bit5, flags_45,	loc_E95D ; saturate around 10 deg
+		tbbc	bit1, flags_45,	loc_E963
 
 loc_E95D:				; CODE XREF: __RESET+14A1j
 		cmp	a, #085		; saturate around 10 deg
@@ -20093,7 +8799,7 @@ loc_E95D:				; CODE XREF: __RESET+14A1j
 
 loc_E963:				; CODE XREF: __RESET+14A4j
 					; __RESET+14A9j
-		tbbc	bit3, unk_43, loc_E96C
+		tbbc	bit3, flags_43,	loc_E96C ; bit3: AFM bad bit4: rev limiter
 		mov	a, b
 		clr	a
 		shl	d
@@ -20103,7 +8809,7 @@ loc_E963:				; CODE XREF: __RESET+14A4j
 
 loc_E96C:				; CODE XREF: __RESET:loc_E92Ej
 					; __RESET:loc_E963j
-		clrb	bit3, unk_40
+		clrb	bit3, flags_40
 		mov	a, b
 		clr	a
 		add	b, unk_18D	; im thinking it's a net retard, summed from a number of positive vales then negated
@@ -20113,12 +8819,12 @@ loc_E96C:				; CODE XREF: __RESET:loc_E92Ej
 		shl	d
 		cmp	d, unk_188
 		ble	loc_E98E
-		st	d, unk_51
+		st	d, temp_51
 		ld	d, unk_188
 		add	d, #0009h
-		cmp	d, unk_51
+		cmp	d, temp_51
 		ble	loc_E98E
-		ld	d, unk_51
+		ld	d, temp_51
 
 loc_E98E:				; CODE XREF: __RESET+14C8j
 					; __RESET+14D4j
@@ -20129,7 +8835,7 @@ loc_E98E:				; CODE XREF: __RESET+14C8j
 		ld	a, unk_18E
 
 loc_E99C:				; CODE XREF: __RESET+14E1j
-		tbbc	bit5, unk_4A, loc_E9A5
+		tbbc	bit5, flags_4A,	loc_E9A5
 		cmp	a, #80h
 		bcc	loc_E9A5
 		ld	a, #80h
@@ -20173,26 +8879,26 @@ loc_E9B9:				; CODE XREF: __RESET+134Dj
 		clr	b
 
 loc_E9D4:				; CODE XREF: __RESET+151Aj
-		st	d, unk_51
-		ld	d, word_170
+		st	d, temp_51
+		ld	d, word_170	; inversely temp dependant, additional math elsewhere
 		sub	d, #0008h
 		ble	loc_E9E2
-		cmp	d, unk_51
+		cmp	d, temp_51
 		bcc	loc_E9E4
 
 loc_E9E2:				; CODE XREF: __RESET+1526j
-		ld	d, unk_51
+		ld	d, temp_51
 
 loc_E9E4:				; CODE XREF: __RESET+152Aj
-		st	d, word_170
-		ld	d, unk_172
-		sub	d, #0018h
+		st	d, word_170	; inversely temp dependant, additional math elsewhere
+		ld	d, word_172	; inversely temp dependant, additional math elsewhere
+		sub	d, #00024
 		bcc	loc_E9F1
 		clr	a
 		clr	b
 
 loc_E9F1:				; CODE XREF: __RESET+1537j
-		st	d, unk_172
+		st	d, word_172	; inversely temp dependant, additional math elsewhere
 		ld	a, unk_174
 		ld	b, #03h
 		cmp	#14h, VTA_net
@@ -20216,28 +8922,28 @@ loc_EA09:				; CODE XREF: __RESET+1550j
 
 loc_EA13:				; CODE XREF: __RESET+155Aj
 		st	a, unk_D5
-		ld	d, word_16E
+		ld	d, word_16E	; inversely temp dependant, additional math elsewhere
 		sub	d, #000Dh
 		bcc	loc_EA1F
 		clr	a
 		clr	b
 
 loc_EA1F:				; CODE XREF: __RESET+1565j
-		st	d, unk_51
+		st	d, temp_51
 		ld	y, #0C313h
 		jsr	TwoD_rawTHW	; lookup Raw Water Temp, integer return	in Acca, fraction return in AccB
-		cmp	d, unk_51
+		cmp	d, temp_51
 		bcc	loc_EA2D
-		ld	d, unk_51
+		ld	d, temp_51
 
 loc_EA2D:				; CODE XREF: __RESET+1573j
-		st	d, word_16E
+		st	d, word_16E	; inversely temp dependant, additional math elsewhere
 
 loc_EA30:				; CODE XREF: __RESET+150Ej
-		setb	bit2, unk_4A
+		setb	bit2, flags_4A
 		ld	y, #0C5BAh
 		jsr	TwoD_RPM	; lookup unk_F0, integer return	in Acca, fraction return in AccB
-		st	a, unk_51
+		st	a, temp_51
 		ld	a, unk_1CD
 		ld	b, unk_6C	; sort of a filtered, saturated	VTA_net
 		cmp	b, #2Fh
@@ -20261,16 +8967,16 @@ loc_EA53:				; CODE XREF: __RESET+1599j
 		or	a, #02h
 
 loc_EA59:				; CODE XREF: __RESET+159Fj
-		tbbs	bit6, unk_45, loc_EA6C
-		ld	b, word_F2
-		cmp	b, unk_51
+		tbbs	bit6, flags_45,	loc_EA6C
+		ld	b, compLOAD	; air temp compensated Load
+		cmp	b, temp_51
 		bcc	loc_EA64
 		or	a, #04h
 
 loc_EA64:				; CODE XREF: __RESET+15AAj
 		sub	b, #08h
 		bcs	loc_EA6E
-		cmp	b, unk_51
+		cmp	b, temp_51
 		ble	loc_EA6E
 
 loc_EA6C:				; CODE XREF: __RESET:loc_EA59j
@@ -20281,10 +8987,10 @@ loc_EA6E:				; CODE XREF: __RESET+15B0j
 		ld	b, unk_103
 		cmpb	b, #08h
 		beq	loc_EA8C
-		tbbs	bit3, unk_43, loc_EA8C
-		tbbs	bit4, unk_4A, loc_EA8C
-		tbbc	bit5, unk_45, loc_EA81
-		tbbc	bit6, unk_45, loc_EA8C
+		tbbs	bit3, flags_43,	loc_EA8C ; bit3: AFM bad bit4: rev limiter
+		tbbs	bit4, flags_4A,	loc_EA8C
+		tbbc	bit5, flags_45,	loc_EA81
+		tbbc	bit6, flags_45,	loc_EA8C
 
 loc_EA81:				; CODE XREF: __RESET+15C5j
 		cmpb	a, #07h
@@ -20301,7 +9007,7 @@ loc_EA8C:				; CODE XREF: __RESET+15BDj
 
 loc_EA91:				; CODE XREF: __RESET+15D4j
 		st	a, unk_1CD
-		cmp	#64h, unk_5E
+		cmp	#64h, unk_5E	; could	be last	unk_100, or 0
 		bcs	loc_EAA1
 		ld	x, #0308h
 		ld	b, #01h
@@ -20311,7 +9017,7 @@ loc_EAA1:				; CODE XREF: __RESET+15E1j
 		cmp	#31h, unk_CD
 		beq	loc_EAC1
 		bgt	loc_EACC
-		tbbc	bit0, unk_45, loc_EAD3
+		tbbc	bit0, flags_45,	loc_EAD3
 		ld	b, unk_103
 		cmpb	b, #10h
 		beq	loc_EAD3
@@ -20334,7 +9040,7 @@ loc_EAC1:				; CODE XREF: __RESET+15EEj
 
 loc_EACC:				; CODE XREF: __RESET+15F0j
 		tbbc	bit2, PORTD_ASRIN, loc_EAD1 ; Port D Data Register / ASR Input Data
-		setb	bit2, unk_47
+		setb	bit2, flags_47
 
 loc_EAD1:				; CODE XREF: __RESET:loc_EACCj
 		clrb	bit2, PORTD_ASRIN
@@ -20342,9 +9048,9 @@ loc_EAD1:				; CODE XREF: __RESET:loc_EACCj
 loc_EAD3:				; CODE XREF: __RESET+15F2j
 					; __RESET+15FAj ...
 		clr	a
-		tbbs	bit7, unk_4C, loc_EAE2 ; bit 7 demands a sampling of the oxygen	sensors
-		tbbc	bit0, unk_47, loc_EAE2
-		ld	a, unk_116	; adc request 1D
+		tbbs	bit7, flags_4C,	loc_EAE2 ; bit 7 demands a sampling of the oxygen sensors
+		tbbc	bit0, flags_47,	loc_EAE2
+		ld	a, ADC_rq1D	; adc request 1D (probably pin 14, 0V)
 		and	a, #04h
 		beq	loc_EAE8
 		clr	a
@@ -20359,21 +9065,21 @@ loc_EAE2:				; CODE XREF: __RESET+161Ej
 loc_EAE8:				; CODE XREF: __RESET+1629j
 		cmp	#0Fh, unk_C0	; flag for Gx
 		bcs	loc_EAF1
-		setb	bit6, unk_4F
+		setb	bit6, flags_4F
 		bra	loc_EB01
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_EAF1:				; CODE XREF: __RESET+1635j
 		cmp	#0Fh, unk_C1	; flag for Gx
 		bcs	loc_EAFA
-		setb	bit6, unk_4F
+		setb	bit6, flags_4F
 		bra	loc_EB01
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_EAFA:				; CODE XREF: __RESET+163Ej
 		cmp	#0Fh, unk_BF
 		bcs	loc_EB03
-		clrb	bit6, unk_4F
+		clrb	bit6, flags_4F
 
 loc_EB01:				; CODE XREF: __RESET+1630j
 					; __RESET+1639j ...
@@ -20390,16 +9096,16 @@ loc_EB0B:				; CODE XREF: __RESET+1651j
 		cmpb	b, #40h
 		bne	loc_EB30
 		st	a, unk_1A3
-		tbbs	bit0, unk_45, loc_EB30
+		tbbs	bit0, flags_45,	loc_EB30
 		cmp	#102, Bvolts	; 8V
 		bcs	loc_EB30
-		tbbc	bit4, unk_45, loc_EB30
+		tbbc	bit4, flags_45,	loc_EB30
 		cmp	#02h, unk_7F
 		bcs	loc_EB30
 		ld	a, unk_1A2
 		cmp	a, #10h
 		bcs	loc_EB33
-		setb	bit5, unk_4C
+		setb	bit5, flags_4C
 		bra	loc_EB33
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
@@ -20411,19 +9117,19 @@ loc_EB33:				; CODE XREF: __RESET+1674j
 					; __RESET+1678j
 		cmp	#14h, RPM	; MSB is RPM/50, LSB is	fraction of 50
 		bcs	loc_EB3A
-		setb	bit7, unk_40
+		setb	bit7, flags_40
 
 loc_EB3A:				; CODE XREF: __RESET+1680j
 		ld	a, unk_1A3
 		cmp	a, #4Dh
 		bcc	loc_EB5E
-		tbbs	bit7, unk_40, loc_EB60
-		tbbc	bit5, unk_4C, loc_EB69 ; bit 7 demands a sampling of the oxygen	sensors
+		tbbs	bit7, flags_40,	loc_EB60
+		tbbc	bit5, flags_4C,	loc_EB69 ; bit 7 demands a sampling of the oxygen sensors
 		ld	a, unk_162
 		or	a, #80h
 		st	a, unk_162
-		tbbc	bit3, unk_4B, loc_EB69
-		setb	bit6, unk_4D
+		tbbc	bit3, flags_4B,	loc_EB69
+		setb	bit6, flags_4D
 		ld	a, unk_163
 		or	a, #80h
 		st	a, unk_163
@@ -20431,7 +9137,7 @@ loc_EB3A:				; CODE XREF: __RESET+1680j
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_EB5E:				; CODE XREF: __RESET+1689j
-		clrb	bit5, unk_4C
+		clrb	bit5, flags_4C
 
 loc_EB60:				; CODE XREF: __RESET+168Bj
 		ld	x, #0D256h
@@ -20441,12 +9147,12 @@ loc_EB60:				; CODE XREF: __RESET+168Bj
 loc_EB69:				; CODE XREF: __RESET+168Ej
 					; __RESET+1699j ...
 		clr	a
-		ld	x, unk_172
+		ld	x, word_172	; inversely temp dependant, additional math elsewhere
 		beq	loc_EB71
 		or	a, #01h
 
 loc_EB71:				; CODE XREF: __RESET+16B7j
-		ld	x, word_170
+		ld	x, word_170	; inversely temp dependant, additional math elsewhere
 		beq	loc_EB78
 		or	a, #02h
 
@@ -20472,36 +9178,36 @@ loc_EB91:				; CODE XREF: __RESET+16D7j
 		clr	b
 		ld	a, unk_1C6
 		and	a, #80h
-		tbbc	bit0, unk_45, loc_EB9F
+		tbbc	bit0, flags_45,	loc_EB9F
 		or	a, #01h
 
 loc_EB9F:				; CODE XREF: __RESET+16E4j
-		tbbc	bit0, unk_41, loc_EBA4
+		tbbc	bit0, flags_41,	loc_EBA4
 		or	a, #02h
 
 loc_EBA4:				; CODE XREF: __RESET:loc_EB9Fj
-		tbbc	bit1, unk_45, loc_EBA9
+		tbbc	bit1, flags_45,	loc_EBA9
 		or	a, #04h
 
 loc_EBA9:				; CODE XREF: __RESET:loc_EBA4j
-		tbbc	bit5, unk_45, loc_EBAE
+		tbbc	bit5, flags_45,	loc_EBAE
 		or	a, #08h
 
 loc_EBAE:				; CODE XREF: __RESET:loc_EBA9j
-		tbbc	bit0, unk_49, loc_EBB3 ; bits 1-3-4-5 are oxl1-oxr1-oxl2-oxr2
+		tbbc	bit0, flags_49,	loc_EBB3 ; bits	1-3-4-5	are oxl1-oxr1-oxl2-oxr2
 		or	a, #10h
 
 loc_EBB3:				; CODE XREF: __RESET:loc_EBAEj
-		tbbc	bit2, unk_49, loc_EBB8 ; bits 1-3-4-5 are oxl1-oxr1-oxl2-oxr2
+		tbbc	bit2, flags_49,	loc_EBB8 ; bits	1-3-4-5	are oxl1-oxr1-oxl2-oxr2
 		or	a, #20h
 
 loc_EBB8:				; CODE XREF: __RESET:loc_EBB3j
 		st	a, unk_1C6
-		ld	b, unk_45
+		ld	b, flags_45
 		st	b, unk_F8
-		ld	d, InjectPW1	; pulsewidth for most cases/cylinders
+		ld	d, InjectPW1	; pulsewidth for most cases/cylinders, 4us/bit
 		jsr	sub_EC27
-		st	b, unk_1C8	; word_164+word_168 divided by 32 and saturated	at 8 bits
+		st	b, unk_1C8	; injector pulsewidth divided by 32 and	saturated at 8 bits
 		ld	d, RPM		; MSB is RPM/50, LSB is	fraction of 50
 		shl	d
 		bcc	loc_EBCF	; this will crap out at	6350 RPM
@@ -20509,7 +9215,7 @@ loc_EBB8:				; CODE XREF: __RESET:loc_EBB3j
 
 loc_EBCF:				; CODE XREF: __RESET+1715j
 		st	a, unk_1C9
-		ld	d, word_78	; deltaKS/unk_68, filtered
+		ld	d, meanKSint	; deltaKS/KS_count, filtered
 		shl	d
 		bcc	loc_EBD9
 		ld	a, #0FFh
@@ -20521,11 +9227,11 @@ loc_EBD9:				; CODE XREF: __RESET+171Fj
 		ld	a, word_124	; VTA1 - offset	(unk_123)
 		st	a, unk_F5	; last VTA1-Offset
 		clr	a
-		tbbs	bit0, unk_4D, loc_EBEC
+		tbbs	bit0, flags_4D,	loc_EBEC
 		ld	a, unk_100
 
 loc_EBEC:				; CODE XREF: __RESET+1730j
-		st	a, unk_5E
+		st	a, unk_5E	; could	be last	unk_100, or 0
 		jsr	sub_D257
 		nop			; please insert	user subroutine	here in	the form of "jsr beepboop"
 		nop
@@ -20537,16 +9243,16 @@ loc_EBEC:				; CODE XREF: __RESET+1730j
 		ld	#0Fh, ASR0PL	; ASR0 pos edge	counter	value LSB
 		ld	#0FDh, ASR1P	; ASR1 pos edge	counter	value MSB
 		ld	#30h, ASR0NL	; ASR0 neg edge	counter	value LSB
-		ld	#08h, unk_1D
+		ld	#08h, unk_1D	; bit3 seems to	be a uart global clock output enable
 		ld	#30h, SMRC_SIR	; Serial Master	Register Control
 		clrb	bit3, SSD
 		clrb	bit2, DOM
 		clrb	bit3, DOM
 		di
-		ld	a, unk_11C
+		ld	a, asr0n_shadow	; stores configuration information written to asr0n
 		and	a, #0C0h
-		add	a, #34h		; isnt this always zero?
-		st	a, unk_11C
+		add	a, #34h
+		st	a, asr0n_shadow	; stores configuration information written to asr0n
 		ei
 		ld	s, #02DFh
 
@@ -20558,7 +9264,7 @@ EndMainLoop:
 
 
 sub_EC27:				; CODE XREF: __RESET+170Cp
-		add	d, InjDeadtime	; probably deadtime, have to chase out ADC code
+		add	d, InjDeadtime	; injector deadtime, 4us/bit
 		jsr	divDby32	; shift	D right	5 times
 		cmpz	a
 		beq	locret_EC32
@@ -20594,13 +9300,13 @@ intASR2_1:				; CODE XREF: ROM:EC45j
 		ld	b, #001
 
 intASR2_2:				; CODE XREF: ROM:EC66j	ROM:EC70j
-		tbbs	bit7, unk_4C, intASR2_5	; bit 7	demands	a sampling of the oxygen sensors
+		tbbs	bit7, flags_4C,	intASR2_5 ; bit	7 demands a sampling of	the oxygen sensors
 		cmpz	a
 		beq	intASR2_5
-		setb	bit4, unk_46
-		tbbc	bit3, unk_4B, intASR2_5
-		setb	bit6, unk_4D
-		setb	bit7, unk_4F
+		setb	bit4, flags_46
+		tbbc	bit3, flags_4B,	intASR2_5
+		setb	bit6, flags_4D
+		setb	bit7, flags_4F
 		bra	intASR2_5
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
@@ -20652,7 +9358,7 @@ intASR2_9:				; CODE XREF: ROM:EC91j	ROM:EC95j
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 intASR2_10:				; CODE XREF: ROM:EC9Fj
-		tbs	bit0, unk_4A
+		tbs	bit0, flags_4A
 		beq	intASR2_11
 		ld	y, #0060h
 		xch	a, y + 02h	; word 62 (most	current	deltaNE	is here)
@@ -20664,8 +9370,8 @@ intASR2_10:				; CODE XREF: ROM:EC9Fj
 		st	d, threeDeltaNE
 		cmp	d, #00568	; rev limit 6602 RPM
 		bcc	intASR2_11
-		setb	bit3, unk_44	; smells like a	rev limiter
-		setb	bit4, unk_43
+		setb	bit3, flags_44	; smells like a	rev limiter
+		setb	bit4, flags_43
 
 intASR2_11:				; CODE XREF: ROM:ECA6j	ROM:ECBCj
 		ld	y, #00C0h
@@ -20676,13 +9382,13 @@ intASR2_11:				; CODE XREF: ROM:ECA6j	ROM:ECBCj
 		bne	intASR2_17	; asr3 irq flag	(G1)
 
 intASR2_12:				; CODE XREF: ROM:ECC8j
-		tbbc	bit0, unk_41, intASR2_14
+		tbbc	bit0, flags_41,	intASR2_14
 		ld	d, threeDeltaNE
 		cmp	d, #01500	; 2500 RPM
 		bcs	intASR2_14
 		cmp	d, #16384	; 229RPM
 		bcc	intASR2_14
-		tbbs	bit4, unk_46, intASR2_15
+		tbbs	bit4, flags_46,	intASR2_15
 		clr	a
 		ld	b, threeDeltaNE
 		div	d, #026		; divide MSB
@@ -20730,13 +9436,13 @@ intASR2_15:				; CODE XREF: ROM:ECDFj	ROM:ECEFj
 		clr	unk_BF
 
 intASR2_16:				; CODE XREF: ROM:ED18j
-		clrb	bit4, unk_46
+		clrb	bit4, flags_46
 		bra	intASR2_18	; service G1 flag
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 intASR2_17:				; CODE XREF: ROM:ECCEj
 		tbbc	bit7, IRQLL, intASR2_19	; asr3 irq flag	(G1)
-		setb	bit4, unk_46
+		setb	bit4, flags_46
 
 intASR2_18:				; CODE XREF: ROM:ED20j
 		clrb	bit7, IRQLL	; service G1 flag
@@ -20794,7 +9500,7 @@ intASR2_25:				; CODE XREF: ROM:ED4Fj
 intASR2_26:				; CODE XREF: ROM:ED4Dj
 		setb	bit1, DOUT
 		setb	bit1, PORTA
-		tbbs	bit7, unk_4C, intASR2_28 ; bit 7 demands a sampling of the oxygen sensors
+		tbbs	bit7, flags_4C,	intASR2_28 ; bit 7 demands a sampling of the oxygen sensors
 		tbbc	bit5, RAMST, intASR2_28	; Built-in RAM status
 		ld	a, unk_E5
 		mov	a, b
@@ -20809,15 +9515,15 @@ intASR2_27:				; CODE XREF: ROM:ED78j
 		rorc	b
 		bvc	intASR2_32
 		bcs	intASR2_34
-		tbbs	bit3, unk_43, intASR2_35
-		cmp	#3Ch, word_F2
+		tbbs	bit3, flags_43,	intASR2_35 ; bit3: AFM bad bit4: rev limiter
+		cmp	#3Ch, compLOAD	; air temp compensated Load
 		bcs	intASR2_35
 		ld	a, unk_186
 		bne	intASR2_35
 		ld	a, unk_103
 		cmpb	a, #40h
 		beq	intASR2_35
-		tbbs	bit5, unk_4A, intASR2_35
+		tbbs	bit5, flags_4A,	intASR2_35
 		cmp	#032, RPM	; MSB is RPM/50, LSB is	fraction of 50
 		bcs	intASR2_35
 		cmp	#104, RPM	; MSB is RPM/50, LSB is	fraction of 50
@@ -20844,14 +9550,14 @@ intASR2_30:				; CODE XREF: ROM:EDB5j
 		bne	intASR2_36
 		cmp	a, #0Fh
 		beq	intASR2_31
-		setb	bit5, unk_4E
+		setb	bit5, flags_4E
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 		.db  8Ch ; Œ		; cmp x, a three byte NOP
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 intASR2_31:				; CODE XREF: ROM:EDC7j
-		setb	bit7, unk_4E
-		setb	bit0, unk_46
+		setb	bit7, flags_4E
+		setb	bit0, flags_46
 		bra	intASR2_36
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
@@ -20870,9 +9576,9 @@ intASR2_33:				; CODE XREF: ROM:EDD4j
 		add	a, #20h
 		bcc	intASR2_38
 		clrb	bit2, DOUT
-		tbs	bit2, unk_41
+		tbs	bit2, flags_41
 		beq	intASR2_37
-		setb	bit6, unk_4E
+		setb	bit6, flags_4E
 		ld	a, #0Bh
 		st	a, unk_E8
 		bra	intASR2_37
@@ -20880,7 +9586,7 @@ intASR2_33:				; CODE XREF: ROM:EDD4j
 
 intASR2_34:				; CODE XREF: ROM:ED85j
 		clr	unk_E8
-		clrb	bit6, unk_4E
+		clrb	bit6, flags_4E
 
 intASR2_35:				; CODE XREF: ROM:ED87j	ROM:ED8Dj ...
 		cmp	#0Bh, unk_E6
@@ -20888,7 +9594,7 @@ intASR2_35:				; CODE XREF: ROM:ED87j	ROM:ED8Dj ...
 		clr	unk_E6
 
 intASR2_36:				; CODE XREF: ROM:EDAFj	ROM:EDC3j ...
-		clrb	bit2, unk_41
+		clrb	bit2, flags_41
 
 intASR2_37:				; CODE XREF: ROM:intASR2_28j ROM:EDEEj ...
 		ld	a, #40h
@@ -20902,7 +9608,7 @@ intASR2_38:				; CODE XREF: ROM:EDE8j
 
 intASR2_39:				; CODE XREF: ROM:intASR2_25j
 		ld	a, ModuloNE	; contains modulo: NEcounts%3, represents 30 degree chunks after 10dBTDC cylinder NEcounts/3
-		tbbc	bit2, unk_40, intASR2_41
+		tbbc	bit2, flags_40,	intASR2_41
 		setb	bit0, DOM	; IGT bit related
 		cmpz	a
 		beq	intASR2_40	; bounce if 10 deg BTDC, looks like failsafe timing, 30	degrees	dwell, 10 deg BTDC spark
@@ -20926,19 +9632,19 @@ intASR2_41:				; CODE XREF: ROM:EE12j
 		jsr	sub_EF13	; we end up here if we're late, which is why we're checking target NEcounts+1
 
 intASR2_42:				; CODE XREF: ROM:EE2Aj
-		setb	bit2, unk_40
-		tbbs	bit7, unk_4C, ASR2_reti	; bit 7	demands	a sampling of the oxygen sensors
-		clrb	bit2, unk_40
+		setb	bit2, flags_40
+		tbbs	bit7, flags_4C,	ASR2_reti ; bit	7 demands a sampling of	the oxygen sensors
+		clrb	bit2, flags_40
 
 intASR2_43:				; CODE XREF: ROM:EE2Dj
 		jsr	NEsub1
 
 ASR2_reti:				; CODE XREF: ROM:ECA1j	ROM:EE1Cj ...
-		clrb	bit5, unk_4F
+		clrb	bit5, flags_4F
 		clrb	bit4, PORTAL
 		clrb	bit5, PORTAL
-		setb	bit6, unk_44
-		setb	bit1, IRQLL	; no idea what this flag does, but may trigger IV6
+		setb	bit6, flags_44
+		setb	bit1, IRQLL	; trigger IV6
 		pull	y
 		pull	x
 		reti
@@ -20955,7 +9661,7 @@ NEsub1:					; CODE XREF: ROM:intASR2_43p
 NEsub1_1:				; CODE XREF: NEsub1+2j
 		clr	a
 		clr	b
-		tbbs	bit3, unk_40, NEsub1_3
+		tbbs	bit3, flags_40,	NEsub1_3
 		ld	b, unk_18A
 		shl	d
 		cmpz	a
@@ -20980,7 +9686,7 @@ NEsub1_3:				; CODE XREF: NEsub1+9j	NEsub1+11j ...
 
 NEsub1_4:				; CODE XREF: NEsub1+2Aj
 		pull	x
-		clrb	bit4, unk_40
+		clrb	bit4, flags_40
 		cmp	#022, NEcounts	; 10 deg BTDC2
 		beq	NEsub1_5	; upper	bound data
 		cmp	#007, NEcounts	; 10 deg BTDC 4
@@ -20993,7 +9699,7 @@ NEsub1_4:				; CODE XREF: NEsub1+2Aj
 		pull	a
 		beq	NEsub1_5	; lsb low prevents addition below
 		add	d, #00026
-		setb	bit4, unk_40
+		setb	bit4, flags_40
 
 NEsub1_5:				; CODE XREF: NEsub1+34j NEsub1+39j ...
 		cmp	d, #00768	; upper	bound data
@@ -21006,21 +9712,21 @@ NEsub1_6:				; CODE XREF: NEsub1+51j
 		ld	d, #00290	; saturate at 290 (122h)
 
 NEsub1_7:				; CODE XREF: NEsub1+59j
-		tbbc	bit6, unk_42, NEsub1_12	; skip the word_193 stuff
+		tbbc	bit6, flags_42,	NEsub1_12 ; skip the word_193 stuff
 		push	d
 		mov	s, x		; stack	now points to limited value
 		ld	d, word_193
-		tbbs	bit0, unk_42, NEsub1_9
+		tbbs	bit0, flags_42,	NEsub1_9
 		cmp	#020, RPM	; MSB is RPM/50, LSB is	fraction of 50
 		ble	NEsub1_9
-		tbbs	bit5, unk_42, NEsub1_8
-		tbbc	bit0, unk_41, NEsub1_9
+		tbbs	bit5, flags_42,	NEsub1_8
+		tbbc	bit0, flags_41,	NEsub1_9
 		add	d, #00002
 		bra	NEsub1_10
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 NEsub1_8:				; CODE XREF: NEsub1+6Ej
-		cmp	#24h, word_F2
+		cmp	#24h, compLOAD	; air temp compensated Load
 		bcc	NEsub1_9
 		add	d, #0002h
 		bra	NEsub1_10
@@ -21033,15 +9739,15 @@ NEsub1_10:				; CODE XREF: NEsub1+77j NEsub1+81j
 		cmp	d, x + 00h
 		ble	NEsub1_11	; provided calculated stuff was	greater	than 193, keep 193 as it
 		ld	d, x + 00h
-		clrb	bit6, unk_42
-		clrb	bit5, unk_42
+		clrb	bit6, flags_42
+		clrb	bit5, flags_42
 
 NEsub1_11:				; CODE XREF: NEsub1+88j
 		st	d, word_193
 		pull	x		; tidy stack
 
 NEsub1_12:				; CODE XREF: NEsub1:NEsub1_7j
-		tbbs	bit4, unk_40, NEsub1_13	; this is where	the magic begins, 43 counts/768*90=5 degrees
+		tbbs	bit4, flags_40,	NEsub1_13 ; this is where the magic begins, 43 counts/768*90=5 degrees
 		mov	d, x
 		shr	d
 		shr	d
@@ -21098,7 +9804,7 @@ loc_EF1A:				; CODE XREF: sub_EF13+3j
 		bsr	calcIGT_time	; accepts ratio	in AccA
 		clrc
 		tbbs	bit0, LDOUT, NEsub1_divert ; bounces immediately to Cmp0IGTdwell
-		setb	bit5, unk_40
+		setb	bit5, flags_40
 
 NEsub1_ret2:				; CODE XREF: sub_EF13+9j
 		ret
@@ -21121,7 +9827,7 @@ loc_EF2A:				; CODE XREF: NEsub1+C5j
 NEsub1_ret1:				; CODE XREF: sub_EF13+27j
 		setc
 		tbbc	bit0, LDOUT, NEsub1_divert ; bounces immediately to Cmp0IGTdwell
-		setb	bit6, unk_40
+		setb	bit6, flags_40
 		ret
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
@@ -21162,232 +9868,231 @@ IV6:					; DATA XREF: ROM:FFEAo
 		clrb	bit1, IRQLL
 		push	x
 		push	y
-		tbbc	bit6, unk_44, loc_EF70 ; bits 543210 will all cause a branch past doinjectors
-		clrb	bit6, unk_44
-		jmp	loc_EF7B
+		tbbc	bit6, flags_44,	IV6_1 ;	bit3: rev limiter, bits	543210 will all	cause a	branch past doinjectors
+		clrb	bit6, flags_44
+		jmp	IV6_2
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
-loc_EF70:				; CODE XREF: IV6+4j IV6:loc_F135j
-		tbbc	bit3, unk_4A, loc_EF78
-		clrb	bit3, unk_4A
-		jmp	loc_F3CA
+IV6_1:					; CODE XREF: IV6+4j IV6:IV6_44j
+		tbbc	bit3, flags_4A,	IV6_ret	; bomb out
+		clrb	bit3, flags_4A
+		jmp	IV6_TXadc
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
-loc_EF78:				; CODE XREF: IV6:loc_EF70j
-					; IV6:loc_F666j
-		pull	y
+IV6_ret:				; CODE XREF: IV6:IV6_1j IV6:loc_F666j
+		pull	y		; bomb out
 		pull	x
 		reti
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
-loc_EF7B:				; CODE XREF: IV6+9j IV6+1CEj
+IV6_2:					; CODE XREF: IV6+9j IV6+1CEj
 		ld	a, NEcounts
 		mov	a, b
 		xch	b, unk_67
-		beq	loc_EF96
+		beq	IV6_4
 		cmpz	b
-		beq	loc_EFAA
+		beq	IV6_6
 		cmp	a, b
-		beq	loc_EFA7
+		beq	IV6_5
 		dec	a
-		bne	loc_EF8D
+		bne	IV6_3
 		ld	a, #024
 
-loc_EF8D:				; CODE XREF: IV6+25j
+IV6_3:					; CODE XREF: IV6+25j
 		cmp	a, b
-		beq	loc_EFAA
-		clrb	bit3, unk_47
+		beq	IV6_6
+		clrb	bit3, flags_47
 		st	a, unk_67
-		bra	loc_EFAA
+		bra	IV6_6
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
-loc_EF96:				; CODE XREF: IV6+1Cj
-		tbbc	bit5, unk_47, loc_EFA7
-		clrb	bit5, unk_47
-		tbs	bit5, unk_41
-		beq	loc_EFA7
+IV6_4:					; CODE XREF: IV6+1Cj
+		tbbc	bit5, flags_47,	IV6_5
+		clrb	bit5, flags_47
+		tbs	bit5, flags_41
+		beq	IV6_5
 		ld	a, unk_D2
 		clr	b
 		shr	d
 		shr	d
 		jsr	DoAllInj	; inject the value of unk_D2 multiplied	by 64
 
-loc_EFA7:				; CODE XREF: IV6+22j IV6:loc_EF96j ...
-		jmp	loc_F12E
+IV6_5:					; CODE XREF: IV6+22j IV6:IV6_4j ...
+		jmp	IV6_43
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
-loc_EFAA:				; CODE XREF: IV6+1Fj IV6+2Aj ...
+IV6_6:					; CODE XREF: IV6+1Fj IV6+2Aj ...
 		clr	a
 		div	d, #03h
 		st	d, unk_58
 		ld	a, unk_58
 		shr	a
-		bcc	loc_F02A
+		bcc	IV6_14
 		ld	b, unk_67
 		cmp	b, #02h
-		beq	loc_EFC6	; clear	bit 0
+		beq	IV6_7		; clear	bit 0
 		cmp	b, #05h
-		beq	loc_EFC6	; clear	bit 0
+		beq	IV6_7		; clear	bit 0
 		cmp	b, #0Eh
-		beq	loc_EFC6	; clear	bit 0
+		beq	IV6_7		; clear	bit 0
 		cmp	b, #11h
-		bne	loc_EFCC	; clear	bit 6
+		bne	IV6_8		; clear	bit 6
 
-loc_EFC6:				; CODE XREF: IV6+54j IV6+58j ...
+IV6_7:					; CODE XREF: IV6+54j IV6+58j ...
 		ld	a, unk_77	; clear	bit 0
 		and	a, #0FEh
 		st	a, unk_77	; clear	bit 0
 
-loc_EFCC:				; CODE XREF: IV6+60j
+IV6_8:					; CODE XREF: IV6+60j
 		ld	a, unk_77	; clear	bit 6
 		and	a, #0BFh
 		st	a, unk_77	; clear	bit 6
 		di
 		clr	a
-		ld	b, deltaKS	; Cumulative sum of KS intervals, counted by unk_68
-		div	d, KS_count	; deltaKS related
-		bcs	loc_F013
+		ld	b, deltaKS	; Cumulative sum of KS intervals, counted by KS_count, reset in	IV6
+		div	d, KS_count	; counts KS interrupts,	reset in IV6
+		bcs	IV6_12
 		push	b		; push the fraction
 		ld	b, deltaKSl
-		div	d, KS_count	; deltaKS related
-		ld	a, unk_1AE
-		add	a, KS_count	; deltaKS related
-		bcc	loc_EFEA
+		div	d, KS_count	; counts KS interrupts,	reset in IV6
+		ld	a, KS_count2
+		add	a, KS_count	; counts KS interrupts,	reset in IV6
+		bcc	IV6_9
 		ld	a, #0FFh
 
-loc_EFEA:				; CODE XREF: IV6+82j
-		st	a, unk_1AE
+IV6_9:					; CODE XREF: IV6+82j
+		st	a, KS_count2
 		clr	a
 		st	a, KS_count	; clear	it
 		st	a, deltaKS	; clear	it
 		st	a, deltaKSl	; clear	it
 		ei
-		pull	a		; d now	has deltaKS/unk_68
-		add	d, word_78	; deltaKS/unk_68, filtered
+		pull	a		; d now	has deltaKS/KS_count
+		add	d, meanKSint	; deltaKS/KS_count, filtered
 		rorc	a
 		rorc	b
 		cmp	#10h, unk_69	; choose filtering process
-		bcc	loc_F005	; heavy	filter branch
+		bcc	IV6_10		; heavy	filter branch
 		inc	unk_69
-		bra	loc_F011	; no more filter branch
+		bra	IV6_11		; no more filter branch
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
-loc_F005:				; CODE XREF: IV6+9Bj
-		add	d, word_78	; deltaKS/unk_68, filtered
+IV6_10:					; CODE XREF: IV6+9Bj
+		add	d, meanKSint	; deltaKS/KS_count, filtered
 		rorc	a
 		rorc	b
-		add	d, word_78	; deltaKS/unk_68, filtered
+		add	d, meanKSint	; deltaKS/KS_count, filtered
 		rorc	a
 		rorc	b
-		add	d, word_78	; deltaKS/unk_68, filtered
+		add	d, meanKSint	; deltaKS/KS_count, filtered
 		rorc	a
 		rorc	b
 
-loc_F011:				; CODE XREF: IV6+9Fj
-		st	d, word_78	; deltaKS/unk_68, filtered
+IV6_11:					; CODE XREF: IV6+9Fj
+		st	d, meanKSint	; deltaKS/KS_count, filtered
 
-loc_F013:				; CODE XREF: IV6+75j
+IV6_12:					; CODE XREF: IV6+75j
 		ei
 		clr	a
 		cmp	#52h, VTA_net
-		bcs	loc_F023
+		bcs	IV6_13
 		ld	a, unk_E9
 		inc	a
 		cmp	a, #08h
-		bcs	loc_F023
+		bcs	IV6_13
 		ld	a, #80h
 
-loc_F023:				; CODE XREF: IV6+B4j IV6+BBj
+IV6_13:					; CODE XREF: IV6+B4j IV6+BBj
 		st	a, unk_E9
 		jsr	sub_F1A9
-		bra	loc_F060
+		bra	IV6_21
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
-loc_F02A:				; CODE XREF: IV6+4Ej
+IV6_14:					; CODE XREF: IV6+4Ej
 		shr	a
-		bcs	loc_F060
+		bcs	IV6_21
 		ld	a, unk_77
 		and	a, #7Fh
 		st	a, unk_77
 		ld	a, unk_186
 		ld	b, unk_102
 		cmpb	b, #80h
-		beq	loc_F053
+		beq	IV6_16
 		ld	b, unk_187
 		cmp	a, b
-		beq	loc_F05D
-		bgt	loc_F054
+		beq	IV6_20
+		bgt	IV6_17
 		cmpz	a
-		bne	loc_F05C
-		setb	bit1, unk_41
+		bne	IV6_19
+		setb	bit1, flags_41
 		cmp	#50h, RPM	; MSB is RPM/50, LSB is	fraction of 50
-		bcc	loc_F051
-		clrb	bit1, unk_41
+		bcc	IV6_15
+		clrb	bit1, flags_41
 
-loc_F051:				; CODE XREF: IV6+E9j
-		bra	loc_F05C
+IV6_15:					; CODE XREF: IV6+E9j
+		bra	IV6_19
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
-loc_F053:				; CODE XREF: IV6+D7j
+IV6_16:					; CODE XREF: IV6+D7j
 		clr	b
 
-loc_F054:				; CODE XREF: IV6+DFj
+IV6_17:					; CODE XREF: IV6+DFj
 		sub	a, #22h
-		bgt	loc_F059
+		bgt	IV6_18
 		clr	a
 
-loc_F059:				; CODE XREF: IV6+F2j
+IV6_18:					; CODE XREF: IV6+F2j
 		cmp	a, b
-		bgt	loc_F05D
+		bgt	IV6_20
 
-loc_F05C:				; CODE XREF: IV6+E2j IV6:loc_F051j
+IV6_19:					; CODE XREF: IV6+E2j IV6:IV6_15j
 		mov	b, a
 
-loc_F05D:				; CODE XREF: IV6+DDj IV6+F6j
+IV6_20:					; CODE XREF: IV6+DDj IV6+F6j
 		st	a, unk_186
 
-loc_F060:				; CODE XREF: IV6+C4j IV6+C7j
-		ld	a, unk_44	; bits 543210 will all cause a branch past doinjectors
+IV6_21:					; CODE XREF: IV6+C4j IV6+C7j
+		ld	a, flags_44	; bit3:	rev limiter, bits 543210 will all cause	a branch past doinjectors
 		and	a, #3Fh
-		beq	loc_F06E	; on the right path
+		beq	IV6_22		; on the right path
 		ld	a, #0FFh
 		st	a, unk_112
-		jmp	loc_F0B4	; bounces past doinjectors
+		jmp	IV6_29		; bounces past doinjectors
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
-loc_F06E:				; CODE XREF: IV6+100j
+IV6_22:					; CODE XREF: IV6+100j
 		ld	a, unk_67	; on the right path
 		ld	y, #0C2DBh
 
-loop_F073:				; CODE XREF: IV6+126j
+IV6_23:					; CODE XREF: IV6+126j
 		cmp	y, #0C2DFh	; this value is	too high, carry	should always be set
-		bcs	loc_F07B
-		jmp	loc_F0DA	; bounces past doinjectors because this	loop has failed	somehow
+		bcs	IV6_24
+		jmp	IV6_33		; bounces past doinjectors because this	loop has failed	somehow
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
-loc_F07B:				; CODE XREF: IV6+112j
+IV6_24:					; CODE XREF: IV6+112j
 		ld	b, y + 00h
 		add	b, unk_113
 		cmp	b, #024
-		ble	loc_F086
+		ble	IV6_25
 		sub	b, #18h
 
-loc_F086:				; CODE XREF: IV6+11Ej
+IV6_25:					; CODE XREF: IV6+11Ej
 		cmp	a, b
-		beq	loc_F08C
+		beq	IV6_27
 
-loc_F089:				; CODE XREF: IV6+131j
+IV6_26:					; CODE XREF: IV6+131j
 		inc	y
-		bra	loop_F073	; this value is	too high, carry	should always be set
+		bra	IV6_23		; this value is	too high, carry	should always be set
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
-loc_F08C:				; CODE XREF: IV6+123j
+IV6_27:					; CODE XREF: IV6+123j
 		push	d
 		mov	y, d
 		sub	d, #0C2DBh
 		cmp	b, unk_112
 		pull	d
-		beq	loc_F089
+		beq	IV6_26
 		mov	y, d
 		sub	d, #0C2DBh
 		st	b, unk_112
@@ -21395,7 +10100,7 @@ loc_F08C:				; CODE XREF: IV6+123j
 		shl	b		; double b
 		add	y, b
 
-loc_F0A3:				; either 00 or 02
+IV6_28:					; either 00 or 02
 		ld	a, y + 10h
 		ld	x, #0164h	; choose either	word_164 or word_166
 		add	x, a
@@ -21405,102 +10110,102 @@ loc_F0A3:				; either 00 or 02
 		and	b, #0DFh
 		st	b, unk_77	; clear	bit 4
 
-loc_F0B4:				; CODE XREF: IV6+107j
-		ld	a, unk_110
+IV6_29:					; CODE XREF: IV6+107j
+		ld	a, unk_110	; related to pulsewidth*RPM/195, fuel flow for pump controller?
 		ld	b, unk_111
 		sub	a, b
-		bmi	loc_F0C5
+		bmi	IV6_30
 		cmp	a, #02h
-		ble	loc_F0CB
+		ble	IV6_31
 		ld	a, #02h
-		bra	loc_F0CB
+		bra	IV6_31
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
-loc_F0C5:				; CODE XREF: IV6+157j
+IV6_30:					; CODE XREF: IV6+157j
 		cmp	a, #0FEh
-		bcc	loc_F0CB
+		bcc	IV6_31
 		ld	a, #0FEh
 
-loc_F0CB:				; CODE XREF: IV6+15Bj IV6+15Fj ...
+IV6_31:					; CODE XREF: IV6+15Bj IV6+15Fj ...
 		add	a, b
 		st	a, unk_111
 		add	a, #0Dh
 		cmp	a, #18h
-		ble	loc_F0D7
+		ble	IV6_32
 		sub	a, #18h
 
-loc_F0D7:				; CODE XREF: IV6+16Fj
+IV6_32:					; CODE XREF: IV6+16Fj
 		st	a, unk_113
 
-loc_F0DA:				; CODE XREF: IV6+114j
+IV6_33:					; CODE XREF: IV6+114j
 		cmp	#0FFh, unk_D7
-		beq	loc_F0E1
+		beq	IV6_34
 		inc	unk_D7
 
-loc_F0E1:				; CODE XREF: IV6+179j
+IV6_34:					; CODE XREF: IV6+179j
 		ld	b, unk_67
 		cmp	b, #07h
-		beq	loc_F0EB
+		beq	IV6_35
 		cmp	b, #13h
-		bne	loc_F0FE
+		bne	IV6_37
 
-loc_F0EB:				; CODE XREF: IV6+181j
+IV6_35:					; CODE XREF: IV6+181j
 		ld	a, unk_E3
 		inc	a
-		beq	loc_F0F2
+		beq	IV6_36
 		st	a, unk_E3
 
-loc_F0F2:				; CODE XREF: IV6+18Aj
-		ld	b, unk_44	; bits 543210 will all cause a branch past doinjectors
+IV6_36:					; CODE XREF: IV6+18Aj
+		ld	b, flags_44	; bit3:	rev limiter, bits 543210 will all cause	a branch past doinjectors
 		and	b, #3Fh
-		bne	loc_F0FE
+		bne	IV6_37
 		ld	a, unk_77
 		and	a, #0EFh
 		st	a, unk_77
 
-loc_F0FE:				; CODE XREF: IV6+185j IV6+192j
-		tbbc	bit3, unk_43, loc_F111
+IV6_37:					; CODE XREF: IV6+185j IV6+192j
+		tbbc	bit3, flags_43,	IV6_39 ; bit3: AFM bad bit4: rev limiter
 		cmp	#7Ah, unk_B4
-		bcs	loc_F127
+		bcs	IV6_42
 		cmp	#0Fh, unk_EB
-		bcs	loc_F10D
-		clrb	bit3, unk_43
+		bcs	IV6_38
+		clrb	bit3, flags_43
 
-loc_F10D:				; CODE XREF: IV6+1A5j
+IV6_38:					; CODE XREF: IV6+1A5j
 		clr	unk_B4
-		bra	loc_F123
+		bra	IV6_41
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
-loc_F111:				; CODE XREF: IV6:loc_F0FEj
+IV6_39:					; CODE XREF: IV6:IV6_37j
 		clr	unk_B4
 		cmp	#06h, RPM	; MSB is RPM/50, LSB is	fraction of 50
-		bcs	loc_F123
-		cmp	#30h, unk_EA
-		bcc	loc_F121
-		inc	unk_EA
-		bra	loc_F127
+		bcs	IV6_41
+		cmp	#30h, badKScount ; Incremented by IV6, cleared by KS interrupt
+		bcc	IV6_40
+		inc	badKScount	; Incremented by IV6, cleared by KS interrupt
+		bra	IV6_42
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
-loc_F121:				; CODE XREF: IV6+1B7j
-		setb	bit3, unk_43
+IV6_40:					; CODE XREF: IV6+1B7j
+		setb	bit3, flags_43
 
-loc_F123:				; CODE XREF: IV6+1ABj IV6+1B2j
-		clr	unk_EA
+IV6_41:					; CODE XREF: IV6+1ABj IV6+1B2j
+		clr	badKScount	; Incremented by IV6, cleared by KS interrupt
 		clr	unk_EB
 
-loc_F127:				; CODE XREF: IV6+1A0j IV6+1BBj
-		clrb	bit0, unk_4E
-		tbbc	bit0, unk_45, loc_F12E
-		setb	bit4, unk_4C
+IV6_42:					; CODE XREF: IV6+1A0j IV6+1BBj
+		clrb	bit0, flags_4E
+		tbbc	bit0, flags_45,	IV6_43
+		setb	bit4, flags_4C
 
-loc_F12E:				; CODE XREF: IV6:loc_EFA7j IV6+1C5j
-		tbs	bit3, unk_47
-		bne	loc_F135
-		jmp	loc_EF7B
+IV6_43:					; CODE XREF: IV6:IV6_5j IV6+1C5j
+		tbs	bit3, flags_47
+		bne	IV6_44
+		jmp	IV6_2
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
-loc_F135:				; CODE XREF: IV6+1CCj
-		jmp	loc_EF70
+IV6_44:					; CODE XREF: IV6+1CCj
+		jmp	IV6_1
 ; End of function IV6
 
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
@@ -21522,8 +10227,8 @@ InjBits:	.db  10h		; DATA XREF: IV6+13Ao DoAllInjo
 		.db  7Fh ; 
 		.db  00h
 		.db  00h		; offset 10h
-		.db  00h
-		.db  02h
+		.db  00h		; select injectpw1
+		.db  02h		; select injectpw2
 		.db  00h
 		.db  02h
 		.db  00h
@@ -21544,7 +10249,7 @@ DoInjectors:				; CODE XREF: IV6+147p DoAllInj+4p
 		cmpb	a, y + 00h	; compare BITS,	it's an AND, not a subtraction
 		bne	DoInj_ison	; not equal when injector is already on
 		pull	d
-		add	d, InjDeadtime	; probably deadtime, have to chase out ADC code
+		add	d, InjDeadtime	; injector deadtime, 4us/bit
 		bra	DoInj6
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
@@ -21585,8 +10290,7 @@ DoInj6:					; CODE XREF: DoInjectors+Cj
 		st	a, DOUT		; DOUT Data Register
 		ei			; and all of that ends up generating a high pulse of
 					; some kind of length at the desired pin. certainly
-					; it's output compare, the time scaling doesnt seem
-					; to make sense	yet, but that could be my test rig
+					; it's output compare. 4us/bit
 		ret
 ; End of function DoInjectors
 
@@ -21630,32 +10334,32 @@ loc_F1BB:				; CODE XREF: sub_F1A9+Dj
 		beq	loc_F1C7
 		ld	a, unk_1CC
 		inc	a
-		beq	loc_F1CA
+		beq	loc_F1CA	; 5150 RPM
 
 loc_F1C7:				; CODE XREF: sub_F1A9+16j
 		st	a, unk_1CC
 
 loc_F1CA:				; CODE XREF: sub_F1A9+1Cj
-		cmp	#67h, RPM	; MSB is RPM/50, LSB is	fraction of 50
-		bcc	loc_F1D1
-		setb	bit5, unk_46
+		cmp	#103, RPM	; 5150 RPM
+		bcc	loc_F1D1	; 5250 RPM
+		setb	bit5, flags_46
 
 loc_F1D1:				; CODE XREF: sub_F1A9+24j
-		cmp	#69h, RPM	; MSB is RPM/50, LSB is	fraction of 50
+		cmp	#105, RPM	; 5250 RPM
 		bcs	loc_F1D8
-		clrb	bit5, unk_46
+		clrb	bit5, flags_46
 
 loc_F1D8:				; CODE XREF: sub_F1A9+2Bj
 		ld	a, unk_196
 		shl	a
 		shl	a
 		and	a, #0Ch
-		tbbs	bit3, unk_43, loc_F1EE
-		cmp	#18h, word_F2
+		tbbs	bit3, flags_43,	loc_F1EE ; bit3: AFM bad bit4: rev limiter
+		cmp	#18h, compLOAD	; air temp compensated Load
 		bcs	loc_F1EE
 		or	a, #80h
 		cmp	#0Dh, RPM	; MSB is RPM/50, LSB is	fraction of 50
-		bcc	loc_F1F2
+		bcc	loc_F1F2	; 3000 RPM
 
 loc_F1EE:				; CODE XREF: sub_F1A9+36j sub_F1A9+3Cj
 		or	a, #01h
@@ -21663,9 +10367,9 @@ loc_F1EE:				; CODE XREF: sub_F1A9+36j sub_F1A9+3Cj
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_F1F2:				; CODE XREF: sub_F1A9+43j
-		cmp	#3Ch, RPM	; MSB is RPM/50, LSB is	fraction of 50
+		cmp	#060, RPM	; 3000 RPM
 		bcs	loc_F200
-		tbbc	bit5, unk_46, loc_F1FE
+		tbbc	bit5, flags_46,	loc_F1FE
 		or	a, #02h
 		bra	loc_F200
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
@@ -21676,9 +10380,9 @@ loc_F1FE:				; CODE XREF: sub_F1A9+4Ej
 loc_F200:				; CODE XREF: sub_F1A9+47j sub_F1A9+4Cj ...
 		st	a, unk_196
 		clr	b
-		tbbs	bit0, unk_46, loc_F216
+		tbbs	bit0, flags_46,	loc_F216
 		push	a
-		ld	a, unk_4E
+		ld	a, flags_4E
 		and	a, #0E0h
 		pull	a
 		bne	loc_F216
@@ -21767,8 +10471,8 @@ loc_F289:				; CODE XREF: sub_F1A9+D2j
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_F28C:				; CODE XREF: sub_F1A9+D7j sub_F1A9+DEj
-		tbbs	bit5, unk_45, loc_F2AA
-		tbbs	bit5, unk_4A, loc_F2AA
+		tbbs	bit5, flags_45,	loc_F2AA
+		tbbs	bit5, flags_4A,	loc_F2AA
 		ld	y, #009Eh
 		and	a, #02h
 		add	y, a
@@ -21877,48 +10581,48 @@ loc_F31C:				; CODE XREF: sub_F1A9+170j
 IVc:					; DATA XREF: ROM:FFF6o
 		clrb	bit4, IRQL
 		ld	a, TIMER	; Timer	MSB (bit11~bit18)
-		and	a, #04h
-		bne	loc_F34D
-		tbbc	bit7, unk_45, loc_F34D
-		clrb	bit4, PORTB
-		ld	a, unk_7C
+		and	a, #04h		; toggles every	4096ms
+		bne	loc_F34D	; bounce if high, every	8ms
+		tbbc	bit7, flags_45,	loc_F34D
+		clrb	bit4, PORTB	; clear	pin 23
+		ld	a, unk_7C	; counter
 		bpz	loc_F33A
 		inc	a
-		st	a, unk_7C
-		cmp	a, #0F0h
-		blea	loc_F343
-		bra	loc_F349
+		st	a, unk_7C	; counter
+		cmp	a, #240
+		blea	loc_F343	; set pin 29
+		bra	loc_F349	; clear	pin 29
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_F33A:				; CODE XREF: IVc+Fj
 		ld	d, unk_1CA
 		shr	d
 		st	d, unk_1CA
-		ble	loc_F349
+		ble	loc_F349	; clear	pin 29
 
 loc_F343:				; CODE XREF: IVc+16j
-		setb	bit6, PORTA
-		setb	bit7, PORTA
+		setb	bit6, PORTA	; set pin 29
+		setb	bit7, PORTA	; set pin 28
 		bra	loc_F34D
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_F349:				; CODE XREF: IVc+18j IVc+21j
-		clrb	bit6, PORTA
-		clrb	bit7, PORTA
+		clrb	bit6, PORTA	; clear	pin 29
+		clrb	bit7, PORTA	; clear	pin 28
 
 loc_F34D:				; CODE XREF: IVc+6j IVc+8j ...
 		clr	a
-		cmp	#89h, unk_E1
+		cmp	#137, unk_E1
 		bcc	loc_F395
-		tbbs	bit5, unk_4C, loc_F378 ; bit 7 demands a sampling of the oxygen	sensors
+		tbbs	bit5, flags_4C,	loc_F378 ; bit 7 demands a sampling of the oxygen sensors
 		ld	b, unk_1AB
 		cmpb	b, #40h
 		bne	loc_F388
-		ld	b, unk_19F
-		cmp	b, #0Ah
+		ld	b, unk_19F	; ISC related
+		cmp	b, #010
 		bcc	loc_F374
 		ld	a, unk_B1
-		cmp	a, #30h
+		cmp	a, #048
 		ble	loc_F37F
 		cmpz	b
 		bne	loc_F370
@@ -21927,55 +10631,55 @@ loc_F34D:				; CODE XREF: IVc+6j IVc+8j ...
 
 loc_F370:				; CODE XREF: IVc+4Bj
 		inc	b
-		st	b, unk_19F
+		st	b, unk_19F	; ISC related
 
 loc_F374:				; CODE XREF: IVc+42j
-		setb	bit6, unk_4C
+		setb	bit6, flags_4C
 		bra	loc_F388
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_F378:				; CODE XREF: IVc+33j
-		st	a, unk_19F
-		clrb	bit6, unk_4C
+		st	a, unk_19F	; ISC related
+		clrb	bit6, flags_4C
 		bra	loc_F388
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_F37F:				; CODE XREF: IVc+48j
 		cmp	a, #18h
-		bgt	loc_F397
-		cmp	#14h, RPM	; MSB is RPM/50, LSB is	fraction of 50
-		bcc	loc_F38A
+		bgt	loc_F397	; set pin 58
+		cmp	#020, RPM	; MSB is RPM/50, LSB is	fraction of 50
+		bcc	loc_F38A	; bounce if >= 1000 RPM
 
 loc_F388:				; CODE XREF: IVc+3Bj IVc+56j ...
 		clr	unk_B1
 
 loc_F38A:				; CODE XREF: IVc+66j
-		tbbs	bit6, unk_4C, loc_F39B ; bit 7 demands a sampling of the oxygen	sensors
-		tbbc	bit7, unk_4B, loc_F39B
-		tbbs	bit3, DOUT, loc_F39B ; DOUT Data Register
-		bra	loc_F397
+		tbbs	bit6, flags_4C,	loc_F39B ; clear pin 58
+		tbbc	bit7, flags_4B,	loc_F39B ; clear pin 58
+		tbbs	bit3, DOUT, loc_F39B ; clear pin 58
+		bra	loc_F397	; set pin 58
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_F395:				; CODE XREF: IVc+31j
 		clr	unk_B1
 
 loc_F397:				; CODE XREF: IVc+61j IVc+73j
-		setb	bit3, DOUT
+		setb	bit3, DOUT	; set pin 58
 		bra	loc_F39D
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_F39B:				; CODE XREF: IVc:loc_F38Aj IVc+6Dj ...
-		clrb	bit3, DOUT
+		clrb	bit3, DOUT	; clear	pin 58
 
 loc_F39D:				; CODE XREF: IVc+79j
 		ld	a, unk_CC
-		cmp	a, #74h
-		bcs	loc_F3A7
+		cmp	a, #116
+		bcs	ISC_alt
 		clr	a
-		st	a, unk_19F
+		st	a, unk_19F	; ISC related
 
-loc_F3A7:				; CODE XREF: IVc+81j
-		ld	a, unk_120
+ISC_alt:				; CODE XREF: IVc+81j
+		ld	a, unk_120	; ISC output bits is lsN
 		and	a, #0Fh
 		di
 		ld	b, PORTB	; Port B Data Register
@@ -21983,24 +10687,24 @@ loc_F3A7:				; CODE XREF: IVc+81j
 		add	a, b
 		st	a, PORTB	; Port B Data Register
 		ei
-		ld	a, unk_11F
+		ld	a, unk_11F	; ISC related
 		and	a, #3Ch
 		cmp	a, #08h
 		bne	loc_F3C2
 		clr	a
-		st	a, unk_120
+		st	a, unk_120	; ISC output bits is lsN
 
 loc_F3C2:				; CODE XREF: IVc+9Cj
-		jsr	sub_D47F
-		setb	bit3, unk_4A
-		setb	bit1, IRQLL	; no idea, but may trigger IV6
+		jsr	write6336
+		setb	bit3, flags_4A
+		setb	bit1, IRQLL	; Trigger IV6
 		reti
 ; End of function IVc
 
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 ; START	OF FUNCTION CHUNK FOR IV6
 
-loc_F3CA:				; CODE XREF: IV6+11j
+IV6_TXadc:				; CODE XREF: IV6+11j
 		ld	b, unk_75
 		cmpb	b, #01h
 		beq	loc_F3F0
@@ -22008,7 +10712,7 @@ loc_F3CA:				; CODE XREF: IV6+11j
 loc_F3D0:				; CODE XREF: IV6+490j
 		ld	b, ADC_count
 		clr	a
-		div	d, #03h
+		div	d, #003
 		cmpz	a
 		bne	loc_F3DE
 		ld	x, #0F767h
@@ -22038,22 +10742,22 @@ loc_F3F0:				; CODE XREF: IV6+46Aj
 
 loc_F3F6:				; CODE XREF: IV6+48Aj
 		st	b, unk_75
-		tbbc	bit1, unk_4A, loc_F408
-		tbbc	bit2, unk_4A, loc_F408
+		tbbc	bit1, flags_4A,	loc_F408
+		tbbc	bit2, flags_4A,	loc_F408
 		tbs	bit0, PORTA	; Port A Data Register
 		beq	loc_F404
 		clrb	bit0, PORTA
 
 loc_F404:				; CODE XREF: IV6+49Cj
-		clrb	bit1, unk_4A
-		clrb	bit2, unk_4A
+		clrb	bit1, flags_4A
+		clrb	bit2, flags_4A
 
 loc_F408:				; CODE XREF: IV6+494j IV6+497j
 		ld	b, unk_75
 		bne	loc_F413
 		ld	#30h, SMRC_SIR	; Serial Master	Register Control
 		ld	a, SSD		; Serial Status	Data Register
-		ld	a, SIDR_SODR	; Serial Input/Output Data Register
+		ld	a, SIDR_SODR	; the ADC may not respond in time, this	could clear all	errors and get the rx interface	ready for the adc data
 
 loc_F413:				; CODE XREF: IV6+4A6j
 		ei
@@ -22062,20 +10766,20 @@ loc_F413:				; CODE XREF: IV6+4A6j
 		ld	b, unk_76
 		cmpb	a, #80h
 		beq	loc_F425
-		tbs	bit1, unk_47
+		tbs	bit1, flags_47
 		bne	loc_F433
 		bra	loc_F42A
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_F425:				; CODE XREF: IV6+4B9j
-		tbbc	bit1, unk_47, loc_F433
-		clrb	bit1, unk_47
+		tbbc	bit1, flags_47,	loc_F433
+		clrb	bit1, flags_47
 
 loc_F42A:				; CODE XREF: IV6+4BFj
 		shl	b
 		and	b, #0C0h
 		bne	loc_F476
-		clrb	bit0, unk_4D
+		clrb	bit0, flags_4D
 		bra	loc_F476
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
@@ -22098,10 +10802,10 @@ loc_F449:				; CODE XREF: IV6+4DFj
 
 loc_F44B:				; CODE XREF: IV6+4E3j
 		di
-		ld	b, unk_4A
+		ld	b, flags_4A
 		and	b, #8Fh
 		add	a, b
-		st	a, unk_4A
+		st	a, flags_4A
 		ei
 		bra	loc_F478
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
@@ -22121,13 +10825,13 @@ loc_F460:				; CODE XREF: IV6+4F6j
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_F466:				; CODE XREF: IV6+4FAj IV6+4FEj
-		setb	bit0, unk_4D
+		setb	bit0, flags_4D
 		clr	a
 		st	a, unk_106
 		di
-		ld	a, unk_4A
+		ld	a, flags_4A
 		and	a, #8Fh
-		st	a, unk_4A
+		st	a, flags_4A
 		ei
 
 loc_F474:				; CODE XREF: IV6+500j
@@ -22147,7 +10851,7 @@ loc_F478:				; CODE XREF: IV6+4F0j
 
 loc_F489:				; CODE XREF: IV6+520j
 		clr	a
-		tbbc	bit2, unk_45, loc_F493
+		tbbc	bit2, flags_45,	loc_F493
 		ld	a, unk_12C
 		inc	a
 		beq	loc_F496
@@ -22161,7 +10865,7 @@ loc_F496:				; CODE XREF: IV6+52Dj
 		ld	y, #01B8h
 		jsr	sub_C084	; increment B bytes of ram by 1	starting from Y
 		ei
-		tbbs	bit7, unk_45, loc_F4D4
+		tbbs	bit7, flags_45,	loc_F4D4
 		setb	bit4, PORTB
 		ld	a, TIMER	; Timer	MSB (bit11~bit18)
 		and	a, #0Ch
@@ -22289,7 +10993,7 @@ loc_F545:
 		inc	a
 
 loc_F546:				; CODE XREF: IV6+5DFj
-		tbbc	bit1, unk_41, loc_F54B
+		tbbc	bit1, flags_41,	loc_F54B
 		add	a, #02h
 
 loc_F54B:				; CODE XREF: IV6:loc_F546j
@@ -22328,13 +11032,13 @@ loc_F57B:				; CODE XREF: IV6+612j
 		ld	b, #04h
 		ld	y, #01C0h
 		jsr	sub_C084	; increment B bytes of ram by 1	starting from Y
-		ld	a, unk_11F
+		ld	a, unk_11F	; ISC related
 		ld	b, unk_11E
 		cmp	b, #06h
 		bcs	loc_F594
 		and	a, #03h
 		or	a, #1Ch
-		st	a, unk_11F
+		st	a, unk_11F	; ISC related
 
 loc_F594:				; CODE XREF: IV6+627j
 		and	a, #3Ch
@@ -22349,7 +11053,7 @@ loc_F594:				; CODE XREF: IV6+627j
 loc_F5A0:				; CODE XREF: IV6+639j
 		st	b, unk_11E
 		tbbc	bit5, RAMST, loc_F5FC ;	Built-in RAM status
-		tbbc	bit4, unk_45, loc_F5AE
+		tbbc	bit4, flags_45,	loc_F5AE
 		cmp	#109, Bvolts	; 8.55V
 		bcs	loc_F5FC
 
@@ -22390,7 +11094,7 @@ loc_F5D7:				; CODE XREF: IV6+670j
 		st	d, unk_DC
 
 loc_F5D9:				; CODE XREF: IV6+64Dj IV6+666j
-		tbbc	bit0, unk_48, loc_F5E2
+		tbbc	bit0, flags_48,	loc_F5E2
 		cmp	a, unk_E2
 		bcc	loc_F5E2
 		ld	a, unk_E2
@@ -22415,7 +11119,7 @@ loc_F5FC:				; CODE XREF: IV6+63Fj IV6+648j ...
 loc_F5FF:				; CODE XREF: IV6+683j IV6+689j ...
 		ld	b, unk_58
 		add	x, b
-		ld	a, unk_11F
+		ld	a, unk_11F	; ISC related
 		and	a, #03h
 		ld	b, x + 00h
 		beq	loc_F61E
@@ -22464,14 +11168,14 @@ loc_F638:				; CODE XREF: IV6+6B8j IV6+6C6j
 		cmp	#78h, unk_DB
 		bcs	loc_F649
 		add	a, #14h
-		st	a, unk_11F
+		st	a, unk_11F	; ISC related
 		mov	x, d
 		bra	loc_F65D
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_F649:				; CODE XREF: IV6+6A9j IV6+6D6j ...
 		add	a, b
-		st	a, unk_11F
+		st	a, unk_11F	; ISC related
 		cmp	b, #10h
 		bcc	loc_F65A
 		cmp	b, #08h
@@ -22487,10 +11191,10 @@ loc_F65D:				; CODE XREF: IV6+6E3j IV6+6EFj ...
 		ld	x, #0C539h
 		add	x, a
 		ld	a, x + 00h
-		st	a, unk_120
+		st	a, unk_120	; ISC output bits is lsN
 
 loc_F666:				; CODE XREF: IV6:loc_F516j IV6+5BBj ...
-		jmp	loc_EF78
+		jmp	IV6_ret		; bomb out
 ; END OF FUNCTION CHUNK	FOR IV6
 
 ; ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ S U B	R O U T	I N E ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ
@@ -22505,18 +11209,18 @@ intCPR0:				; DATA XREF: ROM:FFF0o
 		jsr	CPR0_sub	; gets called if IGT was high, seems to	handle some housekeeping, IGF counters and bitflags
 		pull	y
 		pull	x
-		tbbc	bit5, unk_40, intCPR0_end
+		tbbc	bit5, flags_40,	intCPR0_end
 		clrc
 		bra	intCPR0_3
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 intCPR0_1:				; CODE XREF: intCPR0+2j
-		setb	bit1, unk_4C
-		tbbs	bit0, unk_45, intCPR0_2
-		setb	bit2, unk_4C
+		setb	bit1, flags_4C
+		tbbs	bit0, flags_45,	intCPR0_2
+		setb	bit2, flags_4C
 
 intCPR0_2:				; CODE XREF: intCPR0+14j
-		tbbc	bit6, unk_40, intCPR0_end
+		tbbc	bit6, flags_40,	intCPR0_end
 		setc
 
 intCPR0_3:				; CODE XREF: intCPR0+10j
@@ -22561,8 +11265,8 @@ Cmp0NOW:				; CODE XREF: ROM:EE20p	ROM:EE27p ...
 		st	d, CPR0		; Timer	comparison #0 MSB
 
 IGTdwell_ret:				; CODE XREF: Cmp0IGTdwell+13j
-		clrb	bit5, unk_40
-		clrb	bit6, unk_40
+		clrb	bit5, flags_40
+		clrb	bit6, flags_40
 		ei
 		ret
 ; End of function Cmp0NOW
@@ -22587,21 +11291,21 @@ CPR0_sub:				; CODE XREF: intCPR0+7p
 CPR0_sub_1:				; CODE XREF: CPR0_sub+Fj
 		ld	b, NEcounts
 		beq	CPR0_sub_3
-		tbbc	bit1, unk_4C, CPR0_sub_3 ; bit 7 demands a sampling of the oxygen sensors
-		clrb	bit1, unk_4C
+		tbbc	bit1, flags_4C,	CPR0_sub_3 ; bit 7 demands a sampling of the oxygen sensors
+		clrb	bit1, flags_4C
 		cmpz	a
 		bne	CPR0_sub_2	; IGF2 flag
 		tbbc	bit4, IRQLL, CPR0_sub_4	; IGF1 flag
-		clrb	bit1, unk_4E
-		clrb	bit1, unk_44
+		clrb	bit1, flags_4E
+		clrb	bit1, flags_44
 		clrb	bit4, IRQLL	; clear	IGF1 flag
 		bra	CPR0_sub_3
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 CPR0_sub_2:				; CODE XREF: CPR0_sub+1Ej
 		tbbc	bit6, IRQL, CPR0_sub_4 ; IGF2 flag
-		clrb	bit2, unk_4E
-		clrb	bit2, unk_44
+		clrb	bit2, flags_4E
+		clrb	bit2, flags_44
 		clrb	bit6, IRQL	; clear	IGF2 flag
 
 CPR0_sub_3:				; CODE XREF: CPR0_sub+16j CPR0_sub+18j ...
@@ -22626,12 +11330,12 @@ CPR0_sub_6:				; CODE XREF: CPR0_sub+35j CPR0_sub+3Ej
 		bcs	CPR0_sub_RET
 		cmpz	a
 		bne	CPR0_sub_7
-		setb	bit1, unk_44
+		setb	bit1, flags_44
 		bra	CPR0_sub_8
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 CPR0_sub_7:				; CODE XREF: CPR0_sub+48j
-		setb	bit2, unk_44
+		setb	bit2, flags_44
 
 CPR0_sub_8:				; CODE XREF: CPR0_sub+4Cj
 		cmp	b, #09h
@@ -22643,12 +11347,12 @@ CPR0_sub_8:				; CODE XREF: CPR0_sub+4Cj
 		bcs	CPR0_sub_RET
 		cmpz	a
 		bne	CPR0_sub_9
-		setb	bit1, unk_4E
+		setb	bit1, flags_4E
 		bra	CPR0_sub_RET
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 CPR0_sub_9:				; CODE XREF: CPR0_sub+60j
-		setb	bit2, unk_4E
+		setb	bit2, flags_4E
 
 CPR0_sub_RET:				; CODE XREF: CPR0_sub+45j CPR0_sub+52j ...
 		ret
@@ -22683,7 +11387,7 @@ loc_F72F:				; CODE XREF: intASR1+Fj
 loc_F730:				; CODE XREF: intASR1+18j
 		rorc	a
 		rorc	b
-		clr	unk_EA
+		clr	badKScount	; Incremented by IV6, cleared by KS interrupt
 		cmp	#0FFh, unk_EB
 		beq	loc_F73B
 		inc	unk_EB
@@ -22693,17 +11397,17 @@ loc_F73B:				; CODE XREF: intASR1+22j
 		bcs	loc_F747
 		cmp	d, word_1AC	; something deltaKS related
 		bcs	loc_F747
-		inc	KS_count	; deltaKS related
+		inc	KS_count	; counts KS interrupts,	reset in IV6
 
 loc_F747:				; CODE XREF: intASR1+29j intASR1+2Ej
-		add	d, deltaKS	; Cumulative sum of KS intervals, counted by unk_68
+		add	d, deltaKS	; Cumulative sum of KS intervals, counted by KS_count, reset in	IV6
 		bcs	loc_F751	; skip here to NOT store a deltaKS value
-		st	d, deltaKS	; Cumulative sum of KS intervals, counted by unk_68
-		inc	KS_count	; deltaKS related
+		st	d, deltaKS	; Cumulative sum of KS intervals, counted by KS_count, reset in	IV6
+		inc	KS_count	; counts KS interrupts,	reset in IV6
 
 loc_F751:				; CODE XREF: intASR1+Dj intASR1+14j ...
-		tbbs	bit0, unk_4C, loc_F759 ; skip here to NOT store	a deltaKS value
-		tbbs	bit3, unk_4E, loc_F759
+		tbbs	bit0, flags_4C,	loc_F759 ; skip	here to	NOT store a deltaKS value
+		tbbs	bit3, flags_4E,	loc_F759
 		clr	unk_B3
 
 loc_F759:				; CODE XREF: intASR1:loc_F751j
@@ -22720,6 +11424,7 @@ loc_F759:				; CODE XREF: intASR1:loc_F751j
 		.db 0C1h ; Á		; data for F3DE
 		.db 0C3h ; Ã
 unk_F767:	.db  4Fh ; O		; DATA XREF: __RESET:loc_D5BEr
+					; data for f3d8
 		.db  51h ; Q
 		.db  45h ; E
 		.db  57h ; W
@@ -22746,7 +11451,7 @@ unk_F767:	.db  4Fh ; O		; DATA XREF: __RESET:loc_D5BEr
 		.dw 0FC06h		; pin 18
 		.dw 0F911h		; pin 17
 		.dw 0FBBBh		; pin 16
-		.dw 0FBC0h		; pin 15
+		.dw 0FBC0h		; atm pressure sensor
 		.dw 0FBC5h		; conversion request 1D
 		.dw 0FBCAh		; conversion request 1F
 
@@ -22780,7 +11485,7 @@ loc_F7B5:				; CODE XREF: intSIN0+Cj
 		mov	d, y
 		ld	b, ADC_TXed	; MSb signifies	next TX	value is 02
 		push	b		; pushed here for jump table later
-		setb	bit7, unk_46
+		setb	bit7, flags_46
 		ld	a, ADC_count
 		cmpb	b, #40h
 		beq	doJMPtable
@@ -22788,13 +11493,13 @@ loc_F7B5:				; CODE XREF: intSIN0+Cj
 		cmp	a, #1Eh
 		bcs	loc_F7C9
 		clr	a
-		clrb	bit7, unk_42
+		clrb	bit7, flags_42
 
 loc_F7C9:				; CODE XREF: intSIN0+2Fj
 		st	a, ADC_count
 		shr	a
 		bcs	doJMPtable
-		tbbc	bit7, unk_4C, TXadcSpecific ; bit 7 demands a sampling of the oxygen sensors
+		tbbc	bit7, flags_4C,	TXadcSpecific ;	bit 7 demands a	sampling of the	oxygen sensors
 		and	b, #0BFh
 		cmp	b, #05h
 		beq	doJMPtable
@@ -22810,7 +11515,7 @@ TXadcSpecific:				; CODE XREF: intSIN0+39j
 
 TXaccA:					; CODE XREF: intSIN0+44j
 		st	a, ADC_TXed	; MSb signifies	next TX	value is 02
-		clrb	bit7, unk_46
+		clrb	bit7, flags_46
 		di
 		ld	#30h, SMRC_SIR	; Serial Master	Register Control
 		setb	bit1, SSD	; set ninth bit	high
@@ -22835,15 +11540,15 @@ loc_F800:				; CODE XREF: intSIN0+5j intSIN0+16j ...
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_F805:				; CODE XREF: ROM:F95Cj	ROM:loc_F98Fj ...
-		tbbs	bit7, unk_46, loc_F80B ; test bit7 of unk_46, read more	data from serial port if set, otherwise	terminate interrupt
+		tbbs	bit7, flags_46,	loc_F80B ; test	bit7 of	unk_46,	read more data from serial port	if set,	otherwise terminate interrupt
 		jmp	retSerIRQ2
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_F80B:				; CODE XREF: intSIN0:loc_F805j
 		ld	#70h, SMRC_SIR	; Serial Master	Register Control
-		ld	a, SSD		; Serial Status	Data Register
-		ld	a, SIDR_SODR	; Serial Input/Output Data Register
-		setb	bit1, PORTD_ASRIN
+		ld	a, SSD		; clear	everything
+		ld	a, SIDR_SODR	; clear	everything
+		setb	bit1, PORTD_ASRIN ; select different target (IC302/IC303)
 		ld	a, #012
 
 loc_F816:				; CODE XREF: intSIN0+85j
@@ -22862,17 +11567,17 @@ loc_F820:				; CODE XREF: intSIN0:loc_F816j
 		xor	a, #0E6h
 		push	a
 		mov	a, b
-		xor	a, unk_45
+		xor	a, flags_45
 		and	a, unk_1A9
-		and	b, unk_45
+		and	b, flags_45
 		add	a, b
-		st	a, unk_45
+		st	a, flags_45
 		pull	b
 		st	b, unk_1A9
 
 loc_F837:				; CODE XREF: intSIN0+89j
 		clrb	bit1, PORTD_ASRIN
-		ld	a, #0Ch
+		ld	a, #012
 
 loc_F83B:				; CODE XREF: intSIN0+AAj
 		tbbs	bit7, SSD, loc_F845 ; Serial Status Data Register
@@ -22899,66 +11604,66 @@ loc_F845:				; CODE XREF: intSIN0:loc_F83Bj
 		st	b, unk_1AA
 		cmpb	b, #10h
 		beq	loc_F867
-		setb	bit0, unk_49
+		setb	bit0, flags_49
 		bra	loc_F869
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_F867:				; CODE XREF: intSIN0+CCj
-		clrb	bit0, unk_49
+		clrb	bit0, flags_49
 
 loc_F869:				; CODE XREF: intSIN0+D0j
 		cmpb	b, #20h
 		beq	loc_F871
-		setb	bit2, unk_49
+		setb	bit2, flags_49
 		bra	loc_F873
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_F871:				; CODE XREF: intSIN0+D6j
-		clrb	bit2, unk_49
+		clrb	bit2, flags_49
 
 loc_F873:				; CODE XREF: intSIN0+AEj intSIN0+DAj
 		tbbc	bit4, PBCS, loc_F87F ; Port B Control Register
-		tbbs	bit3, unk_42, loc_F87B
-		clrb	bit0, unk_41
+		tbbs	bit3, flags_42,	loc_F87B
+		clrb	bit0, flags_41
 
 loc_F87B:				; CODE XREF: intSIN0+E1j
-		clrb	bit3, unk_42
+		clrb	bit3, flags_42
 		bra	loc_F886
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_F87F:				; CODE XREF: intSIN0:loc_F873j
-		tbbc	bit3, unk_42, loc_F884
-		setb	bit0, unk_41
+		tbbc	bit3, flags_42,	loc_F884
+		setb	bit0, flags_41
 
 loc_F884:				; CODE XREF: intSIN0:loc_F87Fj
-		setb	bit3, unk_42
+		setb	bit3, flags_42
 
 loc_F886:				; CODE XREF: intSIN0+E8j
-		tbbs	bit4, unk_45, loc_F88B ; this branch is	executed often
+		tbbs	bit4, flags_45,	loc_F88B ; this	branch is executed often
 		clr	unk_AF
 
 loc_F88B:				; CODE XREF: intSIN0:loc_F886j
 		setb	bit1, SSD	; this branch is executed often
 		ld	#0DAh, SIDR_SODR ; transmit DA to ADC
-		ld	a, unk_49	; bits 1-3-4-5 are oxl1-oxr1-oxl2-oxr2
+		ld	a, flags_49	; bits 1-3-4-5 are oxl1-oxr1-oxl2-oxr2
 		ld	y, #012Dh
 		jsr	sub_FC0D
-		ld	a, unk_49	; bits 1-3-4-5 are oxl1-oxr1-oxl2-oxr2
+		ld	a, flags_49	; bits 1-3-4-5 are oxl1-oxr1-oxl2-oxr2
 		shr	a
 		shr	a
 		ld	y, #0149h
 		jsr	sub_FC0D
-		tbbs	bit0, unk_45, loc_F8AE
+		tbbs	bit0, flags_45,	loc_F8AE
 		cmp	#32h, unk_A8
 		ble	loc_F8DA
-		clrb	bit7, unk_4A
+		clrb	bit7, flags_4A
 		bra	loc_F8DA
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_F8AE:				; CODE XREF: intSIN0+10Dj
 		clr	a
 		st	a, unk_1BA
-		tbs	bit7, unk_4A
+		tbs	bit7, flags_4A
 		bne	loc_F8D2
 		clr	unk_7F
 		clr	unk_5F
@@ -22969,9 +11674,9 @@ loc_F8AE:				; CODE XREF: intSIN0+10Dj
 		clr	a
 		st	a, unk_1B6
 		st	a, unk_1B7
-		clrb	bit1, unk_4C
-		tbbc	bit7, unk_4C, loc_F8DA ; bit 7 demands a sampling of the oxygen	sensors
-		setb	bit5, unk_47
+		clrb	bit1, flags_4C
+		tbbc	bit7, flags_4C,	loc_F8DA ; bit 7 demands a sampling of the oxygen sensors
+		setb	bit5, flags_47
 		bra	loc_F8DA
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
@@ -22981,7 +11686,7 @@ loc_F8D2:				; CODE XREF: intSIN0+11Fj
 		ld	#26h, unk_A8
 
 loc_F8DA:				; CODE XREF: intSIN0+113j intSIN0+117j ...
-		ld	a, #0Dh
+		ld	a, #013
 
 loc_F8DC:				; CODE XREF: intSIN0+148j
 		dec	a
@@ -23021,42 +11726,42 @@ retSerIRQ:				; CODE XREF: intSIN0+6Dj intSIN0+152j
 retSerIRQ2:				; CODE XREF: intSIN0+73j
 		pull	y
 		pull	x
-		setb	bit1, unk_4A
+		setb	bit1, flags_4A
 		reti
 ; End of function intSIN0
 
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
-		jsr	SaturateData	; called from F7FE adc pin 17
+		jsr	SaturateData	; called from F7FE adc pin 17 -	PCM absolute pressure sensor denso IS121
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 		.db 0FBh ; û
 		.db  0Fh
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 		bcs	loc_F921
-		clrb	bit7, unk_43
-		tbbs	bit3, unk_4B, loc_F91F
-		clrb	bit2, unk_4F
+		clrb	bit7, flags_43
+		tbbs	bit3, flags_4B,	loc_F91F
+		clrb	bit2, flags_4F
 
 loc_F91F:				; CODE XREF: ROM:F91Aj
 		bra	loc_F939
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_F921:				; CODE XREF: ROM:F916j
-		tbs	bit7, unk_43
+		tbs	bit7, flags_43	; bit3:	AFM bad	bit4: rev limiter
 		bne	loc_F927
 		clr	unk_B7
 
 loc_F927:				; CODE XREF: ROM:F923j
-		tbbs	bit3, unk_4B, loc_F931
+		tbbs	bit3, flags_4B,	loc_F931
 		cmp	#3Dh, unk_B7
 		bcs	loc_F935	; default value
 		bra	loc_F933
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_F931:				; CODE XREF: ROM:loc_F927j
-		setb	bit6, unk_4D
+		setb	bit6, flags_4D
 
 loc_F933:				; CODE XREF: ROM:F92Fj
-		setb	bit2, unk_4F
+		setb	bit2, flags_4F
 
 loc_F935:				; CODE XREF: ROM:F92Dj
 		ld	b, #0B4h	; default value
@@ -23066,20 +11771,20 @@ loc_F935:				; CODE XREF: ROM:F92Dj
 loc_F939:				; CODE XREF: ROM:loc_F91Fj
 		cmp	a, #96h
 		bcc	loc_F946
-		tbbs	bit7, unk_49, loc_F942 ; bits 1-3-4-5 are oxl1-oxr1-oxl2-oxr2
-		clrb	bit6, unk_4B
+		tbbs	bit7, flags_49,	loc_F942 ; bits	1-3-4-5	are oxl1-oxr1-oxl2-oxr2
+		clrb	bit6, flags_4B
 
 loc_F942:				; CODE XREF: ROM:F93Dj
-		clrb	bit7, unk_49
+		clrb	bit7, flags_49
 		bra	loc_F94D
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_F946:				; CODE XREF: ROM:F93Bj
-		tbbc	bit7, unk_49, loc_F94B ; bits 1-3-4-5 are oxl1-oxr1-oxl2-oxr2
-		setb	bit6, unk_4B
+		tbbc	bit7, flags_49,	loc_F94B ; bits	1-3-4-5	are oxl1-oxr1-oxl2-oxr2
+		setb	bit6, flags_4B
 
 loc_F94B:				; CODE XREF: ROM:loc_F946j
-		setb	bit7, unk_49
+		setb	bit7, flags_49
 
 loc_F94D:				; CODE XREF: ROM:F944j
 		jsr	SaturateData
@@ -23092,7 +11797,7 @@ loc_F94D:				; CODE XREF: ROM:F944j
 		jsr	MulAbyY		; returns upper	16b in AccD
 
 loc_F95A:				; CODE XREF: ROM:F937j
-		st	b, unk_5D	; adc pin 17 related
+		st	b, ATM_press	; adc pin 17 - PCM atmospheric pressure	sensor,	debiased and scaled
 		jmp	loc_F805	; test bit7 of unk_46, read more data from serial port if set, otherwise terminate interrupt
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 		cmp	a, #102		; called from F7FE, +B/4, 102==8V
@@ -23104,70 +11809,70 @@ loc_F965:				; CODE XREF: ROM:F961j
 		clr	unk_AE
 		cmp	a, #109		; about	8.5V
 		bcs	loc_F97C
-		tbbs	bit3, unk_41, loc_F97E
-		tbbc	bit4, unk_41, loc_F978
+		tbbs	bit3, flags_41,	loc_F97E
+		tbbc	bit4, flags_41,	loc_F978
 		setb	bit5, RAMST
 
 loc_F976:				; CODE XREF: ROM:loc_F965j
-		setb	bit3, unk_41
+		setb	bit3, flags_41
 
 loc_F978:				; CODE XREF: ROM:F971j
-		setb	bit4, unk_41
+		setb	bit4, flags_41
 		bra	loc_F980
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_F97C:				; CODE XREF: ROM:F96Cj
-		clrb	bit4, unk_41
+		clrb	bit4, flags_41
 
 loc_F97E:				; CODE XREF: ROM:F96Ej
-		clrb	bit3, unk_41
+		clrb	bit3, flags_41
 
 loc_F980:				; CODE XREF: ROM:F97Aj
 		st	a, Bvolts	; ADC measurement of +B/4. scaling is thus 20*value/255=volts
-		tbbs	bit0, unk_45, loc_F989 ; 11V
-		clrb	bit4, unk_4B
+		tbbs	bit0, flags_45,	loc_F989 ; 11V
+		clrb	bit4, flags_4B
 		bra	loc_F98F
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_F989:				; CODE XREF: ROM:F982j
 		cmp	a, #141		; 11V
 		bcc	loc_F98F
-		setb	bit4, unk_4B
+		setb	bit4, flags_4B
 
 loc_F98F:				; CODE XREF: ROM:F987j	ROM:F98Bj
 		jmp	loc_F805	; test bit7 of unk_46, read more data from serial port if set, otherwise terminate interrupt
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
-		jsr	SaturateData	; called from F7FE
+		jsr	SaturateData	; called from F7FE, THA
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 		.db 0FBh
 		.db 07h
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 		bcs	THAbad
-		clrb	bit6, unk_43
-		tbbs	bit3, unk_4B, loc_F9A0
-		clrb	bit1, unk_4F
+		clrb	bit6, flags_43
+		tbbs	bit3, flags_4B,	loc_F9A0
+		clrb	bit1, flags_4F
 
 loc_F9A0:				; CODE XREF: ROM:F99Bj
 		bra	THAgood
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 THAbad:					; CODE XREF: ROM:F997j
-		tbs	bit6, unk_43
+		tbs	bit6, flags_43	; bit3:	AFM bad	bit4: rev limiter
 		bne	loc_F9A8
 		clr	unk_B7
 
 loc_F9A8:				; CODE XREF: ROM:F9A4j
-		tbbs	bit3, unk_4B, loc_F9B2
+		tbbs	bit3, flags_4B,	loc_F9B2
 		cmp	#3Dh, unk_B7
 		bcs	loc_F9B6	; default air temp
 		bra	loc_F9B4
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_F9B2:				; CODE XREF: ROM:loc_F9A8j
-		setb	bit6, unk_4D
+		setb	bit6, flags_4D
 
 loc_F9B4:				; CODE XREF: ROM:F9B0j
-		setb	bit1, unk_4F
+		setb	bit1, flags_4F
 
 loc_F9B6:				; CODE XREF: ROM:F9AEj
 		ld	a, #79h		; default air temp
@@ -23177,37 +11882,37 @@ THAgood:				; CODE XREF: ROM:loc_F9A0j
 		st	a, rawTHA	; Contains the NOT of air temp reading from ADC, sensor	is tied	to ground on other side
 		jmp	loc_F805	; test bit7 of unk_46, read more data from serial port if set, otherwise terminate interrupt
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
-		jsr	SaturateData	; called from F7FE
+		jsr	SaturateData	; called from F7FE, THW
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 		.db 0FBh
 		.db 07h
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 		bcs	loc_F9CF	; bounce if data was clipped
-		clrb	bit5, unk_43
-		tbbs	bit3, unk_4B, loc_F9CD
-		clrb	bit0, unk_4F
+		clrb	bit5, flags_43
+		tbbs	bit3, flags_4B,	loc_F9CD
+		clrb	bit0, flags_4F
 
 loc_F9CD:				; CODE XREF: ROM:F9C8j
 		bra	loc_F9E5
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_F9CF:				; CODE XREF: ROM:F9C4j
-		tbs	bit5, unk_43
+		tbs	bit5, flags_43	; bit3:	AFM bad	bit4: rev limiter
 		bne	loc_F9D5
 		clr	unk_B7
 
 loc_F9D5:				; CODE XREF: ROM:F9D1j
-		tbbs	bit3, unk_4B, loc_F9DF
+		tbbs	bit3, flags_4B,	loc_F9DF
 		cmp	#3Dh, unk_B7
 		bcs	loc_F9E3	; default value	if bad CTS
 		bra	loc_F9E1
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_F9DF:				; CODE XREF: ROM:loc_F9D5j
-		setb	bit6, unk_4D
+		setb	bit6, flags_4D
 
 loc_F9E1:				; CODE XREF: ROM:F9DDj
-		setb	bit0, unk_4F
+		setb	bit0, flags_4F
 
 loc_F9E3:				; CODE XREF: ROM:F9DBj
 		ld	a, #1Bh		; default value	if bad CTS
@@ -23217,7 +11922,7 @@ loc_F9E5:				; CODE XREF: ROM:loc_F9CDj
 		st	a, rawTHW	; Contains the NOT of CTS reading from ADC, sensor is tied to ground on	other side
 		jmp	loc_F805	; test bit7 of unk_46, read more data from serial port if set, otherwise terminate interrupt
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
-		ld	y, #0F9F7h	; called from F7FE
+		ld	y, #0F9F7h	; called from F7FE, THG
 		jsr	TwoDTable	; X value in AccA, integer return in Acca, fraction return in AccB
 		st	a, THG		; THG lookup table output from exhaust gas temp	sensor ADC reading
 		jmp	loc_F805	; test bit7 of unk_46, read more data from serial port if set, otherwise terminate interrupt
@@ -23244,7 +11949,7 @@ loc_F9E5:				; CODE XREF: ROM:loc_F9CDj
 		.db  00h
 		.db 0FFh
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
-		clrb	bit1, unk_40	; called from F7FE, VTA1 process
+		clrb	bit1, flags_40	; called from F7FE, VTA1 process
 		ld	y, #0122h
 		jsr	VTAchecksub	; throttle processing sub. accepts an address in Y, AccA is ADC	VTA, B is ADCtx, returns offset	VTA in AccA, plus some crap in B
 		ld	y, word_124	; VTA1 - offset	(unk_123)
@@ -23299,8 +12004,8 @@ loc_FA56:				; CODE XREF: ROM:FA50j
 
 loc_FA58:				; CODE XREF: ROM:FA54j
 		st	b, unk_6C	; sort of a filtered, saturated	VTA_net
-		tbbs	bit7, unk_4C, loc_FA63 ; bit 7 demands a sampling of the oxygen	sensors
-		ld	a, unk_44	; here bits 5321 prevent a doallinj call
+		tbbs	bit7, flags_4C,	loc_FA63 ; bit 7 demands a sampling of the oxygen sensors
+		ld	a, flags_44	; here bits 5321 prevent a doallinj call
 		cmpb	a, #2Eh
 		beq	loc_FA67
 
@@ -23311,7 +12016,7 @@ loc_FA63:				; CODE XREF: ROM:FA5Aj
 
 loc_FA67:				; CODE XREF: ROM:FA61j
 		cmp	b, #058
-		bcc	loc_FA74
+		bcc	loc_FA74	; 3600 RPM
 		cmp	#18h, unk_D7
 		bcs	loc_FA8C	; prevent injection
 		clr	unk_D6
@@ -23319,7 +12024,7 @@ loc_FA67:				; CODE XREF: ROM:FA61j
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_FA74:				; CODE XREF: ROM:FA69j
-		cmp	#072, RPM	; MSB is RPM/50, LSB is	fraction of 50
+		cmp	#072, RPM	; 3600 RPM
 		bcc	loc_FA8C	; prevent injection
 		cmp	#03h, unk_D6
 		bcc	loc_FA8C	; prevent injection
@@ -23355,8 +12060,8 @@ loc_FA9E:				; CODE XREF: ROM:FA98j
 loc_FAA5:				; CODE XREF: ROM:FA9Cj	ROM:FAA1j
 		cmp	a, b
 		ble	loc_FAAE
-		tbbs	bit7, unk_4C, loc_FAAE ; bit 7 demands a sampling of the oxygen	sensors
-		tbbc	bit0, unk_41, loc_FAB0
+		tbbs	bit7, flags_4C,	loc_FAAE ; bit 7 demands a sampling of the oxygen sensors
+		tbbc	bit0, flags_41,	loc_FAB0
 
 loc_FAAE:				; CODE XREF: ROM:FAA6j	ROM:FAA8j
 		clr	unk_69
@@ -23366,8 +12071,8 @@ loc_FAB0:				; CODE XREF: ROM:FAABj
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 VTAchecksub:				; CODE XREF: ROM:FA11p	ROM:FBB5p
-		tbbc	bit1, unk_40, loc_FAC4 ; throttle processing sub. accepts an address in	Y, AccA	is ADC VTA, B is ADCtx,	returns	offset VTA in AccA, plus some crap in B
-		tbbc	bit2, unk_45, loc_FAC4 ; passed	inital check
+		tbbc	bit1, flags_40,	loc_FAC4 ; throttle processing sub. accepts an address in Y, AccA is ADC VTA, B	is ADCtx, returns offset VTA in	AccA, plus some	crap in	B
+		tbbc	bit2, flags_45,	loc_FAC4 ; passed inital check
 		cmp	d, #0F0A4h
 		bcs	loc_FAC4	; passed inital	check
 		clr	a
@@ -23380,13 +12085,13 @@ loc_FAC4:				; CODE XREF: ROM:VTAchecksubj
 		mov	d, x		; passed inital	check
 		ld	a, y + 00h	; mask out bit 6
 		and	a, #0BFh
-		tbbc	bit1, unk_40, loc_FAD1
-		tbbc	bit2, unk_45, loc_FAD6 ; always	executing this check stack
+		tbbc	bit1, flags_40,	loc_FAD1
+		tbbc	bit2, flags_45,	loc_FAD6 ; always executing this check stack
 		bra	loc_FAD4	; set bit 6
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_FAD1:				; CODE XREF: ROM:FAC9j
-		tbbc	bit0, unk_41, loc_FAD6 ; always	executing this check stack
+		tbbc	bit0, flags_41,	loc_FAD6 ; always executing this check stack
 
 loc_FAD4:				; CODE XREF: ROM:FACFj
 		or	a, #40h		; set bit 6
@@ -23409,15 +12114,15 @@ loc_FAD6:				; CODE XREF: ROM:FACCj	ROM:loc_FAD1j
 
 loc_FAF6:				; CODE XREF: ROM:FAF2j
 		or	a, #02h
-		tbbs	bit3, unk_4B, loc_FB27
-		tbbs	bit1, unk_40, loc_FB01
-		clrb	bit3, unk_4F
+		tbbs	bit3, flags_4B,	loc_FB27
+		tbbs	bit1, flags_40,	loc_FB01
+		clrb	bit3, flags_4F
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 		.db  8Ch ; Œ		; cmp x
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_FB01:				; CODE XREF: ROM:FAFBj
-		clrb	bit4, unk_4F
+		clrb	bit4, flags_4F
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 		.db  8Ch ; Œ		; cmp x
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
@@ -23437,13 +12142,13 @@ loc_FB08:				; CODE XREF: ROM:FAE9j
 
 loc_FB12:				; CODE XREF: ROM:FAE2j
 		and	a, #0FDh
-		tbbs	bit1, unk_40, loc_FB1C
-		tbbs	bit3, unk_4F, loc_FB27
+		tbbs	bit1, flags_40,	loc_FB1C
+		tbbs	bit3, flags_4F,	loc_FB27
 		bra	loc_FB1F
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_FB1C:				; CODE XREF: ROM:FB14j
-		tbbs	bit4, unk_4F, loc_FB27
+		tbbs	bit4, flags_4F,	loc_FB27
 
 loc_FB1F:				; CODE XREF: ROM:FB1Aj
 		cmpb	a, #04h
@@ -23474,24 +12179,24 @@ loc_FB31:				; CODE XREF: ROM:FADEj	ROM:FB0Aj
 		or	a, #01h
 
 loc_FB3D:				; CODE XREF: ROM:FB37j
-		tbbs	bit3, unk_4B, loc_FB47
+		tbbs	bit3, flags_4B,	loc_FB47
 		cmp	#3Dh, unk_B7
 		bcs	loc_FB51	; loads	a default VTA, returns
 		bra	loc_FB49
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_FB47:				; CODE XREF: ROM:loc_FB3Dj
-		setb	bit6, unk_4D
+		setb	bit6, flags_4D
 
 loc_FB49:				; CODE XREF: ROM:FB45j
-		tbbs	bit1, unk_40, loc_FB4F
-		setb	bit3, unk_4F
+		tbbs	bit1, flags_40,	loc_FB4F
+		setb	bit3, flags_4F
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 		.db  8Ch ; Œ		; cmp x, three byte NOP
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_FB4F:				; CODE XREF: ROM:loc_FB49j
-		setb	bit4, unk_4F
+		setb	bit4, flags_4F
 
 loc_FB51:				; CODE XREF: ROM:FB2Bj	ROM:FB43j
 		st	a, y + 00h	; loads	a default VTA, returns
@@ -23554,7 +12259,7 @@ loc_FB9B:				; CODE XREF: ROM:FB95j
 		clr	b
 
 loc_FBA2:				; CODE XREF: ROM:FB9Ej
-		tbbc	bit1, unk_40, VTAcheck_ret ; (vta-y+01)	also is	written	out here
+		tbbc	bit1, flags_40,	VTAcheck_ret ; (vta-y+01) also is written out here
 		add	d, #0312h
 		bcc	VTAcheck_ret	; (vta-y+01) also is written out here
 
@@ -23565,15 +12270,15 @@ VTAcheck_ret:				; CODE XREF: ROM:FB5Dj	ROM:loc_FBA2j ...
 		st	d, y + 02h	; (vta-y+01) also is written out here
 		ret
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
-		setb	bit1, unk_40	; called from F7FE, VTA2 process
+		setb	bit1, flags_40	; called from F7FE, VTA2 process
 		ld	y, #0128h
 		jsr	VTAchecksub	; throttle processing sub. accepts an address in Y, AccA is ADC	VTA, B is ADCtx, returns offset	VTA in AccA, plus some crap in B
 		jmp	loc_F805	; test bit7 of unk_46, read more data from serial port if set, otherwise terminate interrupt
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
-		ld	x, #0114h	; called from F7FE adc pin 16
+		ld	x, #0114h	; called from F7FE adc pin 16 (0V)
 		bra	loc_FBCD
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
-		ld	x, #0115h	; called from F7FE adc pin 15
+		ld	x, #0115h	; called from F7FE adc pin 15 (0V)
 		bra	loc_FBCD
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 		ld	x, #0116h	; called from F7FE adc request 1D
@@ -23588,44 +12293,44 @@ loc_FBCD:				; CODE XREF: ROM:FBBEj	ROM:FBC3j ...
 		st	b, x + 00h
 		jmp	loc_F805	; test bit7 of unk_46, read more data from serial port if set, otherwise terminate interrupt
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
-		setb	bit1, unk_49	; called from F7FE, OXL1
+		setb	bit1, flags_49	; called from F7FE, OXL1
 		jsr	SaturateData
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 		.db 24h			; .70V
 		.db 12h			; .35V
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 		bcc	loc_FBEE
-		clrb	bit1, unk_49
+		clrb	bit1, flags_49
 		bra	loc_FBEE
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
-		setb	bit3, unk_49	; called from F7FE, OXR1
+		setb	bit3, flags_49	; called from F7FE, OXR1
 		jsr	SaturateData
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 		.db 24h
 		.db 12h
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 		bcc	loc_FBEE
-		clrb	bit3, unk_49
+		clrb	bit3, flags_49
 
 loc_FBEE:				; CODE XREF: ROM:FBDDj	ROM:FBE1j ...
 		jmp	loc_F805	; test bit7 of unk_46, read more data from serial port if set, otherwise terminate interrupt
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
-		clrb	bit5, unk_49	; called from F7FE, OXR2
+		clrb	bit5, flags_49	; called from F7FE, OXR2
 		cmp	a, #17h
 		bcs	loc_FC03
-		setb	bit5, unk_49
+		setb	bit5, flags_49
 		bra	loc_FC03
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
-		clrb	bit4, unk_49	; called from F7FE, OXL2
+		clrb	bit4, flags_49	; called from F7FE, OXL2
 		cmp	a, #17h
 		bcs	loc_FC03
-		setb	bit4, unk_49
+		setb	bit4, flags_49
 
 loc_FC03:				; CODE XREF: ROM:FBF5j	ROM:FBF9j ...
 		jmp	loc_F805	; test bit7 of unk_46, read more data from serial port if set, otherwise terminate interrupt
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
-		xor	a, #0FFh	; called from F7FE
-		st	a, unk_FB	; adc converter	pin 18 NOT'ed
+		xor	a, #0FFh	; called from F7FE, pin	18 of ADC (0V)
+		st	a, ADC_pin18	; 0V NOT'ed, so 255
 		jmp	loc_F805	; test bit7 of unk_46, read more data from serial port if set, otherwise terminate interrupt
 
 ; ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ S U B	R O U T	I N E ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ
@@ -24611,22 +13316,22 @@ __NMI:					; DATA XREF: ROM:FFFCo
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 		.dw 519Bh		; Used to force	checksum to equal AA55 at D397
 		.dw 8243h		; mask rom version!
-		.dw IV0			; External interrupt 0,	probably serial	TX related
-		.dw intSIN0		; triggered on SIN0, possibly others
-		.dw DefaultINT		; /IRL
-		.dw DefaultINT		; /IRP (IGF2)
-		.dw DefaultINT		; ASR3 events (G1)
-		.dw DefaultINT		; ASR0 events (IGF1)
-		.dw IV6			; External interrupt 6
-		.dw DefaultINT		; Timer	Compare	1
-		.dw DefaultINT		; Timer	Compare	2
-		.dw intCPR0		; Timer	Compare	0
-		.dw DefaultINT		; Timer	Compare	3
-		.dw DefaultINT		; Timer	Overflow
-		.dw IVc			; External interrupt c
-		.dw intASR1		; ASR1 events (KS)
-		.dw intASR2		; ASR2 events (NE)
-		.dw __NMI		; Non maskable interrupt
+		.dw intSINx		; 00 - SINx on pin 43
+		.dw intSIN0		; 01 - SIN0, possibly others
+		.dw DefaultINT		; 02 - /IRL
+		.dw DefaultINT		; 03 - /IRP (IGF2)
+		.dw DefaultINT		; 04 - ASR3 events (G1)
+		.dw DefaultINT		; 05 - ASR0 events (IGF1)
+		.dw IV6			; 06 -
+		.dw DefaultINT		; 07 - Timer Compare 1
+		.dw DefaultINT		; 08 - Timer Compare 2
+		.dw intCPR0		; 09 - Timer Compare 0
+		.dw DefaultINT		; 0A - Timer Compare 3
+		.dw DefaultINT		; 0B - Timer Overflow
+		.dw IVc			; 0C - 4ms periodic
+		.dw intASR1		; 0D - ASR1 events (KS)
+		.dw intASR2		; 0E - ASR2 events (NE)
+		.dw __NMI		; 0F - Non maskable interrupt
 		.dw __RESET		; Processor reset
 ; end of 'ROM'
 
