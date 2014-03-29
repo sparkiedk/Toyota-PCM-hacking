@@ -116,6 +116,7 @@ Timer word increment rate is 250kHz
 61	DOUT0	IGT output for all sparks, multiplexed by MP908
 62	/G1
 63	/NE
+64	VCC
 
 1 ASR1 
 2 ASR0 
@@ -241,6 +242,18 @@ d151821-0090
 10	sout
 11	clk
 12	gnd
+
+IC302 d151821-0090
+==================
+1	+12 vcc
+
+7	/cs ?
+8	+5 vcc
+10	sout
+11	clk
+12	gnd
+22	D37 trac ECU
+
 
 d IS121
 ========
