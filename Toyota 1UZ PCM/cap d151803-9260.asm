@@ -64,7 +64,7 @@ SIDR_SODR2:	.block 1		; DATA XREF: write6336+6w
 					; write	data is	tx'd on pin 47, read data is from pin 48
 OMODE:		.block 1		; DATA XREF: __RESETr
 					; Mode control Register
-PORTA:		.block 1		; DATA XREF: sub_D2B9+61r sub_D415r ...
+PORTA:		.block 1		; DATA XREF: sub_D2B9+61r portAclrB0r	...
 					; Port A Data Register
 PORTAL:		.block 1		; Port A Latch
 PORTB:		.block 1		; DATA XREF: sub_D2B9+93r sub_D2B9+96r ...
@@ -105,10 +105,10 @@ unk_34:		.block 1
 		.block 1
 		.block 1
 unk_37:		.block 1
-CPR4:		.block 2		; Only written to in DoInjectors
-CPR5:		.block 2
-CPR6:		.block 2
-CPR7:		.block 2
+CPR4:		.block 2		; Timer	comparison #0 MSB
+CPR5:		.block 2		; Timer	comparison #1 MSB
+CPR6:		.block 2		; Timer	comparison #2 MSB
+CPR7:		.block 2		; Timer	comparison #3 MSB
 ; end of 'FSR'
 
 ; ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
@@ -125,9 +125,11 @@ flags_44:	.block 1		; DATA XREF: sub_C64D+59r ROM:CC71r ...
 					; bit3:	rev limiter, bits 543210 will all cause	a branch past doinjectors
 flags_45:	.block 1		; DATA XREF: ROM:loc_C918r
 					; ROM:loc_C952r ...
+					; received from	serial port apparently
 flags_46:	.block 1		; DATA XREF: __RESET:loc_DE48r
 					; __RESET+B2Cr	...
 flags_47:	.block 1		; DATA XREF: sub_C64D+4Dr sub_C64D+84r ...
+					; bit4:	high when hot (but how hot?)
 flags_48:	.block 1		; DATA XREF: __RESET+A49r
 					; __RESET:loc_DF31r ...
 flags_49:	.block 1		; DATA XREF: sub_C64D:loc_C666r
@@ -149,8 +151,8 @@ temp_52:	.block 1		; DATA XREF: sub_C64D+10Cw
 temp_53:	.block 1		; DATA XREF: DivDby12+6w
 					; ThreeDtable+Br ...
 temp_54:	.block 1		; DATA XREF: DivDby12w	DivDby12+8r ...
-unk_55:		.block 1		; DATA XREF: ROM:CEE4w	ROM:loc_CEF3r ...
-unk_56:		.block 1		; DATA XREF: ROM:CEE8w	ROM:CF2Fr ...
+temp_55:	.block 1		; DATA XREF: ROM:CEE4w	ROM:loc_CEF3r ...
+temp_56:	.block 1		; DATA XREF: ROM:CEE8w	ROM:CF2Fr ...
 unk_57:		.block 1		; DATA XREF: ROM:CEFAw	ROM:CF01r ...
 unk_58:		.block 1		; DATA XREF: IV6+49w IV6+4Br ...
 		.block 1
@@ -205,7 +207,7 @@ word_7A:	.block 2		; DATA XREF: TwoD_7Ar __RESET+315w ...
 					; meanKSint divided by a air temp comp factor
 unk_7C:		.block 1		; DATA XREF: sub_D257+3r sub_D257+Dr ...
 					; counter
-unk_7D:		.block 1		; DATA XREF: ROM:C940r	ROM:C944w ...
+flags_7D:	.block 1		; DATA XREF: ROM:C940r	ROM:C944w ...
 unk_7E:		.block 1		; DATA XREF: ROM:CDC0r	__RESET+132Er ...
 unk_7F:		.block 1		; DATA XREF: __RESET+1653w
 					; __RESET+166Ar ...
@@ -244,77 +246,119 @@ word_9E:	.block 2		; DATA XREF: sub_D688+3Fw
 unk_A0:		.block 1		; DATA XREF: sub_D688+41w
 		.block 1
 flags_A2:	.block 1		; DATA XREF: sub_C64D+3Cr ROM:C972r ...
-					; contains bitflags, bit7 VTA_net related
-unk_A3:		.block 1		; DATA XREF: __RESET:loc_DA55r
+					; bit7:	VTA_net	high, bit4: VTA_net high
+count_A3:	.block 1		; DATA XREF: __RESET:loc_DA55r
 					; __RESET+5D8w	...
-unk_A4:		.block 1		; DATA XREF: __RESET+F2Fr
+					; incremented at F47D
+count_A4:	.block 1		; DATA XREF: __RESET+F2Fr
 					; __RESET:loc_E42Dw
-unk_A5:		.block 1		; DATA XREF: __RESET+F54r
+					; incremented at F47D
+count_A5:	.block 1		; DATA XREF: __RESET+F54r
 					; __RESET:loc_E424w ...
-unk_A6:		.block 1		; DATA XREF: __RESET+43Ar
+					; incremented at F47D
+count_A6:	.block 1		; DATA XREF: __RESET+43Ar
 					; __RESET:loc_D8F7w
-unk_A7:		.block 1		; DATA XREF: __RESET+2C1r __RESET+567w
-unk_A8:		.block 1		; DATA XREF: intSIN0+110r intSIN0+125w ...
-unk_A9:		.block 1		; DATA XREF: sub_C003r
+					; incremented at F47D
+count_A7:	.block 1		; DATA XREF: __RESET+2C1r __RESET+567w
+					; incremented at F47D
+count_A8:	.block 1		; DATA XREF: intSIN0+110r intSIN0+125w ...
+					; incremented at F47D
+count_A9:	.block 1		; DATA XREF: sub_C003r
 					; sub_C010:loc_C046r ...
-unk_AA:		.block 1		; DATA XREF: sub_C010r	sub_C010+5w ...
-unk_AB:		.block 1		; DATA XREF: __RESET+854w __RESET+8BFr ...
-unk_AC:		.block 1		; DATA XREF: sub_F1A9+ACw
+					; incremented at F47D
+count_AA:	.block 1		; DATA XREF: sub_C010r	sub_C010+5w ...
+					; incremented at F47D
+count_AB:	.block 1		; DATA XREF: __RESET+854w __RESET+8BFr ...
+					; incremented at F47D
+count_AC:	.block 1		; DATA XREF: sub_F1A9+ACw
 					; sub_F1A9+107w ...
-unk_AD:		.block 1		; DATA XREF: ROM:CE9Er	ROM:F963w
-					; cleared when below 8V	input
-unk_AE:		.block 1		; DATA XREF: ROM:CE91r	ROM:F968w
-unk_AF:		.block 1		; DATA XREF: ROM:CE99r	ROM:CFC9r ...
-unk_B0:		.block 1		; DATA XREF: CPR0_sub+5Ar intSIN0+12Bw
-unk_B1:		.block 1		; DATA XREF: IVc+44r IVc:loc_F388w ...
-unk_B2:		.block 1		; DATA XREF: intASR1+5r
+					; incremented at F47D
+count_AD:	.block 1		; DATA XREF: ROM:CE9Er	ROM:F963w
+					; cleared when below 8V	input, incremented at F47D
+count_AE:	.block 1		; DATA XREF: ROM:CE91r	ROM:F968w
+					; incremented at F47D
+count_AF:	.block 1		; DATA XREF: ROM:CE99r	ROM:CFC9r ...
+					; incremented at F47D
+count_B0:	.block 1		; DATA XREF: CPR0_sub+5Ar intSIN0+12Bw
+					; incremented at F47D
+count_B1:	.block 1		; DATA XREF: IVc+44r IVc:loc_F388w ...
+					; incremented at F47D
+count_B2:	.block 1		; DATA XREF: intASR1+5r
 					; intASR1:loc_F726r ...
-unk_B3:		.block 1		; DATA XREF: __RESET+241w __RESET+DE1r ...
-unk_B4:		.block 1		; DATA XREF: IV6+19Dr IV6:IV6_38w ...
-		.block 1
-		.block 1
-unk_B7:		.block 1		; DATA XREF: ROM:F925w	ROM:F92Ar ...
-unk_B8:		.block 1		; DATA XREF: __RESET:loc_E816w
+					; incremented at F47D
+count_B3:	.block 1		; DATA XREF: __RESET+241w __RESET+DE1r ...
+					; incremented at F55E
+count_B4:	.block 1		; DATA XREF: IV6+19Dr IV6:IV6_38w ...
+					; incremented at F55E
+count_B5:	.block 1		; incremented at F55E
+count_B6:	.block 1		; incremented at F55E
+count_B7:	.block 1		; DATA XREF: ROM:F925w	ROM:F92Ar ...
+					; incremented at F55E
+count_B8:	.block 1		; DATA XREF: __RESET:loc_E816w
 					; __RESET:loc_E818r
-unk_B9:		.block 1		; DATA XREF: __RESET+22Ar
+					; incremented at F55E
+count_B9:	.block 1		; DATA XREF: __RESET+22Ar
 					; __RESET:loc_D6EAr ...
-unk_BA:		.block 1		; DATA XREF: __RESET+31Cr __RESET+33Cr
-unk_BB:		.block 1		; DATA XREF: __RESET+B3Er __RESET+B48r ...
-unk_BC:		.block 1		; DATA XREF: __RESET+B05r __RESET+B0Fr ...
-unk_BD:		.block 1		; DATA XREF: __RESET:loc_E79Dr
+					; incremented at F55E
+count_BA:	.block 1		; DATA XREF: __RESET+31Cr __RESET+33Cr
+					; decremented at F566
+count_BB:	.block 1		; DATA XREF: __RESET+B3Er __RESET+B48r ...
+					; decremented at F566
+count_BC:	.block 1		; DATA XREF: __RESET+B05r __RESET+B0Fr ...
+					; decremented at F566
+count_BD:	.block 1		; DATA XREF: __RESET:loc_E79Dr
 					; __RESET+12EBr
-unk_BE:		.block 1		; DATA XREF: ROM:C957w	ROM:loc_C959r
-unk_BF:		.block 1		; DATA XREF: __RESET:loc_EAFAr
+					; decremented at F566
+count_BE:	.block 1		; DATA XREF: ROM:C957w	ROM:loc_C959r
+					; increments at	E478
+count_BF:	.block 1		; DATA XREF: __RESET:loc_EAFAr
 					; __RESET:loc_EB01w ...
-unk_C0:		.block 1		; DATA XREF: __RESET:loc_EAE2w
+					; increments at	E478
+count_C0:	.block 1		; DATA XREF: __RESET:loc_EAE2w
 					; __RESET:loc_EAE8r
-					; flag for Gx
-unk_C1:		.block 1		; DATA XREF: __RESET+162Ew
+					; flag for Gx increments at E478
+count_C1:	.block 1		; DATA XREF: __RESET+162Ew
 					; __RESET:loc_EAF1r
-					; flag for Gx
-unk_C2:		.block 1		; DATA XREF: ROM:CDC7w	ROM:loc_CDCBr ...
-unk_C3:		.block 1		; DATA XREF: ROM:CDDAr	ROM:CDE7w
-unk_C4:		.block 1		; DATA XREF: ROM:CD75r	ROM:CD7Aw
-unk_C5:		.block 1		; DATA XREF: IV6+5D0r IV6:loc_F53Bw
-unk_C6:		.block 1		; DATA XREF: __RESET:loc_E280w
+					; flag for Gx increments at E478
+count_C2:	.block 1		; DATA XREF: ROM:CDC7w	ROM:loc_CDCBr ...
+					; increments at	E478
+count_C3:	.block 1		; DATA XREF: ROM:CDDAr	ROM:CDE7w
+					; increments at	E478
+count_C4:	.block 1		; DATA XREF: ROM:CD75r	ROM:CD7Aw
+					; increments at	E478
+count_C5:	.block 1		; DATA XREF: IV6+5D0r IV6:loc_F53Bw
+					; increments at	E478
+count_C6:	.block 1		; DATA XREF: __RESET:loc_E280w
 					; __RESET:loc_E282r ...
-unk_C7:		.block 1		; DATA XREF: ROM:loc_CC30w
+					; increments at	E478
+count_C7:	.block 1		; DATA XREF: ROM:loc_CC30w
 					; ROM:loc_CC3Ar ...
-unk_C8:		.block 1		; DATA XREF: __RESET+AA6w
+					; increments at	E478
+count_C8:	.block 1		; DATA XREF: __RESET+AA6w
 					; __RESET:loc_DF9Ew ...
-unk_C9:		.block 1		; DATA XREF: __RESET+107Fr
+					; decrements at	E488
+count_C9:	.block 1		; DATA XREF: __RESET+107Fr
 					; __RESET+10B9r
-unk_CA:		.block 1		; DATA XREF: ROM:C96Fr	__RESET+11BDr ...
-unk_CB:		.block 1		; DATA XREF: ROM:C9D0r	__RESET+11F2r ...
-unk_CC:		.block 1		; DATA XREF: IVc+4Ew IVc:loc_F39Dr
-unk_CD:		.block 1		; DATA XREF: __RESET:loc_DCBAw
+					; decrements at	E488
+count_CA:	.block 1		; DATA XREF: ROM:C96Fr	__RESET+11BDr ...
+					; incremented at E643
+count_CB:	.block 1		; DATA XREF: ROM:C9D0r	__RESET+11F2r ...
+					; incremented at E643
+count_CC:	.block 1		; DATA XREF: IVc+4Ew IVc:loc_F39Dr
+					; incremented at E643
+count_CD:	.block 1		; DATA XREF: __RESET:loc_DCBAw
 					; __RESET+131Cr ...
-unk_CE:		.block 1		; DATA XREF: __RESET+1224w
+					; incremented at E7A9
+count_CE:	.block 1		; DATA XREF: __RESET+1224w
 					; __RESET+124Cr
-unk_CF:		.block 1		; DATA XREF: __RESET+109Fr
+					; incremented at E7A9
+count_CF:	.block 1		; DATA XREF: __RESET+109Fr
 					; __RESET+11FCr ...
-unk_D0:		.block 1		; DATA XREF: ROM:loc_CC7Dw ROM:CC86r ...
-unk_D1:		.block 1		; DATA XREF: ROM:CC7Fw	ROM:CCA3r ...
+					; incremented at E7A9
+count_D0:	.block 1		; DATA XREF: ROM:loc_CC7Dw ROM:CC86r ...
+					; incremented at E7A9
+count_D1:	.block 1		; DATA XREF: ROM:CC7Fw	ROM:CCA3r ...
+					; incremented at E7A9
 unk_D2:		.block 1		; DATA XREF: sub_C634:loc_C64Aw
 					; IV6+3Br
 unk_D3:		.block 1		; DATA XREF: __RESET:loc_DCF5w
@@ -358,7 +402,7 @@ unk_EB:		.block 1		; DATA XREF: IV6+1A2r IV6+1C1w ...
 RPM:		.block 2		; DATA XREF: ROM:TwoD_RPMr ThreeD_RPMr ...
 					; MSB is RPM/50, LSB is	fraction of 50
 compLOAD:	.block 2		; DATA XREF: ROM:CAFBr	ROM:CCF7r ...
-					; air temp compensated Load
+					; air temp and Baro compensated	Load (likely in	units of mass)
 unk_F4:		.block 1		; DATA XREF: __RESET+1728w
 					; last VTA_net
 unk_F5:		.block 1		; DATA XREF: __RESET+172Dw
@@ -421,9 +465,9 @@ deltaKS:	.block 1		; DATA XREF: IV6+70r IV6+8Cw ...
 deltaKSl:	.block 1		; DATA XREF: IV6+78r IV6+8Fw
 asr0n_shadow:	.block 1		; DATA XREF: sub_C003+7w sub_C010+8r ...
 					; stores configuration information written to asr0n
-unk_11D:	.block 1		; DATA XREF: __RESET+120Er
+count_11D:	.block 1		; DATA XREF: __RESET+120Er
 					; __RESET:loc_E6CDw
-					; some kind of counter
+					; tof increment	rate
 unk_11E:	.block 1		; DATA XREF: IV6+622r IV6:loc_F5A0w
 unk_11F:	.block 1		; DATA XREF: __RESET+C4w __RESET+A61r	...
 					; ISC related
@@ -471,8 +515,8 @@ unk_142:	.block 1		; DATA XREF: ROM:CA3Fr	ROM:loc_CA5Dr ...
 unk_143:	.block 1		; DATA XREF: ROM:CD12r	__RESET+FD5r ...
 		.block 1
 unk_145:	.block 1		; DATA XREF: ROM:CFC0w	__RESET+C9w
-unk_146:	.block 1		; DATA XREF: ROM:C930r	ROM:C93Aw ...
-unk_147:	.block 1		; DATA XREF: ROM:CBD9r	ROM:CBDEw ...
+flags_146:	.block 1		; DATA XREF: ROM:C930r	ROM:C93Aw ...
+flags_147:	.block 1		; DATA XREF: ROM:CBD9r	ROM:CBDEw ...
 		.block 1
 unk_149:	.block 1
 unk_14A:	.block 1		; DATA XREF: ROM:CAD5r	ROM:CB28r ...
@@ -500,8 +544,8 @@ unk_15F:	.block 1		; DATA XREF: ROM:CD44r
 					; __RESET:loc_E494r ...
 		.block 1
 unk_161:	.block 1		; DATA XREF: ROM:CFC5w	__RESET+CCw
-unk_162:	.block 1		; DATA XREF: ROM:C933r	ROM:C93Dw ...
-unk_163:	.block 1		; DATA XREF: ROM:CBE1r	ROM:CBE6w ...
+flags_162:	.block 1		; DATA XREF: ROM:C933r	ROM:C93Dw ...
+flags_163:	.block 1		; DATA XREF: ROM:CBE1r	ROM:CBE6w ...
 InjectPW1:	.block 2		; DATA XREF: calcInjPW+2Aw __RESET+83w ...
 					; pulsewidth for most cases/cylinders, 4us/bit
 InjectPW2:	.block 2		; DATA XREF: calcInjPW+2Dw __RESET+86w ...
@@ -523,7 +567,8 @@ unk_174:	.block 1		; DATA XREF: __RESET:loc_DCA3w
 unk_175:	.block 1		; DATA XREF: sub_C64D+218r sub_C8BB+Fr ...
 unk_176:	.block 1		; DATA XREF: __RESET+A6w __RESET+69Ar	...
 unk_177:	.block 1		; DATA XREF: sub_C64D+E5w
-unk_178:	.block 1		; DATA XREF: sub_C64D+Dr __RESET+818w	...
+count_178:	.block 1		; DATA XREF: sub_C64D+Dr __RESET+818w	...
+					; tof increment	rate
 unk_179:	.block 1		; DATA XREF: __RESET:loc_E58Cr
 					; __RESET:loc_E5D4r ...
 unk_17A:	.block 1		; DATA XREF: sub_C64D+1DEr ROM:CAA1r ...
@@ -574,6 +619,7 @@ unk_197:	.block 1		; DATA XREF: __RESET:loc_D9C1r
 unk_198:	.block 1		; DATA XREF: sub_F1A9+70w sub_F1A9+82w ...
 unk_199:	.block 1		; DATA XREF: __RESET:loc_D8AEw
 					; sub_F1A9+6Aw	...
+					; output from 3d table c54c
 unk_19A:	.block 1		; DATA XREF: sub_F1A9+123r
 					; sub_F1A9+135r ...
 unk_19B:	.block 1		; DATA XREF: sub_F1A9:loc_F216w
@@ -584,21 +630,28 @@ unk_19D:	.block 1		; DATA XREF: sub_F1A9:loc_F1B2r
 unk_19E:	.block 1		; DATA XREF: ROM:intASR2_30r ROM:EDBDw ...
 unk_19F:	.block 1		; DATA XREF: IVc+3Dr IVc+51w ...
 					; ISC related
-unk_1A0:	.block 1		; DATA XREF: __RESET+BCw __RESET+F42r	...
-unk_1A1:	.block 1		; DATA XREF: __RESET+BFw
+count_1A0:	.block 1		; DATA XREF: __RESET+BCw __RESET+F42r	...
+					; increments at	E480
+count_1A1:	.block 1		; DATA XREF: __RESET+BFw
 					; __RESET:loc_E403r ...
-unk_1A2:	.block 1		; DATA XREF: __RESET+166Fr
+					; increments at	E480
+count_1A2:	.block 1		; DATA XREF: __RESET+166Fr
 					; __RESET:loc_EB30w
-unk_1A3:	.block 1		; DATA XREF: __RESET+165Cw
+					; increments at	E480
+count_1A3:	.block 1		; DATA XREF: __RESET+165Cw
 					; __RESET:loc_EB3Ar
+					; increments at	E480
 lastASR2:	.block 2		; DATA XREF: ROM:EC7Cr	ROM:intASR2_7w	...
 avgCompLoad:	.block 1		; DATA XREF: __RESET+341r __RESET+35Er ...
 		.block 1
 unk_1A8:	.block 1		; DATA XREF: sub_C4DF+14r __RESET+2FBw ...
 					; looks	like air temp compensation for load
 unk_1A9:	.block 1		; DATA XREF: intSIN0+96r intSIN0+9Fw
+					; flags_45 related?
 unk_1AA:	.block 1		; DATA XREF: ROM:C987r	ROM:C9ABr ...
+					; flags_49 bit0	related
 unk_1AB:	.block 1		; DATA XREF: __RESET:loc_EB0Br	IVc+36r ...
+					; flags_49 bit0	related
 word_1AC:	.block 2		; DATA XREF: __RESET+266w intASR1+2Br
 					; something deltaKS related
 KS_count2:	.block 1		; DATA XREF: __RESET+DF7r __RESET+E05w ...
@@ -613,19 +666,20 @@ unk_1B3:	.block 1		; DATA XREF: __RESET+D1w
 unk_1B5:	.block 1		; DATA XREF: ROM:CE14w	ROM:CE2Er ...
 unk_1B6:	.block 1		; DATA XREF: ROM:CEA8w	ReInitNEIGT+21w ...
 unk_1B7:	.block 1		; DATA XREF: ROM:CEABw	ReInitNEIGT+24w ...
-		.block 1
-		.block 1
-unk_1BA:	.block 1		; DATA XREF: ROM:CEB9r	intSIN0+11Aw
+count_1B8:	.block 1		; incremented at F49C
+count_1B9:	.block 1		; incremented at F49C
+count_1BA:	.block 1		; DATA XREF: ROM:CEB9r	intSIN0+11Aw
+					; incremented at F49C
 unk_1BB:	.block 1		; DATA XREF: ROM:loc_CE41r
 					; ROM:loc_CE48w ...
-unk_1BC:	.block 1		; DATA XREF: ROM:CD0Aw	ROM:CD21r ...
+count_1BC:	.block 1		; DATA XREF: ROM:CD0Aw	ROM:CD21r ...
 unk_1BD:	.block 1		; DATA XREF: ROM:loc_CD7Er ROM:CD8Aw
-unk_1BE:	.block 1		; DATA XREF: ROM:CD53r	ROM:loc_CD70w ...
+count_1BE:	.block 1		; DATA XREF: ROM:CD53r	ROM:loc_CD70w ...
 unk_1BF:	.block 1		; DATA XREF: ROM:CD8Dr	ROM:CD99w
-unk_1C0:	.block 1
-unk_1C1:	.block 1
-unk_1C2:	.block 1
-unk_1C3:	.block 1
+count_1C0:	.block 1		; incremented at F580
+count_1C1:	.block 1		; incremented at F580
+count_1C2:	.block 1		; incremented at F580
+count_1C3:	.block 1		; incremented at F580
 unk_1C4:	.block 1		; DATA XREF: ROM:CE71r	ROM:loc_CE86w ...
 unk_1C5:	.block 1
 unk_1C6:	.block 1		; DATA XREF: ROM:CF5Br	ROM:loc_CF65w ...
@@ -638,11 +692,11 @@ unk_1CC:	.block 1
 unk_1CD:	.block 1
 unk_1CE:	.block 1		; DATA XREF: ROM:loc_CB0Cw ROM:CB46r ...
 unk_1CF:	.block 1		; DATA XREF: ROM:loc_CB16w ROM:CB4Fr ...
-unk_1D0:	.block 1		; DATA XREF: ROM:CC32w
+count_1D0:	.block 1		; DATA XREF: ROM:CC32w
 		.block 1
 		.block 1
-unk_1D3:	.block 1
-unk_1D4:	.block 1		; DATA XREF: ROM:CC35w
+count_1D3:	.block 1		; tof increment	rate
+count_1D4:	.block 1		; DATA XREF: ROM:CC35w
 unk_1D5:	.block 1
 		.block 1
 unk_1D7:	.block 1		; DATA XREF: __RESET:loc_E726r
@@ -955,7 +1009,6 @@ word_304:	.block 2
 word_306:	.block 2
 unk_308:	.block 1
 ; end of 'badaddress'
-
 ; File Name   :	C:\Documents and Settings\Sparkie\Desktop\Toyota PCM hacking\Toyota 1UZ PCM\cap d151803-9260.bin
 ; Format      :	Binary file
 ; Base Address:	0000h Range: C000h - 10000h Loaded length: 4000h
@@ -972,7 +1025,7 @@ unk_308:	.block 1
 
 
 sub_C003:				; CODE XREF: __RESET+17Dp
-		ld	#0FEh, unk_A9
+		ld	#0FEh, count_A9	; incremented at F47D
 		ld	a, #34h
 		or	a, #0C0h	; kinbda straightforward, =F4
 		st	a, asr0n_shadow	; stores configuration information written to asr0n
@@ -985,9 +1038,9 @@ sub_C003:				; CODE XREF: __RESET+17Dp
 
 
 sub_C010:				; CODE XREF: IV6:loc_F4DEp
-		cmp	#04h, unk_AA
+		cmp	#04h, count_AA	; incremented at F47D
 		ble	loc_C025
-		clr	unk_AA
+		clr	count_AA	; incremented at F47D
 		di
 		ld	a, asr0n_shadow	; stores configuration information written to asr0n
 		and	a, #0BFh
@@ -1004,7 +1057,7 @@ loc_C025:				; CODE XREF: sub_C010+3j
 		beq	loc_C046
 		cmpb	a, #08h
 		bne	loc_C034
-		clr	unk_AA
+		clr	count_AA	; incremented at F47D
 
 loc_C034:				; CODE XREF: sub_C010+13j sub_C010+20j
 		ld	a, asr0n_shadow	; stores configuration information written to asr0n
@@ -1016,7 +1069,7 @@ loc_C034:				; CODE XREF: sub_C010+13j sub_C010+20j
 		ld	#0B7h, TIMER3	; Timer	LSB (bit0~bit2)
 
 loc_C046:				; CODE XREF: sub_C010+1Cj
-		cmp	#04h, unk_A9
+		cmp	#04h, count_A9	; incremented at F47D
 		ble	locret_C069
 		ld	a, asr0n_shadow	; stores configuration information written to asr0n
 		and	a, #7Fh
@@ -1029,7 +1082,7 @@ loc_C046:				; CODE XREF: sub_C010+1Cj
 		ld	d, #3900h
 		st	d, ASR2		; ASR2 edge counter value MSB
 		ld	#4Fh, TIMER3	; Timer	LSB (bit0~bit2)
-		clr	unk_A9
+		clr	count_A9	; incremented at F47D
 
 locret_C069:				; CODE XREF: sub_C010+39j
 		ret
@@ -1048,7 +1101,7 @@ intSINx:				; DATA XREF: ROM:FFDEo
 		ld	a, TIMER3	; Timer	LSB (bit0~bit2)
 		cmpb	a, #30h
 		bne	iv0part2
-		clr	unk_A9
+		clr	count_A9	; incremented at F47D
 
 iv0part2:				; CODE XREF: intSINx+Dj
 		ld	d, #3900h
@@ -1060,42 +1113,43 @@ iv0part2:				; CODE XREF: intSINx+Dj
 
 ; ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ S U B	R O U T	I N E ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ
 
-; increment B bytes of ram by 1	starting from Y
+; increment B bytes of ram by 1	starting from Y, saturates at FF
 
-sub_C084:				; CODE XREF: sub_C084+9j
+satcount:				; CODE XREF: satcount+9j
 					; sub_C64D:loc_C891p ...
 		di
 		ld	a, [y]		; postincrement	y (ld a,y+0 | inc y)
 		inc	a
-		beq	loc_C08B
+		beq	satcount_2
 		dec	y
 		st	a, [y]
 
-loc_C08B:				; CODE XREF: sub_C084+3j
+satcount_2:				; CODE XREF: satcount+3j
 		ei
 		dec	b
-		bne	sub_C084	; increment B bytes of ram by 1	starting from Y
+		bne	satcount	; increment B bytes of ram by 1	starting from Y, saturates at FF
 		ret
-; End of function sub_C084
+; End of function satcount
 
 
 ; ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ S U B	R O U T	I N E ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ
 
-; decrements B bytes of	ram by 1 starting from Y
+; decrements B bytes of	ram by 1 starting from Y, saturates at 00
 
-sub_C090:				; CODE XREF: sub_C090+9j __RESET+FD2p	...
+satuncount:				; CODE XREF: satuncount+9j
+					; __RESET+FD2p	...
 		di
 		ld	a, y + 00h
-		beq	loc_C096	; postincrement	Y
+		beq	satuncount_2	; postincrement	Y
 		dec	a
 
-loc_C096:				; CODE XREF: sub_C090+3j
+satuncount_2:				; CODE XREF: satuncount+3j
 		st	a, [y]		; postincrement	Y
 		ei
 		dec	b
-		bne	sub_C090	; decrements B bytes of	ram by 1 starting from Y
+		bne	satuncount	; decrements B bytes of	ram by 1 starting from Y, saturates at 00
 		ret
-; End of function sub_C090
+; End of function satuncount
 
 
 ; ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ S U B	R O U T	I N E ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ
@@ -1323,7 +1377,7 @@ TwoD_AccD_1:				; CODE XREF: TwoD_AccD+2j
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 TwoD_RPM:				; CODE XREF: __RESET+2A9p __RESET+4A7p ...
-		ld	a, RPM		; lookup unk_F0, integer return	in Acca, fraction return in AccB
+		ld	a, RPM		; lookup RPM, integer return in	Acca, fraction return in AccB
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 		.db  8Ch ; Œ		; cpx... Nop's through the next load
 
@@ -1423,7 +1477,7 @@ DivDby12:				; CODE XREF: __RESET+3EBp
 
 ; ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ S U B	R O U T	I N E ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ
 
-; called with C3FE in mind, other parameter in temp_53:temp_54
+; called with C3FE in mind, other parameter in temp_53:temp_54,	output in A
 
 ThreeD_RPM:				; CODE XREF: __RESET+1371p
 		ld	d, RPM		; MSB is RPM/50, LSB is	fraction of 50
@@ -1436,7 +1490,7 @@ ThreeD_RPM:				; CODE XREF: __RESET+1371p
 
 ; ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ S U B	R O U T	I N E ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ
 
-; inputs in D and temp_53:temp_54
+; inputs in D and temp_53:temp_54, output in A
 
 ThreeDtable2:				; CODE XREF: __RESET+877p
 		shr	d
@@ -1445,7 +1499,7 @@ ThreeDtable2:				; CODE XREF: __RESET+877p
 
 ; ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ S U B	R O U T	I N E ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ
 
-; inputs in D and temp_53:temp_54
+; inputs in D and temp_53:temp_54, output in A
 
 ThreeDtable:				; CODE XREF: ThreeD_RPM+8j
 					; __RESET+3F0p	...
@@ -1673,7 +1727,8 @@ unk_C246:	.db  03h		; D741 2d lookup for word_78, also DC0D	for 7A
 		.db  68h ; h
 		.db  17h
 		.db 0FFh
-word_C26A:	.dw 0A580h		; DATA XREF: __RESET:loc_DD50r
+ScaleFactor:	.dw 0A580h		; DATA XREF: __RESET:loc_DD50r
+					; value	to scale load to get pulsewidth
 		.dw 0180h		; 3d table TPS vs RPM
 		.db  05h
 		.db  00h
@@ -1742,21 +1797,21 @@ word_C26A:	.dw 0A580h		; DATA XREF: __RESET:loc_DD50r
 		.db 0FFh
 		.db  00h
 		.db  00h
-		.db  5Dh ; ]		; DCD7,	2d lookup for F7
+		.db  5Dh ; ]		; DCD7,	2d lookup for rawTHW
 		.db  96h ; –
 		.db 0B3h ; ³
 		.db  5Bh ; [
 		.db 0E4h ; ä
 		.db  26h ; &
 		.db 0FFh
-		.db  4Eh ; N		; D75C,	lookup for F0
+		.db  4Eh ; N		; D75C,	lookup for RPM
 		.db  98h ; ˜
 		.db  60h ; `
 		.db 0A0h ;  
 		.db  78h ; x
 		.db  90h ; 
 		.db 0FFh
-		.db  4Ch ; L		; F6 table from	E455
+		.db  4Ch ; L		; Bovlts table from E455
 		.db  9Dh ; 
 		.db  66h ; f
 		.db  62h ; b
@@ -1769,7 +1824,7 @@ word_C26A:	.dw 0A580h		; DATA XREF: __RESET:loc_DD50r
 		.db 0CCh ; Ì
 		.db  1Bh
 		.db 0FFh
-		.db  0Bh		; C623,	lookup for FA
+		.db  0Bh		; C623,	lookup for rawTHA
 		.db 0EAh ; ê
 		.db  24h ; $
 		.db 0B7h ; ·
@@ -1788,7 +1843,7 @@ byte_C2DB:	.db 12h			; data used by F070 (18)
 		.db 15h			; 21
 		.db 06h			; 6
 		.db 09h			; 9
-		.db  15h		; C619 2d lookup for F7
+		.db  15h		; C619 2d lookup for rawTHW
 		.db 0B9h ; ¹
 		.db  24h ; $
 		.db  67h ; g
@@ -1799,12 +1854,12 @@ byte_C2DB:	.db 12h			; data used by F070 (18)
 		.db 0E4h ; ä
 		.db  2Ch ; ,
 		.db 0FFh
-unk_C2EA:	.db  86h ; †		; C5F4,	lookup for F7
+unk_C2EA:	.db  86h ; †		; C5F4,	lookup for rawTHW
 		.db  14h		; 5120
 		.db 0D2h ; Ò
 		.db  0Ah		; 2560
 		.db 0FFh
-		.db  15h		; E9C6,DC7C,2d lookup for F7
+		.db  15h		; E9C6,DC7C,2d lookup for rawTHW
 		.db  73h ; s
 		.db  38h ; 8
 		.db  4Fh ; O
@@ -1815,12 +1870,12 @@ unk_C2EA:	.db  86h ; †		; C5F4,	lookup for F7
 		.db 0D2h ; Ò
 		.db  00h
 		.db 0FFh
-		.db  1Eh		; DDB6,	2dlookup F0
+		.db  1Eh		; DDB6,	2dlookup RPM
 		.db 0FFh
 		.db  46h ; F
 		.db  9Ah ; š
 		.db 0FFh
-		.db  15h		; DC85,	2d lookup for F7
+		.db  15h		; DC85,	2d lookup for rawTHW
 		.db 0C0h ; À
 		.db  38h ; 8
 		.db  54h ; T
@@ -1831,7 +1886,7 @@ unk_C2EA:	.db  86h ; †		; C5F4,	lookup for F7
 		.db 0D2h ; Ò
 		.db  0Dh
 		.db 0FFh
-		.db  5Dh ; ]		; DCA6,	2d lookup for F7
+		.db  5Dh ; ]		; DCA6,	2d lookup for rawTHW
 		.db  52h ; R
 		.db  79h ; y
 		.db  43h ; C
@@ -1840,7 +1895,7 @@ unk_C2EA:	.db  86h ; †		; C5F4,	lookup for F7
 		.db 0E4h ; ä
 		.db  0Dh
 		.db 0FFh
-		.db  15h		; EA21,	F7
+		.db  15h		; EA21,	rawTHW
 		.db  2Ch ; ,
 		.db  79h ; y
 		.db  1Ch
@@ -1849,12 +1904,12 @@ unk_C2EA:	.db  86h ; †		; C5F4,	lookup for F7
 		.db 0E4h ; ä
 		.db  0Dh
 		.db 0FFh
-		.db  0Bh		; DDAF,	2d lookup for F7
+		.db  0Bh		; DDAF,	2d lookup for rawTHW
 		.db 0B0h ; °
 		.db 0EAh ; ê
 		.db  30h ; 0
 		.db 0FFh
-		.db  38h ; 8		; D95A,	2d lookup for F0
+		.db  38h ; 8		; D95A,	2d lookup for RPM, establishes limits for compLOAD to set flags_A2 bit6
 		.db 0F0h ; ğ
 		.db  38h ; 8
 		.db  6Ch ; l
@@ -1875,16 +1930,16 @@ unk_C2EA:	.db  86h ; †		; C5F4,	lookup for F7
 		.db  86h ; †
 		.db  31h ; 1
 		.db 0FFh
-		.db  24h ; $		; D9E3,	2d lookup for F7
+		.db  24h ; $		; D9E3,	2d lookup for rawTHW
 		.db  2Eh ; .
 		.db 0E4h ; ä
 		.db  18h
 		.db 0FFh
-		.dw 0708h		; word data for	DD63
+		.dw 0708h		; word data for	DD63, pulsewidth limitations
 		.dw 0708h
 		.dw 0FA0h
 		.dw 1130h
-		.db  32h ; 2		; E4B0,	F0
+		.db  32h ; 2		; E4B0,	RPM
 		.db  00h
 		.db  32h ; 2
 		.db  01h
@@ -1895,7 +1950,7 @@ unk_C2EA:	.db  86h ; †		; C5F4,	lookup for F7
 		.db  78h ; x
 		.db  14h
 		.db 0FFh
-		.db  01h		; Three	D table	RPM by word_f2,	row offset high
+		.db  01h		; Three	D table	RPM by compLoad, row offset high
 		.db  00h		; row offset low
 		.db  0Eh		; row maximum
 		.db  02h		; column offset	high
@@ -2202,12 +2257,12 @@ unk_C2EA:	.db  86h ; †		; C5F4,	lookup for F7
 		.db 0ABh ; «
 		.db 0BCh ; ¼
 		.db 0CDh ; Í
-		.db  18h		; E8BA,	F2
+		.db  18h		; E8BA,	compLOAD
 		.db  33h ; 3
 		.db  78h ; x
 		.db  00h
 		.db 0FFh
-		.db  86h ; †		; DF60,	2d lookup for F7
+		.db  86h ; †		; rawTHW
 		.db  10h
 		.db  86h ; †
 		.db  0Ah
@@ -2216,7 +2271,7 @@ unk_C2EA:	.db  86h ; †		; C5F4,	lookup for F7
 		.db 0DCh ; Ü
 		.db  05h
 		.db 0FFh
-		.db  24h ; $		; C4DA 2d table	for F7
+		.db  24h ; $		; C4DA 2d table	for rawTHW
 		.db  7Bh ; {
 		.db  6Bh ; k
 		.db  58h ; X
@@ -2230,7 +2285,7 @@ unk_C2EA:	.db  86h ; †		; C5F4,	lookup for F7
 		.db  80h ; €
 		.db  00h
 		.db 0FFh
-		.db  15h		; C4DF 2d table	for F7
+		.db  15h		; C4DF 2d table	for rawTHW
 		.db  7Bh ; {
 		.db  38h ; 8
 		.db  58h ; X
@@ -2239,14 +2294,14 @@ unk_C2EA:	.db  86h ; †		; C5F4,	lookup for F7
 		.db 0DCh ; Ü
 		.db  3Ah ; :
 		.db 0FFh
-		.db  86h ; †		; E0F6,	F7
+		.db  86h ; †		; E0F6,	rawTHW
 		.db 0A0h ;  
 		.db 0B3h ; ³
 		.db  90h ; 
 		.db 0DCh ; Ü
 		.db  64h ; d
 		.db 0FFh
-		.db  86h ; †		; E0FE,	F7
+		.db  86h ; †		; E0FE,	rawTHW
 		.db  78h ; x
 		.db 0B3h ; ³
 		.db  6Ch ; l
@@ -2265,7 +2320,7 @@ unk_C2EA:	.db  86h ; †		; C5F4,	lookup for F7
 		.db  00h
 		.db  16h
 		.db  06h
-		.db  14h		; E052,	2d lookup for F0
+		.db  14h		; E052,	2d lookup for RPM
 		.db  3Eh ; >
 		.db  3Ch ; <
 		.db  5Ch ; \
@@ -2409,7 +2464,7 @@ loc_C512:				; CODE XREF: sub_C505+9j
 		.db  02h		; data for f2b3
 		.db  04h
 		.db  06h
-		.db  03h
+		.db  03h		; 3d table, compLOAD by	RPM
 		.db  00h
 		.db  0Ch
 		.db  02h
@@ -2554,12 +2609,12 @@ loc_C512:				; CODE XREF: sub_C505+9j
 		.db 0E4h ; ä
 		.db 0A0h ;  
 		.db 0FFh
-		.db  00h		; D8B9 word_F2
+		.db  00h		; D8B9 compLOAD
 		.db  75h ; u
 		.db  50h ; P
 		.db  32h ; 2
 		.db 0FFh
-		.db  00h		; D8C1,	word_F2
+		.db  00h		; D8C1,	compLOAD
 		.db  53h ; S
 		.db  30h ; 0
 		.db  00h
@@ -2573,9 +2628,9 @@ calcInjPW:				; CODE XREF: __RESET+177p __RESET+851p
 		st	y, temp_53	; result of multiplication
 		ld	y, #0000h
 		cmp	#020, VTA_net
-		ble	loc_C5FA	; bounce if unk_6a is lower or equal to	20
+		ble	loc_C5FA	; bounce if VTA_net is lower or	equal to 20
 		ld	y, #0C2EAh
-		jsr	sub_C61C
+		jsr	sub_C61C	; enrichment for cold air and cold water
 
 loc_C5FA:				; CODE XREF: calcInjPW+Bj
 		mov	y, d		; MSW from multiplication is now in D, so table+5% of whatever was calculated before
@@ -2609,6 +2664,7 @@ sub_C619:				; CODE XREF: calcInjPWp sub_C634p
 
 ; ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ S U B	R O U T	I N E ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ
 
+; enrichment for cold air and cold water
 
 sub_C61C:				; CODE XREF: calcInjPW+10p
 		jsr	TwoD_rawTHW	; lookup Raw Water Temp, integer return	in Acca, fraction return in AccB
@@ -2666,7 +2722,7 @@ sub_C64D:				; CODE XREF: __RESET+5FAp __RESET+602p
 loc_C656:				; CODE XREF: sub_C64D+2j
 		cmpb	b, #08h
 		bne	loc_C687
-		ld	a, unk_178
+		ld	a, count_178	; tof increment	rate
 		cmp	a, #73h
 		bne	loc_C666
 		cmp	#0D2h, rawTHW	; Contains the NOT of CTS reading from ADC, sensor is tied to ground on	other side
@@ -2695,15 +2751,15 @@ loc_C67B:				; CODE XREF: sub_C64D+28j
 
 loc_C687:				; CODE XREF: sub_C64D+Bj
 		ld	b, y + 13h
-		ld	a, flags_A2	; contains bitflags, bit7 VTA_net related
-		and	a, #50h
+		ld	a, flags_A2	; bit7:	VTA_net	high, bit4: VTA_net high
+		and	a, #50h		; bit6 or bit4
 		bne	loc_C6B7
 		ld	a, y + 01h
 		cmp	a, #66h
 		bgt	loc_C69D
 		cmp	#94h, byte_6D	; signed change	in load	from average
 		bcc	loc_C6B7
-		tbbs	bit2, flags_47,	loc_C6B7
+		tbbs	bit2, flags_47,	loc_C6B7 ; bit4: high when hot (but how	hot?)
 
 loc_C69D:				; CODE XREF: sub_C64D+46j
 		push	a
@@ -2735,7 +2791,7 @@ loc_C6B7:				; CODE XREF: sub_C64D+7j
 		ld	a, y + 14h
 		and	a, #0FBh
 		st	a, y + 14h
-		tbbc	bit2, flags_47,	sub_C6E0
+		tbbc	bit2, flags_47,	sub_C6E0 ; bit4: high when hot (but how	hot?)
 		clrb	bit2, flags_47
 		jsr	sub_C6E0
 		ld	y, #0149h
@@ -2971,7 +3027,7 @@ loc_C81C:				; CODE XREF: sub_C64D+1C6j
 		ld	d, temp_51
 
 loc_C81E:				; CODE XREF: sub_C64D+1CDj
-		tbbs	bit4, flags_47,	loc_C84E
+		tbbs	bit4, flags_47,	loc_C84E ; bit4: high when hot (but how	hot?)
 		shr	d
 		mov	d, x
 
@@ -3053,7 +3109,7 @@ loc_C861:				; CODE XREF: sub_C64D+20Cj
 		ld	y, #01D4h
 
 loc_C891:				; CODE XREF: sub_C64D+23Ej
-		jsr	sub_C084	; increment B bytes of ram by 1	starting from Y
+		jsr	satcount	; increment B bytes of ram by 1	starting from Y, saturates at FF
 		ret
 ; END OF FUNCTION CHUNK	FOR sub_C64D
 
@@ -3202,7 +3258,7 @@ loc_C912:				; CODE XREF: sub_C907+7j
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_C918:				; CODE XREF: __RESET+FF7p
-		tbbs	bit7, flags_45,	loc_C952
+		tbbs	bit7, flags_45,	loc_C952 ; received from serial	port apparently
 		tbbc	bit3, flags_4B,	loc_C946
 		clrb	bit3, flags_4B
 		tbbs	bit6, flags_4D,	loc_C926
@@ -3214,15 +3270,15 @@ loc_C926:				; CODE XREF: ROM:C920j
 		and	a, #0EFh	; clear	bit 4 of unk_4e
 		and	b, #60h
 		st	d, flags_4E
-		ld	a, unk_146
-		ld	b, unk_162
+		ld	a, flags_146
+		ld	b, flags_162
 		and	a, #00h
 		and	b, #00h
-		st	a, unk_146
-		st	b, unk_162
-		ld	a, unk_7D
+		st	a, flags_146
+		st	b, flags_162
+		ld	a, flags_7D
 		and	a, #1Fh
-		st	a, unk_7D
+		st	a, flags_7D
 
 loc_C946:				; CODE XREF: ROM:C91Bj	ROM:C923j
 		ld	a, flags_4F
@@ -3233,12 +3289,12 @@ loc_C946:				; CODE XREF: ROM:C91Bj	ROM:C923j
 		st	a, flags_4D
 
 loc_C952:				; CODE XREF: ROM:loc_C918j
-		tbbs	bit0, flags_45,	loc_C959
+		tbbs	bit0, flags_45,	loc_C959 ; received from serial	port apparently
 		clrb	bit4, flags_4C
-		clr	unk_BE
+		clr	count_BE	; increments at	E478
 
 loc_C959:				; CODE XREF: ROM:loc_C952j
-		cmp	#1Fh, unk_BE
+		cmp	#1Fh, count_BE	; increments at	E478
 		bcs	loc_C96A
 		tbbc	bit4, flags_4B,	loc_C96A
 		ld	a, NEcounts
@@ -3249,15 +3305,15 @@ loc_C968:				; CODE XREF: ROM:C963j
 		setb	bit0, flags_4E
 
 loc_C96A:				; CODE XREF: ROM:C95Cj	ROM:C95Ej ...
-		ld	b, unk_7D
+		ld	b, flags_7D
 		tbbc	bit6, flags_49,	loc_C981 ; bits	1-3-4-5	are oxl1-oxr1-oxl2-oxr2
-		ld	#0FFh, unk_CA
-		ld	a, flags_A2	; contains bitflags, bit7 VTA_net related
-		and	a, #0FAh
-		st	a, flags_A2	; contains bitflags, bit7 VTA_net related
+		ld	#0FFh, count_CA	; incremented at E643
+		ld	a, flags_A2	; bit7:	VTA_net	high, bit4: VTA_net high
+		and	a, #0FAh	; clear	flags_A2 bits 0+2
+		st	a, flags_A2	; bit7:	VTA_net	high, bit4: VTA_net high
 		clr	a
-		st	a, unk_1C0
-		st	a, unk_1C1
+		st	a, count_1C0	; incremented at F580
+		st	a, count_1C1	; incremented at F580
 		bra	loc_C9C9
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
@@ -3265,7 +3321,7 @@ loc_C981:				; CODE XREF: ROM:C96Cj
 		ld	a, flags_50	; could	be bits	for 6336 output	chip
 		cmpb	a, #01h
 		bne	loc_C99B
-		ld	a, unk_1AA
+		ld	a, unk_1AA	; flags_49 bit0	related
 		cmpb	a, #01h
 		bne	loc_C992
 		and	b, #0FEh
@@ -3273,23 +3329,23 @@ loc_C981:				; CODE XREF: ROM:C96Cj
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_C992:				; CODE XREF: ROM:C98Cj
-		ld	a, unk_1C0
+		ld	a, count_1C0	; incremented at F580
 		cmp	a, #3Dh
 		ble	loc_C9A5
 		or	b, #01h
 
 loc_C99B:				; CODE XREF: ROM:C985j	ROM:C990j
-		ld	a, flags_A2	; contains bitflags, bit7 VTA_net related
-		or	a, #01h
-		st	a, flags_A2	; contains bitflags, bit7 VTA_net related
+		ld	a, flags_A2	; bit7:	VTA_net	high, bit4: VTA_net high
+		or	a, #01h		; set bit1 of flags_A2
+		st	a, flags_A2	; bit7:	VTA_net	high, bit4: VTA_net high
 		clr	a
-		st	a, unk_1C0
+		st	a, count_1C0	; incremented at F580
 
 loc_C9A5:				; CODE XREF: ROM:C997j
 		ld	a, flags_50	; could	be bits	for 6336 output	chip
 		cmpb	a, #01h
 		bne	loc_C9BF
-		ld	a, unk_1AA
+		ld	a, unk_1AA	; flags_49 bit0	related
 		cmpb	a, #04h
 		bne	loc_C9B6
 		and	b, #0FBh
@@ -3297,29 +3353,29 @@ loc_C9A5:				; CODE XREF: ROM:C997j
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_C9B6:				; CODE XREF: ROM:C9B0j
-		ld	a, unk_1C1
+		ld	a, count_1C1	; incremented at F580
 		cmp	a, #3Dh
 		ble	loc_C9C9
 		or	b, #04h
 
 loc_C9BF:				; CODE XREF: ROM:C9A9j	ROM:C9B4j
-		ld	a, flags_A2	; contains bitflags, bit7 VTA_net related
-		or	a, #04h
-		st	a, flags_A2	; contains bitflags, bit7 VTA_net related
+		ld	a, flags_A2	; bit7:	VTA_net	high, bit4: VTA_net high
+		or	a, #04h		; set bit3 flags_A2
+		st	a, flags_A2	; bit7:	VTA_net	high, bit4: VTA_net high
 		clr	a
-		st	a, unk_1C1
+		st	a, count_1C1	; incremented at F580
 
 loc_C9C9:				; CODE XREF: ROM:C97Fj	ROM:C9BBj
-		st	b, unk_7D
-		ld	b, unk_7D
+		st	b, flags_7D
+		ld	b, flags_7D
 		tbbc	bit6, flags_49,	loc_C9E2 ; bits	1-3-4-5	are oxl1-oxr1-oxl2-oxr2
-		ld	#0FFh, unk_CB
-		ld	a, flags_A2	; contains bitflags, bit7 VTA_net related
-		and	a, #0F5h
-		st	a, flags_A2	; contains bitflags, bit7 VTA_net related
+		ld	#0FFh, count_CB	; incremented at E643
+		ld	a, flags_A2	; bit7:	VTA_net	high, bit4: VTA_net high
+		and	a, #0F5h	; clear	bits 3+1 of flags_A2
+		st	a, flags_A2	; bit7:	VTA_net	high, bit4: VTA_net high
 		clr	a
-		st	a, unk_1C2
-		st	a, unk_1C3
+		st	a, count_1C2	; incremented at F580
+		st	a, count_1C3	; incremented at F580
 		bra	loc_CA2A
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
@@ -3327,7 +3383,7 @@ loc_C9E2:				; CODE XREF: ROM:C9CDj
 		ld	a, flags_50	; could	be bits	for 6336 output	chip
 		cmpb	a, #02h
 		bne	loc_C9FC
-		ld	a, unk_1AA
+		ld	a, unk_1AA	; flags_49 bit0	related
 		cmpb	a, #02h
 		bne	loc_C9F3
 		and	b, #0FDh
@@ -3335,23 +3391,23 @@ loc_C9E2:				; CODE XREF: ROM:C9CDj
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_C9F3:				; CODE XREF: ROM:C9EDj
-		ld	a, unk_1C2
+		ld	a, count_1C2	; incremented at F580
 		cmp	a, #3Dh
 		ble	loc_CA06
 		or	b, #02h
 
 loc_C9FC:				; CODE XREF: ROM:C9E6j	ROM:C9F1j
-		ld	a, flags_A2	; contains bitflags, bit7 VTA_net related
-		or	a, #02h
-		st	a, flags_A2	; contains bitflags, bit7 VTA_net related
+		ld	a, flags_A2	; bit7:	VTA_net	high, bit4: VTA_net high
+		or	a, #02h		; set bit1 of flags_A2
+		st	a, flags_A2	; bit7:	VTA_net	high, bit4: VTA_net high
 		clr	a
-		st	a, unk_1C2
+		st	a, count_1C2	; incremented at F580
 
 loc_CA06:				; CODE XREF: ROM:C9F8j
 		ld	a, flags_50	; could	be bits	for 6336 output	chip
 		cmpb	a, #02h
 		bne	loc_CA20
-		ld	a, unk_1AA
+		ld	a, unk_1AA	; flags_49 bit0	related
 		cmpb	a, #08h
 		bne	loc_CA17
 		and	b, #0F7h
@@ -3359,25 +3415,25 @@ loc_CA06:				; CODE XREF: ROM:C9F8j
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_CA17:				; CODE XREF: ROM:CA11j
-		ld	a, unk_1C3
+		ld	a, count_1C3	; incremented at F580
 		cmp	a, #3Dh
 		ble	loc_CA2A
 		or	b, #08h
 
 loc_CA20:				; CODE XREF: ROM:CA0Aj	ROM:CA15j
-		ld	a, flags_A2	; contains bitflags, bit7 VTA_net related
-		or	a, #08h
-		st	a, flags_A2	; contains bitflags, bit7 VTA_net related
+		ld	a, flags_A2	; bit7:	VTA_net	high, bit4: VTA_net high
+		or	a, #08h		; set bit3 of flags_A2
+		st	a, flags_A2	; bit7:	VTA_net	high, bit4: VTA_net high
 		clr	a
-		st	a, unk_1C3
+		st	a, count_1C3	; incremented at F580
 
 loc_CA2A:				; CODE XREF: ROM:C9E0j	ROM:CA1Cj
-		st	b, unk_7D
-		ld	a, unk_1D3
+		st	b, flags_7D
+		ld	a, count_1D3	; tof increment	rate
 		cmp	a, #4Ch
 		ble	loc_CA6D
 		clr	b
-		st	b, unk_1D3
+		st	b, count_1D3	; tof increment	rate
 		ld	a, word_8A
 		or	a, word_8C
 		and	a, #7Ch
@@ -3385,17 +3441,17 @@ loc_CA2A:				; CODE XREF: ROM:C9E0j	ROM:CA1Cj
 		ld	a, unk_142
 		cmpb	a, #40h
 		beq	loc_CA4E
-		ld	a, unk_146
+		ld	a, flags_146
 		or	a, #50h
-		st	a, unk_146
+		st	a, flags_146
 
 loc_CA4E:				; CODE XREF: ROM:CA44j
 		ld	a, unk_15E
 		cmpb	a, #40h
 		beq	loc_CA5D
-		ld	a, unk_162
+		ld	a, flags_162
 		or	a, #50h
-		st	a, unk_162
+		st	a, flags_162
 
 loc_CA5D:				; CODE XREF: ROM:CA3Dj	ROM:CA53j
 		ld	a, unk_142
@@ -3425,7 +3481,7 @@ loc_CA7F:
 		or	a, word_92
 		and	a, #01h
 		bne	loc_CAC9
-		ld	a, unk_7D
+		ld	a, flags_7D
 		and	a, #1Fh
 		bne	loc_CAC9
 		ld	a, unk_140
@@ -3480,7 +3536,7 @@ loc_CAF1:				; CODE XREF: ROM:CADDj
 		and	a, unk_15D
 		and	a, #04h
 		beq	loc_CB03
-		cmp	#18h, compLOAD	; air temp compensated Load
+		cmp	#18h, compLOAD	; air temp and Baro compensated	Load (likely in	units of mass)
 		bcs	loc_CB03
 		tbbs	bit5, flags_4B,	loc_CB1C
 
@@ -3606,23 +3662,23 @@ loc_CBB4:				; CODE XREF: ROM:CBACj
 		ld	a, unk_142
 		and	a, #80h
 		bne	loc_CBEB
-		ld	a, unk_146
+		ld	a, flags_146
 		or	a, #28h
-		st	a, unk_146
-		ld	a, unk_162
+		st	a, flags_146
+		ld	a, flags_162
 		or	a, #28h
-		st	a, unk_162
+		st	a, flags_162
 		bra	loc_CC1F
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_CBD7:				; CODE XREF: ROM:CBBBj
 		setb	bit6, flags_4D
-		ld	a, unk_147
+		ld	a, flags_147
 		or	a, #28h
-		st	a, unk_147
-		ld	a, unk_163
+		st	a, flags_147
+		ld	a, flags_163
 		or	a, #28h
-		st	a, unk_163
+		st	a, flags_163
 		bra	loc_CBF5
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
@@ -3634,10 +3690,10 @@ loc_CBEB:				; CODE XREF: ROM:CBB9j	ROM:CBC3j
 
 loc_CBF5:				; CODE XREF: ROM:CBE9j
 		ld	a, temp_51
-		ld	b, unk_146
+		ld	b, flags_146
 		cmp	#00h, temp_53
 		beq	loc_CC02
-		ld	b, unk_162
+		ld	b, flags_162
 
 loc_CC02:				; CODE XREF: ROM:CBFDj
 		cmp	a, #8Dh
@@ -3657,12 +3713,12 @@ loc_CC10:				; CODE XREF: ROM:CC04j
 loc_CC12:				; CODE XREF: ROM:CC0Cj
 		cmp	#00h, temp_53
 		bne	loc_CC1C
-		st	b, unk_146
+		st	b, flags_146
 		bra	loc_CC1F
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_CC1C:				; CODE XREF: ROM:CC15j
-		st	b, unk_162
+		st	b, flags_162
 
 loc_CC1F:				; CODE XREF: ROM:CB19j	ROM:CB98j ...
 		clr	a
@@ -3674,16 +3730,16 @@ loc_CC1F:				; CODE XREF: ROM:CB19j	ROM:CB98j ...
 		bcs	loc_CC3A
 
 loc_CC30:				; CODE XREF: ROM:CC20j	ROM:CC23j ...
-		st	a, unk_C7
-		st	a, unk_1D0
-		st	a, unk_1D4
+		st	a, count_C7	; increments at	E478
+		st	a, count_1D0
+		st	a, count_1D4
 		bra	loc_CC53
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_CC3A:				; CODE XREF: ROM:CC2Ej
-		cmp	#3Eh, unk_C7
+		cmp	#3Eh, count_C7	; increments at	E478
 		bcs	loc_CC53
-		clr	unk_C7
+		clr	count_C7	; increments at	E478
 		ld	x, #01D0h
 		ld	y, #012Dh
 		jsr	sub_D159
@@ -3702,8 +3758,8 @@ loc_CC53:				; CODE XREF: ROM:CC38j	ROM:CC3Dj
 		ld	d, word_170	; inversely temp dependant, additional math elsewhere
 		cmp	d, #0CCDh
 		bcc	loc_CC7D
-		ld	a, flags_A2	; contains bitflags, bit7 VTA_net related
-		and	a, #50h
+		ld	a, flags_A2	; bit7:	VTA_net	high, bit4: VTA_net high
+		and	a, #50h		; test flags_A2	bit4 bit6
 		bne	loc_CC7D
 		ld	a, flags_44	; bit3:	rev limiter, bits 543210 will all cause	a branch past doinjectors
 		and	a, #3Fh
@@ -3712,50 +3768,50 @@ loc_CC53:				; CODE XREF: ROM:CC38j	ROM:CC3Dj
 		tbbc	bit3, flags_4E,	loc_CC83
 
 loc_CC7D:				; CODE XREF: ROM:CC56j	ROM:CC5Cj ...
-		clr	unk_D0
-		clr	unk_D1
+		clr	count_D0	; incremented at E7A9
+		clr	count_D1	; incremented at E7A9
 		bra	loc_CCBD
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_CC83:				; CODE XREF: ROM:CC7Aj
 		tbbs	bit0, flags_49,	loc_CCA0 ; bits	1-3-4-5	are oxl1-oxr1-oxl2-oxr2
-		cmp	#2Dh, unk_D0
+		cmp	#2Dh, count_D0	; incremented at E7A9
 		bcs	loc_CCA0
-		ld	a, unk_146
+		ld	a, flags_146
 		or	a, #04h
-		st	a, unk_146
+		st	a, flags_146
 		tbbc	bit3, flags_4B,	loc_CCA0
 		setb	bit6, flags_4D
-		ld	a, unk_147
+		ld	a, flags_147
 		or	a, #04h
-		st	a, unk_147
+		st	a, flags_147
 
 loc_CCA0:				; CODE XREF: ROM:loc_CC83j ROM:CC89j ...
 		tbbs	bit2, flags_49,	loc_CCBD ; bits	1-3-4-5	are oxl1-oxr1-oxl2-oxr2
-		cmp	#2Dh, unk_D1
+		cmp	#2Dh, count_D1	; incremented at E7A9
 		bcs	loc_CCBD
-		ld	a, unk_162
+		ld	a, flags_162
 		or	a, #04h
-		st	a, unk_162
+		st	a, flags_162
 		tbbc	bit3, flags_4B,	loc_CCBD
 		setb	bit6, flags_4D
-		ld	a, unk_163
+		ld	a, flags_163
 		or	a, #04h
-		st	a, unk_163
+		st	a, flags_163
 
 loc_CCBD:				; CODE XREF: ROM:CC81j	ROM:loc_CCA0j ...
 		tbbc	bit0, flags_49,	loc_CCCB ; bits	1-3-4-5	are oxl1-oxr1-oxl2-oxr2
 		ld	x, #0D252h
 		ld	y, #012Dh
 		jsr	sub_D222
-		clr	unk_D0
+		clr	count_D0	; incremented at E7A9
 
 loc_CCCB:				; CODE XREF: ROM:loc_CCBDj
 		tbbc	bit2, flags_49,	loc_CCD9 ; bits	1-3-4-5	are oxl1-oxr1-oxl2-oxr2
 		ld	x, #0D252h
 		ld	y, #0149h
 		jsr	sub_D222
-		clr	unk_D1
+		clr	count_D1	; incremented at E7A9
 
 loc_CCD9:				; CODE XREF: ROM:loc_CCCBj
 		ld	a, word_86
@@ -3773,80 +3829,80 @@ loc_CCD9:				; CODE XREF: ROM:loc_CCCBj
 		ld	a, word_8E
 		and	a, #10h
 		bne	loc_CD09
-		cmp	#24h, compLOAD	; air temp compensated Load
-		bcs	loc_CD09
+		cmp	#036, compLOAD	; air temp and Baro compensated	Load (likely in	units of mass)
+		bcs	loc_CD09	; bounce if low	load
 		tbbc	bit2, flags_4B,	loc_CD09
 		cmp	#030, RPM	; 1500RPM
-		bcs	loc_CD09
+		bcs	loc_CD09	; bounce if low	rpm
 		cmp	#64h, unk_5E	; could	be last	unk_100, or 0
 		bcs	loc_CD0F
 
 loc_CD09:				; CODE XREF: ROM:CCDDj	ROM:CCE3j ...
 		clr	a
-		st	a, unk_1BC
-		bra	loc_CD6F
+		st	a, count_1BC	; clear
+		bra	loc_CD6F	; clear	and store
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_CD0F:				; CODE XREF: ROM:CD07j
 		tbbc	bit1, flags_49,	loc_CD3D ; bits	1-3-4-5	are oxl1-oxr1-oxl2-oxr2
-		ld	d, unk_143
-		cmp	b, #03h
+		ld	d, unk_143	; if carry is set OXL1 voltage was between .35 and .7
+		cmp	b, #003
 		ble	loc_CD3D
-		cmp	b, #9Ah
+		cmp	b, #154
 		bcc	loc_CD3D
-		cmp	a, #9Ah
+		cmp	a, #154
 		bcc	loc_CD3D
-		ld	a, unk_1BC
-		cmp	a, #1Eh
+		ld	a, count_1BC
+		cmp	a, #030
 		bcs	loc_CD3E
-		ld	a, unk_146
+		ld	a, flags_146
 		or	a, #01h
-		st	a, unk_146
+		st	a, flags_146
 		tbbc	bit3, flags_4B,	loc_CD3D
 		setb	bit6, flags_4D
-		ld	a, unk_147
+		ld	a, flags_147
 		or	a, #01h
-		st	a, unk_147
+		st	a, flags_147
 
 loc_CD3D:				; CODE XREF: ROM:loc_CD0Fj ROM:CD17j ...
 		clr	a
 
 loc_CD3E:				; CODE XREF: ROM:CD26j
-		st	a, unk_1BC
-		tbbc	bit3, flags_49,	loc_CD6F ; bits	1-3-4-5	are oxl1-oxr1-oxl2-oxr2
-		ld	d, unk_15F
-		cmp	b, #03h
-		ble	loc_CD6F
-		cmp	b, #9Ah
-		bcc	loc_CD6F
-		cmp	a, #9Ah
-		bcc	loc_CD6F
-		ld	a, unk_1BE
-		cmp	a, #1Eh
-		bcs	loc_CD70
-		ld	a, unk_162
+		st	a, count_1BC
+		tbbc	bit3, flags_49,	loc_CD6F ; clear and store
+		ld	d, unk_15F	; if carry is set OXR1 voltage was between .35 and .7
+		cmp	b, #003
+		ble	loc_CD6F	; clear	and store
+		cmp	b, #154
+		bcc	loc_CD6F	; clear	and store
+		cmp	a, #154
+		bcc	loc_CD6F	; clear	and store
+		ld	a, count_1BE
+		cmp	a, #030
+		bcs	loc_CD70	; store
+		ld	a, flags_162
 		or	a, #01h
-		st	a, unk_162
-		tbbc	bit3, flags_4B,	loc_CD6F
+		st	a, flags_162
+		tbbc	bit3, flags_4B,	loc_CD6F ; clear and store
 		setb	bit6, flags_4D
-		ld	a, unk_163
+		ld	a, flags_163
 		or	a, #01h
-		st	a, unk_163
+		st	a, flags_163
 
 loc_CD6F:				; CODE XREF: ROM:CD0Dj	ROM:CD41j ...
-		clr	a
+		clr	a		; clear	and store
 
 loc_CD70:				; CODE XREF: ROM:CD58j
-		st	a, unk_1BE
+		st	a, count_1BE	; store
 		clrb	bit0, flags_40
-		cmp	#99h, unk_C4
+		cmp	#153, count_C4	; increments at	E478
 		bcs	loc_CD7E
-		clr	unk_C4
+		clr	count_C4	; increments at	E478
 		setb	bit0, flags_40
 
 loc_CD7E:				; CODE XREF: ROM:CD78j
 		ld	b, unk_1BD
-		ld	x, #0D1EBh
+		ld	x, #0D1EBh	; bitmasks 0..3
 		ld	y, #012Dh
 		jsr	sub_D1BC
 		st	b, unk_1BD
@@ -3868,8 +3924,8 @@ loc_CD7E:				; CODE XREF: ROM:CD78j
 		ld	b, word_8E
 		and	b, #1Fh
 		bne	loc_CDC5
-		ld	b, unk_147
-		or	b, unk_163
+		ld	b, flags_147
+		or	b, flags_163
 		and	b, #7Dh
 		bne	loc_CDC5
 		cmp	#78h, unk_7E
@@ -3878,23 +3934,23 @@ loc_CD7E:				; CODE XREF: ROM:CD78j
 loc_CDC5:				; CODE XREF: ROM:CDA0j	ROM:CDA6j ...
 		clr	a
 		clr	b
-		st	d, unk_C2
+		st	d, count_C2	; increments at	E478
 		bra	loc_CDE9
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_CDCB:				; CODE XREF: ROM:CDC3j
-		ld	a, unk_C2
+		ld	a, count_C2	; increments at	E478
 		ld	b, unk_140
 		ld	y, #012Dh
 		clrb	bit0, flags_40
 		jsr	sub_D1EF
-		st	a, unk_C2
-		ld	a, unk_C3
+		st	a, count_C2	; increments at	E478
+		ld	a, count_C3	; increments at	E478
 		ld	b, unk_15C
 		ld	y, #0149h
 		setb	bit0, flags_40
 		jsr	sub_D1EF
-		st	a, unk_C3
+		st	a, count_C3	; increments at	E478
 
 loc_CDE9:				; CODE XREF: ROM:CDC9j
 		ld	a, unk_140
@@ -3915,9 +3971,9 @@ loc_CDF9:				; CODE XREF: ROM:CDEEj
 loc_CE09:				; CODE XREF: ROM:CDFEj
 		ld	b, unk_5E	; could	be last	unk_100, or 0
 		beq	loc_CE1F	; 2800RPM
-		ld	a, unk_7D
+		ld	a, flags_7D
 		and	a, #0EFh
-		st	a, unk_7D
+		st	a, flags_7D
 
 loc_CE13:				; CODE XREF: ROM:CE22j	ROM:CE24j ...
 		clr	a
@@ -3931,7 +3987,7 @@ loc_CE13:				; CODE XREF: ROM:CE22j	ROM:CE24j ...
 loc_CE1F:				; CODE XREF: ROM:CE0Bj
 		cmp	#056, RPM	; 2800RPM
 		bcs	loc_CE13
-		tbbs	bit5, flags_45,	loc_CE13
+		tbbs	bit5, flags_45,	loc_CE13 ; received from serial	port apparently
 		ld	a, unk_109
 		and	a, #02h
 		bne	loc_CE13
@@ -3943,9 +3999,9 @@ loc_CE1F:				; CODE XREF: ROM:CE0Bj
 loc_CE37:				; CODE XREF: ROM:CE32j
 		cmp	a, #7Ah
 		bcs	loc_CE41
-		ld	a, unk_7D
+		ld	a, flags_7D
 		or	a, #10h
-		st	a, unk_7D
+		st	a, flags_7D
 
 loc_CE41:				; CODE XREF: ROM:CE19j	ROM:CE1Dj ...
 		ld	a, unk_1BB
@@ -3956,8 +4012,8 @@ loc_CE41:				; CODE XREF: ROM:CE19j	ROM:CE1Dj ...
 loc_CE48:				; CODE XREF: ROM:CE45j
 		st	a, unk_1BB
 		tbbc	bit3, flags_4B,	loc_CE6C
-		tbbc	bit6, flags_45,	loc_CE6C
-		tbbs	bit0, flags_45,	loc_CE6C
+		tbbc	bit6, flags_45,	loc_CE6C ; received from serial	port apparently
+		tbbs	bit0, flags_45,	loc_CE6C ; received from serial	port apparently
 		tbbs	bit7, flags_4C,	loc_CE6C ; bit 7 demands a sampling of the oxygen sensors
 		cmp	#00h, NEcounts
 		beq	loc_CE6C
@@ -3966,8 +4022,8 @@ loc_CE48:				; CODE XREF: ROM:CE45j
 		tbbc	bit0, flags_41,	loc_CE69
 
 loc_CE63:				; CODE XREF: ROM:CE5Ej
-		tbbs	bit1, flags_45,	loc_CE69
-		tbbs	bit5, flags_45,	loc_CE6C
+		tbbs	bit1, flags_45,	loc_CE69 ; received from serial	port apparently
+		tbbs	bit5, flags_45,	loc_CE6C ; received from serial	port apparently
 
 loc_CE69:				; CODE XREF: ROM:CE60j	ROM:loc_CE63j
 		setb	bit5, flags_4D
@@ -3977,7 +4033,7 @@ loc_CE69:				; CODE XREF: ROM:CE60j	ROM:loc_CE63j
 
 loc_CE6C:				; CODE XREF: ROM:CE4Bj	ROM:CE4Ej ...
 		clrb	bit5, flags_4D
-		tbbs	bit0, flags_45,	loc_CE89
+		tbbs	bit0, flags_45,	loc_CE89 ; received from serial	port apparently
 		ld	a, unk_1C4
 		ld	b, unk_140
 		cmpb	b, #01h
@@ -3998,12 +4054,12 @@ loc_CE89:				; CODE XREF: ROM:CE6Ej
 		push	a
 		ld	d, flags_4E
 		tbbc	bit5, RAMST, loc_CEA7 ;	Built-in RAM status
-		cmp	#7Ah, unk_AE
+		cmp	#7Ah, count_AE	; incremented at F47D
 		ble	loc_CEA7
 		tbbc	bit7, RAMST, loc_CEA7 ;	Built-in RAM status
-		cmp	#31h, unk_AF
+		cmp	#31h, count_AF	; incremented at F47D
 		ble	loc_CEA7
-		cmp	#7Ah, unk_AD	; cleared when below 8V	input
+		cmp	#7Ah, count_AD	; cleared when below 8V	input, incremented at F47D
 		bgt	loc_CEB8
 		and	a, #0Fh
 		bra	loc_CEC3
@@ -4022,7 +4078,7 @@ loc_CEA7:				; CODE XREF: ROM:CE8Ej	ROM:CE94j ...
 
 loc_CEB8:				; CODE XREF: ROM:CEA1j
 		push	a
-		ld	a, unk_1BA
+		ld	a, count_1BA	; incremented at F49C
 		cmp	a, #7Ah
 		pull	a
 		bgt	loc_CEDA
@@ -4032,9 +4088,9 @@ loc_CEC3:				; CODE XREF: ROM:CEA5j	ROM:CEB6j
 		push	a
 		clr	a
 		clr	b
-		st	a, unk_146
-		st	a, unk_162
-		st	a, unk_7D
+		st	a, flags_146
+		st	a, flags_162
+		st	a, flags_7D
 		pull	a
 		st	d, flags_4E
 		mov	s, x
@@ -4045,12 +4101,12 @@ loc_CEC3:				; CODE XREF: ROM:CEA5j	ROM:CEB6j
 
 loc_CEDA:				; CODE XREF: ROM:CEBFj
 		st	d, temp_52
-		ld	a, unk_146
-		ld	b, unk_162
+		ld	a, flags_146
+		ld	b, flags_162
 		st	a, temp_54
-		st	b, unk_55
-		ld	a, unk_7D
-		st	a, unk_56
+		st	b, temp_55
+		ld	a, flags_7D
+		st	a, temp_56
 		pull	a
 		st	a, temp_51
 		cmpb	a, #40h
@@ -4058,8 +4114,8 @@ loc_CEDA:				; CODE XREF: ROM:CEBFj
 		setb	bit7, flags_4D
 
 loc_CEF3:				; CODE XREF: ROM:CEEFj
-		ld	b, unk_55
-		and	b, unk_163
+		ld	b, temp_55
+		and	b, flags_163
 		and	b, #0FFh
 		st	b, unk_57
 		ld	x, #008Ch
@@ -4068,7 +4124,7 @@ loc_CEF3:				; CODE XREF: ROM:CEEFj
 		ld	x, #0092h
 		bsr	sub_CF4C
 		ld	b, temp_54
-		and	b, unk_147
+		and	b, flags_147
 		and	b, #0FFh
 		st	b, unk_57
 		ld	x, #008Ah
@@ -4084,7 +4140,7 @@ loc_CEF3:				; CODE XREF: ROM:CEEFj
 		and	b, #0FFh
 		ld	x, #0088h
 		bsr	sub_CF4C
-		ld	b, unk_56
+		ld	b, temp_56
 		and	b, #1Fh
 		ld	x, #008Eh
 		bsr	sub_CF4C
@@ -4092,7 +4148,7 @@ loc_CEF3:				; CODE XREF: ROM:CEEFj
 		and	b, #0FFh
 		ld	x, #0094h
 		bsr	sub_CF4C
-		ld	b, unk_55
+		ld	b, temp_55
 		and	b, #0FFh
 		ld	x, #0096h
 		bsr	sub_CF4C
@@ -4133,7 +4189,7 @@ loc_CF65:				; CODE XREF: ROM:CF61j
 		st	b, unk_1C6
 		ld	x, #0D2ABh
 		ld	y, #0D2ABh
-		tbbc	bit6, flags_45,	loc_CF96
+		tbbc	bit6, flags_45,	loc_CF96 ; received from serial	port apparently
 		tbbc	bit0, flags_41,	loc_CF88
 		ld	b, unk_1C6
 		bmi	loc_CFBE
@@ -4193,7 +4249,7 @@ loc_CFBE:				; CODE XREF: ROM:CF77j	ROM:CF7Ej ...
 		ld	a, y + 05h
 		st	a, unk_161
 		clr	b
-		cmp	#31h, unk_AF
+		cmp	#31h, count_AF	; incremented at F47D
 		bcc	loc_CFD1
 		jmp	loc_D0A0
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
@@ -4204,7 +4260,7 @@ loc_CFD1:				; CODE XREF: ROM:CFCCj
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_CFD7:				; CODE XREF: ROM:loc_CFD1j
-		tbbs	bit6, flags_45,	loc_CFDD
+		tbbs	bit6, flags_45,	loc_CFDD ; received from serial	port apparently
 		tbbc	bit0, flags_4B,	loc_D046
 
 loc_CFDD:				; CODE XREF: ROM:loc_CFD7j
@@ -4257,7 +4313,7 @@ loc_D01A:				; CODE XREF: ROM:loc_D015j
 		ld	a, unk_71
 		bne	loc_D040
 		st	a, unk_70
-		tbbc	bit6, flags_45,	loc_D046
+		tbbc	bit6, flags_45,	loc_D046 ; received from serial	port apparently
 		setb	bit0, flags_4B
 		ld	a, unk_72
 		bmi	loc_D030
@@ -4335,7 +4391,7 @@ loc_D06E:				; CODE XREF: ROM:loc_D066j
 		ld	a, temp_53
 		and	a, #6Fh
 		bne	loc_D0A0
-		ld	a, unk_56
+		ld	a, temp_56
 		and	a, #0Fh
 		bne	loc_D0A0
 		ld	a, word_90
@@ -4542,7 +4598,7 @@ locret_D158:				; CODE XREF: ROM:D0B0j
 
 sub_D159:				; CODE XREF: ROM:CC47p	ROM:CC50p
 		ld	d, x + 00h
-		cmp	a, #28h
+		cmp	a, #040
 		bcs	loc_D192
 		cmp	b, #0FFh
 		beq	loc_D164
@@ -4629,11 +4685,11 @@ sub_D1BC:				; CODE XREF: ROM:CD87p	ROM:CD96p
 		beq	loc_D1E9
 		tbbs	bit0, flags_40,	loc_D1DF
 		ld	a, flags_49	; bits 1-3-4-5 are oxl1-oxr1-oxl2-oxr2
-		cmpb	a, x + 01h
+		cmpb	a, x + 01h	; check	high bit
 		bne	locret_D1D1
-		cmpb	a, x + 00h
+		cmpb	a, x + 00h	; check	low bit
 		bne	loc_D1D2
-		or	b, #01h
+		or	b, #01h		; set b	lsb
 
 locret_D1D1:				; CODE XREF: sub_D1BC+Dj
 		ret
@@ -4642,7 +4698,7 @@ locret_D1D1:				; CODE XREF: sub_D1BC+Dj
 loc_D1D2:				; CODE XREF: sub_D1BC+11j
 		cmpb	b, #01h
 		beq	locret_D1DE
-		and	b, #0FEh
+		and	b, #0FEh	; clear	b lsb
 		add	b, #08h
 		bcc	locret_D1DE
 		or	b, #0F8h
@@ -4654,7 +4710,7 @@ locret_D1DE:				; CODE XREF: sub_D1BC+18j sub_D1BC+1Ej
 loc_D1DF:				; CODE XREF: sub_D1BC+6j
 		cmp	b, #20h
 		bcs	loc_D1E9
-		ld	x, #0D250h
+		ld	x, #0D250h	; negative masks for bits 0..3
 		jsr	sub_D222
 
 loc_D1E9:				; CODE XREF: sub_D1BC+4j sub_D1BC+25j
@@ -4709,12 +4765,12 @@ locret_D221:				; CODE XREF: sub_D1EF+1Ej
 sub_D222:				; CODE XREF: ROM:CB80p	ROM:CB89p ...
 		ld	a, y + 19h
 		and	a, x + 00h
-		st	a, y + 19h
-		ld	a, y + 1Ah
+		st	a, y + 19h	; offset 25
+		ld	a, y + 1Ah	; offset 26
 		and	a, x + 00h
 		st	a, y + 1Ah
 		ld	a, x + 00h
-		st	a, unk_56
+		st	a, temp_56
 		ld	x, #0090h
 		cmp	y, #012Dh
 		beq	loc_D23D
@@ -4722,14 +4778,14 @@ sub_D222:				; CODE XREF: ROM:CB80p	ROM:CB89p ...
 
 loc_D23D:				; CODE XREF: sub_D222+16j
 		ld	b, x + 00h
-		and	b, unk_56
+		and	b, temp_56
 		jsr	sub_CF4E
 		inc	x
 		inc	x
 		inc	x
 		inc	x
 		ld	b, x + 00h
-		and	b, unk_56
+		and	b, temp_56
 		jsr	sub_CF4E
 		ret
 ; End of function sub_D222
@@ -4747,7 +4803,7 @@ loc_D23D:				; CODE XREF: sub_D222+16j
 
 
 sub_D257:				; CODE XREF: __RESET+1738p
-		tbbs	bit7, flags_45,	loc_D25F
+		tbbs	bit7, flags_45,	loc_D25F ; received from serial	port apparently
 		ld	#222, unk_7C	; counter
 		bra	loc_D289
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
@@ -4860,37 +4916,37 @@ loc_D2C8:				; CODE XREF: sub_D2B9+B5j
 		ld	a, #0Eh
 		st	a, DOUT		; DOUT Data Register
 		clrb	bit3, IRQLL
-		ld	#08h, IMASKL	; Interrupt Request Mask LSB
+		ld	#08h, IMASKL	; enable only SIN0
 		ld	y, #0F765h
 
 loc_D2D6:				; CODE XREF: sub_D2B9+2Bj
 		ld	a, y + 00h
-		jsr	sub_D45F	; blast	out a byte, set	unk_74,	read SIDR and SSD for 300 iterations
+		jsr	sub_D45F	; blast	out a byte, read SIDR and SSD for 300 iterations
 		cmp	y, #0F774h
-		bcc	loc_D2E6
+		bcc	loc_D2E6	; end adc burst
 		inc	y
 		jsr	sub_D3F3
 		bra	loc_D2D6
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_D2E6:				; CODE XREF: sub_D2B9+25j
-		ld	a, unk_1AA
+		ld	a, unk_1AA	; flags_49 bit0	related
 		cmpb	a, #40h
-		beq	loc_D2F1
-		clrb	bit2, PORTD_ASRIN
+		beq	loc_D2F1	; fuel pressure	down
+		clrb	bit2, PORTD_ASRIN ; fuel pressure up
 		bra	loc_D2F3
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_D2F1:				; CODE XREF: sub_D2B9+32j
-		setb	bit2, PORTD_ASRIN
+		setb	bit2, PORTD_ASRIN ; fuel pressure down
 
 loc_D2F3:				; CODE XREF: sub_D2B9+36j
-		tbbc	bit7, flags_45,	loc_D2F9
+		tbbc	bit7, flags_45,	loc_D2F9 ; received from serial	port apparently
 		jmp	loc_D371
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_D2F9:				; CODE XREF: sub_D2B9:loc_D2F3j
-		tbbs	bit2, flags_45,	loc_D347
+		tbbs	bit2, flags_45,	loc_D347 ; received from serial	port apparently
 		ld	a, unk_12A	; VTA2-offset (unk_129)
 		cmp	#80h, THG	; THG lookup table output from exhaust gas temp	sensor ADC reading
 		bcc	ISC1
@@ -4911,7 +4967,7 @@ loc_D315:				; CODE XREF: sub_D2B9+89j
 		shl	a
 		shl	a
 		st	a, temp_51
-		ld	b, unk_1AA
+		ld	b, unk_1AA	; flags_49 bit0	related
 		and	b, #0Fh
 		or	b, temp_51
 		st	b, temp_51
@@ -4992,7 +5048,7 @@ loc_D382:				; CODE XREF: sub_D2B9+D1j
 		inc	b
 		cmp	y, #0340h
 		bcs	loc_D382
-		bsr	sub_D3D5
+		bsr	sub_D3D5	; clears bit0 of porta,	re-inits if bit4 of PBCS is set
 		inc	b
 		mov	b, a
 		bne	loc_D374
@@ -5009,7 +5065,7 @@ calcChecksum2:				; CODE XREF: sub_D2B9+E6j
 		inc	x
 		dec	y
 		bne	calcChecksum2
-		bsr	sub_D3D5
+		bsr	sub_D3D5	; clears bit0 of porta,	re-inits if bit4 of PBCS is set
 		cmp	x, #0000h
 		bne	calcChecksum
 		cmp	d, #0AA55h
@@ -5041,7 +5097,7 @@ loc_D3C1:				; CODE XREF: sub_D2B9+9Fj sub_D2B9+F9j ...
 loc_D3C4:				; CODE XREF: sub_D2B9+10Cj
 		inc	x
 		bne	loc_D3C4
-		bsr	sub_D3D5
+		bsr	sub_D3D5	; clears bit0 of porta,	re-inits if bit4 of PBCS is set
 		dec	a
 		bne	loc_D3C1
 		cmp	b, #0AAh
@@ -5053,9 +5109,10 @@ loc_D3C4:				; CODE XREF: sub_D2B9+10Cj
 
 ; ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ S U B	R O U T	I N E ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ
 
+; clears bit0 of porta,	re-inits if bit4 of PBCS is set
 
 sub_D3D5:				; CODE XREF: sub_D2B9+D3p sub_D2B9+E8p ...
-		jsr	sub_D415
+		jsr	portAclrB0
 		tbbc	bit4, PBCS, ClearRAM ; Port B Control Register
 		ret
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
@@ -5091,10 +5148,10 @@ loc_D3F5:				; CODE XREF: sub_D3F3+Bj
 
 loc_D3F8:				; CODE XREF: sub_D3F3+6j
 		inc	x
-		bne	loc_D3F8
-		bsr	sub_D3D5
+		bne	loc_D3F8	; loop 2121 times
+		bsr	sub_D3D5	; clears bit0 of porta,	re-inits if bit4 of PBCS is set
 		inc	a
-		bne	loc_D3F5
+		bne	loc_D3F5	; loop again perhaps
 		ret
 ; End of function sub_D3F3
 
@@ -5123,15 +5180,15 @@ loc_D3F8:				; CODE XREF: sub_D3F3+6j
 ; ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ S U B	R O U T	I N E ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ
 
 
-sub_D415:				; CODE XREF: sub_D3D5p
+portAclrB0:				; CODE XREF: sub_D3D5p
 					; __RESET:loc_D5B6p
 		tbs	bit0, PORTA	; Port A Data Register
-		beq	locret_D41B
+		beq	portAclrB0_ret
 		clrb	bit0, PORTA
 
-locret_D41B:				; CODE XREF: sub_D415+2j
+portAclrB0_ret:				; CODE XREF: portAclrB0+2j
 		ret
-; End of function sub_D415
+; End of function portAclrB0
 
 
 ; ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ S U B	R O U T	I N E ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ
@@ -5185,7 +5242,7 @@ ReInitCNT_1:				; CODE XREF: ReInitCounters+Fj
 
 ; ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ S U B	R O U T	I N E ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ
 
-; blast	out a byte, set	unk_74,	read SIDR and SSD for 300 iterations
+; blast	out a byte, read SIDR and SSD for 300 iterations
 
 sub_D45F:				; CODE XREF: sub_D2B9+1Fp __RESET+10Bp
 		clrb	bit3, SSD
@@ -5204,7 +5261,7 @@ loc_D46C:				; CODE XREF: sub_D45F+1Dj
 		ld	a, SIDR_SODR	; Serial Input/Output Data Register
 
 loc_D479:				; CODE XREF: sub_D45F+11j
-		cmp	x, #012Ch
+		cmp	x, #00300
 		bcs	loc_D46C
 		ret
 ; End of function sub_D45F
@@ -5251,12 +5308,12 @@ sub_D499:				; CODE XREF: __RESET+174p
 loc_D4A1:				; CODE XREF: sub_D499+4j
 		cmp	a, #223
 		ble	loc_D4A7	; bounce if lower
-		setb	bit4, flags_47
+		setb	bit4, flags_47	; warmness bit
 
 loc_D4A7:				; CODE XREF: sub_D499+Aj
 		ld	a, unk_5E	; could	be last	unk_100, or 0
 		cmp	a, #045
-		bgt	loc_D4AF
+		bgt	loc_D4AF	; bounce if greater than 45
 		clrb	bit7, flags_41
 
 loc_D4AF:				; CODE XREF: sub_D499+12j
@@ -5360,8 +5417,8 @@ loc_D525:				; CODE XREF: sub_D3D5+17j __RESET+6Bj
 		ld	a, #0A0h
 		st	a, unk_12A	; VTA2-offset (unk_129)
 		ld	a, #0FFh
-		st	a, unk_1A0
-		st	a, unk_1A1
+		st	a, count_1A0	; increments at	E480
+		st	a, count_1A1	; increments at	E480
 		ld	a, #08h
 		st	a, unk_11F	; ISC related
 		ld	a, #10h
@@ -5415,19 +5472,19 @@ loc_D525:				; CODE XREF: sub_D3D5+17j __RESET+6Bj
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_D5B6:				; CODE XREF: __RESET+D4j
-		jsr	sub_D415
+		jsr	portAclrB0
 		ld	#08h, IMASKL	; Interrupt Request Mask LSB
 		ei
 		clr	b
 
 loc_D5BE:				; CODE XREF: __RESET+111j
-		ld	a, unk_F767	; data for f3d8
-		jsr	sub_D45F	; blast	out a byte, set	unk_74,	read SIDR and SSD for 300 iterations
+		ld	a, byte_F767
+		jsr	sub_D45F	; blast	out a byte, read SIDR and SSD for 300 iterations
 		inc	b
 		cmp	b, #02h
 		bcs	loc_D5BE
-		tbbs	bit6, flags_45,	loc_D5D5
-		tbbc	bit7, flags_45,	loc_D5D5
+		tbbs	bit6, flags_45,	loc_D5D5 ; received from serial	port apparently
+		tbbc	bit7, flags_45,	loc_D5D5 ; received from serial	port apparently
 		setb	bit3, flags_4B
 		setb	bit4, flags_4D
 		setb	bit3, flags_4D
@@ -5442,10 +5499,10 @@ loc_D5D5:				; CODE XREF: __RESET+113j __RESET+116j
 		bcs	loc_D614
 		ld	a, word_94
 		and	a, #0FFh
-		st	a, unk_147
+		st	a, flags_147
 		ld	a, word_96
 		and	a, #0FFh
-		st	a, unk_163
+		st	a, flags_163
 		ld	a, word_94
 		or	a, word_96
 		and	a, #28h
@@ -5490,7 +5547,7 @@ MainLoop:				; CODE XREF: __RESET:EndMainLoopj
 		ld	d, #116Eh
 		st	d, IMASK	; Interrupt Request Mask MSB
 		setb	bit2, flags_4A
-		tbbc	bit0, flags_45,	loc_D64C
+		tbbc	bit0, flags_45,	loc_D64C ; received from serial	port apparently
 		clrb	bit4, flags_4D
 
 loc_D64C:				; CODE XREF: __RESET+191j
@@ -5566,9 +5623,9 @@ sub_D688:				; CODE XREF: __RESET:loc_D65Dp
 		clr	a
 		clr	b
 		st	d, flags_4E
-		st	a, unk_146
-		st	a, unk_162
-		st	a, unk_7D
+		st	a, flags_146
+		st	a, flags_162
+		st	a, flags_7D
 		dec	b
 		ld	y, #0086h
 		st	d, [y]		; write	out 00FF
@@ -5606,26 +5663,26 @@ sub_D688:				; CODE XREF: __RESET:loc_D65Dp
 ; START	OF FUNCTION CHUNK FOR __RESET
 
 loc_D6D6:				; CODE XREF: __RESET:loc_D665j
-		tbbc	bit0, flags_45,	loc_D6DB
+		tbbc	bit0, flags_45,	loc_D6DB ; received from serial	port apparently
 		clrb	bit2, flags_4C
 
 loc_D6DB:				; CODE XREF: __RESET:loc_D6D6j
 		cmp	#14h, RPM	; MSB is RPM/50, LSB is	fraction of 50
 		bcs	loc_D6EA
-		cmp	#07h, unk_B9
+		cmp	#07h, count_B9	; incremented at F55E
 		bcs	loc_D6EA
 		tbbc	bit2, flags_4C,	loc_D6EA ; bit 7 demands a sampling of the oxygen sensors
 		setb	bit5, flags_4F
 
 loc_D6EA:				; CODE XREF: __RESET+228j __RESET+22Dj ...
-		cmp	#92h, unk_B9
+		cmp	#92h, count_B9	; incremented at F55E
 		bcs	loc_D6FE
 		tbbc	bit0, flags_4C,	loc_D6F4 ; bit 7 demands a sampling of the oxygen sensors
 		setb	bit3, flags_4E
 
 loc_D6F4:				; CODE XREF: __RESET+239j
 		tbbs	bit3, flags_4E,	loc_D6F9
-		clr	unk_B3
+		clr	count_B3	; incremented at F55E
 
 loc_D6F9:				; CODE XREF: __RESET:loc_D6F4j
 		jsr	ReInitNEIGT
@@ -5678,9 +5735,9 @@ loc_D72F:				; CODE XREF: __RESET+274j
 		shr	d
 		ld	y, #0C246h	; this could be	a compensation for AFM nonlinearities
 		jsr	TwoD_AccD	; lookup AccD/64, integer return in Acca, fraction return in AccB
-		ld	y, #08523
+		ld	y, #08523	; load scaling,	could be used for AFM bypass tweaks
 		jsr	MulAbyY		; returns upper	16b in AccD
-		add	d, #08523
+		add	d, #08523	; plus 1 offset
 		ld	x, temp_51	; load MSW
 		jsr	divDbyX		; takes	a scaled reciprocal to compensate for RPM*meanKSint decreasing with increasing load
 		bra	loc_D75A	; temp_51 now holds load.
@@ -5692,20 +5749,20 @@ loc_D757:				; CODE XREF: __RESET+284j
 loc_D75A:				; CODE XREF: __RESET+29Fj
 		st	d, temp_51	; temp_51 now holds load.
 		ld	y, #0C2B8h	; load limiting	table
-		jsr	TwoD_RPM	; lookup unk_F0, integer return	in Acca, fraction return in AccB
+		jsr	TwoD_RPM	; lookup RPM, integer return in	Acca, fraction return in AccB
 		cmp	d, temp_51
 		ble	loc_D768	; choose smallest.
 		ld	d, temp_51
 
 loc_D768:				; CODE XREF: __RESET+2AEj
-		mov	d, y
+		mov	d, y		; other	load limiter routine
 		tbbs	bit0, flags_41,	loc_D784 ; only	time this is writ
 		cmp	#030, RPM	; 1500RPM
 		bcc	loc_D784	; only time this is writ
 		ld	a, VTA_net
 		cmp	a, #082
-		bcs	loc_D784	; only time this is writ
-		cmp	#19h, unk_A7
+		bcs	loc_D784	; bounce if VTA_net is less than 82
+		cmp	#025, count_A7	; incremented at F47D
 		bcs	loc_D784	; only time this is writ
 		cmp	y, #7800h	; default value, smaller than table output
 		bgt	loc_D784	; only time this is writ
@@ -5756,7 +5813,7 @@ loc_D784:				; CODE XREF: __RESET+2B3j __RESET+2B9j ...
 		st	d, word_7A	; meanKSint divided by a air temp comp factor
 		cmp	d, #00468
 		bcs	loc_D7D5
-		ld	#7Ah, unk_BA
+		ld	#7Ah, count_BA	; decremented at F566
 
 loc_D7D5:				; CODE XREF: __RESET+31Aj
 		di
@@ -5771,14 +5828,14 @@ loc_D7D5:				; CODE XREF: __RESET+31Aj
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_D7E5:				; CODE XREF: __RESET+32Aj
-		ld	d, compLOAD	; air temp compensated Load
+		ld	d, compLOAD	; air temp and Baro compensated	Load (likely in	units of mass)
 		tbbs	bit7, flags_4C,	loc_D817 ; bit 7 demands a sampling of the oxygen sensors
 		push	a
 		ld	a, flags_44	; bit3:	rev limiter, bits 543210 will all cause	a branch past doinjectors
 		cmpb	a, #3Fh
 		pull	a
 		bne	loc_D817
-		cmp	#00h, unk_BA
+		cmp	#00h, count_BA	; decremented at F566
 		beq	loc_D817
 		sub	d, avgCompLoad
 		bcc	loc_D803
@@ -5808,7 +5865,7 @@ loc_D808:				; CODE XREF: __RESET+346j __RESET+34Bj ...
 
 loc_D817:				; CODE XREF: __RESET+331j __RESET+33Aj ...
 		st	d, avgCompLoad
-		ld	d, compLOAD	; air temp compensated Load
+		ld	d, compLOAD	; air temp and Baro compensated	Load (likely in	units of mass)
 		sub	d, avgCompLoad
 		bcc	loc_D82F
 		add	a, #80h
@@ -5859,7 +5916,7 @@ loc_D858:				; CODE XREF: __RESET+398j __RESET+39Ej
 
 loc_D861:				; CODE XREF: __RESET+3E1j
 		jsr	sub_C8D9
-		cmp	#0E3h, rawTHW	; Contains the NOT of CTS reading from ADC, sensor is tied to ground on	other side
+		cmp	#227, rawTHW	; Contains the NOT of CTS reading from ADC, sensor is tied to ground on	other side
 		rorc	a
 		mul	a, temp_51
 		shl	d
@@ -5904,20 +5961,20 @@ loc_D88D:				; CODE XREF: __RESET+3D2j
 loc_D899:				; CODE XREF: __RESET+3D9j
 		st	d, word_16C
 		ld	y, #0C54Ch
-		ld	d, compLOAD	; air temp compensated Load
+		ld	d, compLOAD	; air temp and Baro compensated	Load (likely in	units of mass)
 		jsr	DivDby12	; divides D by 12, returns 16b result in unks 53:54
 		ld	d, RPM		; MSB is RPM/50, LSB is	fraction of 50
-		jsr	ThreeDtable	; inputs in D and temp_53:temp_54
-		tbbc	bit3, flags_45,	loc_D8AE
-		add	a, #2Bh
+		jsr	ThreeDtable	; inputs in D and temp_53:temp_54, output in A
+		tbbc	bit3, flags_45,	loc_D8AE ; received from serial	port apparently
+		add	a, #043
 
 loc_D8AE:				; CODE XREF: __RESET+3F3j
-		st	a, unk_199
+		st	a, unk_199	; output from 3d table c54c
 
 loc_D8B1:				; CODE XREF: __RESET+276j __RESET+32Cj
 		tbbs	bit7, flags_4C,	loc_D8E9 ; bit 7 demands a sampling of the oxygen sensors
-		tbbs	bit0, flags_45,	loc_D8E9
-		ld	a, compLOAD	; air temp compensated Load
+		tbbs	bit0, flags_45,	loc_D8E9 ; received from serial	port apparently
+		ld	a, compLOAD	; air temp and Baro compensated	Load (likely in	units of mass)
 		ld	y, #0C5DDh	; high voltage table
 		cmp	#160, Bvolts	; 12.5V
 		bcc	loc_D8C4
@@ -5928,7 +5985,7 @@ loc_D8C4:				; CODE XREF: __RESET+409j
 		st	d, temp_51	; load table output
 		ld	d, InjectPW1	; pulsewidth for most cases/cylinders, 4us/bit
 		ld	y, RPM		; MSB is RPM/50, LSB is	fraction of 50
-		jsr	MulDbyY		; returns upper	16 bits	in Y, lower 16 bits in D
+		jsr	MulDbyY		; looking at total fuel	rate here
 		cmp	y, #02918
 		bcs	loc_D8DB
 		ld	d, #0FFFFh
@@ -5955,17 +6012,17 @@ loc_D8E9:				; CODE XREF: __RESET:loc_D8B1j
 
 loc_D8ED:				; CODE XREF: __RESET+431j
 		tbbs	bit7, flags_4B,	loc_D8F9
-		cmp	#0C3h, unk_A6
+		cmp	#0C3h, count_A6	; incremented at F47D
 		bcs	loc_D8F9
 		setb	bit7, flags_4B
 
 loc_D8F7:				; CODE XREF: __RESET+435j
-		clr	unk_A6
+		clr	count_A6	; incremented at F47D
 
 loc_D8F9:				; CODE XREF: __RESET:loc_D8EDj
 					; __RESET+43Dj
 		clr	a
-		tbbs	bit5, flags_45,	loc_D91F
+		tbbs	bit5, flags_45,	loc_D91F ; received from serial	port apparently
 		ld	b, flags_44	; bit3:	rev limiter, bits 543210 will all cause	a branch past doinjectors
 		and	b, #3Fh
 		bne	loc_D91F
@@ -6008,10 +6065,10 @@ loc_D943:				; CODE XREF: __RESET+47Fj __RESET+486j
 
 loc_D944:				; CODE XREF: __RESET+46Cj __RESET+48Bj
 		st	a, unk_187
-		ld	b, flags_A2	; contains bitflags, bit7 VTA_net related
+		ld	b, flags_A2	; bit7:	VTA_net	high, bit4: VTA_net high
 		ld	a, VTA_net
 		cmp	a, #123
-		bcs	loc_D951
+		bcs	loc_D951	; bounce if VTA_net is less than 123
 		or	b, #10h		; set bit 4
 
 loc_D951:				; CODE XREF: __RESET+497j
@@ -6023,31 +6080,31 @@ loc_D957:				; CODE XREF: __RESET+49Dj
 		and	b, #0BFh
 		push	b
 		ld	y, #0C321h
-		jsr	TwoD_RPM	; lookup unk_F0, integer return	in Acca, fraction return in AccB
+		jsr	TwoD_RPM	; lookup RPM, integer return in	Acca, fraction return in AccB
 		pull	b
-		cmp	a, compLOAD	; air temp compensated Load
+		cmp	a, compLOAD	; air temp and Baro compensated	Load (likely in	units of mass)
 		bcc	loc_D967
-		or	b, #40h
+		or	b, #40h		; flags_A2 bit6	set when load exceeds a	certain	value
 
 loc_D967:				; CODE XREF: __RESET+4ADj
 		cmp	#037, VTA_net
 		bcc	loc_D96E
-		and	b, #7Fh
+		and	b, #7Fh		; clear	flags_A2 bit7
 
 loc_D96E:				; CODE XREF: __RESET+4B4j
 		cmp	#041, VTA_net
 		bcs	loc_D975
-		or	b, #80h
+		or	b, #80h		; set flags_A2 bit7
 
 loc_D975:				; CODE XREF: __RESET+4BBj
-		st	b, flags_A2	; contains bitflags, bit7 VTA_net related
+		st	b, flags_A2	; bit7:	VTA_net	high, bit4: VTA_net high
 		ld	b, unk_183
-		cmp	#028, RPM	; MSB is RPM/50, LSB is	fraction of 50
-		bcc	loc_D981
+		cmp	#028, RPM	; 1400 RPM
+		bcc	loc_D981	; 1550 RPM
 		and	b, #0FCh
 
 loc_D981:				; CODE XREF: __RESET+4C7j
-		cmp	#031, RPM	; MSB is RPM/50, LSB is	fraction of 50
+		cmp	#031, RPM	; 1550 RPM
 		bcc	loc_D98A
 		and	b, #0FDh
 		bra	loc_D993
@@ -6055,7 +6112,7 @@ loc_D981:				; CODE XREF: __RESET+4C7j
 
 loc_D98A:				; CODE XREF: __RESET+4CEj
 		or	b, #01h
-		cmp	#034, RPM	; MSB is RPM/50, LSB is	fraction of 50
+		cmp	#034, RPM	; 1700 RPM
 		bcs	loc_D993
 		or	b, #02h
 
@@ -6065,17 +6122,17 @@ loc_D993:				; CODE XREF: __RESET+4D2j __RESET+4D9j
 		ld	x, word_170	; inversely temp dependant, additional math elsewhere
 		cmp	x, #11ECh
 		bcc	loc_D9AD
-		ld	b, flags_A2	; contains bitflags, bit7 VTA_net related
+		ld	b, flags_A2	; bit7:	VTA_net	high, bit4: VTA_net high
 		cmpb	b, #10h
 		beq	loc_D9AD
 		cmp	a, #0Fh
 		bcc	loc_D9AD
-		ld	a, #0Fh
+		ld	a, #0Fh		; saturate a
 
 loc_D9AD:				; CODE XREF: __RESET+4E9j __RESET+4EFj ...
 		st	a, temp_51
 		beq	loc_D9E1
-		cmp	#0D2h, rawTHW	; Contains the NOT of CTS reading from ADC, sensor is tied to ground on	other side
+		cmp	#210, rawTHW	; Contains the NOT of CTS reading from ADC, sensor is tied to ground on	other side
 		bcs	loc_D9E1
 		ld	a, unk_186
 		cmp	a, unk_187
@@ -6110,8 +6167,8 @@ loc_D9E1:				; CODE XREF: __RESET+4F9j __RESET+4FEj
 		ld	y, #0C336h
 		jsr	TwoD_rawTHW	; lookup Raw Water Temp, integer return	in Acca, fraction return in AccB
 		clrb	bit0, flags_40
-		tbbc	bit1, flags_45,	loc_D9F4
-		tbbs	bit5, flags_45,	loc_D9F4
+		tbbc	bit1, flags_45,	loc_D9F4 ; received from serial	port apparently
+		tbbs	bit5, flags_45,	loc_D9F4 ; received from serial	port apparently
 		tbbs	bit7, flags_41,	loc_D9FC
 
 loc_D9F4:				; CODE XREF: __RESET+535j __RESET+538j
@@ -6129,8 +6186,8 @@ loc_DA01:				; CODE XREF: __RESET:loc_D9FCj
 		ld	b, #0Ch
 		tbbc	bit0, flags_40,	loc_DA12
 		ld	b, #08h
-		tbbs	bit6, flags_47,	loc_DA12
-		tbbs	bit7, flags_47,	loc_DA12
+		tbbs	bit6, flags_47,	loc_DA12 ; bit4: high when hot (but how	hot?)
+		tbbs	bit7, flags_47,	loc_DA12 ; bit4: high when hot (but how	hot?)
 		ld	b, #04h
 
 loc_DA12:				; CODE XREF: __RESET+54Fj __RESET+554j ...
@@ -6139,7 +6196,7 @@ loc_DA12:				; CODE XREF: __RESET+54Fj __RESET+554j ...
 		ld	a, word_126
 		ld	b, RPM		; MSB is RPM/50, LSB is	fraction of 50
 		tbbc	bit0, flags_41,	loc_DA5E
-		clr	unk_A7
+		clr	count_A7	; incremented at F47D
 		cmp	a, #7Ah
 		bcs	loc_DA25
 		setb	bit7, flags_44
@@ -6150,7 +6207,7 @@ loc_DA25:				; CODE XREF: __RESET+56Bj
 		bcc	loc_DA5A	; prevent gasso	among other things
 		clrb	bit6, flags_47
 		tbbs	bit3, flags_43,	loc_DAA7 ; bit3: AFM bad bit4: rev limiter
-		tbbc	bit4, flags_47,	loc_DAA7
+		tbbc	bit4, flags_47,	loc_DAA7 ; bit4: high when hot (but how	hot?)
 		tbbc	bit1, flags_42,	loc_DAA7
 		tbbs	bit0, flags_42,	loc_DAA7
 		cmp	#05h, unk_5E	; could	be last	unk_100, or 0
@@ -6172,7 +6229,7 @@ loc_DA4D:				; CODE XREF: __RESET:loc_DA25j
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_DA55:				; CODE XREF: __RESET+599j
-		cmp	#7Ah, unk_A3
+		cmp	#7Ah, count_A3	; incremented at F47D
 		bcs	loc_DAAB
 
 loc_DA5A:				; CODE XREF: __RESET+574j
@@ -6209,7 +6266,7 @@ loc_DA88:				; CODE XREF: __RESET+5B7j __RESET+5BCj ...
 		clr	a
 		st	a, word_126
 		clrb	bit7, flags_44
-		clr	unk_A3
+		clr	count_A3	; incremented at F47D
 		clrb	bit4, flags_44
 		cmp	#24h, RPM	; MSB is RPM/50, LSB is	fraction of 50
 		bcs	loc_DA99
@@ -6225,7 +6282,7 @@ loc_DAA4:				; CODE XREF: __RESET+5E9j
 		st	d, unk_17A
 
 loc_DAA7:				; CODE XREF: __RESET+578j __RESET+57Bj ...
-		clr	unk_A3
+		clr	count_A3	; incremented at F47D
 		clrb	bit4, flags_44
 
 loc_DAAB:				; CODE XREF: __RESET+5A2j __RESET+5A6j
@@ -6553,7 +6610,7 @@ loc_DC68:				; CODE XREF: __RESET+7AFj
 
 loc_DC6D:				; CODE XREF: __RESET+798j __RESET+79Bj
 		st	a, unk_1B0
-		tbbc	bit7, flags_4C,	loc_DCB3 ; bit 7 demands a sampling of the oxygen sensors
+		tbbc	bit7, flags_4C,	loc_DCB3 ; 300 RPM
 		cmp	#08h, RPM	; MSB is RPM/50, LSB is	fraction of 50
 		bcs	loc_DCBA
 		clrb	bit7, flags_4C
@@ -6566,7 +6623,7 @@ loc_DC6D:				; CODE XREF: __RESET+798j __RESET+79Bj
 		shr	d
 		shr	d
 		st	d, word_172	; inversely temp dependant, additional math elsewhere
-		cmp	#14h, VTA_net
+		cmp	#020, VTA_net
 		bcc	loc_DC99
 		mul	a, #80h
 		bra	loc_DC9B
@@ -6592,25 +6649,25 @@ loc_DCA3:				; CODE XREF: __RESET+7E9j
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_DCB3:				; CODE XREF: __RESET+7BAj
-		cmp	#06h, RPM	; MSB is RPM/50, LSB is	fraction of 50
+		cmp	#006, RPM	; 300 RPM
 		bcc	loc_DCC0	; 10V
 		setb	bit7, flags_4C
 
 loc_DCBA:				; CODE XREF: __RESET+7C0j
-		clr	unk_CD
+		clr	count_CD	; incremented at E7A9
 		clr	a
 		st	a, unk_1BB
 
 loc_DCC0:				; CODE XREF: __RESET+800j
 		cmp	#128, Bvolts	; 10V
 		bcs	loc_DCCB
-		tbbs	bit0, flags_45,	loc_DCCB
+		tbbs	bit0, flags_45,	loc_DCCB ; received from serial	port apparently
 		tbbc	bit7, flags_4C,	loc_DCD2 ; bit 7 demands a sampling of the oxygen sensors
 
 loc_DCCB:				; CODE XREF: __RESET+80Dj __RESET+80Fj
 		setb	bit6, flags_49
 		clr	a
-		st	a, unk_178
+		st	a, count_178	; tof increment	rate
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 		.db  8Ch ; Œ		; cmpx
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
@@ -6644,37 +6701,37 @@ loc_DCF5:				; CODE XREF: __RESET+83Bj
 		clrb	bit0, flags_40
 
 loc_DCF9:				; CODE XREF: __RESET+9C3j
-		tbbc	bit7, flags_4C,	loc_DD0F ; bit 7 demands a sampling of the oxygen sensors
+		tbbc	bit7, flags_4C,	loc_DD0F ; used	here for injection PW calculation
 		tbbs	bit3, flags_43,	loc_DD05 ; is this an abnormal program path while DD0F is normal?
 		tbbc	bit4, flags_47,	loc_DD05 ; is this an abnormal program path while DD0F is normal?
-		tbbc	bit0, flags_45,	loc_DD0F
+		tbbc	bit0, flags_45,	loc_DD0F ; used	here for injection PW calculation
 
 loc_DD05:				; CODE XREF: __RESET+846j __RESET+849j ...
 		setb	bit1, flags_46	; is this an abnormal program path while DD0F is normal?
 		jsr	calcInjPW	; calculate the	pulsewidths
-		clr	unk_AB
+		clr	count_AB	; incremented at F47D
 		jmp	loc_DE6B	; assign pulsewidth
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_DD0F:				; CODE XREF: __RESET:loc_DCF9j
 					; __RESET+84Cj
-		ld	y, compLOAD	; air temp compensated Load
-		tbbc	bit3, flags_43,	loc_DD50 ; about 65 percent
+		ld	y, compLOAD	; used here for	injection PW calculation
+		tbbc	bit3, flags_43,	loc_DD50 ; bounce if AFM is good
 		ld	d, VTA_net
 		cmp	d, #04194
-		ble	loc_DD20
+		ble	loc_DD20	; Alpha-N injection routine
 		add	d, #12583	; is around 4194*3
 		shr	d
 		shr	d
 
 loc_DD20:				; CODE XREF: __RESET+863j
-		ld	x, #01049
+		ld	x, #01049	; Alpha-N injection routine
 		jsr	divDbyX		; divide D by X, does some shifting to return ?? bits
 		st	d, temp_53
 		ld	d, RPM		; MSB is RPM/50, LSB is	fraction of 50
 		ld	y, #0C26Ch
-		jsr	ThreeDtable2	; inputs in D and temp_53:temp_54
-		st	d, unk_56
+		jsr	ThreeDtable2	; inputs in D and temp_53:temp_54, output in A
+		st	d, temp_56
 		ld	y, #0C2A8h
 		ld	a, unk_DB
 		jsr	TwoDTable	; X value in AccA, integer return in Acca, fraction return in AccB
@@ -6695,11 +6752,11 @@ loc_DD4F:				; CODE XREF: __RESET+894j
 		mov	d, y
 
 loc_DD50:				; CODE XREF: __RESET+85Bj
-		ld	d, word_C26A	; about	65 percent
+		ld	d, ScaleFactor	; about	65 percent
 		jsr	MulDbyY		; returns upper	16 bits	in Y, lower 16 bits in D
-		tbbc	bit3, flags_43,	loc_DD62 ; push	the load based pulsewidth
+		tbbc	bit3, flags_43,	loc_DD62 ; bounce if AFM good
 		mov	y, d
-		add	d, unk_56	; add value from TPS/RPM 3d table
+		add	d, temp_56	; add value from TPS/RPM 3d table
 		bcc	loc_DD61
 		ld	d, #0FFFFh
 
@@ -6718,7 +6775,7 @@ loc_DD6C:				; CODE XREF: __RESET+8B0j
 		bcc	loc_DD7E
 		cmp	#029, RPM	; 1450 RPM
 		bcs	loc_DD7E
-		cmp	#62h, unk_AB
+		cmp	#62h, count_AB	; incremented at F47D
 		bcs	loc_DDAF
 		setb	bit0, flags_44
 		bra	loc_DDAF
@@ -6737,7 +6794,7 @@ loc_DD87:				; CODE XREF: __RESET+8CAj
 		cmp	y, x + 02h
 		bcs	loc_DDAD
 		tbbs	bit3, flags_43,	loc_DDAD ; bit3: AFM bad bit4: rev limiter
-		tbbc	bit4, flags_47,	loc_DDAD
+		tbbc	bit4, flags_47,	loc_DDAD ; bit4: high when hot (but how	hot?)
 		tbbs	bit0, flags_42,	loc_DDAD
 		cmp	#05h, unk_5E	; could	be last	unk_100, or 0
 		bcs	loc_DDAD
@@ -6750,17 +6807,17 @@ loc_DD87:				; CODE XREF: __RESET+8CAj
 
 loc_DDAD:				; CODE XREF: __RESET:loc_DD87j
 					; __RESET+8D6j	...
-		clr	unk_AB
+		clr	count_AB	; incremented at F47D
 
 loc_DDAF:				; CODE XREF: __RESET+8C2j __RESET+8C6j ...
 		ld	y, #0C31Ch
 		jsr	TwoD_rawTHW	; lookup Raw Water Temp, integer return	in Acca, fraction return in AccB
 		push	a
 		ld	y, #0C2FAh
-		jsr	TwoD_RPM	; lookup unk_F0, integer return	in Acca, fraction return in AccB
+		jsr	TwoD_RPM	; lookup RPM, integer return in	Acca, fraction return in AccB
 		ld	y, word_170	; inversely temp dependant, additional math elsewhere
 		jsr	MulAbyY		; returns upper	16b in AccD
-		add	a, #80h
+		add	a, #128
 		mov	d, x
 		ld	a, unk_D5
 		clr	b
@@ -6979,7 +7036,7 @@ loc_DEF0:				; CODE XREF: __RESET+A2Fj
 		mov	a, b
 		xor	b, #0FFh
 		st	d, word_82
-		cmp	#3Dh, unk_B9
+		cmp	#3Dh, count_B9	; incremented at F55E
 		bcs	loc_DF31
 		clr	unk_DD
 		tbbc	bit2, flags_48,	loc_DF0D
@@ -7026,7 +7083,7 @@ loc_DF31:				; CODE XREF: __RESET+A45j
 		st	a, unk_DC
 
 loc_DF3C:				; CODE XREF: __RESET:loc_DF31j
-		tbbs	bit0, flags_45,	loc_DF54
+		tbbs	bit0, flags_45,	loc_DF54 ; received from serial	port apparently
 		cmp	#14h, RPM	; MSB is RPM/50, LSB is	fraction of 50
 		bcs	loc_DF56
 		tbbc	bit3, flags_48,	loc_DF56
@@ -7044,7 +7101,7 @@ loc_DF54:				; CODE XREF: __RESET:loc_DF3Cj
 loc_DF56:				; CODE XREF: __RESET+A8Cj __RESET+A8Ej
 		tbbs	bit2, flags_48,	loc_DF85
 		tbbc	bit3, flags_48,	loc_DF60
-		clr	unk_C8
+		clr	count_C8	; decrements at	E488
 		bra	loc_DFA0	; 300RPM
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
@@ -7085,7 +7142,7 @@ loc_DF85:				; CODE XREF: __RESET:loc_DF56j
 		ld	a, #99h
 
 loc_DF9E:				; CODE XREF: __RESET+AE4j
-		st	a, unk_C8
+		st	a, count_C8	; decrements at	E488
 
 loc_DFA0:				; CODE XREF: __RESET+AA8j
 					; __RESET:loc_DF85j
@@ -7104,17 +7161,17 @@ loc_DFA5:				; CODE XREF: __RESET:loc_DF2Fj
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_DFB3:				; CODE XREF: __RESET+AEDj
-		tbbs	bit1, flags_45,	loc_DFC0
+		tbbs	bit1, flags_45,	loc_DFC0 ; received from serial	port apparently
 		tbbc	bit1, flags_42,	loc_DFD0
 		clrb	bit1, flags_42
-		ld	#00h, unk_BC
+		ld	#00h, count_BC	; decremented at F566
 		bra	loc_DFC8
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_DFC0:				; CODE XREF: __RESET:loc_DFB3j
 		tbbs	bit1, flags_42,	loc_DFD0
 		setb	bit1, flags_42
-		ld	#25h, unk_BC
+		ld	#25h, count_BC	; decremented at F566
 
 loc_DFC8:				; CODE XREF: __RESET+B08j
 		tbs	bit1, flags_43	; bit3:	AFM bad	bit4: rev limiter
@@ -7128,7 +7185,7 @@ loc_DFCE:				; CODE XREF: __RESET+B14j
 loc_DFD0:				; CODE XREF: __RESET+B00j
 					; __RESET:loc_DFC0j
 		tbbc	bit1, flags_43,	loc_DFEC ; bit3: AFM bad bit4: rev limiter
-		ld	a, unk_BC
+		ld	a, count_BC	; decremented at F566
 		bne	loc_DFEC
 		clrb	bit1, flags_43
 		ld	y, #0C4D6h
@@ -7150,17 +7207,17 @@ loc_DFEA:				; CODE XREF: __RESET:loc_DFE6j
 
 loc_DFEC:				; CODE XREF: __RESET:loc_DFD0j
 					; __RESET+B1Fj
-		tbbs	bit5, flags_45,	loc_DFF9
+		tbbs	bit5, flags_45,	loc_DFF9 ; received from serial	port apparently
 		tbbc	bit0, flags_42,	loc_E011
 		clrb	bit0, flags_42
-		ld	#00h, unk_BB
+		ld	#00h, count_BB	; decremented at F566
 		bra	loc_E001
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_DFF9:				; CODE XREF: __RESET:loc_DFECj
 		tbbs	bit0, flags_42,	loc_E011
 		setb	bit0, flags_42
-		ld	#06h, unk_BB
+		ld	#06h, count_BB	; decremented at F566
 
 loc_E001:				; CODE XREF: __RESET+B41j
 		tbs	bit0, flags_43	; bit3:	AFM bad	bit4: rev limiter
@@ -7169,16 +7226,16 @@ loc_E001:				; CODE XREF: __RESET+B41j
 
 loc_E007:				; CODE XREF: __RESET:loc_DFCEj
 					; __RESET+B4Dj
-		cmp	#1Fh, unk_C8
+		cmp	#1Fh, count_C8	; decrements at	E488
 		bcc	loc_E033
-		ld	#1Fh, unk_C8
+		ld	#1Fh, count_C8	; decrements at	E488
 		bra	loc_E033
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_E011:				; CODE XREF: __RESET+B39j
 					; __RESET:loc_DFF9j
 		tbbc	bit0, flags_43,	loc_E033 ; bit3: AFM bad bit4: rev limiter
-		ld	a, unk_BB
+		ld	a, count_BB	; decremented at F566
 		bne	loc_E033
 		clrb	bit0, flags_43
 		ld	y, #0C4D8h
@@ -7204,7 +7261,7 @@ loc_E02B:				; CODE XREF: __RESET:loc_DFEAj
 
 loc_E033:				; CODE XREF: __RESET+B54j __RESET+B59j ...
 		tbbc	bit4, flags_44,	loc_E050 ; bit3: rev limiter, bits 543210 will all cause a branch past doinjectors
-		tbbs	bit5, flags_45,	loc_E050
+		tbbs	bit5, flags_45,	loc_E050 ; received from serial	port apparently
 		cmp	#37h, unk_5E	; could	be last	unk_100, or 0
 		bcs	loc_E050
 		cmp	#14h, unk_DB
@@ -7224,10 +7281,10 @@ loc_E050:				; CODE XREF: __RESET:loc_E033j
 
 loc_E052:				; CODE XREF: __RESET+B95j
 		ld	y, #0C4C0h
-		jsr	TwoD_RPM	; lookup unk_F0, integer return	in Acca, fraction return in AccB
+		jsr	TwoD_RPM	; lookup RPM, integer return in	Acca, fraction return in AccB
 		st	a, unk_E2
 		tbbs	bit3, flags_43,	loc_E0AD ; bit3: AFM bad bit4: rev limiter
-		tbbc	bit4, flags_47,	loc_E0AD
+		tbbc	bit4, flags_47,	loc_E0AD ; bit4: high when hot (but how	hot?)
 		tbbs	bit0, flags_42,	loc_E0AD
 		ld	a, unk_103
 		and	a, #01h
@@ -7305,12 +7362,12 @@ loc_E0B4:				; CODE XREF: __RESET+BF5j
 		add	a, b
 		st	a, temp_51
 		tbbs	bit0, flags_41,	loc_E0E4
-		cmp	#1Fh, unk_C8
+		cmp	#1Fh, count_C8	; decrements at	E488
 		bcc	loc_E0E4
-		ld	#1Fh, unk_C8
+		ld	#1Fh, count_C8	; decrements at	E488
 
 loc_E0E4:				; CODE XREF: __RESET+C23j __RESET+C29j
-		ld	a, unk_C8
+		ld	a, count_C8	; decrements at	E488
 		beq	loc_E0EE
 		cmp	a, #03h
 		bgt	loc_E134
@@ -7320,7 +7377,7 @@ loc_E0E4:				; CODE XREF: __RESET+C23j __RESET+C29j
 loc_E0EE:				; CODE XREF: __RESET+C30j
 		cmp	#02h, unk_5E	; could	be last	unk_100, or 0
 		bcc	loc_E134
-		ld	#03h, unk_C8
+		ld	#03h, count_C8	; decrements at	E488
 		ld	y, #0C4A6h
 		ld	a, #30h
 		tbbs	bit0, flags_42,	loc_E103
@@ -7332,7 +7389,7 @@ loc_E103:				; CODE XREF: __RESET+C45j
 		jsr	TwoD_rawTHW	; lookup Raw Water Temp, integer return	in Acca, fraction return in AccB
 		push	a
 		ld	d, RPM		; MSB is RPM/50, LSB is	fraction of 50
-		cmp	a, #40h
+		cmp	a, #064		; 3200 RPM
 		bcc	loc_E121
 		shl	d
 		shl	d
@@ -7355,9 +7412,9 @@ loc_E121:				; CODE XREF: __RESET+C57j
 
 loc_E122:				; CODE XREF: __RESET+C65j
 		tbbs	bit0, flags_42,	loc_E130
-		cmp	#1Ah, compLOAD	; air temp compensated Load
+		cmp	#1Ah, compLOAD	; air temp and Baro compensated	Load (likely in	units of mass)
 		bcs	loc_E134
-		ld	a, unk_7D
+		ld	a, flags_7D
 		cmpb	a, #10h
 		bne	loc_E134
 
@@ -7373,7 +7430,7 @@ loc_E136:				; CODE XREF: __RESET+C36j __RESET+C69j
 		cmp	#1Eh, unk_E3
 		bcs	loc_E151
 		clr	unk_E3
-		tbbs	bit4, flags_47,	loc_E151
+		tbbs	bit4, flags_47,	loc_E151 ; bit4: high when hot (but how	hot?)
 		jsr	sub_C4DF
 		add	a, #20h
 		cmp	a, unk_DC
@@ -7391,7 +7448,7 @@ loc_E151:				; CODE XREF: __RESET+C84j __RESET+C88j ...
 		di
 		ld	a, unk_77	; make a decision on bit 1
 		cmpb	a, #02h
-		beq	loc_E15C
+		beq	loc_E15C	; if the bit was clear,	set it.
 		ei
 		jmp	loc_E257
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
@@ -7400,9 +7457,9 @@ loc_E15C:				; CODE XREF: __RESET+CA0j
 		or	a, #02h
 		st	a, unk_77	; set bit 1
 		ei
-		tbbc	bit4, flags_47,	loc_E172
+		tbbc	bit4, flags_47,	loc_E172 ; bit4: high when hot (but how	hot?)
 		tbbc	bit0, flags_41,	loc_E172
-		ld	a, unk_7D
+		ld	a, flags_7D
 		cmpb	a, #10h
 		bne	loc_E172
 		cmp	#02h, unk_5E	; could	be last	unk_100, or 0
@@ -7616,10 +7673,10 @@ loc_E274:				; CODE XREF: __RESET+AFAj
 		bcc	loc_E282
 
 loc_E280:				; CODE XREF: __RESET+DC3j
-		clr	unk_C6
+		clr	count_C6	; increments at	E478
 
 loc_E282:				; CODE XREF: __RESET+DC8j
-		cmp	#4Ch, unk_C6
+		cmp	#4Ch, count_C6	; increments at	E478
 		bcc	loc_E2A4
 		tbbs	bit0, flags_4C,	loc_E2A8 ; bit 7 demands a sampling of the oxygen sensors
 		tbbs	bit3, flags_4E,	loc_E2A8
@@ -7627,7 +7684,7 @@ loc_E282:				; CODE XREF: __RESET+DC8j
 		bcs	loc_E2B8
 		cmp	#077, Bvolts	; 6V
 		bcs	loc_E2B8
-		cmp	#9Fh, unk_B3
+		cmp	#9Fh, count_B3	; incremented at F55E
 		bcs	loc_E2BE
 		setb	bit0, flags_4C
 		ld	a, word_86
@@ -7640,7 +7697,7 @@ loc_E2A4:				; CODE XREF: __RESET+DCFj
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_E2A8:				; CODE XREF: __RESET+DD1j __RESET+DD4j
-		cmp	#7Ah, unk_B3
+		cmp	#7Ah, count_B3	; incremented at F55E
 		bcs	loc_E2BE
 		ld	a, KS_count2
 		cmp	a, #0Fh
@@ -7650,7 +7707,7 @@ loc_E2A8:				; CODE XREF: __RESET+DD1j __RESET+DD4j
 
 loc_E2B8:				; CODE XREF: __RESET+DDAj __RESET+DDFj ...
 		clr	a
-		st	a, unk_B3
+		st	a, count_B3	; incremented at F55E
 		st	a, KS_count2
 
 loc_E2BE:				; CODE XREF: __RESET+DE4j __RESET+DF5j
@@ -7668,7 +7725,7 @@ loc_E2BE:				; CODE XREF: __RESET+DE4j __RESET+DF5j
 
 loc_E2D0:				; CODE XREF: __RESET+E15j
 		ld	a, unk_1AF
-		tbbs	bit5, flags_45,	loc_E305
+		tbbs	bit5, flags_45,	loc_E305 ; received from serial	port apparently
 		cmp	a, #0FEh
 		bcc	loc_E2DC
 		add	a, #02h
@@ -7710,7 +7767,7 @@ loc_E308:				; CODE XREF: __RESET+E35j __RESET+E39j ...
 		st	a, unk_1AF
 		ld	a, unk_E1
 		shl	a
-		tbbc	bit4, flags_45,	loc_E318
+		tbbc	bit4, flags_45,	loc_E318 ; received from serial	port apparently
 		clrb	bit0, PORTD_ASRIN
 		bcc	loc_E322
 		clr	a
@@ -7787,8 +7844,8 @@ loc_E379:				; CODE XREF: __RESET+EB7j __RESET+EBEj
 		inc	x
 		bmi	loc_E3A0
 		tbbs	bit2, PORTD_ASRIN, loc_E39D ; Port D Data Register / ASR Input Data
-		tbbs	bit6, flags_45,	loc_E39D
-		tbbc	bit4, flags_47,	loc_E39D
+		tbbs	bit6, flags_45,	loc_E39D ; received from serial	port apparently
+		tbbc	bit4, flags_47,	loc_E39D ; bit4: high when hot (but how	hot?)
 		cmp	x, #55D5h
 		bgt	loc_E3A6
 		tbbc	bit0, flags_40,	loc_E39B
@@ -7848,16 +7905,16 @@ loc_E3D1:				; CODE XREF: __RESET+F08j
 
 loc_E3E2:				; CODE XREF: __RESET:loc_E34Bj
 					; __RESET+F27j
-		tbbc	bit1, flags_45,	loc_E42D
-		cmp	#92h, unk_A4
+		tbbc	bit1, flags_45,	loc_E42D ; received from serial	port apparently
+		cmp	#92h, count_A4	; incremented at F47D
 		bcs	loc_E42F
-		tbbs	bit5, flags_45,	loc_E41F
-		ld	a, flags_A2	; contains bitflags, bit7 VTA_net related
-		cmpb	a, #10h
+		tbbs	bit5, flags_45,	loc_E41F ; received from serial	port apparently
+		ld	a, flags_A2	; bit7:	VTA_net	high, bit4: VTA_net high
+		cmpb	a, #10h		; bigger throttle bit
 		beq	loc_E41F
 		cmp	#64h, unk_5E	; could	be last	unk_100, or 0
 		bgt	loc_E41F
-		ld	a, unk_1A0
+		ld	a, count_1A0	; increments at	E480
 		cmp	a, #0FFh
 		bcc	loc_E403
 		ld	a, #0B3h
@@ -7865,10 +7922,10 @@ loc_E3E2:				; CODE XREF: __RESET:loc_E34Bj
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_E403:				; CODE XREF: __RESET+F47j
-		ld	a, unk_1A1
+		ld	a, count_1A1	; increments at	E480
 		cmp	a, #0FFh
 		bcs	loc_E424
-		cmp	#49h, unk_A5
+		cmp	#49h, count_A5	; incremented at F47D
 		bcs	loc_E426
 		ld	a, #94h
 		ld	b, unk_108
@@ -7877,16 +7934,16 @@ loc_E403:				; CODE XREF: __RESET+F47j
 		add	a, #3Dh
 
 loc_E41A:				; CODE XREF: __RESET+F60j
-		st	a, unk_1A0
+		st	a, count_1A0	; increments at	E480
 		bra	loc_E439
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_E41F:				; CODE XREF: __RESET+F34j __RESET+F3Bj ...
 		ld	a, #0FFh
-		st	a, unk_1A0
+		st	a, count_1A0	; increments at	E480
 
 loc_E424:				; CODE XREF: __RESET+F52j
-		clr	unk_A5
+		clr	count_A5	; incremented at F47D
 
 loc_E426:				; CODE XREF: __RESET+F57j
 		ld	b, #04h
@@ -7895,15 +7952,15 @@ loc_E426:				; CODE XREF: __RESET+F57j
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_E42D:				; CODE XREF: __RESET:loc_E3E2j
-		clr	unk_A4
+		clr	count_A4	; incremented at F47D
 
 loc_E42F:				; CODE XREF: __RESET+F32j
 		ld	a, #0FFh
-		st	a, unk_1A0
-		clr	unk_A5
+		st	a, count_1A0	; increments at	E480
+		clr	count_A5	; incremented at F47D
 
 loc_E436:				; CODE XREF: __RESET+F4Bj
-		st	a, unk_1A1
+		st	a, count_1A1	; increments at	E480
 
 loc_E439:				; CODE XREF: __RESET+F67j
 		ld	b, #0FBh
@@ -7912,13 +7969,13 @@ loc_E439:				; CODE XREF: __RESET+F67j
 loc_E43E:				; CODE XREF: __RESET+F75j
 		ld	a, RPM		; MSB is RPM/50, LSB is	fraction of 50
 		bne	loc_E453
-		ld	a, flags_45
+		ld	a, flags_45	; received from	serial port apparently
 		and	a, #71h
 		cmp	a, #61h
 		bne	loc_E453
 		tbbs	bit0, flags_41,	loc_E453
 		jsr	sub_D2B9
-		nop
+		nop			; user sub injection!
 		nop
 		nop
 
@@ -7943,15 +8000,15 @@ loc_E461:				; CODE XREF: __RESET+E17j
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_E473:				; CODE XREF: __RESET+FB8j
-		ld	b, #0Ah
+		ld	b, #010
 		ld	y, #00BEh
-		jsr	sub_C084	; increment B bytes of ram by 1	starting from Y
-		ld	b, #04h
+		jsr	satcount	; increment B bytes of ram by 1	starting from Y, saturates at FF
+		ld	b, #004
 		ld	y, #01A0h
-		jsr	sub_C084	; increment B bytes of ram by 1	starting from Y
-		ld	b, #02h
+		jsr	satcount	; increment B bytes of ram by 1	starting from Y, saturates at FF
+		ld	b, #002
 		ld	y, #00C8h
-		jsr	sub_C090	; decrements B bytes of	ram by 1 starting from Y
+		jsr	satuncount	; decrements B bytes of	ram by 1 starting from Y, saturates at 00
 		ld	a, unk_143
 		inc	a
 		beq	loc_E494
@@ -7968,7 +8025,7 @@ loc_E49D:				; CODE XREF: __RESET+FE2j
 		ld	a, unk_5F
 		cmp	a, #03h
 		bcs	loc_E4A7
-		tbbs	bit0, flags_45,	loc_E4AC
+		tbbs	bit0, flags_45,	loc_E4AC ; received from serial	port apparently
 
 loc_E4A7:				; CODE XREF: __RESET+FECj
 		inc	a
@@ -7979,7 +8036,7 @@ loc_E4AC:				; CODE XREF: __RESET+FEEj __RESET+FF2j
 		ei
 		jsr	loc_C918
 		ld	y, #0C343h
-		jsr	TwoD_RPM	; lookup unk_F0, integer return	in Acca, fraction return in AccB
+		jsr	TwoD_RPM	; lookup RPM, integer return in	Acca, fraction return in AccB
 		ld	x, unk_17E
 		add	x, a
 		ld	a, word_8E
@@ -7988,7 +8045,7 @@ loc_E4AC:				; CODE XREF: __RESET+FEEj __RESET+FF2j
 		cmp	#05h, unk_5E	; could	be last	unk_100, or 0
 		bcc	loc_E4CB
 		tbbs	bit0, flags_41,	loc_E4CB
-		tbbs	bit5, flags_45,	loc_E4D2
+		tbbs	bit5, flags_45,	loc_E4D2 ; received from serial	port apparently
 
 loc_E4CB:				; CODE XREF: __RESET+1008j
 					; __RESET+100Dj ...
@@ -8036,7 +8093,7 @@ loc_E4FB:				; CODE XREF: __RESET+101Aj
 loc_E504:				; CODE XREF: __RESET+FBAj
 		tbs	bit7, flags_42
 		beq	loc_E50B
-		jmp	loc_E636
+		jmp	loc_E636	; set on timer overflow
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_E50B:				; CODE XREF: __RESET+1050j
@@ -8064,7 +8121,7 @@ loc_E52F:				; CODE XREF: __RESET+117Dj
 		ld	a, flags_44	; bit3:	rev limiter, bits 543210 will all cause	a branch past doinjectors
 		cmpb	a, #3Fh
 		beq	loc_E538
-		ld	#2Eh, unk_C9
+		ld	#2Eh, count_C9	; decrements at	E488
 
 loc_E538:				; CODE XREF: __RESET+107Dj
 		ld	d, y + 13h
@@ -8072,7 +8129,7 @@ loc_E538:				; CODE XREF: __RESET+107Dj
 		ld	b, x + 00h
 		and	b, #03h
 		bne	loc_E581
-		ld	b, unk_7D
+		ld	b, flags_7D
 		st	b, temp_53
 		ld	b, #03h
 		tbbc	bit0, flags_40,	loc_E54D
@@ -8083,7 +8140,7 @@ loc_E54D:				; CODE XREF: __RESET+1092j
 		bne	loc_E581
 		cmpb	a, #20h
 		bne	loc_E55A
-		cmp	#1Eh, unk_CF
+		cmp	#1Eh, count_CF	; incremented at E7A9
 		bcs	loc_E576
 
 loc_E55A:				; CODE XREF: __RESET+109Dj
@@ -8094,9 +8151,9 @@ loc_E55A:				; CODE XREF: __RESET+109Dj
 		beq	loc_E585
 		ld	d, temp_51
 		tbbs	bit0, flags_41,	loc_E585
-		cmp	#14h, compLOAD	; air temp compensated Load
+		cmp	#14h, compLOAD	; air temp and Baro compensated	Load (likely in	units of mass)
 		bcs	loc_E585
-		cmp	#00h, unk_C9
+		cmp	#00h, count_C9	; decrements at	E488
 		beq	loc_E5A8
 		bra	loc_E585
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
@@ -8244,7 +8301,7 @@ loc_E621:				; CODE XREF: __RESET+1167j
 loc_E627:				; CODE XREF: __RESET+10EFj
 		st	b, y + 14h
 		tbs	bit0, flags_40
-		bne	loc_E636
+		bne	loc_E636	; set on timer overflow
 		ld	x, #0092h
 		ld	y, #0149h
 		jmp	loc_E52F
@@ -8252,29 +8309,29 @@ loc_E627:				; CODE XREF: __RESET+10EFj
 
 loc_E636:				; CODE XREF: __RESET+1052j
 					; __RESET+1175j
-		tbbs	bit5, IRQL, loc_E63C ; Interrupt Request Flag MSB
-		jmp	loc_E79D
+		tbbs	bit5, IRQL, loc_E63C ; set on timer overflow
+		jmp	loc_E79D	; --------------------------end	of pseudo interrupt
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_E63C:				; CODE XREF: __RESET:loc_E636j
-		clrb	bit5, IRQL
-		ld	b, #03h
+		clrb	bit5, IRQL	; timer	overflow psuedo	interrupt
+		ld	b, #003
 		ld	y, #00CAh
-		jsr	sub_C084	; increment B bytes of ram by 1	starting from Y
+		jsr	satcount	; increment B bytes of ram by 1	starting from Y, saturates at FF
 		clr	a
 		ld	b, unk_142
 		or	b, unk_15E
 		and	b, #40h
 		beq	loc_E657
-		ld	a, unk_1D3
+		ld	a, count_1D3	; tof increment	rate
 		inc	a
 		beq	loc_E65A
 
 loc_E657:				; CODE XREF: __RESET+1199j
-		st	a, unk_1D3
+		st	a, count_1D3	; tof increment	rate
 
 loc_E65A:				; CODE XREF: __RESET+119Fj
-		ld	a, flags_A2	; contains bitflags, bit7 VTA_net related
+		ld	a, flags_A2	; bit7:	VTA_net	high, bit4: VTA_net high
 		and	a, #05h
 		cmp	a, #05h
 		bne	loc_E678
@@ -8285,7 +8342,7 @@ loc_E65A:				; CODE XREF: __RESET+119Fj
 		ld	d, word_7A	; meanKSint divided by a air temp comp factor
 		cmp	d, #084Dh
 		bcc	loc_E67F
-		cmp	#2Eh, unk_CA
+		cmp	#2Eh, count_CA	; incremented at E643
 		bcs	loc_E681
 
 loc_E678:				; CODE XREF: __RESET+11AAj
@@ -8296,46 +8353,46 @@ loc_E678:				; CODE XREF: __RESET+11AAj
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_E67F:				; CODE XREF: __RESET+11BBj
-		clr	unk_CA
+		clr	count_CA	; incremented at E643
 
 loc_E681:				; CODE XREF: __RESET+11C0j
 		ld	b, #01h
 		jsr	sub_C23A
-		ld	a, unk_178
+		ld	a, count_178	; tof increment	rate
 		inc	a
 		beq	loc_E68F
-		st	a, unk_178
+		st	a, count_178	; tof increment	rate
 
 loc_E68F:				; CODE XREF: __RESET+11C7j
 					; __RESET+11D4j
-		ld	a, flags_A2	; contains bitflags, bit7 VTA_net related
-		and	a, #0Ah
-		cmp	a, #0Ah
-		bne	loc_E6AD
+		ld	a, flags_A2	; bit7:	VTA_net	high, bit4: VTA_net high
+		and	a, #00001010b
+		cmp	a, #00001010b
+		bne	loc_E6AD	; bounce if bits high
 		cmp	#147, Bvolts	; 11.5V
-		bcs	loc_E6AD
-		cmp	#0B3h, rawTHW	; Contains the NOT of CTS reading from ADC, sensor is tied to ground on	other side
-		bcs	loc_E6AD
+		bcs	loc_E6AD	; bounce if low	voltage
+		cmp	#179, rawTHW	; Contains the NOT of CTS reading from ADC, sensor is tied to ground on	other side
+		bcs	loc_E6AD	; bounce if too	cold
 		ld	d, word_7A	; meanKSint divided by a air temp comp factor
 		cmp	d, #084Dh
 		bcc	loc_E6BB
-		cmp	#2Eh, unk_CB
+		cmp	#2Eh, count_CB	; incremented at E643
 		bcs	loc_E6BD
 
 loc_E6AD:				; CODE XREF: __RESET+11DFj
 					; __RESET+11E4j ...
 		ld	b, #0FDh
 		jsr	sub_C23F
-		cmp	#1Eh, unk_CF
+		cmp	#1Eh, count_CF	; incremented at E7A9
 		bcc	loc_E6B9
-		clr	unk_CF
+		clr	count_CF	; incremented at E7A9
 
 loc_E6B9:				; CODE XREF: __RESET+11FFj
 		bra	loc_E6C2
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_E6BB:				; CODE XREF: __RESET+11F0j
-		clr	unk_CB
+		clr	count_CB	; incremented at E643
 
 loc_E6BD:				; CODE XREF: __RESET+11F5j
 		ld	b, #02h
@@ -8343,22 +8400,22 @@ loc_E6BD:				; CODE XREF: __RESET+11F5j
 
 loc_E6C2:				; CODE XREF: __RESET:loc_E6B9j
 		st	b, flags_50	; could	be bits	for 6336 output	chip
-		ld	a, unk_11D	; some kind of counter
+		ld	a, count_11D	; tof increment	rate
 		inc	a
 		cmp	a, #04h
 		bcs	loc_E6CD
 		clr	a
 
 loc_E6CD:				; CODE XREF: __RESET+1214j
-		st	a, unk_11D	; some kind of counter
+		st	a, count_11D	; tof increment	rate
 		beq	loc_E6D5
-		jmp	loc_E79D
+		jmp	loc_E79D	; --------------------------end	of pseudo interrupt
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_E6D5:				; CODE XREF: __RESET+121Aj
 		cmp	#0Ah, THG	; THG lookup table output from exhaust gas temp	sensor ADC reading
 		bcc	loc_E6DC
-		clr	unk_CE
+		clr	count_CE	; incremented at E7A9
 
 loc_E6DC:				; CODE XREF: __RESET+1222j
 		tbbc	bit6, flags_4B,	loc_E722
@@ -8371,8 +8428,8 @@ loc_E6DC:				; CODE XREF: __RESET+1222j
 		ld	a, unk_12E
 		jsr	SaturateData
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
-		.db 0E5h ; å
-		.db  1Ah
+		.db 0E5h
+		.db 1Ah
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 		bcs	loc_E722
 		ld	a, unk_14A
@@ -8382,7 +8439,7 @@ loc_E6DC:				; CODE XREF: __RESET+1222j
 		.db  1Ah
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 		bcs	loc_E722
-		cmp	#58h, unk_CE
+		cmp	#58h, count_CE	; incremented at E7A9
 		bcs	loc_E722
 		tbbs	bit0, flags_4F,	loc_E722
 		tbbs	bit1, flags_4F,	loc_E722
@@ -8393,7 +8450,7 @@ loc_E6DC:				; CODE XREF: __RESET+1222j
 		ld	a, word_92
 		and	a, #7Bh
 		bne	loc_E722
-		ld	a, unk_7D
+		ld	a, flags_7D
 		and	a, #00h
 		beq	loc_E726
 
@@ -8458,24 +8515,24 @@ loc_E76C:				; CODE XREF: __RESET+12ABj
 		cmp	a, b
 		bcc	loc_E775
 		st	a, unk_1D7
-		bra	loc_E79D
+		bra	loc_E79D	; --------------------------end	of pseudo interrupt
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_E775:				; CODE XREF: __RESET+12B8j
 		st	b, unk_1D7
 		cmp	#075, THG	; THG lookup table output from exhaust gas temp	sensor ADC reading
 		bcc	loc_E794
-		ld	a, unk_146
+		ld	a, flags_146
 		or	a, #80h
-		st	a, unk_146
+		st	a, flags_146
 		tbbc	bit3, flags_4B,	loc_E792
 		setb	bit6, flags_4D
-		ld	a, unk_147
+		ld	a, flags_147
 		or	a, #80h
-		st	a, unk_147
+		st	a, flags_147
 
 loc_E792:				; CODE XREF: __RESET+12CFj
-		bra	loc_E79D
+		bra	loc_E79D	; --------------------------end	of pseudo interrupt
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_E794:				; CODE XREF: __RESET+12C5j
@@ -8485,22 +8542,22 @@ loc_E794:				; CODE XREF: __RESET+12C5j
 
 loc_E79D:				; CODE XREF: __RESET+1183j
 					; __RESET+121Cj ...
-		ld	a, unk_BD
+		ld	a, count_BD	; --------------------------end	of pseudo interrupt
 		bne	loc_E7F6
-		ld	#0F4h, unk_BD
-		ld	b, #05h
+		ld	#0F4h, count_BD	; decremented at F566
+		ld	b, #005
 		ld	y, #00CDh
-		jsr	sub_C084	; increment B bytes of ram by 1	starting from Y
-		ld	b, unk_1BC
+		jsr	satcount	; increment B bytes of ram by 1	starting from Y, saturates at FF
+		ld	b, count_1BC
 		inc	b
 		beq	loc_E7B5
-		st	b, unk_1BC
+		st	b, count_1BC
 
 loc_E7B5:				; CODE XREF: __RESET+12FAj
-		ld	b, unk_1BE
+		ld	b, count_1BE
 		inc	b
 		beq	loc_E7BE
-		st	b, unk_1BE
+		st	b, count_1BE
 
 loc_E7BE:				; CODE XREF: __RESET+1303j
 		ld	a, unk_1D8
@@ -8518,7 +8575,7 @@ loc_E7D0:				; CODE XREF: __RESET+1312j
 					; __RESET+1315j
 		clr	a
 		clr	b
-		cmp	#3Bh, unk_CD
+		cmp	#3Bh, count_CD	; incremented at E7A9
 		ble	loc_E7F4
 		inc	b
 		ld	y, meanKSint	; deltaKS/KS_count, filtered
@@ -8566,10 +8623,10 @@ loc_E806:				; CODE XREF: __RESET+134Bj
 
 loc_E816:				; CODE XREF: __RESET+1351j
 					; __RESET+1358j
-		clr	unk_B8
+		clr	count_B8	; incremented at F55E
 
 loc_E818:				; CODE XREF: __RESET+135Ej
-		cmp	#62h, unk_B8
+		cmp	#62h, count_B8	; incremented at F55E
 		ble	loc_E82A
 		ld	y, #0C3FEh
 		ld	d, LOAD		; Load,	uncompensated for ThA
@@ -8592,7 +8649,7 @@ loc_E837:				; CODE XREF: __RESET+137Dj
 loc_E83E:				; CODE XREF: __RESET+1384j
 		tbbs	bit3, flags_43,	loc_E84E ; bit3: AFM bad bit4: rev limiter
 		tbbc	bit7, flags_44,	loc_E852 ; bit3: rev limiter, bits 543210 will all cause a branch past doinjectors
-		tbbs	bit5, flags_45,	loc_E84E
+		tbbs	bit5, flags_45,	loc_E84E ; received from serial	port apparently
 		ld	b, unk_103
 		cmpb	b, #02h
 		bne	loc_E852
@@ -8621,7 +8678,7 @@ loc_E854:				; CODE XREF: __RESET+139Aj
 		ld	a, unk_185
 		cmpb	a, #80h
 		bne	loc_E878
-		ld	a, compLOAD	; air temp compensated Load
+		ld	a, compLOAD	; air temp and Baro compensated	Load (likely in	units of mass)
 		cmp	a, #108
 		bcs	loc_E87C
 
@@ -8667,11 +8724,11 @@ loc_E8A7:				; CODE XREF: __RESET+13DEj
 		ld	a, unk_109
 		cmpb	a, #002
 		beq	loc_E8C9
-		tbbs	bit5, flags_45,	loc_E8C9
+		tbbs	bit5, flags_45,	loc_E8C9 ; received from serial	port apparently
 		ld	a, unk_185
 		and	a, #80h
 		bne	loc_E8C9
-		ld	a, compLOAD	; air temp compensated Load
+		ld	a, compLOAD	; air temp and Baro compensated	Load (likely in	units of mass)
 		ld	y, #0C481h
 		jsr	TwoDTable	; X value in AccA, integer return in Acca, fraction return in AccB
 		ld	b, temp_51
@@ -8695,7 +8752,7 @@ loc_E8CD:				; CODE XREF: __RESET+1411j
 		clr	a
 		cmp	#100, RPM	; 5000RPM
 		bcs	loc_E8E1
-		cmp	#040, compLOAD	; air temp compensated Load
+		cmp	#040, compLOAD	; air temp and Baro compensated	Load (likely in	units of mass)
 		bcs	loc_E8E1
 		ld	y, #0C474h
 		jsr	TwoD_rawTHW	; lookup Raw Water Temp, integer return	in Acca, fraction return in AccB
@@ -8735,10 +8792,10 @@ loc_E900:				; CODE XREF: __RESET+1442j
 		cmpb	a, #80h
 		bne	loc_E930
 		ld	y, #0C34Eh
-		ld	d, compLOAD	; air temp compensated Load
+		ld	d, compLOAD	; air temp and Baro compensated	Load (likely in	units of mass)
 		jsr	DivDby12	; divides D by 12, returns 16b result in unks 53:54
 		ld	d, RPM		; MSB is RPM/50, LSB is	fraction of 50
-		jsr	ThreeDtable	; inputs in D and temp_53:temp_54
+		jsr	ThreeDtable	; inputs in D and temp_53:temp_54, output in A
 		ld	b, ADC_pin15	; adc pin 15 (0V)
 		cmpb	b, #0Ch
 		beq	loc_E92E
@@ -8761,7 +8818,7 @@ loc_E92E:				; CODE XREF: __RESET+1469j
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_E930:				; CODE XREF: __RESET+1455j
-		tbbc	bit6, flags_45,	loc_E94C
+		tbbc	bit6, flags_45,	loc_E94C ; received from serial	port apparently
 		cmp	#02h, unk_5E	; could	be last	unk_100, or 0
 		bcc	loc_E94C
 		ld	d, #00341	; 40 deg
@@ -8790,7 +8847,7 @@ loc_E951:				; CODE XREF: __RESET+1498j
 		ld	y, #0C3F9h
 		jsr	TwoDTable	; X value in AccA, integer return in Acca, fraction return in AccB
 		tbbc	bit5, flags_45,	loc_E95D ; saturate around 10 deg
-		tbbc	bit1, flags_45,	loc_E963
+		tbbc	bit1, flags_45,	loc_E963 ; received from serial	port apparently
 
 loc_E95D:				; CODE XREF: __RESET+14A1j
 		cmp	a, #085		; saturate around 10 deg
@@ -8942,7 +8999,7 @@ loc_EA2D:				; CODE XREF: __RESET+1573j
 loc_EA30:				; CODE XREF: __RESET+150Ej
 		setb	bit2, flags_4A
 		ld	y, #0C5BAh
-		jsr	TwoD_RPM	; lookup unk_F0, integer return	in Acca, fraction return in AccB
+		jsr	TwoD_RPM	; lookup RPM, integer return in	Acca, fraction return in AccB
 		st	a, temp_51
 		ld	a, unk_1CD
 		ld	b, unk_6C	; sort of a filtered, saturated	VTA_net
@@ -8967,8 +9024,8 @@ loc_EA53:				; CODE XREF: __RESET+1599j
 		or	a, #02h
 
 loc_EA59:				; CODE XREF: __RESET+159Fj
-		tbbs	bit6, flags_45,	loc_EA6C
-		ld	b, compLOAD	; air temp compensated Load
+		tbbs	bit6, flags_45,	loc_EA6C ; received from serial	port apparently
+		ld	b, compLOAD	; air temp and Baro compensated	Load (likely in	units of mass)
 		cmp	b, temp_51
 		bcc	loc_EA64
 		or	a, #04h
@@ -8989,8 +9046,8 @@ loc_EA6E:				; CODE XREF: __RESET+15B0j
 		beq	loc_EA8C
 		tbbs	bit3, flags_43,	loc_EA8C ; bit3: AFM bad bit4: rev limiter
 		tbbs	bit4, flags_4A,	loc_EA8C
-		tbbc	bit5, flags_45,	loc_EA81
-		tbbc	bit6, flags_45,	loc_EA8C
+		tbbc	bit5, flags_45,	loc_EA81 ; received from serial	port apparently
+		tbbc	bit6, flags_45,	loc_EA8C ; received from serial	port apparently
 
 loc_EA81:				; CODE XREF: __RESET+15C5j
 		cmpb	a, #07h
@@ -9014,21 +9071,21 @@ loc_EA91:				; CODE XREF: __RESET+15D4j
 		jsr	sub_CF4C
 
 loc_EAA1:				; CODE XREF: __RESET+15E1j
-		cmp	#31h, unk_CD
+		cmp	#31h, count_CD	; incremented at E7A9
 		beq	loc_EAC1
-		bgt	loc_EACC
-		tbbc	bit0, flags_45,	loc_EAD3
+		bgt	loc_EACC	; bounce if fuel pressure is up
+		tbbc	bit0, flags_45,	loc_EAD3 ; received from serial	port apparently
 		ld	b, unk_103
 		cmpb	b, #10h
 		beq	loc_EAD3
 		cmpb	b, #20h
-		bne	loc_EABD
+		bne	loc_EABD	; fuel pressure	down
 		ld	a, unk_308
 		and	a, #01h
 		beq	loc_EAD3
 
 loc_EABD:				; CODE XREF: __RESET+15FEj
-		setb	bit2, PORTD_ASRIN
+		setb	bit2, PORTD_ASRIN ; fuel pressure down
 		bra	loc_EAD3
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
@@ -9039,17 +9096,17 @@ loc_EAC1:				; CODE XREF: __RESET+15EEj
 		jsr	sub_CF4E
 
 loc_EACC:				; CODE XREF: __RESET+15F0j
-		tbbc	bit2, PORTD_ASRIN, loc_EAD1 ; Port D Data Register / ASR Input Data
+		tbbc	bit2, PORTD_ASRIN, loc_EAD1 ; bounce if	fuel pressure is up
 		setb	bit2, flags_47
 
 loc_EAD1:				; CODE XREF: __RESET:loc_EACCj
-		clrb	bit2, PORTD_ASRIN
+		clrb	bit2, PORTD_ASRIN ; fuel pressure up
 
 loc_EAD3:				; CODE XREF: __RESET+15F2j
 					; __RESET+15FAj ...
 		clr	a
 		tbbs	bit7, flags_4C,	loc_EAE2 ; bit 7 demands a sampling of the oxygen sensors
-		tbbc	bit0, flags_47,	loc_EAE2
+		tbbc	bit0, flags_47,	loc_EAE2 ; bit4: high when hot (but how	hot?)
 		ld	a, ADC_rq1D	; adc request 1D (probably pin 14, 0V)
 		and	a, #04h
 		beq	loc_EAE8
@@ -9057,52 +9114,52 @@ loc_EAD3:				; CODE XREF: __RESET+15F2j
 
 loc_EAE2:				; CODE XREF: __RESET+161Ej
 					; __RESET+1621j
-		st	a, unk_C0	; flag for Gx
-		st	a, unk_C1	; flag for Gx
+		st	a, count_C0	; flag for Gx increments at E478
+		st	a, count_C1	; flag for Gx increments at E478
 		bra	loc_EB01
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_EAE8:				; CODE XREF: __RESET+1629j
-		cmp	#0Fh, unk_C0	; flag for Gx
+		cmp	#0Fh, count_C0	; flag for Gx increments at E478
 		bcs	loc_EAF1
 		setb	bit6, flags_4F
 		bra	loc_EB01
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_EAF1:				; CODE XREF: __RESET+1635j
-		cmp	#0Fh, unk_C1	; flag for Gx
+		cmp	#0Fh, count_C1	; flag for Gx increments at E478
 		bcs	loc_EAFA
 		setb	bit6, flags_4F
 		bra	loc_EB01
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_EAFA:				; CODE XREF: __RESET+163Ej
-		cmp	#0Fh, unk_BF
+		cmp	#0Fh, count_BF	; increments at	E478
 		bcs	loc_EB03
 		clrb	bit6, flags_4F
 
 loc_EB01:				; CODE XREF: __RESET+1630j
 					; __RESET+1639j ...
-		st	a, unk_BF
+		st	a, count_BF	; increments at	E478
 
 loc_EB03:				; CODE XREF: __RESET+1647j
 		clr	a
-		cmp	#7Ah, unk_B9
+		cmp	#7Ah, count_B9	; incremented at F55E
 		bcs	loc_EB0B
 		clr	unk_7F
 
 loc_EB0B:				; CODE XREF: __RESET+1651j
-		ld	b, unk_1AB
+		ld	b, unk_1AB	; flags_49 bit0	related
 		cmpb	b, #40h
 		bne	loc_EB30
-		st	a, unk_1A3
-		tbbs	bit0, flags_45,	loc_EB30
+		st	a, count_1A3	; increments at	E480
+		tbbs	bit0, flags_45,	loc_EB30 ; received from serial	port apparently
 		cmp	#102, Bvolts	; 8V
 		bcs	loc_EB30
-		tbbc	bit4, flags_45,	loc_EB30
+		tbbc	bit4, flags_45,	loc_EB30 ; received from serial	port apparently
 		cmp	#02h, unk_7F
 		bcs	loc_EB30
-		ld	a, unk_1A2
+		ld	a, count_1A2	; increments at	E480
 		cmp	a, #10h
 		bcs	loc_EB33
 		setb	bit5, flags_4C
@@ -9111,7 +9168,7 @@ loc_EB0B:				; CODE XREF: __RESET+1651j
 
 loc_EB30:				; CODE XREF: __RESET+165Aj
 					; __RESET+165Fj ...
-		st	a, unk_1A2
+		st	a, count_1A2	; increments at	E480
 
 loc_EB33:				; CODE XREF: __RESET+1674j
 					; __RESET+1678j
@@ -9120,19 +9177,19 @@ loc_EB33:				; CODE XREF: __RESET+1674j
 		setb	bit7, flags_40
 
 loc_EB3A:				; CODE XREF: __RESET+1680j
-		ld	a, unk_1A3
+		ld	a, count_1A3	; increments at	E480
 		cmp	a, #4Dh
 		bcc	loc_EB5E
 		tbbs	bit7, flags_40,	loc_EB60
 		tbbc	bit5, flags_4C,	loc_EB69 ; bit 7 demands a sampling of the oxygen sensors
-		ld	a, unk_162
+		ld	a, flags_162
 		or	a, #80h
-		st	a, unk_162
+		st	a, flags_162
 		tbbc	bit3, flags_4B,	loc_EB69
 		setb	bit6, flags_4D
-		ld	a, unk_163
+		ld	a, flags_163
 		or	a, #80h
-		st	a, unk_163
+		st	a, flags_163
 		bra	loc_EB69
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
@@ -9178,7 +9235,7 @@ loc_EB91:				; CODE XREF: __RESET+16D7j
 		clr	b
 		ld	a, unk_1C6
 		and	a, #80h
-		tbbc	bit0, flags_45,	loc_EB9F
+		tbbc	bit0, flags_45,	loc_EB9F ; received from serial	port apparently
 		or	a, #01h
 
 loc_EB9F:				; CODE XREF: __RESET+16E4j
@@ -9186,11 +9243,11 @@ loc_EB9F:				; CODE XREF: __RESET+16E4j
 		or	a, #02h
 
 loc_EBA4:				; CODE XREF: __RESET:loc_EB9Fj
-		tbbc	bit1, flags_45,	loc_EBA9
+		tbbc	bit1, flags_45,	loc_EBA9 ; received from serial	port apparently
 		or	a, #04h
 
 loc_EBA9:				; CODE XREF: __RESET:loc_EBA4j
-		tbbc	bit5, flags_45,	loc_EBAE
+		tbbc	bit5, flags_45,	loc_EBAE ; received from serial	port apparently
 		or	a, #08h
 
 loc_EBAE:				; CODE XREF: __RESET:loc_EBA9j
@@ -9203,7 +9260,7 @@ loc_EBB3:				; CODE XREF: __RESET:loc_EBAEj
 
 loc_EBB8:				; CODE XREF: __RESET:loc_EBB3j
 		st	a, unk_1C6
-		ld	b, flags_45
+		ld	b, flags_45	; received from	serial port apparently
 		st	b, unk_F8
 		ld	d, InjectPW1	; pulsewidth for most cases/cylinders, 4us/bit
 		jsr	sub_EC27
@@ -9328,7 +9385,7 @@ intASR2_5:				; CODE XREF: ROM:EC41j	ROM:EC4Aj ...
 		st	b, NEcounts
 		ld	d, ASR2		; ASR2 edge counter value MSB
 		mov	d, x
-		cmp	#08h, unk_B9
+		cmp	#08h, count_B9	; incremented at F55E
 		bcc	intASR2_6	; 152 RPM
 		sub	d, lastASR2
 		cmp	a, #20h		; limit	timer counts since last	interrupt 8192,	152 RPM
@@ -9341,7 +9398,7 @@ intASR2_7:				; CODE XREF: ROM:EC81j
 		st	x, lastASR2
 		cmp	#02h, unk_7F
 		bcc	intASR2_8
-		cmp	#06h, unk_B9
+		cmp	#06h, count_B9	; incremented at F55E
 		ble	intASR2_9
 		clr	unk_7F
 		bra	intASR2_9
@@ -9351,7 +9408,7 @@ intASR2_8:				; CODE XREF: ROM:EC8Cj
 		ld	#02h, unk_7F
 
 intASR2_9:				; CODE XREF: ROM:EC91j	ROM:EC95j
-		clr	unk_B9
+		clr	count_B9	; incremented at F55E
 		cmp	#00h, NEcounts
 		bne	intASR2_10
 		jmp	ASR2_reti	; bomb out of interrupt	if NEcounts is zero
@@ -9433,7 +9490,7 @@ intASR2_14:				; CODE XREF: ROM:intASR2_12j ROM:ECD8j ...
 		clr	y + 00h
 
 intASR2_15:				; CODE XREF: ROM:ECDFj	ROM:ECEFj
-		clr	unk_BF
+		clr	count_BF	; increments at	E478
 
 intASR2_16:				; CODE XREF: ROM:ED18j
 		clrb	bit4, flags_46
@@ -9516,7 +9573,7 @@ intASR2_27:				; CODE XREF: ROM:ED78j
 		bvc	intASR2_32
 		bcs	intASR2_34
 		tbbs	bit3, flags_43,	intASR2_35 ; bit3: AFM bad bit4: rev limiter
-		cmp	#3Ch, compLOAD	; air temp compensated Load
+		cmp	#3Ch, compLOAD	; air temp and Baro compensated	Load (likely in	units of mass)
 		bcs	intASR2_35
 		ld	a, unk_186
 		bne	intASR2_35
@@ -9726,7 +9783,7 @@ NEsub1_7:				; CODE XREF: NEsub1+59j
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 NEsub1_8:				; CODE XREF: NEsub1+6Ej
-		cmp	#24h, compLOAD	; air temp compensated Load
+		cmp	#24h, compLOAD	; air temp and Baro compensated	Load (likely in	units of mass)
 		bcc	NEsub1_9
 		add	d, #0002h
 		bra	NEsub1_10
@@ -9907,7 +9964,7 @@ IV6_3:					; CODE XREF: IV6+25j
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 IV6_4:					; CODE XREF: IV6+1Cj
-		tbbc	bit5, flags_47,	IV6_5
+		tbbc	bit5, flags_47,	IV6_5 ;	bit4: high when	hot (but how hot?)
 		clrb	bit5, flags_47
 		tbs	bit5, flags_41
 		beq	IV6_5
@@ -10165,19 +10222,19 @@ IV6_36:					; CODE XREF: IV6+18Aj
 
 IV6_37:					; CODE XREF: IV6+185j IV6+192j
 		tbbc	bit3, flags_43,	IV6_39 ; bit3: AFM bad bit4: rev limiter
-		cmp	#7Ah, unk_B4
+		cmp	#7Ah, count_B4	; incremented at F55E
 		bcs	IV6_42
 		cmp	#0Fh, unk_EB
 		bcs	IV6_38
 		clrb	bit3, flags_43
 
 IV6_38:					; CODE XREF: IV6+1A5j
-		clr	unk_B4
+		clr	count_B4	; incremented at F55E
 		bra	IV6_41
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 IV6_39:					; CODE XREF: IV6:IV6_37j
-		clr	unk_B4
+		clr	count_B4	; incremented at F55E
 		cmp	#06h, RPM	; MSB is RPM/50, LSB is	fraction of 50
 		bcs	IV6_41
 		cmp	#30h, badKScount ; Incremented by IV6, cleared by KS interrupt
@@ -10195,11 +10252,11 @@ IV6_41:					; CODE XREF: IV6+1ABj IV6+1B2j
 
 IV6_42:					; CODE XREF: IV6+1A0j IV6+1BBj
 		clrb	bit0, flags_4E
-		tbbc	bit0, flags_45,	IV6_43
+		tbbc	bit0, flags_45,	IV6_43 ; received from serial port apparently
 		setb	bit4, flags_4C
 
 IV6_43:					; CODE XREF: IV6:IV6_5j IV6+1C5j
-		tbs	bit3, flags_47
+		tbs	bit3, flags_47	; bit4:	high when hot (but how hot?)
 		bne	IV6_44
 		jmp	IV6_2
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
@@ -10355,7 +10412,7 @@ loc_F1D8:				; CODE XREF: sub_F1A9+2Bj
 		shl	a
 		and	a, #0Ch
 		tbbs	bit3, flags_43,	loc_F1EE ; bit3: AFM bad bit4: rev limiter
-		cmp	#18h, compLOAD	; air temp compensated Load
+		cmp	#18h, compLOAD	; air temp and Baro compensated	Load (likely in	units of mass)
 		bcs	loc_F1EE
 		or	a, #80h
 		cmp	#0Dh, RPM	; MSB is RPM/50, LSB is	fraction of 50
@@ -10388,7 +10445,7 @@ loc_F200:				; CODE XREF: sub_F1A9+47j sub_F1A9+4Cj ...
 		bne	loc_F216
 		cmpb	a, #80h
 		bne	loc_F21E
-		st	b, unk_199
+		st	b, unk_199	; output from 3d table c54c
 
 loc_F216:				; CODE XREF: sub_F1A9+5Bj sub_F1A9+64j
 		st	b, unk_19B
@@ -10436,7 +10493,7 @@ loc_F249:				; CODE XREF: sub_F1A9+9Dj
 loc_F251:				; CODE XREF: sub_F1A9+73j sub_F1A9+85j
 		clr	b
 		st	b, unk_19C
-		clr	unk_AC
+		clr	count_AC	; incremented at F47D
 		jmp	loc_F2F9
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
@@ -10471,7 +10528,7 @@ loc_F289:				; CODE XREF: sub_F1A9+D2j
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_F28C:				; CODE XREF: sub_F1A9+D7j sub_F1A9+DEj
-		tbbs	bit5, flags_45,	loc_F2AA
+		tbbs	bit5, flags_45,	loc_F2AA ; received from serial	port apparently
 		tbbs	bit5, flags_4A,	loc_F2AA
 		ld	y, #009Eh
 		and	a, #02h
@@ -10495,7 +10552,7 @@ loc_F2AA:				; CODE XREF: sub_F1A9:loc_F28Cj
 		ld	b, unk_E5
 		and	b, #03h
 		beq	loc_F2DB
-		clr	unk_AC
+		clr	count_AC	; incremented at F47D
 		dec	b
 		ld	y, #0C549h
 		add	y, b
@@ -10510,7 +10567,7 @@ loc_F2C1:				; CODE XREF: sub_F1A9+115j
 		st	a, unk_19D
 		ld	a, unk_198
 		add	a, b
-		ld	b, unk_199
+		ld	b, unk_199	; output from 3d table c54c
 		sub	b, unk_19A
 		bcc	loc_F2D2
 		clr	b
@@ -10529,23 +10586,23 @@ loc_F2DB:				; CODE XREF: sub_F1A9+105j
 		ld	a, unk_19B
 		ld	b, unk_19A
 		beq	loc_F2F9
-		cmp	#62h, unk_AC
+		cmp	#62h, count_AC	; incremented at F47D
 		bcs	loc_F2F9
-		clr	unk_AC
+		clr	count_AC	; incremented at F47D
 		add	a, #02h
 		bcs	loc_F2F3
-		cmp	a, unk_199
+		cmp	a, unk_199	; output from 3d table c54c
 		ble	loc_F2F6
 
 loc_F2F3:				; CODE XREF: sub_F1A9+143j
-		ld	a, unk_199
+		ld	a, unk_199	; output from 3d table c54c
 
 loc_F2F6:				; CODE XREF: sub_F1A9+148j
 		st	a, unk_19B
 
 loc_F2F9:				; CODE XREF: sub_F1A9+AEj
 					; sub_F1A9:loc_F289j ...
-		ld	a, unk_199
+		ld	a, unk_199	; output from 3d table c54c
 		sub	a, unk_19B
 		bcc	loc_F302
 		clr	a
@@ -10553,9 +10610,9 @@ loc_F2F9:				; CODE XREF: sub_F1A9+AEj
 loc_F302:				; CODE XREF: sub_F1A9+156j
 		st	a, unk_19A
 		add	a, unk_198
-		cmp	a, unk_199
+		cmp	a, unk_199	; output from 3d table c54c
 		ble	loc_F310
-		ld	a, unk_199
+		ld	a, unk_199	; output from 3d table c54c
 
 loc_F310:				; CODE XREF: sub_F1A9+162j
 		ld	b, unk_197
@@ -10583,7 +10640,7 @@ IVc:					; DATA XREF: ROM:FFF6o
 		ld	a, TIMER	; Timer	MSB (bit11~bit18)
 		and	a, #04h		; toggles every	4096ms
 		bne	loc_F34D	; bounce if high, every	8ms
-		tbbc	bit7, flags_45,	loc_F34D
+		tbbc	bit7, flags_45,	loc_F34D ; received from serial	port apparently
 		clrb	bit4, PORTB	; clear	pin 23
 		ld	a, unk_7C	; counter
 		bpz	loc_F33A
@@ -10615,19 +10672,19 @@ loc_F34D:				; CODE XREF: IVc+6j IVc+8j ...
 		cmp	#137, unk_E1
 		bcc	loc_F395
 		tbbs	bit5, flags_4C,	loc_F378 ; bit 7 demands a sampling of the oxygen sensors
-		ld	b, unk_1AB
+		ld	b, unk_1AB	; flags_49 bit0	related
 		cmpb	b, #40h
 		bne	loc_F388
 		ld	b, unk_19F	; ISC related
 		cmp	b, #010
 		bcc	loc_F374
-		ld	a, unk_B1
+		ld	a, count_B1	; incremented at F47D
 		cmp	a, #048
 		ble	loc_F37F
 		cmpz	b
 		bne	loc_F370
 		clr	a
-		st	a, unk_CC
+		st	a, count_CC	; incremented at E643
 
 loc_F370:				; CODE XREF: IVc+4Bj
 		inc	b
@@ -10651,7 +10708,7 @@ loc_F37F:				; CODE XREF: IVc+48j
 		bcc	loc_F38A	; bounce if >= 1000 RPM
 
 loc_F388:				; CODE XREF: IVc+3Bj IVc+56j ...
-		clr	unk_B1
+		clr	count_B1	; incremented at F47D
 
 loc_F38A:				; CODE XREF: IVc+66j
 		tbbs	bit6, flags_4C,	loc_F39B ; clear pin 58
@@ -10661,7 +10718,7 @@ loc_F38A:				; CODE XREF: IVc+66j
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_F395:				; CODE XREF: IVc+31j
-		clr	unk_B1
+		clr	count_B1	; incremented at F47D
 
 loc_F397:				; CODE XREF: IVc+61j IVc+73j
 		setb	bit3, DOUT	; set pin 58
@@ -10672,7 +10729,7 @@ loc_F39B:				; CODE XREF: IVc:loc_F38Aj IVc+6Dj ...
 		clrb	bit3, DOUT	; clear	pin 58
 
 loc_F39D:				; CODE XREF: IVc+79j
-		ld	a, unk_CC
+		ld	a, count_CC	; incremented at E643
 		cmp	a, #116
 		bcs	ISC_alt
 		clr	a
@@ -10766,13 +10823,13 @@ loc_F413:				; CODE XREF: IV6+4A6j
 		ld	b, unk_76
 		cmpb	a, #80h
 		beq	loc_F425
-		tbs	bit1, flags_47
+		tbs	bit1, flags_47	; bit4:	high when hot (but how hot?)
 		bne	loc_F433
 		bra	loc_F42A
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_F425:				; CODE XREF: IV6+4B9j
-		tbbc	bit1, flags_47,	loc_F433
+		tbbc	bit1, flags_47,	loc_F433 ; bit4: high when hot (but how	hot?)
 		clrb	bit1, flags_47
 
 loc_F42A:				; CODE XREF: IV6+4BFj
@@ -10841,9 +10898,9 @@ loc_F476:				; CODE XREF: IV6+4C9j IV6+4CDj
 		st	b, unk_76
 
 loc_F478:				; CODE XREF: IV6+4F0j
-		ld	b, #10h
+		ld	b, #016
 		ld	y, #00A3h
-		jsr	sub_C084	; increment B bytes of ram by 1	starting from Y
+		jsr	satcount	; increment B bytes of ram by 1	starting from Y, saturates at FF
 		ld	a, word_126
 		inc	a
 		beq	loc_F489
@@ -10851,7 +10908,7 @@ loc_F478:				; CODE XREF: IV6+4F0j
 
 loc_F489:				; CODE XREF: IV6+520j
 		clr	a
-		tbbc	bit2, flags_45,	loc_F493
+		tbbc	bit2, flags_45,	loc_F493 ; received from serial	port apparently
 		ld	a, unk_12C
 		inc	a
 		beq	loc_F496
@@ -10861,11 +10918,11 @@ loc_F493:				; CODE XREF: IV6+526j
 
 loc_F496:				; CODE XREF: IV6+52Dj
 		di
-		ld	b, #03h
+		ld	b, #003
 		ld	y, #01B8h
-		jsr	sub_C084	; increment B bytes of ram by 1	starting from Y
+		jsr	satcount	; increment B bytes of ram by 1	starting from Y, saturates at FF
 		ei
-		tbbs	bit7, flags_45,	loc_F4D4
+		tbbs	bit7, flags_45,	loc_F4D4 ; received from serial	port apparently
 		setb	bit4, PORTB
 		ld	a, TIMER	; Timer	MSB (bit11~bit18)
 		and	a, #0Ch
@@ -10978,13 +11035,13 @@ loc_F52E:				; CODE XREF: IV6+5C4j
 		clr	a
 		ld	b, unk_186
 		bne	loc_F53B
-		cmp	#3Dh, unk_C5
+		cmp	#3Dh, count_C5	; increments at	E478
 		bcc	loc_F554
 		bra	loc_F556
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_F53B:				; CODE XREF: IV6+5CEj
-		clr	unk_C5
+		clr	count_C5	; increments at	E478
 		ld	x, #0F52Ah
 		cmp	#080, RPM	; MSB is RPM/50, LSB is	fraction of 50
 		bcs	loc_F546
@@ -11011,12 +11068,12 @@ loc_F556:				; CODE XREF: IV6+5D5j
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_F559:				; CODE XREF: IV6+5A7j
-		ld	b, #07h
+		ld	b, #007
 		ld	y, #00B3h
-		jsr	sub_C084	; increment B bytes of ram by 1	starting from Y
-		ld	b, #04h
+		jsr	satcount	; increment B bytes of ram by 1	starting from Y, saturates at FF
+		ld	b, #004
 		ld	y, #00BAh
-		jsr	sub_C090	; decrements B bytes of	ram by 1 starting from Y
+		jsr	satuncount	; decrements B bytes of	ram by 1 starting from Y, saturates at 00
 		ld	a, unk_138
 		inc	a
 		beq	loc_F572
@@ -11029,9 +11086,9 @@ loc_F572:				; CODE XREF: IV6+609j
 		st	a, unk_154
 
 loc_F57B:				; CODE XREF: IV6+612j
-		ld	b, #04h
+		ld	b, #004
 		ld	y, #01C0h
-		jsr	sub_C084	; increment B bytes of ram by 1	starting from Y
+		jsr	satcount	; increment B bytes of ram by 1	starting from Y, saturates at FF
 		ld	a, unk_11F	; ISC related
 		ld	b, unk_11E
 		cmp	b, #06h
@@ -11053,7 +11110,7 @@ loc_F594:				; CODE XREF: IV6+627j
 loc_F5A0:				; CODE XREF: IV6+639j
 		st	b, unk_11E
 		tbbc	bit5, RAMST, loc_F5FC ;	Built-in RAM status
-		tbbc	bit4, flags_45,	loc_F5AE
+		tbbc	bit4, flags_45,	loc_F5AE ; received from serial	port apparently
 		cmp	#109, Bvolts	; 8.55V
 		bcs	loc_F5FC
 
@@ -11216,7 +11273,7 @@ intCPR0:				; DATA XREF: ROM:FFF0o
 
 intCPR0_1:				; CODE XREF: intCPR0+2j
 		setb	bit1, flags_4C
-		tbbs	bit0, flags_45,	intCPR0_2
+		tbbs	bit0, flags_45,	intCPR0_2 ; received from serial port apparently
 		setb	bit2, flags_4C
 
 intCPR0_2:				; CODE XREF: intCPR0+14j
@@ -11343,7 +11400,7 @@ CPR0_sub_8:				; CODE XREF: CPR0_sub+4Cj
 		ld	b, y + 00h
 		cmp	b, #3Fh
 		bcs	CPR0_sub_RET
-		cmp	#3Fh, unk_B0
+		cmp	#3Fh, count_B0	; incremented at F47D
 		bcs	CPR0_sub_RET
 		cmpz	a
 		bne	CPR0_sub_9
@@ -11367,7 +11424,7 @@ CPR0_sub_RET:				; CODE XREF: CPR0_sub+45j CPR0_sub+52j ...
 intASR1:				; DATA XREF: ROM:FFF8o
 		ld	d, ASR1N	; ASR1 neg edge	counter	value MSB
 		sub	d, lastASR1N
-		cmp	#0Eh, unk_B2
+		cmp	#0Eh, count_B2	; incremented at F47D
 		bcc	loc_F726
 		cmp	d, #00500	; compare to 2ms
 		ble	loc_F751	; bomb out carry or zero
@@ -11375,7 +11432,7 @@ intASR1:				; DATA XREF: ROM:FFF8o
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_F726:				; CODE XREF: intASR1+8j
-		cmp	#17h, unk_B2
+		cmp	#17h, count_B2	; incremented at F47D
 		bcc	loc_F751	; skip here to NOT store a deltaKS value
 		cmpz	a
 		setc
@@ -11408,12 +11465,12 @@ loc_F747:				; CODE XREF: intASR1+29j intASR1+2Ej
 loc_F751:				; CODE XREF: intASR1+Dj intASR1+14j ...
 		tbbs	bit0, flags_4C,	loc_F759 ; skip	here to	NOT store a deltaKS value
 		tbbs	bit3, flags_4E,	loc_F759
-		clr	unk_B3
+		clr	count_B3	; incremented at F55E
 
 loc_F759:				; CODE XREF: intASR1:loc_F751j
 					; intASR1+3Fj
-		clr	unk_B2
-		clr	unk_C6
+		clr	count_B2	; incremented at F47D
+		clr	count_C6	; increments at	E478
 		ld	d, ASR1N	; ASR1 neg edge	counter	value MSB
 		st	d, lastASR1N
 		clrb	bit5, IRQLL	; service ASR1 IRQ flag
@@ -11421,10 +11478,9 @@ loc_F759:				; CODE XREF: intASR1:loc_F751j
 ; End of function intASR1
 
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
-		.db 0C1h ; Á		; data for F3DE
+		.db 0C1h ; Á		; data for F3DE, d2d3 start
 		.db 0C3h ; Ã
-unk_F767:	.db  4Fh ; O		; DATA XREF: __RESET:loc_D5BEr
-					; data for f3d8
+byte_F767:	.db 4Fh			; DATA XREF: __RESET:loc_D5BEr
 		.db  51h ; Q
 		.db  45h ; E
 		.db  57h ; W
@@ -11437,7 +11493,7 @@ unk_F767:	.db  4Fh ; O		; DATA XREF: __RESET:loc_D5BEr
 		.db  07h		; byet data for	F7DD
 		.db  09h
 		.db  0Bh
-		.db  0Dh
+		.db  0Dh		; d2d3 end
 		.dw 0FA0Ch		; vector table for F7F5, VTA1
 		.dw 0FBB0h		; VTA2
 		.dw 0F95Fh		; +B/4
@@ -11552,9 +11608,9 @@ loc_F80B:				; CODE XREF: intSIN0:loc_F805j
 		ld	a, #012
 
 loc_F816:				; CODE XREF: intSIN0+85j
-		tbbs	bit7, SSD, loc_F820 ; Serial Status Data Register
+		tbbs	bit7, SSD, loc_F820 ; bounce if	data received
 		dec	a
-		bne	loc_F816
+		bne	loc_F816	; bounce if data received
 
 loc_F81C:				; CODE XREF: intSIN0:loc_F820j
 		ld	a, SIDR_SODR	; Serial Input/Output Data Register
@@ -11562,18 +11618,18 @@ loc_F81C:				; CODE XREF: intSIN0:loc_F820j
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_F820:				; CODE XREF: intSIN0:loc_F816j
-		tbbs	bit6, SSD, loc_F81C ; Serial Status Data Register
+		tbbs	bit6, SSD, loc_F81C ; bounce if	RX error
 		ld	a, SIDR_SODR	; Serial Input/Output Data Register
 		xor	a, #0E6h
 		push	a
 		mov	a, b
-		xor	a, flags_45
-		and	a, unk_1A9
-		and	b, flags_45
+		xor	a, flags_45	; received from	serial port apparently
+		and	a, unk_1A9	; flags_45 related?
+		and	b, flags_45	; received from	serial port apparently
 		add	a, b
-		st	a, flags_45
+		st	a, flags_45	; received from	serial port apparently
 		pull	b
-		st	b, unk_1A9
+		st	b, unk_1A9	; flags_45 related?
 
 loc_F837:				; CODE XREF: intSIN0+89j
 		clrb	bit1, PORTD_ASRIN
@@ -11585,23 +11641,23 @@ loc_F83B:				; CODE XREF: intSIN0+AAj
 		bne	loc_F83B
 
 loc_F841:				; CODE XREF: intSIN0:loc_F845j
-		ld	a, SIDR_SODR	; Serial Input/Output Data Register
+		ld	a, SIDR_SODR	; failure code
 		bra	loc_F873
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_F845:				; CODE XREF: intSIN0:loc_F83Bj
-		tbbs	bit6, SSD, loc_F841 ; Serial Status Data Register
+		tbbs	bit6, SSD, loc_F841 ; failure code
 		ld	a, SIDR_SODR	; Serial Input/Output Data Register
 		xor	a, #0Fh
 		push	a
 		mov	a, b
-		xor	a, unk_1AB
-		and	a, unk_1AA
-		and	b, unk_1AB
+		xor	a, unk_1AB	; flags_49 bit0	related
+		and	a, unk_1AA	; flags_49 bit0	related
+		and	b, unk_1AB	; flags_49 bit0	related
 		add	a, b
-		st	a, unk_1AB
+		st	a, unk_1AB	; flags_49 bit0	related
 		pull	b
-		st	b, unk_1AA
+		st	b, unk_1AA	; flags_49 bit0	related
 		cmpb	b, #10h
 		beq	loc_F867
 		setb	bit0, flags_49
@@ -11640,7 +11696,7 @@ loc_F884:				; CODE XREF: intSIN0:loc_F87Fj
 
 loc_F886:				; CODE XREF: intSIN0+E8j
 		tbbs	bit4, flags_45,	loc_F88B ; this	branch is executed often
-		clr	unk_AF
+		clr	count_AF	; incremented at F47D
 
 loc_F88B:				; CODE XREF: intSIN0:loc_F886j
 		setb	bit1, SSD	; this branch is executed often
@@ -11653,8 +11709,8 @@ loc_F88B:				; CODE XREF: intSIN0:loc_F886j
 		shr	a
 		ld	y, #0149h
 		jsr	sub_FC0D
-		tbbs	bit0, flags_45,	loc_F8AE
-		cmp	#32h, unk_A8
+		tbbs	bit0, flags_45,	loc_F8AE ; received from serial	port apparently
+		cmp	#32h, count_A8	; incremented at F47D
 		ble	loc_F8DA
 		clrb	bit7, flags_4A
 		bra	loc_F8DA
@@ -11662,15 +11718,15 @@ loc_F88B:				; CODE XREF: intSIN0:loc_F886j
 
 loc_F8AE:				; CODE XREF: intSIN0+10Dj
 		clr	a
-		st	a, unk_1BA
+		st	a, count_1BA	; incremented at F49C
 		tbs	bit7, flags_4A
 		bne	loc_F8D2
 		clr	unk_7F
 		clr	unk_5F
-		clr	unk_A8
+		clr	count_A8	; incremented at F47D
 		clr	NEcounts
 		clr	unk_67
-		clr	unk_B0
+		clr	count_B0	; incremented at F47D
 		clr	a
 		st	a, unk_1B6
 		st	a, unk_1B7
@@ -11681,9 +11737,9 @@ loc_F8AE:				; CODE XREF: intSIN0+10Dj
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_F8D2:				; CODE XREF: intSIN0+11Fj
-		cmp	#25h, unk_A8
+		cmp	#25h, count_A8	; incremented at F47D
 		ble	loc_F8DA
-		ld	#26h, unk_A8
+		ld	#26h, count_A8	; incremented at F47D
 
 loc_F8DA:				; CODE XREF: intSIN0+113j intSIN0+117j ...
 		ld	a, #013
@@ -11748,11 +11804,11 @@ loc_F91F:				; CODE XREF: ROM:F91Aj
 loc_F921:				; CODE XREF: ROM:F916j
 		tbs	bit7, flags_43	; bit3:	AFM bad	bit4: rev limiter
 		bne	loc_F927
-		clr	unk_B7
+		clr	count_B7	; incremented at F55E
 
 loc_F927:				; CODE XREF: ROM:F923j
 		tbbs	bit3, flags_4B,	loc_F931
-		cmp	#3Dh, unk_B7
+		cmp	#3Dh, count_B7	; incremented at F55E
 		bcs	loc_F935	; default value
 		bra	loc_F933
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
@@ -11802,11 +11858,11 @@ loc_F95A:				; CODE XREF: ROM:F937j
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 		cmp	a, #102		; called from F7FE, +B/4, 102==8V
 		bgt	loc_F965
-		clr	unk_AD		; cleared when below 8V	input
+		clr	count_AD	; cleared when below 8V	input, incremented at F47D
 
 loc_F965:				; CODE XREF: ROM:F961j
 		tbbs	bit5, RAMST, loc_F976 ;	Built-in RAM status
-		clr	unk_AE
+		clr	count_AE	; incremented at F47D
 		cmp	a, #109		; about	8.5V
 		bcs	loc_F97C
 		tbbs	bit3, flags_41,	loc_F97E
@@ -11859,11 +11915,11 @@ loc_F9A0:				; CODE XREF: ROM:F99Bj
 THAbad:					; CODE XREF: ROM:F997j
 		tbs	bit6, flags_43	; bit3:	AFM bad	bit4: rev limiter
 		bne	loc_F9A8
-		clr	unk_B7
+		clr	count_B7	; incremented at F55E
 
 loc_F9A8:				; CODE XREF: ROM:F9A4j
 		tbbs	bit3, flags_4B,	loc_F9B2
-		cmp	#3Dh, unk_B7
+		cmp	#3Dh, count_B7	; incremented at F55E
 		bcs	loc_F9B6	; default air temp
 		bra	loc_F9B4
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
@@ -11899,11 +11955,11 @@ loc_F9CD:				; CODE XREF: ROM:F9C8j
 loc_F9CF:				; CODE XREF: ROM:F9C4j
 		tbs	bit5, flags_43	; bit3:	AFM bad	bit4: rev limiter
 		bne	loc_F9D5
-		clr	unk_B7
+		clr	count_B7	; incremented at F55E
 
 loc_F9D5:				; CODE XREF: ROM:F9D1j
 		tbbs	bit3, flags_4B,	loc_F9DF
-		cmp	#3Dh, unk_B7
+		cmp	#3Dh, count_B7	; incremented at F55E
 		bcs	loc_F9E3	; default value	if bad CTS
 		bra	loc_F9E1
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
@@ -12175,12 +12231,12 @@ loc_FB31:				; CODE XREF: ROM:FADEj	ROM:FB0Aj
 		and	a, #0F9h
 		cmpb	a, #01h
 		bne	loc_FB3D
-		clr	unk_B7
+		clr	count_B7	; incremented at F55E
 		or	a, #01h
 
 loc_FB3D:				; CODE XREF: ROM:FB37j
 		tbbs	bit3, flags_4B,	loc_FB47
-		cmp	#3Dh, unk_B7
+		cmp	#3Dh, count_B7	; incremented at F55E
 		bcs	loc_FB51	; loads	a default VTA, returns
 		bra	loc_FB49
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
@@ -12316,13 +12372,13 @@ loc_FBEE:				; CODE XREF: ROM:FBDDj	ROM:FBE1j ...
 		jmp	loc_F805	; test bit7 of unk_46, read more data from serial port if set, otherwise terminate interrupt
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 		clrb	bit5, flags_49	; called from F7FE, OXR2
-		cmp	a, #17h
+		cmp	a, #023		; 0.45V
 		bcs	loc_FC03
 		setb	bit5, flags_49
 		bra	loc_FC03
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 		clrb	bit4, flags_49	; called from F7FE, OXL2
-		cmp	a, #17h
+		cmp	a, #023
 		bcs	loc_FC03
 		setb	bit4, flags_49
 
@@ -12339,10 +12395,10 @@ loc_FC03:				; CODE XREF: ROM:FBF5j	ROM:FBF9j ...
 sub_FC0D:				; CODE XREF: intSIN0+100p intSIN0+10Ap
 		push	a
 		mov	s, x
-		ld	b, y + 13h
+		ld	b, y + 019
 		cmpb	b, #02h
 		beq	FC0D_ret	; tidy stack
-		ld	a, y + 05h
+		ld	a, y + 005
 		bne	loc_FC30
 		ld	a, x + 00h
 		shr	a
@@ -12359,13 +12415,13 @@ loc_FC26:				; CODE XREF: sub_FC0D+Fj
 		ld	a, #0Fh
 
 loc_FC2C:				; CODE XREF: sub_FC0D+17j
-		st	a, y + 05h
+		st	a, y + 005
 		bra	FC0D_ret	; tidy stack
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_FC30:				; CODE XREF: sub_FC0D+Aj
 		dec	a
-		st	a, y + 05h
+		st	a, y + 005
 		bne	FC0D_ret	; tidy stack
 		ld	a, x + 00h
 		shr	a
@@ -12383,7 +12439,7 @@ loc_FC42:				; CODE XREF: sub_FC0D+2Bj
 
 loc_FC48:				; CODE XREF: sub_FC0D+33j
 		or	b, #10h
-		st	b, y + 13h
+		st	b, y + 019
 
 FC0D_ret:				; CODE XREF: sub_FC0D+6j sub_FC0D+13j	...
 		inc	s		; tidy stack
