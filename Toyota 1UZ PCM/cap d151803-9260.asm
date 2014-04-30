@@ -6133,7 +6133,7 @@ loc_D9AD:				; CODE XREF: __RESET+4E9j __RESET+4EFj ...
 		st	a, temp_51
 		beq	loc_D9E1
 		cmp	#210, rawTHW	; Contains the NOT of CTS reading from ADC, sensor is tied to ground on	other side
-		bcs	loc_D9E1
+		bcs	loc_D9E1	; skip all this	extra math if warm
 		ld	a, unk_186
 		cmp	a, unk_187
 		bcc	loc_D9C1	; select largest
@@ -6153,12 +6153,12 @@ loc_D9C9:				; CODE XREF: __RESET+50Ej
 loc_D9D2:				; CODE XREF: __RESET+517j
 		ld	b, unk_18D	; im thinking it's a net retard, summed from a number of positive vales then negated
 		sub	b, #128		; 15 degrees
-		bcc	loc_D9DB
+		bcc	loc_D9DB	; 54%
 		neg	b
-		add	a, b
+		add	a, b		; drop result in a
 
 loc_D9DB:				; CODE XREF: __RESET+521j
-		mul	a, #138
+		mul	a, #138		; 54%
 		addc	a, #00h
 		add	a, temp_51
 
@@ -6179,7 +6179,7 @@ loc_D9F4:				; CODE XREF: __RESET+535j __RESET+538j
 
 loc_D9FC:				; CODE XREF: __RESET+53Bj __RESET+542j
 		tbbc	bit6, flags_4A,	loc_DA01
-		add	a, #020
+		add	a, #020		; add 1000 RPM
 
 loc_DA01:				; CODE XREF: __RESET:loc_D9FCj
 		st	a, temp_51
@@ -6873,7 +6873,7 @@ loc_DE09:				; CODE XREF: __RESET+940j
 loc_DE0A:				; CODE XREF: __RESET+94Fj
 		cmp	d, #0333h
 		bcc	loc_DE12
-		ld	d, #0333h
+		ld	d, #00819	; establish minimum
 
 loc_DE12:				; CODE XREF: __RESET+957j
 		mov	d, y
