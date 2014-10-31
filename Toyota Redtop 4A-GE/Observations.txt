@@ -1,0 +1,6 @@
+toshiba 8x variant
+12MHz xtal
+D151802-0442 (7433-1275, 9H1745)
+removed from a 1990 USDM (canadian) AE92 manual transmission.
+
+64 pin shrink dip
