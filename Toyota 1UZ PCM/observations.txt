@@ -55,8 +55,8 @@ Timer word increment rate is 250kHz
 6+7 	clock input, cannot scope
 8 	1MHz sq. wave
 9	low
-10	high
-11	OS	400ns low pulses
+10	high connected to pin 5 of ic301 indirectly - buffered /IDL1 signal
+11	
 12	high to vcc
 13	CLK	1MHz square wave - to 1k then to 9+10 of ADC
 14	output	20us high pulse every 4ms, which occasionally expands in duty cycle. (SIN3), same signal at pin 15 of 1320
@@ -79,10 +79,10 @@ Timer word increment rate is 250kHz
 31		A4 to pin 6 of MP908, short low pulse beginning at next NE trailing edge after g1 trailing edge, ends at subsequent NE trailing edge
 32		GND
 -------
-33
-34
+33		pulled high, not connected
+34		pulled high, not connected
 35
-36	PORTA0	~8ms square wave to mp908 pin 8
+36	PORTA0	~8ms square wave to mp908 pin 8, also drives watchdog chip IC101
 37	PORTD3
 38		/FPU
 39		30us pulse every ~4ms to pin 7 of IC302, NOT of signal to IC 303
@@ -230,15 +230,18 @@ tx to adc	pin value returned
 
 ****************************************************************************************************************************
 
-d151821-0090
+d151821-0090 (IC301) 24p shrink dip
 =============
 1	+12 vcc
 
+5	buffered version of pin 22
 7	/cs ?
 8	+5 vcc
 10	sout
 11	clk
 12	gnd
+
+22	/IDL1 signal, pulled high in PCM
 
 ****************************************************************************************************************************
 
