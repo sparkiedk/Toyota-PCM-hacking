@@ -23,8 +23,8 @@ WDC:		.block 1		; watch	dog timer
 TIMER3:		.block 1		; DATA XREF: sub_C010:loc_C025r
 					; sub_C010+18r	...
 					; Timer	LSB (bit0~bit2)
-TIMER:		.block 2		; DATA XREF: DoInjectors+13r
-					; DoInjectors:DoInj6r ...
+TIMER:		.block 2		; DATA XREF: DoInjector+13r
+					; DoInjector:DoInj6r ...
 					; Timer	MSB (bit11~bit18)
 SIDR_SODR:	.block 1		; DATA XREF: sub_D45F+8w sub_D45F+18r	...
 					; Serial Input/Output Data Register
@@ -73,7 +73,8 @@ PBCS:		.block 1		; DATA XREF: sub_D3D5+3r __RESET+10w ...
 					; Port B Control Register
 TAIT:		.block 1		; DATA XREF: __RESET+34r __RESET+173Er
 					; Timer	ASR Control
-LDOUT:		.block 1		; DATA XREF: sub_EF13+11r sub_EF13+32r ...
+LDOUT:		.block 1		; DATA XREF: NEsub1_18+11r
+					; NEsub1_18+32r ...
 					; Latch	DOUT
 DOUT:		.block 1		; DATA XREF: sub_D2B9+13w __RESET+3Ar	...
 					; DOUT Data Register
@@ -118,24 +119,25 @@ CPR7:		.block 2		; Timer	comparison #3 MSB, injectors #40, left bank
 		.org 40h
 flags_40:	.block 1		; DATA XREF: sub_C64D+28r sub_C64D+A6r ...
 flags_41:	.block 1		; DATA XREF: sub_C64D+19Ar ROM:CC23r ...
-					; b5 indidcates	something about	ram stats during last suspend
+					; B0 IDL1, b5 indidcates something about ram stats during last suspend
 flags_42:	.block 1		; DATA XREF: __RESET+57Er __RESET+581r ...
 flags_43:	.block 1		; DATA XREF: sub_C64D+67r ROM:CC77r ...
 					; bit3:	AFM bad	bit4: rev limiter
 flags_44:	.block 1		; DATA XREF: sub_C64D+59r ROM:CC71r ...
-					; bit3:	rev limiter, bits 543210 will all cause	a branch past doinjectors
+					; bit 1	is igf1	related, bit2 igf2 related
 flags_45:	.block 1		; DATA XREF: ROM:SUB_C918r
 					; ROM:loc_C952r ...
-					; received from	serial port apparently
+					; IC303	input chip: B7 /TE2, B /TE1, B5	/NSW, B4 IGSW,	B3, B2 IDL2, B1	, B0 STA
 flags_46:	.block 1		; DATA XREF: __RESET:main_142r
 					; __RESET+B2Cr	...
+					; bit 1	flags limp in injection	mode
 flags_47:	.block 1		; DATA XREF: sub_C64D+4Dr sub_C64D+84r ...
 					; bit4:	high when hot (but how hot?)
 flags_48:	.block 1		; DATA XREF: __RESET+A49r
 					; __RESET:main_163r ...
 flags_49:	.block 1		; DATA XREF: sub_C64D:loc_C666r
 					; sub_C64D+1Cr	...
-					; bits 1-3-4-5 are oxl1-oxr1-oxl2-oxr2
+					; bits 1-3-4-5 are oxl1-oxr1-oxl2-oxr2 - Oxygen	sensors
 flags_4A:	.block 1		; DATA XREF: __RESET:main_63r
 					; __RESET+8B0r	...
 flags_4B:	.block 1		; DATA XREF: ROM:C91Br	ROM:C95Er ...
@@ -143,6 +145,7 @@ flags_4C:	.block 1		; DATA XREF: sub_C64D+2r ROM:C965r ...
 					; bit 7	demands	a sampling of the oxygen sensors
 flags_4D:	.block 1		; DATA XREF: ROM:C920r	ROM:C923r ...
 flags_4E:	.block 1		; DATA XREF: ROM:C928r	ROM:C92Ew ...
+					; bit1 is igf1 related,	bit2 igf2 related
 flags_4F:	.block 1		; DATA XREF: ROM:loc_C946r ROM:C94Aw ...
 flags_50:	.block 1		; DATA XREF: orFlags_50+1r
 					; andFlags_50+1r ...
@@ -169,8 +172,9 @@ ATM_press:	.block 1		; DATA XREF: ROM:CAB0r	__RESET+2DFr ...
 unk_5E:		.block 1		; DATA XREF: sub_C64D:loc_C826r
 					; ROM:CA72r ...
 					; could	be last	unk_100, or 0
-unk_5F:		.block 1		; DATA XREF: __RESET:main_24r
+count_5F:	.block 1		; DATA XREF: __RESET:main_24r
 					; __RESET+FE8r	...
+					; counts up to 255 since last start, about 15 counts per second
 deltaNE:	.block 1		; DATA XREF: ReInitNEIGT+Ew ROM:ECB3r
 		.block 1
 deltaNE_1:	.block 1		; DATA XREF: ReInitNEIGT+10w ROM:ECB5r ...
@@ -199,12 +203,12 @@ unk_72:		.block 1		; DATA XREF: ROM:loc_CFDDr ROM:CFFCr ...
 ADC_count:	.block 1		; DATA XREF: IV6:loc_F3D0r intSIN0+26r ...
 ADC_TXed:	.block 1		; DATA XREF: sub_D45F+2w IV6+480w ...
 					; MSb signifies	next TX	value is 02
-unk_75:		.block 1		; DATA XREF: IV6:IV6_TXadcr
+flags_75:	.block 1		; DATA XREF: IV6:IV6_TXadcr
 					; IV6:loc_F3F6w ...
 					; flags	relating to ADC	tx'ing
 unk_76:		.block 1		; DATA XREF: IV6+4B5r IV6:loc_F433w ...
 					; some flags which interact with flags_4A
-unk_77:		.block 1		; DATA XREF: __RESET+26Ar __RESET+26Fw ...
+flags_77:	.block 1		; DATA XREF: __RESET+26Ar __RESET+26Fw ...
 meanKSint:	.block 2		; DATA XREF: __RESET:main_14r
 					; __RESET+288r	...
 					; deltaKS/KS_count, filtered
@@ -372,6 +376,7 @@ unk_D3:		.block 1		; DATA XREF: __RESET:main_118w
 					; multiplied by	16 and used for	injectors
 unk_D4:		.block 1		; DATA XREF: sub_D1EF+17r
 					; __RESET:main_61w ...
+					; timing related
 unk_D5:		.block 1		; DATA XREF: __RESET+463r
 					; __RESET:main_44w ...
 unk_D6:		.block 1		; DATA XREF: ROM:loc_FA63w ROM:FA70w ...
@@ -433,6 +438,7 @@ unk_101:	.block 1		; DATA XREF: __RESET+481r
 unk_102:	.block 1		; DATA XREF: __RESET+46Fr IV6+D2r
 unk_103:	.block 1		; DATA XREF: __RESET+47Ar __RESET+BADr ...
 unk_104:	.block 1		; DATA XREF: __RESET+4E0r
+					; timing related
 		.block 1
 unk_106:	.block 1		; DATA XREF: __RESET+1434r IV6+505w
 		.block 1
@@ -488,7 +494,9 @@ VTA1_min:	.block 1		; DATA XREF: __RESET+ABw
 					; VTA1 minimum
 VTA1_net:	.block 2		; DATA XREF: __RESET+172Ar ROM:FA14r
 					; VTA1 - VTA_min
-word_126:	.block 2		; DATA XREF: __RESET+55Fr __RESET+5D3w ...
+count_126:	.block 1		; DATA XREF: __RESET+55Fr __RESET+5D3w ...
+					; from the plots it looks like it increments while the throttle	is closed
+		.block 1
 VTA2_flags:	.block 1		; DATA XREF: ROM:FA1Ar
 					; VTA2 flags
 VTA2_min:	.block 1		; DATA XREF: __RESET+AEw
@@ -521,7 +529,8 @@ unk_140:	.block 1		; DATA XREF: ROM:CA97r	ROM:CDCDr ...
 					; bits 5,0 oxl2	related
 unk_141:	.block 1		; DATA XREF: ROM:CAE1r	ROM:CAE6w ...
 unk_142:	.block 1		; DATA XREF: ROM:CA3Fr	ROM:loc_CA5Dr ...
-unk_143:	.block 1		; DATA XREF: ROM:CD12r	__RESET+FD5r ...
+count_143:	.block 1		; DATA XREF: ROM:CD12r	__RESET+FD5r ...
+					; only counts while warm
 		.block 1
 unk_145:	.block 1		; DATA XREF: ROM:CFC0w	__RESET+C9w
 flags_146:	.block 1		; DATA XREF: ROM:C930r	ROM:C93Aw ...
@@ -550,8 +559,9 @@ unk_15C:	.block 1		; DATA XREF: ROM:CA9Ar	ROM:CDDCr ...
 					; bits 5,0 oxr2	related
 unk_15D:	.block 1		; DATA XREF: ROM:CAE9r	ROM:CAEEw ...
 unk_15E:	.block 1		; DATA XREF: ROM:loc_CA4Er ROM:CA65r ...
-unk_15F:	.block 1		; DATA XREF: ROM:CD44r
+count_15F:	.block 1		; DATA XREF: ROM:CD44r
 					; __RESET:main_284r ...
+					; only counts while warm? oxy sensor related?
 		.block 1
 unk_161:	.block 1		; DATA XREF: ROM:CFC5w	__RESET+CCw
 flags_162:	.block 1		; DATA XREF: ROM:C933r	ROM:C93Dw ...
@@ -592,32 +602,38 @@ unk_17E:	.block 1		; DATA XREF: __RESET+1000r
 unk_180:	.block 1		; DATA XREF: __RESET+6DCw __RESET+72Br
 unk_181:	.block 1		; DATA XREF: __RESET+6E3w __RESET+74Br
 unk_182:	.block 1		; DATA XREF: __RESET+6EAw __RESET+70Cr
-unk_183:	.block 1		; DATA XREF: __RESET+4C1r
+flags_183:	.block 1		; DATA XREF: __RESET+4C1r
 					; __RESET:main_55w ...
+					; bit 0	set oer	1550 RPM, bit 1	set under 1700 RPM
 		.block 1
 unk_185:	.block 1		; DATA XREF: __RESET+1377r
 					; __RESET:main_338w ...
-unk_186:	.block 1		; DATA XREF: __RESET+500r ROM:ED8Fr ...
+byte_186:	.block 1		; DATA XREF: __RESET+500r ROM:ED8Fr ...
+					; timing related
 unk_187:	.block 1		; DATA XREF: __RESET:main_47w
 					; __RESET+503r	...
+					; timing related
 unk_188:	.block 1		; DATA XREF: __RESET+148Cw
 					; __RESET+14C5r ...
+					; initial timing calculation?
 unk_189:	.block 1
-unk_18A:	.block 1		; DATA XREF: __RESET+514r __RESET+519r ...
+byte_18A:	.block 1		; DATA XREF: __RESET+514r __RESET+519r ...
+					; timing related
 unk_18B:	.block 1		; DATA XREF: __RESET+1431r
 					; __RESET:main_352w ...
 byte_18C:	.block 1		; DATA XREF: __RESET:main_333w
 					; __RESET+14BFr
-					; lookup from RPM by LOADish table
+					; lookup from RPM by LOAD table
 unk_18D:	.block 1		; DATA XREF: __RESET:main_59r
 					; __RESET+142Ew ...
 					; im thinking it's a net retard, summed from a number of positive vales then negated
 unk_18E:	.block 1		; DATA XREF: __RESET:main_347w
 					; __RESET+14DEr ...
 unk_18F:	.block 1		; DATA XREF: ROM:EE2Fr
-					; NEsub1:loc_EF09w ...
-unk_190:	.block 1		; DATA XREF: sub_EF13+Br
-					; sub_EF13:loc_EF2Ar ...
+					; NEsub1:NEsub1_16w ...
+					; final	timing related
+unk_190:	.block 1		; DATA XREF: NEsub1_18+Br
+					; NEsub1_18:NEsub1_20r	...
 IGT_time:	.block 2		; DATA XREF: calcIGT_time+12w
 					; Cmp0IGTdwellr
 word_193:	.block 2		; DATA XREF: __RESET+591w __RESET+8F3w ...
@@ -626,6 +642,7 @@ unk_196:	.block 1		; DATA XREF: sub_F1A9:loc_F1D8r
 					; sub_F1A9:loc_F200w
 unk_197:	.block 1		; DATA XREF: __RESET:main_57r
 					; __RESET+510r	...
+					; timing related
 unk_198:	.block 1		; DATA XREF: sub_F1A9+70w sub_F1A9+82w ...
 unk_199:	.block 1		; DATA XREF: __RESET:main_35w
 					; sub_F1A9+6Aw	...
@@ -655,12 +672,12 @@ lastASR2:	.block 2		; DATA XREF: ROM:EC7Cr	ROM:intASR2_7w	...
 avgCompLoad:	.block 2		; DATA XREF: __RESET+341r __RESET+35Er ...
 unk_1A8:	.block 1		; DATA XREF: sub_C4DF+14r __RESET+2FBw ...
 					; looks	like air temp compensation for load
-unk_1A9:	.block 1		; DATA XREF: intSIN0+96r intSIN0+9Fw
-					; flags_45 related?
-unk_1AA:	.block 1		; DATA XREF: ROM:C987r	ROM:C9ABr ...
-					; flags_49 bit0	related
-unk_1AB:	.block 1		; DATA XREF: __RESET:main_402r	IVc+36r ...
-					; flags_49 bit0	related
+flags_1A9:	.block 1		; DATA XREF: intSIN0+96r intSIN0+9Fw
+					; flags_45 related (IC303 inputs)
+flags_1AA:	.block 1		; DATA XREF: ROM:C987r	ROM:C9ABr ...
+					; IC302	input bits B3~0	are NOT	of oxy heater pin voltages
+flags_1AB:	.block 1		; DATA XREF: __RESET:main_402r	IVc+36r ...
+					; flags_1AA related
 word_1AC:	.block 2		; DATA XREF: __RESET+266w intASR1+2Br
 					; something deltaKS related
 KS_count2:	.block 1		; DATA XREF: __RESET+DF7r __RESET+E05w ...
@@ -1018,6 +1035,8 @@ word_304:	.block 2
 word_306:	.block 2
 word_308:	.block 2
 ; end of 'badaddress'
+
+
 
 ; File Name   :	C:\Documents and Settings\Sparkie\Desktop\Toyota PCM hacking\Toyota 1UZ PCM\cap d151803-9260.bin
 ; Format      :	Binary file
@@ -1487,7 +1506,7 @@ DivDby12:				; CODE XREF: __RESET+3EBp
 
 ; ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ S U B	R O U T	I N E ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ
 
-; called with C3FE in mind, other parameter in temp_53:temp_54,	output in A
+; called with C3FE in mind, other parameter in temp_53:temp_54,	output in D
 
 ThreeD_RPM:				; CODE XREF: __RESET+1371p
 		ld	d, RPM		; MSB is RPM/50, LSB is	fraction of 50
@@ -1500,7 +1519,7 @@ ThreeD_RPM:				; CODE XREF: __RESET+1371p
 
 ; ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ S U B	R O U T	I N E ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ
 
-; inputs in D and temp_53:temp_54, output in A
+; inputs in D and temp_53:temp_54, output in D
 
 ThreeDtable2:				; CODE XREF: __RESET+877p
 		shr	d
@@ -1509,7 +1528,7 @@ ThreeDtable2:				; CODE XREF: __RESET+877p
 
 ; ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ S U B	R O U T	I N E ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ
 
-; inputs in D and temp_53:temp_54, output in A
+; inputs in D and temp_53:temp_54, output in D
 
 ThreeDtable:				; CODE XREF: ThreeD_RPM+8j
 					; __RESET+3F0p	...
@@ -1948,9 +1967,9 @@ unk_C2EA:	.db  86h ; †		; C5F4,	lookup for rawTHW
 		.db  18h
 		.db 0FFh
 		.dw 0708h		; word data for	DD63, pulsewidth limitations
-		.dw 0708h
-		.dw 0FA0h
-		.dw 1130h
+		.dw 0708h		; 7.200	ms
+		.dw 0FA0h		; 16.000 ms
+		.dw 1130h		; 17.6 ms
 		.db  32h ; 2		; E4B0,	RPM
 		.db  00h
 		.db  32h ; 2
@@ -2722,6 +2741,7 @@ loc_C64A:				; CODE XREF: sub_C634+12j
 
 ; ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ S U B	R O U T	I N E ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ
 
+; called with either 12D or 149	in Y
 
 sub_C64D:				; CODE XREF: __RESET+5FAp __RESET+602p
 
@@ -2743,8 +2763,8 @@ loc_C656:				; CODE XREF: sub_C64D+2j
 		bcc	loc_C66E
 
 loc_C666:				; CODE XREF: sub_C64D+12j
-		tbbc	bit0, flags_49,	loc_C6B7 ; bits	1-3-4-5	are oxl1-oxr1-oxl2-oxr2
-		tbbc	bit2, flags_49,	loc_C6B7 ; bits	1-3-4-5	are oxl1-oxr1-oxl2-oxr2
+		tbbc	bit0, flags_49,	loc_C6B7 ; bits	1-3-4-5	are oxl1-oxr1-oxl2-oxr2	- Oxygen sensors
+		tbbc	bit2, flags_49,	loc_C6B7 ; bits	1-3-4-5	are oxl1-oxr1-oxl2-oxr2	- Oxygen sensors
 		or	b, #80h
 
 loc_C66E:				; CODE XREF: sub_C64D+17j
@@ -2757,7 +2777,7 @@ loc_C66E:				; CODE XREF: sub_C64D+17j
 loc_C67B:				; CODE XREF: sub_C64D+28j
 		jsr	sub_C900
 		clr	b
-		st	a, y + 0Fh
+		st	a, y + 0Fh	; 13C or 158
 		st	a, y + 10h
 		shr	d
 		shr	d
@@ -2781,7 +2801,7 @@ loc_C69D:				; CODE XREF: sub_C64D+46j
 		cmp	a, #0Dh
 		pull	a
 		bgt	loc_C6B7
-		ld	a, flags_44	; bit3:	rev limiter, bits 543210 will all cause	a branch past doinjectors
+		ld	a, flags_44	; bit 1	is igf1	related, bit2 igf2 related
 		cmpb	a, #3Fh
 		bne	loc_C6B7
 		ld	a, word_94
@@ -2836,12 +2856,12 @@ loc_C6EB:				; CODE XREF: sub_C64D+67j
 		bne	loc_C702
 		or	b, #06h
 		tbbs	bit0, flags_40,	loc_C6FB
-		tbbs	bit0, flags_49,	loc_C700 ; bits	1-3-4-5	are oxl1-oxr1-oxl2-oxr2
+		tbbs	bit0, flags_49,	loc_C700 ; bits	1-3-4-5	are oxl1-oxr1-oxl2-oxr2	- Oxygen sensors
 		bra	loc_C6FE
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_C6FB:				; CODE XREF: sub_C64D+A6j
-		tbbs	bit2, flags_49,	loc_C700 ; bits	1-3-4-5	are oxl1-oxr1-oxl2-oxr2
+		tbbs	bit2, flags_49,	loc_C700 ; bits	1-3-4-5	are oxl1-oxr1-oxl2-oxr2	- Oxygen sensors
 
 loc_C6FE:				; CODE XREF: sub_C64D+ACj
 		and	b, #0FBh
@@ -3006,7 +3026,7 @@ loc_C7DA:				; CODE XREF: sub_C64D+188j
 		xch	b, x + 02h
 		xch	b, x + 03h
 		ld	d, #051Fh
-		tbbs	bit0, flags_41,	loc_C826 ; b5 indidcates something about ram stats during last suspend
+		tbbs	bit0, flags_41,	loc_C826 ; B0 IDL1, b5 indidcates something about ram stats during last	suspend
 		ld	x, y + 0Dh
 		ld	b, y + 13h
 		cmpb	b, #04h
@@ -3272,7 +3292,7 @@ loc_C912:				; CODE XREF: sub_C907+7j
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 SUB_C918:				; CODE XREF: __RESET+FF7p
-		tbbs	bit7, flags_45,	loc_C952 ; received from serial	port apparently
+		tbbs	bit7, flags_45,	loc_C952 ; bounce if TE1 shorted to gnd
 		tbbc	bit3, flags_4B,	loc_C946
 		clrb	bit3, flags_4B
 		tbbs	bit6, flags_4D,	loc_C926
@@ -3280,10 +3300,10 @@ SUB_C918:				; CODE XREF: __RESET+FF7p
 
 loc_C926:				; CODE XREF: ROM:C920j
 		clrb	bit7, flags_4D
-		ld	d, flags_4E
+		ld	d, flags_4E	; bit1 is igf1 related,	bit2 igf2 related
 		and	a, #0EFh	; clear	bit 4 of unk_4e
 		and	b, #60h
-		st	d, flags_4E
+		st	d, flags_4E	; bit1 is igf1 related,	bit2 igf2 related
 		ld	a, flags_146
 		ld	b, flags_162
 		and	a, #00h
@@ -3303,7 +3323,7 @@ loc_C946:				; CODE XREF: ROM:C91Bj	ROM:C923j
 		st	a, flags_4D
 
 loc_C952:				; CODE XREF: ROM:SUB_C918j
-		tbbs	bit0, flags_45,	loc_C959 ; received from serial	port apparently
+		tbbs	bit0, flags_45,	loc_C959 ; bounce if starting
 		clrb	bit4, flags_4C
 		clr	count_BE	; increments at	E478
 
@@ -3320,7 +3340,7 @@ loc_C968:				; CODE XREF: ROM:C963j
 
 loc_C96A:				; CODE XREF: ROM:C95Cj	ROM:C95Ej ...
 		ld	b, flags_7D
-		tbbc	bit6, flags_49,	loc_C981 ; bits	1-3-4-5	are oxl1-oxr1-oxl2-oxr2
+		tbbc	bit6, flags_49,	loc_C981 ; bits	1-3-4-5	are oxl1-oxr1-oxl2-oxr2	- Oxygen sensors
 		ld	#0FFh, count_CA	; incremented at E643
 		ld	a, flags_A2	; bit7:	VTA_net	high, bit4: VTA_net high
 		and	a, #0FAh	; clear	flags_A2 bits 0+2
@@ -3335,7 +3355,7 @@ loc_C981:				; CODE XREF: ROM:C96Cj
 		ld	a, flags_50	; could	be bits	for 6336 output	chip
 		cmpb	a, #01h
 		bne	loc_C99B
-		ld	a, unk_1AA	; flags_49 bit0	related
+		ld	a, flags_1AA	; IC302	input bits B3~0	are NOT	of oxy heater pin voltages
 		cmpb	a, #01h
 		bne	loc_C992
 		and	b, #0FEh
@@ -3359,7 +3379,7 @@ loc_C9A5:				; CODE XREF: ROM:C997j
 		ld	a, flags_50	; could	be bits	for 6336 output	chip
 		cmpb	a, #01h
 		bne	loc_C9BF
-		ld	a, unk_1AA	; flags_49 bit0	related
+		ld	a, flags_1AA	; IC302	input bits B3~0	are NOT	of oxy heater pin voltages
 		cmpb	a, #04h
 		bne	loc_C9B6
 		and	b, #0FBh
@@ -3382,7 +3402,7 @@ loc_C9BF:				; CODE XREF: ROM:C9A9j	ROM:C9B4j
 loc_C9C9:				; CODE XREF: ROM:C97Fj	ROM:C9BBj
 		st	b, flags_7D
 		ld	b, flags_7D
-		tbbc	bit6, flags_49,	loc_C9E2 ; bits	1-3-4-5	are oxl1-oxr1-oxl2-oxr2
+		tbbc	bit6, flags_49,	loc_C9E2 ; bits	1-3-4-5	are oxl1-oxr1-oxl2-oxr2	- Oxygen sensors
 		ld	#0FFh, count_CB	; incremented at E643
 		ld	a, flags_A2	; bit7:	VTA_net	high, bit4: VTA_net high
 		and	a, #0F5h	; clear	bits 3+1 of flags_A2
@@ -3397,7 +3417,7 @@ loc_C9E2:				; CODE XREF: ROM:C9CDj
 		ld	a, flags_50	; could	be bits	for 6336 output	chip
 		cmpb	a, #02h
 		bne	loc_C9FC
-		ld	a, unk_1AA	; flags_49 bit0	related
+		ld	a, flags_1AA	; IC302	input bits B3~0	are NOT	of oxy heater pin voltages
 		cmpb	a, #02h
 		bne	loc_C9F3
 		and	b, #0FDh
@@ -3421,7 +3441,7 @@ loc_CA06:				; CODE XREF: ROM:C9F8j
 		ld	a, flags_50	; could	be bits	for 6336 output	chip
 		cmpb	a, #02h
 		bne	loc_CA20
-		ld	a, unk_1AA	; flags_49 bit0	related
+		ld	a, flags_1AA	; IC302	input bits B3~0	are NOT	of oxy heater pin voltages
 		cmpb	a, #08h
 		bne	loc_CA17
 		and	b, #0F7h
@@ -3480,7 +3500,7 @@ loc_CA6D:				; CODE XREF: ROM:CA31j
 		tbbc	bit6, flags_4B,	loc_CAC9
 		cmp	#82h, unk_5E	; could	be last	unk_100, or 0
 		bcc	loc_CAC9
-		ld	a, flags_4E
+		ld	a, flags_4E	; bit1 is igf1 related,	bit2 igf2 related
 		and	a, #06h
 		bne	loc_CAC9
 		ld	a, flags_4F
@@ -3737,7 +3757,7 @@ loc_CC1C:				; CODE XREF: ROM:CC15j
 loc_CC1F:				; CODE XREF: ROM:CB19j	ROM:CB98j ...
 		clr	a
 		tbbc	bit5, flags_4B,	loc_CC30
-		tbbc	bit0, flags_41,	loc_CC30 ; b5 indidcates something about ram stats during last suspend
+		tbbc	bit0, flags_41,	loc_CC30 ; B0 IDL1, b5 indidcates something about ram stats during last	suspend
 		cmp	#02h, unk_5E	; could	be last	unk_100, or 0
 		bcc	loc_CC30
 		cmp	#019, RPM	; 950RPM
@@ -3775,11 +3795,11 @@ loc_CC53:				; CODE XREF: ROM:CC38j	ROM:CC3Dj
 		ld	a, flags_A2	; bit7:	VTA_net	high, bit4: VTA_net high
 		and	a, #50h		; test flags_A2	bit4 bit6
 		bne	loc_CC7D
-		ld	a, flags_44	; bit3:	rev limiter, bits 543210 will all cause	a branch past doinjectors
+		ld	a, flags_44	; bit 1	is igf1	related, bit2 igf2 related
 		and	a, #3Fh
 		bne	loc_CC7D
 		tbbs	bit3, flags_43,	loc_CC7D ; bit3: AFM bad bit4: rev limiter
-		tbbc	bit3, flags_4E,	loc_CC83
+		tbbc	bit3, flags_4E,	loc_CC83 ; bit1	is igf1	related, bit2 igf2 related
 
 loc_CC7D:				; CODE XREF: ROM:CC56j	ROM:CC5Cj ...
 		clr	count_D0	; incremented at E7A9
@@ -3788,7 +3808,7 @@ loc_CC7D:				; CODE XREF: ROM:CC56j	ROM:CC5Cj ...
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_CC83:				; CODE XREF: ROM:CC7Aj
-		tbbs	bit0, flags_49,	loc_CCA0 ; bits	1-3-4-5	are oxl1-oxr1-oxl2-oxr2
+		tbbs	bit0, flags_49,	loc_CCA0 ; bits	1-3-4-5	are oxl1-oxr1-oxl2-oxr2	- Oxygen sensors
 		cmp	#2Dh, count_D0	; incremented at E7A9
 		bcs	loc_CCA0
 		ld	a, flags_146
@@ -3801,7 +3821,7 @@ loc_CC83:				; CODE XREF: ROM:CC7Aj
 		st	a, flags_147
 
 loc_CCA0:				; CODE XREF: ROM:loc_CC83j ROM:CC89j ...
-		tbbs	bit2, flags_49,	loc_CCBD ; bits	1-3-4-5	are oxl1-oxr1-oxl2-oxr2
+		tbbs	bit2, flags_49,	loc_CCBD ; bits	1-3-4-5	are oxl1-oxr1-oxl2-oxr2	- Oxygen sensors
 		cmp	#045, count_D1	; incremented at E7A9
 		bcs	loc_CCBD
 		ld	a, flags_162
@@ -3814,14 +3834,14 @@ loc_CCA0:				; CODE XREF: ROM:loc_CC83j ROM:CC89j ...
 		st	a, flags_163
 
 loc_CCBD:				; CODE XREF: ROM:CC81j	ROM:loc_CCA0j ...
-		tbbc	bit0, flags_49,	loc_CCCB ; bits	1-3-4-5	are oxl1-oxr1-oxl2-oxr2
+		tbbc	bit0, flags_49,	loc_CCCB ; bits	1-3-4-5	are oxl1-oxr1-oxl2-oxr2	- Oxygen sensors
 		ld	x, #0D252h
 		ld	y, #012Dh
 		jsr	sub_D222
 		clr	count_D0	; incremented at E7A9
 
 loc_CCCB:				; CODE XREF: ROM:loc_CCBDj
-		tbbc	bit2, flags_49,	loc_CCD9 ; bits	1-3-4-5	are oxl1-oxr1-oxl2-oxr2
+		tbbc	bit2, flags_49,	loc_CCD9 ; bits	1-3-4-5	are oxl1-oxr1-oxl2-oxr2	- Oxygen sensors
 		ld	x, #0D252h
 		ld	y, #0149h
 		jsr	sub_D222
@@ -3858,8 +3878,8 @@ loc_CD09:				; CODE XREF: ROM:CCDDj	ROM:CCE3j ...
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_CD0F:				; CODE XREF: ROM:CD07j
-		tbbc	bit1, flags_49,	loc_CD3D ; bits	1-3-4-5	are oxl1-oxr1-oxl2-oxr2
-		ld	d, unk_143	; if carry is set OXL1 voltage was between .35 and .7
+		tbbc	bit1, flags_49,	loc_CD3D ; bits	1-3-4-5	are oxl1-oxr1-oxl2-oxr2	- Oxygen sensors
+		ld	d, count_143	; if carry is set OXL1 voltage was between .35 and .7
 		cmp	b, #003
 		ble	loc_CD3D
 		cmp	b, #154
@@ -3884,7 +3904,7 @@ loc_CD3D:				; CODE XREF: ROM:loc_CD0Fj ROM:CD17j ...
 loc_CD3E:				; CODE XREF: ROM:CD26j
 		st	a, count_1BC
 		tbbc	bit3, flags_49,	loc_CD6F ; clear and store
-		ld	d, unk_15F	; if carry is set OXR1 voltage was between .35 and .7
+		ld	d, count_15F	; if carry is set OXR1 voltage was between .35 and .7
 		cmp	b, #003
 		ble	loc_CD6F	; clear	and store
 		cmp	b, #154
@@ -4001,7 +4021,7 @@ loc_CE13:				; CODE XREF: ROM:CE22j	ROM:CE24j ...
 loc_CE1F:				; CODE XREF: ROM:CE0Bj
 		cmp	#056, RPM	; 2800RPM
 		bcs	loc_CE13
-		tbbs	bit5, flags_45,	loc_CE13 ; received from serial	port apparently
+		tbbs	bit5, flags_45,	loc_CE13 ; IC303 input chip: B7	/TE2, B	/TE1, B5 /NSW, B4 IGSW,	 B3, B2	IDL2, B1 , B0 STA
 		ld	a, unk_109
 		and	a, #02h
 		bne	loc_CE13
@@ -4026,18 +4046,18 @@ loc_CE41:				; CODE XREF: ROM:CE19j	ROM:CE1Dj ...
 loc_CE48:				; CODE XREF: ROM:CE45j
 		st	a, unk_1BB
 		tbbc	bit3, flags_4B,	loc_CE6C
-		tbbc	bit6, flags_45,	loc_CE6C ; received from serial	port apparently
-		tbbs	bit0, flags_45,	loc_CE6C ; received from serial	port apparently
+		tbbc	bit6, flags_45,	loc_CE6C ; bounce if TE2 open
+		tbbs	bit0, flags_45,	loc_CE6C ; bounce if starting
 		tbbs	bit7, flags_4C,	loc_CE6C ; bit 7 demands a sampling of the oxygen sensors
 		cmp	#00h, NEcounts
 		beq	loc_CE6C
 		cmp	a, #2Eh
 		bcs	loc_CE63
-		tbbc	bit0, flags_41,	loc_CE69 ; b5 indidcates something about ram stats during last suspend
+		tbbc	bit0, flags_41,	loc_CE69 ; B0 IDL1, b5 indidcates something about ram stats during last	suspend
 
 loc_CE63:				; CODE XREF: ROM:CE5Ej
-		tbbs	bit1, flags_45,	loc_CE69 ; received from serial	port apparently
-		tbbs	bit5, flags_45,	loc_CE6C ; received from serial	port apparently
+		tbbs	bit1, flags_45,	loc_CE69 ; IC303 input chip: B7	/TE2, B	/TE1, B5 /NSW, B4 IGSW,	 B3, B2	IDL2, B1 , B0 STA
+		tbbs	bit5, flags_45,	loc_CE6C ; IC303 input chip: B7	/TE2, B	/TE1, B5 /NSW, B4 IGSW,	 B3, B2	IDL2, B1 , B0 STA
 
 loc_CE69:				; CODE XREF: ROM:CE60j	ROM:loc_CE63j
 		setb	bit5, flags_4D
@@ -4047,7 +4067,7 @@ loc_CE69:				; CODE XREF: ROM:CE60j	ROM:loc_CE63j
 
 loc_CE6C:				; CODE XREF: ROM:CE4Bj	ROM:CE4Ej ...
 		clrb	bit5, flags_4D
-		tbbs	bit0, flags_45,	loc_CE89 ; received from serial	port apparently
+		tbbs	bit0, flags_45,	loc_CE89 ; bounce if starting
 		ld	a, unk_1C4
 		ld	b, unk_140	; bits 5,0 oxl2	related
 		cmpb	b, #01h
@@ -4066,7 +4086,7 @@ loc_CE86:				; CODE XREF: ROM:CE82j
 loc_CE89:				; CODE XREF: ROM:CE6Ej
 		ld	a, flags_4D
 		push	a
-		ld	d, flags_4E
+		ld	d, flags_4E	; bit1 is igf1 related,	bit2 igf2 related
 		tbbc	bit5, RAMST, loc_CEA7 ;	Built-in RAM status
 		cmp	#122, count_AE	; incremented at F47D
 		ble	loc_CEA7
@@ -4106,7 +4126,7 @@ loc_CEC3:				; CODE XREF: ROM:CEA5j	ROM:CEB6j
 		st	a, flags_162
 		st	a, flags_7D
 		pull	a
-		st	d, flags_4E
+		st	d, flags_4E	; bit1 is igf1 related,	bit2 igf2 related
 		mov	s, x
 		xch	a, x + 00h
 		and	a, #18h
@@ -4203,8 +4223,8 @@ loc_CF65:				; CODE XREF: ROM:CF61j
 		st	b, unk_1C6
 		ld	x, #0D2ABh
 		ld	y, #0D2ABh
-		tbbc	bit6, flags_45,	loc_CF96 ; received from serial	port apparently
-		tbbc	bit0, flags_41,	loc_CF88 ; b5 indidcates something about ram stats during last suspend
+		tbbc	bit6, flags_45,	loc_CF96 ; IC303 input chip: B7	/TE2, B	/TE1, B5 /NSW, B4 IGSW,	 B3, B2	IDL2, B1 , B0 STA
+		tbbc	bit0, flags_41,	loc_CF88 ; B0 IDL1, b5 indidcates something about ram stats during last	suspend
 		ld	b, unk_1C6
 		bmi	loc_CFBE
 		ld	b, unk_1C4
@@ -4216,11 +4236,11 @@ loc_CF65:				; CODE XREF: ROM:CF61j
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_CF88:				; CODE XREF: ROM:CF71j
-		tbbc	bit0, flags_49,	loc_CF8E ; bits	1-3-4-5	are oxl1-oxr1-oxl2-oxr2
+		tbbc	bit0, flags_49,	loc_CF8E ; bits	1-3-4-5	are oxl1-oxr1-oxl2-oxr2	- Oxygen sensors
 		ld	x, #0D2AFh
 
 loc_CF8E:				; CODE XREF: ROM:loc_CF88j
-		tbbc	bit2, flags_49,	loc_CFAA ; bits	1-3-4-5	are oxl1-oxr1-oxl2-oxr2
+		tbbc	bit2, flags_49,	loc_CFAA ; bits	1-3-4-5	are oxl1-oxr1-oxl2-oxr2	- Oxygen sensors
 		ld	y, #0D2AFh
 		bra	loc_CFAA
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
@@ -4274,7 +4294,7 @@ loc_CFD1:				; CODE XREF: ROM:CFCCj
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_CFD7:				; CODE XREF: ROM:loc_CFD1j
-		tbbs	bit6, flags_45,	loc_CFDD ; received from serial	port apparently
+		tbbs	bit6, flags_45,	loc_CFDD ; IC303 input chip: B7	/TE2, B	/TE1, B5 /NSW, B4 IGSW,	 B3, B2	IDL2, B1 , B0 STA
 		tbbc	bit0, flags_4B,	loc_D046
 
 loc_CFDD:				; CODE XREF: ROM:loc_CFD7j
@@ -4327,7 +4347,7 @@ loc_D01A:				; CODE XREF: ROM:loc_D015j
 		ld	a, unk_71
 		bne	loc_D040
 		st	a, unk_70
-		tbbc	bit6, flags_45,	loc_D046 ; received from serial	port apparently
+		tbbc	bit6, flags_45,	loc_D046 ; IC303 input chip: B7	/TE2, B	/TE1, B5 /NSW, B4 IGSW,	 B3, B2	IDL2, B1 , B0 STA
 		setb	bit0, flags_4B
 		ld	a, unk_72
 		bmi	loc_D030
@@ -4698,7 +4718,7 @@ sub_D1BC:				; CODE XREF: ROM:CD87p	ROM:CD96p
 		and	a, #02h
 		beq	loc_D1E9
 		tbbs	bit0, flags_40,	loc_D1DF
-		ld	a, flags_49	; bits 1-3-4-5 are oxl1-oxr1-oxl2-oxr2
+		ld	a, flags_49	; bits 1-3-4-5 are oxl1-oxr1-oxl2-oxr2 - Oxygen	sensors
 		cmpb	a, x + 01h	; check	high bit
 		bne	locret_D1D1
 		cmpb	a, x + 00h	; check	low bit
@@ -4746,13 +4766,13 @@ sub_D1EF:				; CODE XREF: ROM:CDD5p	ROM:CDE4p
 		beq	loc_D220
 		cmp	#64h, unk_5E	; could	be last	unk_100, or 0
 		bcc	loc_D220
-		cmp	#030, RPM	; MSB is RPM/50, LSB is	fraction of 50
+		cmp	#030, RPM	; 1500 RPM
 		bcs	loc_D220
-		cmp	#0E4h, rawTHW	; Contains the NOT of CTS reading from ADC, sensor is tied to ground on	other side
+		cmp	#228, rawTHW	; Contains the NOT of CTS reading from ADC, sensor is tied to ground on	other side
 		bcs	loc_D220
 		cmpb	b, #01h
 		bne	loc_D220
-		cmp	#13h, unk_D4
+		cmp	#019, unk_D4	; timing related
 		bcs	loc_D220
 		cmp	a, #20h
 		bcs	locret_D221
@@ -4817,8 +4837,8 @@ loc_D23D:				; CODE XREF: sub_D222+16j
 
 
 sub_D257:				; CODE XREF: __RESET+1738p
-		tbbs	bit7, flags_45,	loc_D25F ; received from serial	port apparently
-		ld	#222, unk_7C	; counter
+		tbbs	bit7, flags_45,	loc_D25F ; IC303 input chip: B7	/TE2, B	/TE1, B5 /NSW, B4 IGSW,	 B3, B2	IDL2, B1 , B0 STA
+		ld	#222, unk_7C	; this seems to	be the favoured	execution
 		bra	loc_D289	; clear	1ca and	return
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
@@ -4944,7 +4964,7 @@ loc_D2D6:				; CODE XREF: sub_D2B9+2Bj
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_D2E6:				; CODE XREF: sub_D2B9+25j
-		ld	a, unk_1AA	; flags_49 bit0	related
+		ld	a, flags_1AA	; IC302	input bits B3~0	are NOT	of oxy heater pin voltages
 		cmpb	a, #40h
 		beq	loc_D2F1	; fuel pressure	down
 		clrb	bit2, PORTD_ASRIN ; fuel pressure up
@@ -4955,16 +4975,16 @@ loc_D2F1:				; CODE XREF: sub_D2B9+32j
 		setb	bit2, PORTD_ASRIN ; fuel pressure down
 
 loc_D2F3:				; CODE XREF: sub_D2B9+36j
-		tbbc	bit7, flags_45,	loc_D2F9 ; received from serial	port apparently
+		tbbc	bit7, flags_45,	loc_D2F9 ; IC303 input chip: B7	/TE2, B	/TE1, B5 /NSW, B4 IGSW,	 B3, B2	IDL2, B1 , B0 STA
 		jmp	loc_D371
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_D2F9:				; CODE XREF: sub_D2B9:loc_D2F3j
-		tbbs	bit2, flags_45,	loc_D347 ; received from serial	port apparently
+		tbbs	bit2, flags_45,	loc_D347 ; IC303 input chip: B7	/TE2, B	/TE1, B5 /NSW, B4 IGSW,	 B3, B2	IDL2, B1 , B0 STA
 		ld	a, VTA2_net	; VTA2-VTA2_min
 		cmp	#80h, THG	; THG lookup table output from exhaust gas temp	sensor ADC reading
 		bcc	ISC1
-		ld	a, flags_49	; bits 1-3-4-5 are oxl1-oxr1-oxl2-oxr2
+		ld	a, flags_49	; bits 1-3-4-5 are oxl1-oxr1-oxl2-oxr2 - Oxygen	sensors
 		and	a, #3Ah		; mask out everything but the oxy sensors
 		cmp	a, #0Ah
 		beq	loc_D33D
@@ -4981,7 +5001,7 @@ loc_D315:				; CODE XREF: sub_D2B9+89j
 		shl	a
 		shl	a
 		st	a, temp_51
-		ld	b, unk_1AA	; flags_49 bit0	related
+		ld	b, flags_1AA	; IC302	input bits B3~0	are NOT	of oxy heater pin voltages
 		and	b, #0Fh
 		or	b, temp_51
 		st	b, temp_51
@@ -5219,15 +5239,15 @@ ReInitNEIGT:				; CODE XREF: __RESET+185p
 		st	d, deltaNE
 		st	d, deltaNE_1
 		ld	a, #60h
-		st	d, threeDeltaNE
+		st	d, threeDeltaNE	; re-init
 		clr	a
-		st	d, NEcounts
+		st	d, NEcounts	; re-init
 		clrb	bit0, flags_4A
 		clrb	bit1, flags_44
 		clrb	bit2, flags_44
 		clrb	bit1, flags_4C
-		st	a, unk_1B6
-		st	a, unk_1B7
+		st	a, unk_1B6	; re-init
+		st	a, unk_1B7	; re-init
 		st	d, RPM		; re-init to 0000
 		clrb	bit4, flags_42
 		ret
@@ -5497,8 +5517,8 @@ res_05:					; CODE XREF: __RESET+111j
 		inc	b
 		cmp	b, #02h
 		bcs	res_05
-		tbbs	bit6, flags_45,	res_06 ; received from serial port apparently
-		tbbc	bit7, flags_45,	res_06 ; received from serial port apparently
+		tbbs	bit6, flags_45,	res_06 ; IC303 input chip: B7 /TE2, B /TE1, B5 /NSW, B4	IGSW,  B3, B2 IDL2, B1 , B0 STA
+		tbbc	bit7, flags_45,	res_06 ; IC303 input chip: B7 /TE2, B /TE1, B5 /NSW, B4	IGSW,  B3, B2 IDL2, B1 , B0 STA
 		setb	bit3, flags_4B
 		setb	bit4, flags_4D
 		setb	bit3, flags_4D
@@ -5561,7 +5581,7 @@ MainLoop:				; CODE XREF: __RESET:EndMainLoopj
 		ld	d, #116Eh
 		st	d, IMASK	; Interrupt Request Mask MSB
 		setb	bit2, flags_4A
-		tbbc	bit0, flags_45,	main_01	; received from	serial port apparently
+		tbbc	bit0, flags_45,	main_01	; bounce if not	starting
 		clrb	bit4, flags_4D
 
 main_01:				; CODE XREF: __RESET+191j
@@ -5677,7 +5697,7 @@ init_seg0x80:				; CODE XREF: __RESET:main_02p
 ; START	OF FUNCTION CHUNK FOR __RESET
 
 main_05:				; CODE XREF: __RESET:main_04j
-		tbbc	bit0, flags_45,	main_06	; received from	serial port apparently
+		tbbc	bit0, flags_45,	main_06	; IC303	input chip: B7 /TE2, B /TE1, B5	/NSW, B4 IGSW,	B3, B2 IDL2, B1	, B0 STA
 		clrb	bit2, flags_4C
 
 main_06:				; CODE XREF: __RESET:main_05j
@@ -5695,7 +5715,7 @@ main_07:				; CODE XREF: __RESET+228j __RESET+22Dj ...
 		setb	bit3, flags_4E
 
 main_08:				; CODE XREF: __RESET+239j
-		tbbs	bit3, flags_4E,	main_09
+		tbbs	bit3, flags_4E,	main_09	; bit1 is igf1 related,	bit2 igf2 related
 		clr	count_B3	; incremented at F55E
 
 main_09:				; CODE XREF: __RESET:main_08j
@@ -5727,10 +5747,10 @@ main_12:				; CODE XREF: __RESET+252j
 
 main_13:				; CODE XREF: __RESET+246j
 		di
-		ld	a, unk_77	; set bit 6
+		ld	a, flags_77	; set bit 6
 		mov	a, b
 		or	a, #40h
-		st	a, unk_77	; set bit 6
+		st	a, flags_77	; set bit 6
 		ei
 		cmpb	b, #40h
 		beq	main_14
@@ -5742,7 +5762,7 @@ main_14:				; CODE XREF: __RESET+274j
 		shr	d
 		ld	y, RPM		; MSB is RPM/50, LSB is	fraction of 50
 		jsr	MulDbyY		; returns upper	16 bits	in Y, lower 16 bits in D
-		cmp	y, #00075	; Y:D now holds	K*1/Load, but what is K? who cares.
+		cmp	y, #00075	; Y:D now holds	meanKSint*RPM/2. this value decreases with increasing load
 		ble	main_15		; bounce if Y is less or equal to 75, which skips taking the scaled reciprocal of word_51
 		st	y, temp_51	; this is the desirable	program	path
 		ld	d, meanKSint	; deltaKS/KS_count, filtered
@@ -5769,7 +5789,7 @@ main_16:				; CODE XREF: __RESET+29Fj
 		ld	d, temp_51
 
 main_17:				; CODE XREF: __RESET+2AEj
-		mov	d, y		; other	load limiter routine
+		mov	d, y		; assures minimum load for throttle above threshold + count_A7
 		tbbs	bit0, flags_41,	main_18	; only time this is writ
 		cmp	#030, RPM	; 1500RPM
 		bcc	main_18		; only time this is writ
@@ -5780,7 +5800,7 @@ main_17:				; CODE XREF: __RESET+2AEj
 		bcs	main_18		; only time this is writ
 		cmp	y, #7800h	; default value, smaller than table output
 		bgt	main_18		; only time this is writ
-		ld	y, #7800h	; default value, smaller than table output
+		ld	y, #7800h	; assert minimum value
 
 main_18:				; CODE XREF: __RESET+2B3j __RESET+2B9j ...
 		st	y, LOAD		; only time this is writ
@@ -5831,10 +5851,10 @@ main_18:				; CODE XREF: __RESET+2B3j __RESET+2B9j ...
 
 main_19:				; CODE XREF: __RESET+31Aj
 		di
-		ld	a, unk_77	; set bit 0, make decision based on bit	0
+		ld	a, flags_77	; set bit 0, make decision based on bit	0
 		mov	a, b
 		or	a, #01h
-		st	a, unk_77	; set bit 0
+		st	a, flags_77	; set bit 0
 		ei
 		cmpb	b, #01h
 		beq	main_20
@@ -5845,7 +5865,7 @@ main_20:				; CODE XREF: __RESET+32Aj
 		ld	d, compLOAD	; air temp and Baro compensated	Load (likely in	units of mass)
 		tbbs	bit7, flags_4C,	main_23	; bit 7	demands	a sampling of the oxygen sensors
 		push	a
-		ld	a, flags_44	; bit3:	rev limiter, bits 543210 will all cause	a branch past doinjectors
+		ld	a, flags_44	; bit 1	is igf1	related, bit2 igf2 related
 		cmpb	a, #3Fh
 		pull	a
 		bne	main_23
@@ -5887,7 +5907,7 @@ main_23:				; CODE XREF: __RESET+331j __RESET+33Aj ...
 		clr	a
 
 main_24:				; CODE XREF: __RESET+36Dj
-		cmp	#4Fh, unk_5F
+		cmp	#4Fh, count_5F	; counts up to 255 since last start, about 15 counts per second
 		bcc	main_26
 		ld	a, #80h
 		bra	main_26
@@ -5978,8 +5998,8 @@ main_34:				; CODE XREF: __RESET+3D9j
 		ld	d, compLOAD	; air temp and Baro compensated	Load (likely in	units of mass)
 		jsr	DivDby12	; divides D by 12, returns 16b result in unks 53:54
 		ld	d, RPM		; MSB is RPM/50, LSB is	fraction of 50
-		jsr	ThreeDtable	; inputs in D and temp_53:temp_54, output in A
-		tbbc	bit3, flags_45,	main_35	; received from	serial port apparently
+		jsr	ThreeDtable	; inputs in D and temp_53:temp_54, output in D
+		tbbc	bit3, flags_45,	main_35	; IC303	input chip: B7 /TE2, B /TE1, B5	/NSW, B4 IGSW,	B3, B2 IDL2, B1	, B0 STA
 		add	a, #043
 
 main_35:				; CODE XREF: __RESET+3F3j
@@ -5987,7 +6007,7 @@ main_35:				; CODE XREF: __RESET+3F3j
 
 main_36:				; CODE XREF: __RESET+276j __RESET+32Cj
 		tbbs	bit7, flags_4C,	main_40	; bit 7	demands	a sampling of the oxygen sensors
-		tbbs	bit0, flags_45,	main_40	; received from	serial port apparently
+		tbbs	bit0, flags_45,	main_40	; bounce if starting
 		ld	a, compLOAD	; air temp and Baro compensated	Load (likely in	units of mass)
 		ld	y, #0C5DDh	; high voltage table
 		cmp	#160, Bvolts	; 12.5V
@@ -6036,8 +6056,8 @@ main_42:				; CODE XREF: __RESET+435j
 main_43:				; CODE XREF: __RESET:main_41j
 					; __RESET+43Dj
 		clr	a
-		tbbs	bit5, flags_45,	main_44	; received from	serial port apparently
-		ld	b, flags_44	; bit3:	rev limiter, bits 543210 will all cause	a branch past doinjectors
+		tbbs	bit5, flags_45,	main_44	; IC303	input chip: B7 /TE2, B /TE1, B5	/NSW, B4 IGSW,	B3, B2 IDL2, B1	, B0 STA
+		ld	b, flags_44	; bit 1	is igf1	related, bit2 igf2 related
 		and	b, #3Fh
 		bne	main_44
 		ld	b, unk_6C	; sort of a filtered, saturated	VTA_net
@@ -6078,7 +6098,7 @@ main_46:				; CODE XREF: __RESET+47Fj __RESET+486j
 		clr	a
 
 main_47:				; CODE XREF: __RESET+46Cj __RESET+48Bj
-		st	a, unk_187
+		st	a, unk_187	; timing related
 		ld	b, flags_A2	; bit7:	VTA_net	high, bit4: VTA_net high
 		ld	a, VTA_net
 		cmp	a, #123
@@ -6102,7 +6122,7 @@ main_49:				; CODE XREF: __RESET+49Dj
 
 main_50:				; CODE XREF: __RESET+4ADj
 		cmp	#037, VTA_net
-		bcc	main_51
+		bcc	main_51		; branch if some throttle
 		and	b, #7Fh		; clear	flags_A2 bit7
 
 main_51:				; CODE XREF: __RESET+4B4j
@@ -6112,27 +6132,27 @@ main_51:				; CODE XREF: __RESET+4B4j
 
 main_52:				; CODE XREF: __RESET+4BBj
 		st	b, flags_A2	; bit7:	VTA_net	high, bit4: VTA_net high
-		ld	b, unk_183
+		ld	b, flags_183	; bit 0	set oer	1550 RPM, bit 1	set under 1700 RPM
 		cmp	#028, RPM	; 1400 RPM
 		bcc	main_53		; 1550 RPM
-		and	b, #0FCh
+		and	b, #0FCh	; clear	bits 0,1
 
 main_53:				; CODE XREF: __RESET+4C7j
 		cmp	#031, RPM	; 1550 RPM
-		bcc	main_54
-		and	b, #0FDh
+		bcc	main_54		; set bit 0
+		and	b, #0FDh	; clear	bit 1
 		bra	main_55
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 main_54:				; CODE XREF: __RESET+4CEj
-		or	b, #01h
+		or	b, #01h		; set bit 0
 		cmp	#034, RPM	; 1700 RPM
 		bcs	main_55
-		or	b, #02h
+		or	b, #02h		; set bit 1
 
 main_55:				; CODE XREF: __RESET+4D2j __RESET+4D9j
-		st	b, unk_183
-		ld	a, unk_104
+		st	b, flags_183	; bit 0	set oer	1550 RPM, bit 1	set under 1700 RPM
+		ld	a, unk_104	; timing related
 		ld	x, word_170	; inversely temp dependant, additional math elsewhere
 		cmp	x, #11ECh
 		bcc	main_56
@@ -6147,22 +6167,22 @@ main_56:				; CODE XREF: __RESET+4E9j __RESET+4EFj ...
 		st	a, temp_51
 		beq	main_61
 		cmp	#210, rawTHW	; Contains the NOT of CTS reading from ADC, sensor is tied to ground on	other side
-		bcs	main_61		; skip all this	extra math if warm
-		ld	a, unk_186
-		cmp	a, unk_187
+		bcs	main_61		; skip all this	extra math if COLD
+		ld	a, byte_186	; timing related
+		cmp	a, unk_187	; timing related
 		bcc	main_57		; select largest
-		ld	a, unk_187
+		ld	a, unk_187	; timing related
 
 main_57:				; CODE XREF: __RESET+506j
-		cmp	a, unk_197
+		cmp	a, unk_197	; timing related
 		bcc	main_58		; select largest
-		ld	a, unk_197
+		ld	a, unk_197	; timing related
 
 main_58:				; CODE XREF: __RESET+50Ej
 		shr	a
-		cmp	a, unk_18A
+		cmp	a, byte_18A	; timing related
 		bcc	main_59		; select largest
-		ld	a, unk_18A
+		ld	a, byte_18A	; timing related
 
 main_59:				; CODE XREF: __RESET+517j
 		ld	b, unk_18D	; im thinking it's a net retard, summed from a number of positive vales then negated
@@ -6174,16 +6194,16 @@ main_59:				; CODE XREF: __RESET+517j
 main_60:				; CODE XREF: __RESET+521j
 		mul	a, #138		; 54%
 		addc	a, #00h
-		add	a, temp_51
+		add	a, temp_51	; saturated unk_104 (maximum 0x0f)
 
 main_61:				; CODE XREF: __RESET+4F9j __RESET+4FEj
-		st	a, unk_D4
+		st	a, unk_D4	; timing related
 		ld	y, #0C336h
 		jsr	TwoD_rawTHW	; lookup Raw Water Temp, integer return	in Acca, fraction return in AccB
 		clrb	bit0, flags_40
-		tbbc	bit1, flags_45,	main_62	; received from	serial port apparently
-		tbbs	bit5, flags_45,	main_62	; received from	serial port apparently
-		tbbs	bit7, flags_41,	main_63	; b5 indidcates	something about	ram stats during last suspend
+		tbbc	bit1, flags_45,	main_62	; IC303	input chip: B7 /TE2, B /TE1, B5	/NSW, B4 IGSW,	B3, B2 IDL2, B1	, B0 STA
+		tbbs	bit5, flags_45,	main_62	; IC303	input chip: B7 /TE2, B /TE1, B5	/NSW, B4 IGSW,	B3, B2 IDL2, B1	, B0 STA
+		tbbs	bit7, flags_41,	main_63	; B0 IDL1, b5 indidcates something about ram stats during last suspend
 
 main_62:				; CODE XREF: __RESET+535j __RESET+538j
 		setb	bit0, flags_40
@@ -6207,16 +6227,16 @@ main_64:				; CODE XREF: __RESET:main_63j
 main_65:				; CODE XREF: __RESET+54Fj __RESET+554j ...
 		add	a, b
 		st	a, temp_52
-		ld	a, word_126
+		ld	a, count_126	; from the plots it looks like it increments while the throttle	is closed
 		ld	b, RPM		; MSB is RPM/50, LSB is	fraction of 50
-		tbbc	bit0, flags_41,	main_70	; b5 indidcates	something about	ram stats during last suspend
+		tbbc	bit0, flags_41,	main_70	; B0 IDL1, b5 indidcates something about ram stats during last suspend
 		clr	count_A7	; incremented at F47D
 		cmp	a, #7Ah
 		bcs	main_66
 		setb	bit7, flags_44
 
 main_66:				; CODE XREF: __RESET+56Bj
-		tbbc	bit4, flags_44,	main_67	; bit3:	rev limiter, bits 543210 will all cause	a branch past doinjectors
+		tbbc	bit4, flags_44,	main_67	; bit 1	is igf1	related, bit2 igf2 related
 		cmp	b, temp_51
 		bcc	main_69		; prevent gasso	among other things
 		clrb	bit6, flags_47
@@ -6252,7 +6272,7 @@ main_69:				; CODE XREF: __RESET+574j
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 main_70:				; CODE XREF: __RESET+564j
-		tbbc	bit4, flags_44,	main_71	; bit3:	rev limiter, bits 543210 will all cause	a branch past doinjectors
+		tbbc	bit4, flags_44,	main_71	; bit 1	is igf1	related, bit2 igf2 related
 		setb	bit6, flags_47
 		bra	main_72
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
@@ -6264,13 +6284,13 @@ main_71:				; CODE XREF: __RESET:main_70j
 
 main_72:				; CODE XREF: __RESET+5ADj __RESET+5B1j
 		clrb	bit7, flags_47
-		tbbc	bit7, flags_44,	main_73	; bit3:	rev limiter, bits 543210 will all cause	a branch past doinjectors
+		tbbc	bit7, flags_44,	main_73	; bit 1	is igf1	related, bit2 igf2 related
 		cmp	a, #7Ah
 		bcs	main_73
 		tbbs	bit7, flags_4C,	main_73	; bit 7	demands	a sampling of the oxygen sensors
-		cmp	#040, RPM	; MSB is RPM/50, LSB is	fraction of 50
+		cmp	#040, RPM	; 2000 RPM
 		bcc	main_73		; bounce is greater than 2000 RPM
-		ld	a, flags_44	; bit3:	rev limiter, bits 543210 will all cause	a branch past doinjectors
+		ld	a, flags_44	; bit 1	is igf1	related, bit2 igf2 related
 		cmpb	a, #00001110b
 		bne	main_73
 		ld	d, #00250	; 1ms burst
@@ -6278,11 +6298,11 @@ main_72:				; CODE XREF: __RESET+5ADj __RESET+5B1j
 
 main_73:				; CODE XREF: __RESET+5B7j __RESET+5BCj ...
 		clr	a
-		st	a, word_126
+		st	a, count_126	; cleared here
 		clrb	bit7, flags_44
 		clr	count_A3	; incremented at F47D
 		clrb	bit4, flags_44
-		cmp	#036, RPM	; MSB is RPM/50, LSB is	fraction of 50
+		cmp	#036, RPM	; 1800RPM
 		bcs	main_74
 		setb	bit4, flags_42
 
@@ -6302,17 +6322,17 @@ main_76:				; CODE XREF: __RESET+578j __RESET+57Bj ...
 main_77:				; CODE XREF: __RESET+5A2j __RESET+5A6j
 		clrb	bit0, flags_40
 		ld	y, #012Dh
-		jsr	sub_C64D
+		jsr	sub_C64D	; called with either 12D or 149	in Y
 		setb	bit0, flags_40
 		ld	y, #0149h
-		jsr	sub_C64D
-		ld	y, #0098h
+		jsr	sub_C64D	; called with either 12D or 149	in Y
+		ld	y, #0098h	; not sure block
 		bsr	subrDAD4
 		bne	main_78
-		ld	y, #009Ch
+		ld	y, #009Ch	; not sure block
 		bsr	subrDAD4
 		bne	main_78
-		ld	y, #009Ah
+		ld	y, #009Ah	; not sure block
 		bsr	subrDAD4
 		beq	main_79
 
@@ -6375,7 +6395,7 @@ main_83:				; CODE XREF: __RESET+650j
 		setb	bit2, flags_4B
 		ld	a, unk_D8
 		ld	x, word_7A	; meanKSint divided by a air temp comp factor
-		tbbc	bit7, flags_44,	main_84	; bit3:	rev limiter, bits 543210 will all cause	a branch past doinjectors
+		tbbc	bit7, flags_44,	main_84	; bit 1	is igf1	related, bit2 igf2 related
 		cmp	#02h, unk_5E	; could	be last	unk_100, or 0
 		bcc	main_81
 		cmp	x, #1C19h
@@ -6605,7 +6625,7 @@ main_104:				; CODE XREF: __RESET+78Fj
 		ei
 		clr	a
 		tbbs	bit7, flags_4C,	main_106 ; bit 7 demands a sampling of the oxygen sensors
-		tbbs	bit0, flags_41,	main_106 ; b5 indidcates something about ram stats during last suspend
+		tbbs	bit0, flags_41,	main_106 ; B0 IDL1, b5 indidcates something about ram stats during last	suspend
 		ld	y, #0C5C3h
 		jsr	TwoD_7A		; Lookup unk_7A, integer return	in Acca, fraction return in AccB
 		st	a, temp_51
@@ -6625,7 +6645,7 @@ main_105:				; CODE XREF: __RESET+7AFj
 main_106:				; CODE XREF: __RESET+798j __RESET+79Bj
 		st	a, unk_1B0
 		tbbc	bit7, flags_4C,	main_110 ; 300 RPM
-		cmp	#008, RPM	; MSB is RPM/50, LSB is	fraction of 50
+		cmp	#008, RPM	; 400 RPM
 		bcs	main_111
 		clrb	bit7, flags_4C
 		clrb	bit2, DOUT
@@ -6675,7 +6695,7 @@ main_111:				; CODE XREF: __RESET+7C0j
 main_112:				; CODE XREF: __RESET+800j
 		cmp	#128, Bvolts	; 10V
 		bcs	main_113
-		tbbs	bit0, flags_45,	main_113 ; received from serial	port apparently
+		tbbs	bit0, flags_45,	main_113 ; bounce if starting
 		tbbc	bit7, flags_4C,	main_114 ; bit 7 demands a sampling of the oxygen sensors
 
 main_113:				; CODE XREF: __RESET+80Dj __RESET+80Fj
@@ -6718,7 +6738,7 @@ main_119:				; CODE XREF: __RESET+9C3j
 		tbbc	bit7, flags_4C,	main_121 ; used	here for injection PW calculation
 		tbbs	bit3, flags_43,	main_120 ; is this an abnormal program path while DD0F is normal?
 		tbbc	bit4, flags_47,	main_120 ; is this an abnormal program path while DD0F is normal?
-		tbbc	bit0, flags_45,	main_121 ; used	here for injection PW calculation
+		tbbc	bit0, flags_45,	main_121 ; bounce if NOT starting
 
 main_120:				; CODE XREF: __RESET+846j __RESET+849j ...
 		setb	bit1, flags_46	; is this an abnormal program path while DD0F is normal?
@@ -6744,7 +6764,7 @@ main_122:				; CODE XREF: __RESET+863j
 		st	d, temp_53
 		ld	d, RPM		; MSB is RPM/50, LSB is	fraction of 50
 		ld	y, #0C26Ch
-		jsr	ThreeDtable2	; inputs in D and temp_53:temp_54, output in A
+		jsr	ThreeDtable2	; inputs in D and temp_53:temp_54, output in D
 		st	d, temp_56
 		ld	y, #0C2A8h
 		ld	a, unk_DB
@@ -6802,7 +6822,7 @@ main_128:				; CODE XREF: __RESET+8B8j __RESET+8BDj
 		bcc	main_131
 
 main_129:				; CODE XREF: __RESET+8CAj
-		tbbc	bit0, flags_44,	main_130 ; bit3: rev limiter, bits 543210 will all cause a branch past doinjectors
+		tbbc	bit0, flags_44,	main_130 ; bit 1 is igf1 related, bit2 igf2 related
 		clrb	bit0, flags_44
 		tbbc	bit6, flags_4A,	main_130
 		cmp	y, x + 02h
@@ -6849,7 +6869,7 @@ main_132:				; CODE XREF: __RESET+918j
 main_133:				; CODE XREF: __RESET+920j
 		shr	d
 		st	d, temp_51
-		ld	a, unk_D4
+		ld	a, unk_D4	; timing related
 		beq	main_134
 		tbbs	bit0, flags_40,	main_134
 		add	a, #03h
@@ -6913,7 +6933,7 @@ main_140:				; CODE XREF: __RESET+96Bj
 		mov	y, d
 		rolc	b
 		rolc	a
-		pull	y		; pushed from dd62
+		pull	y		; pushed from dd62, this is compLOAD based pulsewidth
 		bcs	main_141
 		jsr	MulDbyY		; returns upper	16 bits	in Y, lower 16 bits in D
 
@@ -6922,20 +6942,20 @@ main_141:				; CODE XREF: __RESET+97Cj
 		ld	d, threeDeltaNE
 		shl	d
 		shl	d
-		bcs	main_142
+		bcs	main_142	; engine running too slow, limit need not be applied
 		shl	d		; 24 delta NE, 1 otto cycle
-		bcs	main_142
+		bcs	main_142	; engine running too slow, limit need not be applied
 		cmp	d, temp_51
 		bcc	main_142
 		st	d, temp_51	; limit	injector pw to 2 crank revolutions
 
 main_142:				; CODE XREF: __RESET+987j __RESET+98Aj ...
-		tbbc	bit1, flags_46,	main_145
+		tbbc	bit1, flags_46,	main_145 ; bit 1 flags limp in injection mode
 		di
-		ld	a, unk_77	; set bit 5, make a decision on	bit 5
+		ld	a, flags_77	; set bit 5, make a decision on	bit 5
 		mov	a, b
 		or	a, #20h
-		st	a, unk_77	; set bit 5
+		st	a, flags_77	; set bit 5
 		ei
 		cmpb	b, #20h
 		beq	main_143	; weird	90% test, keepin' it rich baby!
@@ -7090,14 +7110,14 @@ main_162:				; CODE XREF: __RESET:main_156j
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 main_163:				; CODE XREF: __RESET+A45j
-		tbbc	bit7, flags_48,	main_164
+		tbbc	bit7, flags_48,	main_164 ; bounce if starting
 		clrb	bit7, flags_48
 		ld	a, unk_DB
 		add	a, #20h
 		st	a, unk_DC
 
 main_164:				; CODE XREF: __RESET:main_163j
-		tbbs	bit0, flags_45,	main_165 ; received from serial	port apparently
+		tbbs	bit0, flags_45,	main_165 ; bounce if starting
 		cmp	#020, RPM	; MSB is RPM/50, LSB is	fraction of 50
 		bcs	main_166
 		tbbc	bit3, flags_48,	main_166
@@ -7175,7 +7195,7 @@ main_172:				; CODE XREF: __RESET:main_162j
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 main_173:				; CODE XREF: __RESET+AEDj
-		tbbs	bit1, flags_45,	main_174 ; received from serial	port apparently
+		tbbs	bit1, flags_45,	main_174 ; IC303 input chip: B7	/TE2, B	/TE1, B5 /NSW, B4 IGSW,	 B3, B2	IDL2, B1 , B0 STA
 		tbbc	bit1, flags_42,	main_177
 		clrb	bit1, flags_42
 		ld	#00h, count_BC	; decremented at F566
@@ -7208,7 +7228,7 @@ main_177:				; CODE XREF: __RESET+B00j
 
 main_178:				; CODE XREF: __RESET+B26j
 		ld	a, y + 00h
-		tbbc	bit2, flags_46,	main_179
+		tbbc	bit2, flags_46,	main_179 ; bit 1 flags limp in injection mode
 		shr	a
 
 main_179:				; CODE XREF: __RESET+B2Cj
@@ -7221,7 +7241,7 @@ main_180:				; CODE XREF: __RESET:main_179j
 
 main_181:				; CODE XREF: __RESET:main_177j
 					; __RESET+B1Fj
-		tbbs	bit5, flags_45,	main_182 ; received from serial	port apparently
+		tbbs	bit5, flags_45,	main_182 ; IC303 input chip: B7	/TE2, B	/TE1, B5 /NSW, B4 IGSW,	 B3, B2	IDL2, B1 , B0 STA
 		tbbc	bit0, flags_42,	main_185
 		clrb	bit0, flags_42
 		ld	#00h, count_BB	; decremented at F566
@@ -7258,7 +7278,7 @@ main_185:				; CODE XREF: __RESET+B39j
 
 main_186:				; CODE XREF: __RESET+B67j
 		ld	a, y + 00h
-		tbbc	bit2, flags_46,	main_187
+		tbbc	bit2, flags_46,	main_187 ; bit 1 flags limp in injection mode
 		shr	a
 
 main_187:				; CODE XREF: __RESET+B6Dj
@@ -7274,8 +7294,8 @@ main_188:				; CODE XREF: __RESET:main_180j
 		setb	bit5, flags_48
 
 main_189:				; CODE XREF: __RESET+B54j __RESET+B59j ...
-		tbbc	bit4, flags_44,	main_190 ; bit3: rev limiter, bits 543210 will all cause a branch past doinjectors
-		tbbs	bit5, flags_45,	main_190 ; received from serial	port apparently
+		tbbc	bit4, flags_44,	main_190 ; bit 1 is igf1 related, bit2 igf2 related
+		tbbs	bit5, flags_45,	main_190 ; IC303 input chip: B7	/TE2, B	/TE1, B5 /NSW, B4 IGSW,	 B3, B2	IDL2, B1 , B0 STA
 		cmp	#37h, unk_5E	; could	be last	unk_100, or 0
 		bcs	main_190
 		cmp	#14h, unk_DB
@@ -7317,7 +7337,7 @@ main_193:				; CODE XREF: __RESET+BBAj
 		st	a, temp_51
 		tbbc	bit1, flags_42,	main_195
 		clr	a
-		ld	b, unk_183
+		ld	b, flags_183	; bit 0	set oer	1550 RPM, bit 1	set under 1700 RPM
 		cmpb	b, #01h
 		beq	main_194
 		ld	a, #05h
@@ -7375,7 +7395,7 @@ main_199:				; CODE XREF: __RESET+BF5j
 		add	b, #3Bh
 		add	a, b
 		st	a, temp_51
-		tbbs	bit0, flags_41,	main_200 ; b5 indidcates something about ram stats during last suspend
+		tbbs	bit0, flags_41,	main_200 ; B0 IDL1, b5 indidcates something about ram stats during last	suspend
 		cmp	#1Fh, count_C8	; decrements at	E488
 		bcc	main_200
 		ld	#1Fh, count_C8	; decrements at	E488
@@ -7460,7 +7480,7 @@ main_209:				; CODE XREF: __RESET+C94j
 
 main_210:				; CODE XREF: __RESET+C84j __RESET+C88j ...
 		di
-		ld	a, unk_77	; make a decision on bit 1
+		ld	a, flags_77	; make a decision on bit 1
 		cmpb	a, #02h
 		beq	main_211	; if the bit was clear,	set it.
 		ei
@@ -7469,10 +7489,10 @@ main_210:				; CODE XREF: __RESET+C84j __RESET+C88j ...
 
 main_211:				; CODE XREF: __RESET+CA0j
 		or	a, #02h
-		st	a, unk_77	; set bit 1
+		st	a, flags_77	; set bit 1
 		ei
 		tbbc	bit4, flags_47,	main_212 ; bit4: high when hot (but how	hot?)
-		tbbc	bit0, flags_41,	main_212 ; b5 indidcates something about ram stats during last suspend
+		tbbc	bit0, flags_41,	main_212 ; B0 IDL1, b5 indidcates something about ram stats during last	suspend
 		ld	a, flags_7D
 		cmpb	a, #10h
 		bne	main_212
@@ -7693,7 +7713,7 @@ main_241:				; CODE XREF: __RESET+DC8j
 		cmp	#4Ch, count_C6	; increments at	E478
 		bcc	main_242
 		tbbs	bit0, flags_4C,	main_243 ; bit 7 demands a sampling of the oxygen sensors
-		tbbs	bit3, flags_4E,	main_243
+		tbbs	bit3, flags_4E,	main_243 ; bit1	is igf1	related, bit2 igf2 related
 		cmp	#006, RPM	; MSB is RPM/50, LSB is	fraction of 50
 		bcs	main_244
 		cmp	#077, Bvolts	; 6V
@@ -7727,10 +7747,10 @@ main_244:				; CODE XREF: __RESET+DDAj __RESET+DDFj ...
 main_245:				; CODE XREF: __RESET+DE4j __RESET+DF5j
 		setb	bit2, flags_4A
 		di
-		ld	a, unk_77	; set bit 3, make a decision on	bit 3
+		ld	a, flags_77	; set bit 3, make a decision on	bit 3
 		mov	a, b
 		or	a, #08h
-		st	a, unk_77	; set bit 3
+		st	a, flags_77	; set bit 3
 		ei
 		cmpb	b, #08h
 		beq	main_246
@@ -7739,7 +7759,7 @@ main_245:				; CODE XREF: __RESET+DE4j __RESET+DF5j
 
 main_246:				; CODE XREF: __RESET+E15j
 		ld	a, unk_1AF
-		tbbs	bit5, flags_45,	main_250 ; received from serial	port apparently
+		tbbs	bit5, flags_45,	main_250 ; IC303 input chip: B7	/TE2, B	/TE1, B5 /NSW, B4 IGSW,	 B3, B2	IDL2, B1 , B0 STA
 		cmp	a, #0FEh
 		bcc	main_247
 		add	a, #02h
@@ -7781,7 +7801,7 @@ main_252:				; CODE XREF: __RESET+E35j __RESET+E39j ...
 		st	a, unk_1AF
 		ld	a, unk_E1
 		shl	a
-		tbbc	bit4, flags_45,	main_253 ; received from serial	port apparently
+		tbbc	bit4, flags_45,	main_253 ; IC303 input chip: B7	/TE2, B	/TE1, B5 /NSW, B4 IGSW,	 B3, B2	IDL2, B1 , B0 STA
 		clrb	bit0, PORTD_ASRIN
 		bcc	main_255
 		clr	a
@@ -7842,7 +7862,7 @@ main_260:				; CODE XREF: __RESET+E9Fj
 		st	d, temp_51
 		ld	x, #0000h
 		ld	d, y + 13h
-		tbbc	bit0, flags_41,	main_267 ; b5 indidcates something about ram stats during last suspend
+		tbbc	bit0, flags_41,	main_267 ; B0 IDL1, b5 indidcates something about ram stats during last	suspend
 		cmp	#05h, unk_5E	; could	be last	unk_100, or 0
 		bgt	main_261
 		ld	#2Bh, temp_52
@@ -7858,7 +7878,7 @@ main_261:				; CODE XREF: __RESET+EB7j __RESET+EBEj
 		inc	x
 		bmi	main_264
 		tbbs	bit2, PORTD_ASRIN, main_263 ; Port D Data Register / ASR Input Data
-		tbbs	bit6, flags_45,	main_263 ; received from serial	port apparently
+		tbbs	bit6, flags_45,	main_263 ; IC303 input chip: B7	/TE2, B	/TE1, B5 /NSW, B4 IGSW,	 B3, B2	IDL2, B1 , B0 STA
 		tbbc	bit4, flags_47,	main_263 ; bit4: high when hot (but how	hot?)
 		cmp	x, #55D5h
 		bgt	main_265
@@ -7919,10 +7939,10 @@ main_269:				; CODE XREF: __RESET+F08j
 
 main_270:				; CODE XREF: __RESET:main_258j
 					; __RESET+F27j
-		tbbc	bit1, flags_45,	main_276 ; received from serial	port apparently
+		tbbc	bit1, flags_45,	main_276 ; IC303 input chip: B7	/TE2, B	/TE1, B5 /NSW, B4 IGSW,	 B3, B2	IDL2, B1 , B0 STA
 		cmp	#92h, count_A4	; incremented at F47D
 		bcs	main_277
-		tbbs	bit5, flags_45,	main_273 ; received from serial	port apparently
+		tbbs	bit5, flags_45,	main_273 ; IC303 input chip: B7	/TE2, B	/TE1, B5 /NSW, B4 IGSW,	 B3, B2	IDL2, B1 , B0 STA
 		ld	a, flags_A2	; bit7:	VTA_net	high, bit4: VTA_net high
 		cmpb	a, #10h		; bigger throttle bit
 		beq	main_273
@@ -7983,11 +8003,11 @@ main_279:				; CODE XREF: __RESET+F67j
 main_280:				; CODE XREF: __RESET+F75j
 		ld	a, RPM		; MSB is RPM/50, LSB is	fraction of 50
 		bne	main_281
-		ld	a, flags_45	; received from	serial port apparently
+		ld	a, flags_45	; IC303	input chip: B7 /TE2, B /TE1, B5	/NSW, B4 IGSW,	B3, B2 IDL2, B1	, B0 STA
 		and	a, #71h
 		cmp	a, #61h
 		bne	main_281
-		tbbs	bit0, flags_41,	main_281 ; b5 indidcates something about ram stats during last suspend
+		tbbs	bit0, flags_41,	main_281 ; B0 IDL1, b5 indidcates something about ram stats during last	suspend
 		jsr	sub_D2B9
 		nop			; user sub injection!
 		nop
@@ -8003,10 +8023,10 @@ main_281:				; CODE XREF: __RESET+F8Aj __RESET+F92j ...
 main_282:				; CODE XREF: __RESET+E17j
 		setb	bit2, flags_4A
 		di
-		ld	a, unk_77	; set bit 2, make a decision on	bit 2
+		ld	a, flags_77	; set bit 2, make a decision on	bit 2
 		mov	a, b
 		or	a, #04h
-		st	a, unk_77	; set bit 2
+		st	a, flags_77	; set bit 2
 		ei
 		cmpb	b, #04h
 		beq	main_283
@@ -8023,32 +8043,32 @@ main_283:				; CODE XREF: __RESET+FB8j
 		ld	b, #002
 		ld	y, #00C8h
 		jsr	satuncount	; decrements B bytes of	ram by 1 starting from Y, saturates at 00
-		ld	a, unk_143
+		ld	a, count_143	; only counts while warm
 		inc	a
 		beq	main_284
-		st	a, unk_143
+		st	a, count_143	; only counts while warm
 
 main_284:				; CODE XREF: __RESET+FD9j
-		ld	a, unk_15F
+		ld	a, count_15F	; only counts while warm? oxy sensor related?
 		inc	a
 		beq	main_285
-		st	a, unk_15F
+		st	a, count_15F	; only counts while warm? oxy sensor related?
 
 main_285:				; CODE XREF: __RESET+FE2j
 		di
-		ld	a, unk_5F
+		ld	a, count_5F	; counts up to 255 since last start, about 15 counts per second
 		cmp	a, #03h
 		bcs	main_286
-		tbbs	bit0, flags_45,	main_287 ; received from serial	port apparently
+		tbbs	bit0, flags_45,	main_287 ; bounce if starting
 
 main_286:				; CODE XREF: __RESET+FECj
 		inc	a
 		beq	main_287
-		st	a, unk_5F
+		st	a, count_5F	; counts up to 255 since last start, about 15 counts per second
 
 main_287:				; CODE XREF: __RESET+FEEj __RESET+FF2j
 		ei
-		jsr	SUB_C918
+		jsr	SUB_C918	; bounce if TE1	shorted	to gnd
 		ld	y, #0C343h
 		jsr	TwoD_RPM	; lookup RPM, integer return in	Acca, fraction return in AccB
 		ld	x, unk_17E
@@ -8058,8 +8078,8 @@ main_287:				; CODE XREF: __RESET+FEEj __RESET+FF2j
 		bne	main_288
 		cmp	#05h, unk_5E	; could	be last	unk_100, or 0
 		bcc	main_288
-		tbbs	bit0, flags_41,	main_288 ; b5 indidcates something about ram stats during last suspend
-		tbbs	bit5, flags_45,	main_289 ; received from serial	port apparently
+		tbbs	bit0, flags_41,	main_288 ; B0 IDL1, b5 indidcates something about ram stats during last	suspend
+		tbbs	bit5, flags_45,	main_289 ; IC303 input chip: B7	/TE2, B	/TE1, B5 /NSW, B4 IGSW,	 B3, B2	IDL2, B1 , B0 STA
 
 main_288:				; CODE XREF: __RESET+1008j
 					; __RESET+100Dj ...
@@ -8114,14 +8134,14 @@ main_294:				; CODE XREF: __RESET+1050j
 		di
 		ld	a, unk_140	; bits 5,0 oxl2	related
 		and	a, #0FEh
-		tbbc	bit4, flags_49,	main_295 ; bits	1-3-4-5	are oxl1-oxr1-oxl2-oxr2
+		tbbc	bit4, flags_49,	main_295 ; bits	1-3-4-5	are oxl1-oxr1-oxl2-oxr2	- Oxygen sensors
 		or	a, #21h
 
 main_295:				; CODE XREF: __RESET+105Bj
 		st	a, unk_140	; bits 5,0 oxl2	related
 		ld	a, unk_15C	; bits 5,0 oxr2	related
 		and	a, #0FEh
-		tbbc	bit5, flags_49,	main_296 ; bits	1-3-4-5	are oxl1-oxr1-oxl2-oxr2
+		tbbc	bit5, flags_49,	main_296 ; bits	1-3-4-5	are oxl1-oxr1-oxl2-oxr2	- Oxygen sensors
 		or	a, #21h
 
 main_296:				; CODE XREF: __RESET+1068j
@@ -8132,7 +8152,7 @@ main_296:				; CODE XREF: __RESET+1068j
 		ld	y, #012Dh
 
 main_297:				; CODE XREF: __RESET+117Dj
-		ld	a, flags_44	; bit3:	rev limiter, bits 543210 will all cause	a branch past doinjectors
+		ld	a, flags_44	; bit 1	is igf1	related, bit2 igf2 related
 		cmpb	a, #3Fh
 		beq	main_298
 		ld	#2Eh, count_C9	; decrements at	E488
@@ -8164,7 +8184,7 @@ main_300:				; CODE XREF: __RESET+109Dj
 		cmpb	a, #02h
 		beq	main_303
 		ld	d, temp_51
-		tbbs	bit0, flags_41,	main_303 ; b5 indidcates something about ram stats during last suspend
+		tbbs	bit0, flags_41,	main_303 ; B0 IDL1, b5 indidcates something about ram stats during last	suspend
 		cmp	#14h, compLOAD	; air temp and Baro compensated	Load (likely in	units of mass)
 		bcs	main_303
 		cmp	#00h, count_C9	; decrements at	E488
@@ -8616,10 +8636,10 @@ main_328:				; CODE XREF: __RESET+131Fj
 main_329:				; CODE XREF: __RESET+12E9j
 					; __RESET+132Cj ...
 		setb	bit2, flags_4A
-		ld	a, unk_77	; set bit 7, make a decision on	bit 7
+		ld	a, flags_77	; set bit 7, make a decision on	bit 7
 		mov	a, b
 		or	b, #80h
-		st	b, unk_77	; set bit 7
+		st	b, flags_77	; set bit 7
 		cmpb	a, #80h
 		beq	main_330
 		jmp	main_369
@@ -8627,7 +8647,7 @@ main_329:				; CODE XREF: __RESET+12E9j
 
 main_330:				; CODE XREF: __RESET+134Bj
 		clr	a
-		tbbs	bit0, flags_41,	main_331 ; b5 indidcates something about ram stats during last suspend
+		tbbs	bit0, flags_41,	main_331 ; B0 IDL1, b5 indidcates something about ram stats during last	suspend
 		ld	b, word_94
 		cmpb	b, #80h
 		bne	main_331
@@ -8649,21 +8669,21 @@ main_332:				; CODE XREF: __RESET+135Ej
 		jsr	ThreeD_RPM	; returns 8b value from	3d table lookup	in AccA
 
 main_333:				; CODE XREF: __RESET+1365j
-		st	a, byte_18C	; lookup from RPM by LOADish table
+		st	a, byte_18C	; lookup from RPM by LOAD table
 		ld	a, unk_185
 		cmp	#104, RPM	; 5200RPM
-		bcs	main_334
+		bcs	main_334	; 5000 RPM
 		or	a, #01h
 
 main_334:				; CODE XREF: __RESET+137Dj
-		cmp	#100, RPM	; MSB is RPM/50, LSB is	fraction of 50
+		cmp	#100, RPM	; 5000 RPM
 		bcc	main_335
 		and	a, #0FEh
 
 main_335:				; CODE XREF: __RESET+1384j
 		tbbs	bit3, flags_43,	main_336 ; bit3: AFM bad bit4: rev limiter
-		tbbc	bit7, flags_44,	main_337 ; bit3: rev limiter, bits 543210 will all cause a branch past doinjectors
-		tbbs	bit5, flags_45,	main_336 ; received from serial	port apparently
+		tbbc	bit7, flags_44,	main_337 ; bit 1 is igf1 related, bit2 igf2 related
+		tbbs	bit5, flags_45,	main_336 ; IC303 input chip: B7	/TE2, B	/TE1, B5 /NSW, B4 IGSW,	 B3, B2	IDL2, B1 , B0 STA
 		ld	b, unk_103
 		cmpb	b, #02h
 		bne	main_337
@@ -8738,7 +8758,7 @@ main_344:				; CODE XREF: __RESET+13DEj
 		ld	a, unk_109
 		cmpb	a, #002
 		beq	main_345
-		tbbs	bit5, flags_45,	main_345 ; received from serial	port apparently
+		tbbs	bit5, flags_45,	main_345 ; IC303 input chip: B7	/TE2, B	/TE1, B5 /NSW, B4 IGSW,	 B3, B2	IDL2, B1 , B0 STA
 		ld	a, unk_185
 		and	a, #80h
 		bne	main_345
@@ -8780,7 +8800,7 @@ main_348:				; CODE XREF: __RESET+141Ej
 		ld	b, unk_106
 		cmp	a, b
 		bcs	main_350
-		sub	a, #01h
+		sub	a, #001
 		bcc	main_349
 		clr	a
 
@@ -8791,7 +8811,7 @@ main_349:				; CODE XREF: __RESET+143Cj
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 main_350:				; CODE XREF: __RESET+1438j
-		add	a, #01h
+		add	a, #001
 		cmp	a, b
 		bcs	main_352
 
@@ -8803,13 +8823,13 @@ main_352:				; CODE XREF: __RESET+1442j
 		st	a, unk_18B
 		tbbs	bit7, flags_4C,	main_357 ; 35degrees of	offset
 		ld	a, unk_185
-		cmpb	a, #80h
+		cmpb	a, #128
 		bne	main_356
 		ld	y, #0C34Eh
 		ld	d, compLOAD	; air temp and Baro compensated	Load (likely in	units of mass)
 		jsr	DivDby12	; divides D by 12, returns 16b result in unks 53:54
 		ld	d, RPM		; MSB is RPM/50, LSB is	fraction of 50
-		jsr	ThreeDtable	; inputs in D and temp_53:temp_54, output in A
+		jsr	ThreeDtable	; inputs in D and temp_53:temp_54, output in D
 		ld	b, ADC_pin15	; adc pin 15 (0V)
 		cmpb	b, #0Ch
 		beq	main_355
@@ -8832,7 +8852,7 @@ main_355:				; CODE XREF: __RESET+1469j
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 main_356:				; CODE XREF: __RESET+1455j
-		tbbc	bit6, flags_45,	main_359 ; received from serial	port apparently
+		tbbc	bit6, flags_45,	main_359 ; IC303 input chip: B7	/TE2, B	/TE1, B5 /NSW, B4 IGSW,	 B3, B2	IDL2, B1 , B0 STA
 		cmp	#02h, unk_5E	; could	be last	unk_100, or 0
 		bcc	main_359
 		ld	d, #00341	; 40 deg
@@ -8845,9 +8865,9 @@ main_357:				; CODE XREF: __RESET+144Dj
 main_358:				; CODE XREF: __RESET+1485j
 					; __RESET+14B4j
 		setb	bit3, flags_40
-		st	d, unk_188
+		st	d, unk_188	; initial timing calculation?
 		clr	a
-		st	a, unk_18A
+		st	a, byte_18A	; set to zero
 		jmp	main_369
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
@@ -8861,7 +8881,7 @@ main_360:				; CODE XREF: __RESET+1498j
 		ld	y, #0C3F9h
 		jsr	TwoDTable	; X value in AccA, integer return in Acca, fraction return in AccB
 		tbbc	bit5, flags_45,	main_361 ; saturate around 10 deg
-		tbbc	bit1, flags_45,	main_362 ; received from serial	port apparently
+		tbbc	bit1, flags_45,	main_362 ; IC303 input chip: B7	/TE2, B	/TE1, B5 /NSW, B4 IGSW,	 B3, B2	IDL2, B1 , B0 STA
 
 main_361:				; CODE XREF: __RESET+14A1j
 		cmp	a, #085		; saturate around 10 deg
@@ -8885,21 +8905,21 @@ main_363:				; CODE XREF: __RESET:main_355j
 		clr	a
 		add	b, unk_18D	; im thinking it's a net retard, summed from a number of positive vales then negated
 		addc	a, #00h
-		add	b, byte_18C	; lookup from RPM by LOADish table
+		add	b, byte_18C	; lookup from RPM by LOAD table
 		addc	a, #00h
 		shl	d
-		cmp	d, unk_188
-		ble	main_364
+		cmp	d, unk_188	; initial timing calculation?
+		ble	main_364	; final	timing assignment?
 		st	d, temp_51
-		ld	d, unk_188
+		ld	d, unk_188	; initial timing calculation?
 		add	d, #0009h
 		cmp	d, temp_51
-		ble	main_364
+		ble	main_364	; final	timing assignment?
 		ld	d, temp_51
 
 main_364:				; CODE XREF: __RESET+14C8j
 					; __RESET+14D4j
-		st	d, unk_188
+		st	d, unk_188	; final	timing assignment?
 		ld	a, unk_18B
 		cmp	a, unk_18E
 		bcc	main_365
@@ -8907,37 +8927,37 @@ main_364:				; CODE XREF: __RESET+14C8j
 
 main_365:				; CODE XREF: __RESET+14E1j
 		tbbc	bit5, flags_4A,	main_366
-		cmp	a, #80h
+		cmp	a, #128
 		bcc	main_366
-		ld	a, #80h
+		ld	a, #128
 
 main_366:				; CODE XREF: __RESET:main_365j
 					; __RESET+14EBj
-		ld	b, unk_18A
+		ld	b, byte_18A	; timing related
 		cmp	a, b
-		bcc	main_368
+		bcc	main_368	; useful assignment of timing related
 		sub	b, #04h
 		bcc	main_367
 		clr	a
-		bra	main_368
+		bra	main_368	; useful assignment of timing related
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 main_367:				; CODE XREF: __RESET+14F7j
 		cmp	a, b
-		bcc	main_368
+		bcc	main_368	; useful assignment of timing related
 		mov	b, a
 
 main_368:				; CODE XREF: __RESET+14F3j
 					; __RESET+14FAj ...
-		st	a, unk_18A
+		st	a, byte_18A	; useful assignment of timing related
 
 main_369:				; CODE XREF: __RESET+134Dj
 					; __RESET+1493j
 		di
-		ld	a, unk_77	; set bit 4, make a decision on	bit 4
+		ld	a, flags_77	; set bit 4, make a decision on	bit 4
 		mov	a, b
 		or	a, #10h
-		st	a, unk_77	; set bit 4
+		st	a, flags_77	; set bit 4
 		ei
 		cmpb	b, #10h
 		bne	main_379
@@ -9038,7 +9058,7 @@ main_382:				; CODE XREF: __RESET+1599j
 		or	a, #02h
 
 main_383:				; CODE XREF: __RESET+159Fj
-		tbbs	bit6, flags_45,	main_385 ; received from serial	port apparently
+		tbbs	bit6, flags_45,	main_385 ; IC303 input chip: B7	/TE2, B	/TE1, B5 /NSW, B4 IGSW,	 B3, B2	IDL2, B1 , B0 STA
 		ld	b, compLOAD	; air temp and Baro compensated	Load (likely in	units of mass)
 		cmp	b, temp_51
 		bcc	main_384
@@ -9060,8 +9080,8 @@ main_386:				; CODE XREF: __RESET+15B0j
 		beq	main_388
 		tbbs	bit3, flags_43,	main_388 ; bit3: AFM bad bit4: rev limiter
 		tbbs	bit4, flags_4A,	main_388
-		tbbc	bit5, flags_45,	main_387 ; received from serial	port apparently
-		tbbc	bit6, flags_45,	main_388 ; received from serial	port apparently
+		tbbc	bit5, flags_45,	main_387 ; IC303 input chip: B7	/TE2, B	/TE1, B5 /NSW, B4 IGSW,	 B3, B2	IDL2, B1 , B0 STA
+		tbbc	bit6, flags_45,	main_388 ; IC303 input chip: B7	/TE2, B	/TE1, B5 /NSW, B4 IGSW,	 B3, B2	IDL2, B1 , B0 STA
 
 main_387:				; CODE XREF: __RESET+15C5j
 		cmpb	a, #07h
@@ -9088,7 +9108,7 @@ main_390:				; CODE XREF: __RESET+15E1j
 		cmp	#31h, count_CD	; incremented at E7A9
 		beq	main_392
 		bgt	main_393	; bounce if fuel pressure is up
-		tbbc	bit0, flags_45,	main_395 ; received from serial	port apparently
+		tbbc	bit0, flags_45,	main_395 ; IC303 input chip: B7	/TE2, B	/TE1, B5 /NSW, B4 IGSW,	 B3, B2	IDL2, B1 , B0 STA
 		ld	b, unk_103
 		cmpb	b, #10h
 		beq	main_395
@@ -9163,14 +9183,14 @@ main_401:				; CODE XREF: __RESET+1647j
 		clr	unk_7F
 
 main_402:				; CODE XREF: __RESET+1651j
-		ld	b, unk_1AB	; flags_49 bit0	related
+		ld	b, flags_1AB	; flags_1AA related
 		cmpb	b, #40h
 		bne	main_403
 		st	a, count_1A3	; increments at	E480
-		tbbs	bit0, flags_45,	main_403 ; received from serial	port apparently
+		tbbs	bit0, flags_45,	main_403 ; IC303 input chip: B7	/TE2, B	/TE1, B5 /NSW, B4 IGSW,	 B3, B2	IDL2, B1 , B0 STA
 		cmp	#102, Bvolts	; 8V
 		bcs	main_403
-		tbbc	bit4, flags_45,	main_403 ; received from serial	port apparently
+		tbbc	bit4, flags_45,	main_403 ; IC303 input chip: B7	/TE2, B	/TE1, B5 /NSW, B4 IGSW,	 B3, B2	IDL2, B1 , B0 STA
 		cmp	#02h, unk_7F
 		bcs	main_403
 		ld	a, count_1A2	; increments at	E480
@@ -9240,7 +9260,7 @@ main_411:				; CODE XREF: __RESET+16C7j
 		or	a, #80h
 
 main_412:				; CODE XREF: __RESET+16D0j
-		ld	b, unk_197
+		ld	b, unk_197	; timing related
 		beq	main_413
 		or	a, #40h
 
@@ -9249,32 +9269,32 @@ main_413:				; CODE XREF: __RESET+16D7j
 		clr	b
 		ld	a, unk_1C6
 		and	a, #80h
-		tbbc	bit0, flags_45,	main_414 ; received from serial	port apparently
+		tbbc	bit0, flags_45,	main_414 ; IC303 input chip: B7	/TE2, B	/TE1, B5 /NSW, B4 IGSW,	 B3, B2	IDL2, B1 , B0 STA
 		or	a, #01h
 
 main_414:				; CODE XREF: __RESET+16E4j
-		tbbc	bit0, flags_41,	main_415 ; b5 indidcates something about ram stats during last suspend
+		tbbc	bit0, flags_41,	main_415 ; B0 IDL1, b5 indidcates something about ram stats during last	suspend
 		or	a, #02h
 
 main_415:				; CODE XREF: __RESET:main_414j
-		tbbc	bit1, flags_45,	main_416 ; received from serial	port apparently
+		tbbc	bit1, flags_45,	main_416 ; IC303 input chip: B7	/TE2, B	/TE1, B5 /NSW, B4 IGSW,	 B3, B2	IDL2, B1 , B0 STA
 		or	a, #04h
 
 main_416:				; CODE XREF: __RESET:main_415j
-		tbbc	bit5, flags_45,	main_417 ; received from serial	port apparently
+		tbbc	bit5, flags_45,	main_417 ; IC303 input chip: B7	/TE2, B	/TE1, B5 /NSW, B4 IGSW,	 B3, B2	IDL2, B1 , B0 STA
 		or	a, #08h
 
 main_417:				; CODE XREF: __RESET:main_416j
-		tbbc	bit0, flags_49,	main_418 ; bits	1-3-4-5	are oxl1-oxr1-oxl2-oxr2
+		tbbc	bit0, flags_49,	main_418 ; bits	1-3-4-5	are oxl1-oxr1-oxl2-oxr2	- Oxygen sensors
 		or	a, #10h
 
 main_418:				; CODE XREF: __RESET:main_417j
-		tbbc	bit2, flags_49,	main_419 ; bits	1-3-4-5	are oxl1-oxr1-oxl2-oxr2
+		tbbc	bit2, flags_49,	main_419 ; bits	1-3-4-5	are oxl1-oxr1-oxl2-oxr2	- Oxygen sensors
 		or	a, #20h
 
 main_419:				; CODE XREF: __RESET:main_418j
 		st	a, unk_1C6
-		ld	b, flags_45	; received from	serial port apparently
+		ld	b, flags_45	; IC303	input chip: B7 /TE2, B /TE1, B5	/NSW, B4 IGSW,	B3, B2 IDL2, B1	, B0 STA
 		st	b, unk_F8
 		ld	d, InjectPW1	; pulsewidth for LEFT bank (odd	cyl), 4us/bit
 		jsr	sub_EC27
@@ -9453,13 +9473,13 @@ intASR2_11:				; CODE XREF: ROM:ECA6j	ROM:ECBCj
 		bne	intASR2_17	; asr3 irq flag	(G1)
 
 intASR2_12:				; CODE XREF: ROM:ECC8j
-		tbbc	bit0, flags_41,	intASR2_14 ; b5	indidcates something about ram stats during last suspend
+		tbbc	bit0, flags_41,	intASR2_14 ; B0	IDL1, b5 indidcates something about ram	stats during last suspend
 		ld	d, threeDeltaNE
 		cmp	d, #01500	; 2500 RPM
 		bcs	intASR2_14
 		cmp	d, #16384	; 229RPM
 		bcc	intASR2_14
-		tbbs	bit4, flags_46,	intASR2_15
+		tbbs	bit4, flags_46,	intASR2_15 ; bit 1 flags limp in injection mode
 		clr	a
 		ld	b, threeDeltaNE
 		div	d, #026		; divide MSB
@@ -9589,7 +9609,7 @@ intASR2_27:				; CODE XREF: ROM:ED78j
 		tbbs	bit3, flags_43,	intASR2_35 ; bit3: AFM bad bit4: rev limiter
 		cmp	#3Ch, compLOAD	; air temp and Baro compensated	Load (likely in	units of mass)
 		bcs	intASR2_35
-		ld	a, unk_186
+		ld	a, byte_186	; timing related
 		bne	intASR2_35
 		ld	a, unk_103
 		cmpb	a, #40h
@@ -9647,7 +9667,7 @@ intASR2_33:				; CODE XREF: ROM:EDD4j
 		add	a, #20h
 		bcc	intASR2_38
 		clrb	bit2, DOUT
-		tbs	bit2, flags_41	; b5 indidcates	something about	ram stats during last suspend
+		tbs	bit2, flags_41	; B0 IDL1, b5 indidcates something about ram stats during last suspend
 		beq	intASR2_37
 		setb	bit6, flags_4E
 		ld	a, #0Bh
@@ -9699,8 +9719,8 @@ intASR2_40:				; CODE XREF: ROM:EE18j
 intASR2_41:				; CODE XREF: ROM:EE12j
 		cmpz	a
 		bne	intASR2_43
-		ld	a, unk_18F
-		jsr	sub_EF13	; we end up here if we're late, which is why we're checking target NEcounts+1
+		ld	a, unk_18F	; final	timing related
+		jsr	NEsub1_18	; we end up here if we're late, which is why we're checking target NEcounts+1
 
 intASR2_42:				; CODE XREF: ROM:EE2Aj
 		setb	bit2, flags_40
@@ -9726,29 +9746,29 @@ ASR2_reti:				; CODE XREF: ROM:ECA1j	ROM:EE1Cj ...
 NEsub1:					; CODE XREF: ROM:intASR2_43p
 		ld	a, ModuloNE	; contains modulo: NEcounts%3, represents 30 degree chunks after 10dBTDC cylinder NEcounts/3
 		beq	NEsub1_1	; bounce only if 10 deg	BTDC
-		jmp	loc_EF0C	; skip timing calculation?
+		jmp	NEsub1_17	; skip timing calculation?
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 NEsub1_1:				; CODE XREF: NEsub1+2j
 		clr	a
 		clr	b
 		tbbs	bit3, flags_40,	NEsub1_3
-		ld	b, unk_18A
+		ld	b, byte_18A	; timing related
 		shl	d
 		cmpz	a
 		bne	NEsub1_3
-		cmp	b, unk_186
+		cmp	b, byte_186	; timing related
 		bcc	NEsub1_2	; select highest
-		ld	b, unk_186
+		ld	b, byte_186	; timing related
 
 NEsub1_2:				; CODE XREF: NEsub1+16j
-		cmp	b, unk_197
+		cmp	b, unk_197	; timing related
 		bcc	NEsub1_3	; select highest
-		ld	b, unk_197
+		ld	b, unk_197	; timing related
 
 NEsub1_3:				; CODE XREF: NEsub1+9j	NEsub1+11j ...
 		push	d
-		ld	d, unk_188
+		ld	d, unk_188	; initial timing calculation?
 		mov	s, x
 		sub	d, x + 00h
 		bcc	NEsub1_4
@@ -9788,16 +9808,16 @@ NEsub1_7:				; CODE XREF: NEsub1+59j
 		mov	s, x		; stack	now points to limited value
 		ld	d, word_193
 		tbbs	bit0, flags_42,	NEsub1_9
-		cmp	#020, RPM	; MSB is RPM/50, LSB is	fraction of 50
+		cmp	#020, RPM	; 1000 RPM
 		ble	NEsub1_9
 		tbbs	bit5, flags_42,	NEsub1_8
-		tbbc	bit0, flags_41,	NEsub1_9 ; b5 indidcates something about ram stats during last suspend
+		tbbc	bit0, flags_41,	NEsub1_9 ; B0 IDL1, b5 indidcates something about ram stats during last	suspend
 		add	d, #00002
 		bra	NEsub1_10
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 NEsub1_8:				; CODE XREF: NEsub1+6Ej
-		cmp	#24h, compLOAD	; air temp and Baro compensated	Load (likely in	units of mass)
+		cmp	#036, compLOAD	; air temp and Baro compensated	Load (likely in	units of mass)
 		bcc	NEsub1_9
 		add	d, #0002h
 		bra	NEsub1_10
@@ -9833,28 +9853,28 @@ NEsub1_13:				; CODE XREF: NEsub1:NEsub1_12j
 		shr	b
 		add	a, NEcounts
 		cmp	a, #024
-		ble	loc_EEFA
+		ble	NEsub1_14
 		sub	a, #024
 
-loc_EEFA:				; CODE XREF: NEsub1+AAj
+NEsub1_14:				; CODE XREF: NEsub1+AAj
 		cmp	a, NEcounts
-		beq	loc_EF09	; only write to	18f, 190, 190 seems to be timing related
+		beq	NEsub1_16	; only write to	18f, 190, 190 seems to be timing related
 		cmp	b, RPM		; MSB is RPM/50, LSB is	fraction of 50
-		bcc	loc_EF09	; only write to	18f, 190, 190 seems to be timing related
+		bcc	NEsub1_16	; only write to	18f, 190, 190 seems to be timing related
 
-loc_EF02:				; CODE XREF: sub_EF13+2Fj
+NEsub1_15:				; CODE XREF: NEsub1_18+2Fj
 		dec	a
 		add	b, #128
-		bcc	loc_EF09	; only write to	18f, 190, 190 seems to be timing related
+		bcc	NEsub1_16	; only write to	18f, 190, 190 seems to be timing related
 		ld	b, #0FFh	; saturate
 
-loc_EF09:				; CODE XREF: NEsub1+B0j NEsub1+B4j ...
+NEsub1_16:				; CODE XREF: NEsub1+B0j NEsub1+B4j ...
 		st	d, unk_18F	; only write to	18f, 190, 190 seems to be timing related
 
-loc_EF0C:				; CODE XREF: NEsub1+4j
+NEsub1_17:				; CODE XREF: NEsub1+4j
 		ld	a, unk_18F	; 18f perhaps stores the necount modulo	to offset 190 from?
 		cmp	a, NEcounts
-		beq	loc_EF2A
+		beq	NEsub1_20
 ; End of function NEsub1
 
 
@@ -9862,26 +9882,26 @@ loc_EF0C:				; CODE XREF: NEsub1+4j
 
 ; we end up here if we're late, which is why we're checking target NEcounts+1
 
-sub_EF13:				; CODE XREF: ROM:EE32p
+NEsub1_18:				; CODE XREF: ROM:EE32p
 		inc	a
 		cmp	a, #024
-		ble	loc_EF1A
+		ble	NEsub1_19
 		ld	a, #01h
 
-loc_EF1A:				; CODE XREF: sub_EF13+3j
+NEsub1_19:				; CODE XREF: NEsub1_18+3j
 		cmp	a, NEcounts
 		bne	NEsub1_ret2
 		ld	a, unk_190
 		bsr	calcIGT_time	; accepts ratio	in AccA
-		clrc
+		clrc			; possibly turn	off IGt
 		tbbs	bit0, LDOUT, NEsub1_divert ; bounces immediately to Cmp0IGTdwell
 		setb	bit5, flags_40
 
-NEsub1_ret2:				; CODE XREF: sub_EF13+9j
+NEsub1_ret2:				; CODE XREF: NEsub1_18+9j
 		ret
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
-loc_EF2A:				; CODE XREF: NEsub1+C5j
+NEsub1_20:				; CODE XREF: NEsub1+C5j
 		ld	a, unk_190
 		bsr	calcIGT_time	; accepts ratio	in AccA
 		cmp	#00h, ModuloNE	; contains modulo: NEcounts%3, represents 30 degree chunks after 10dBTDC cylinder NEcounts/3
@@ -9890,28 +9910,30 @@ loc_EF2A:				; CODE XREF: NEsub1+C5j
 		ld	a, unk_190
 		cmp	a, RPM		; MSB is RPM/50, LSB is	fraction of 50
 		bcc	NEsub1_ret1
-		jsr	Cmp0IGTdwell
-		ld	d, unk_18F
-		bra	loc_EF02
+		jsr	Cmp0IGTdwell	; sets IGt if carry is set
+		ld	d, unk_18F	; final	timing related
+		bra	NEsub1_15
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
-NEsub1_ret1:				; CODE XREF: sub_EF13+27j
+NEsub1_ret1:				; CODE XREF: NEsub1_18+27j
 		setc
 		tbbc	bit0, LDOUT, NEsub1_divert ; bounces immediately to Cmp0IGTdwell
 		setb	bit6, flags_40
 		ret
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
-NEsub1_divert:				; CODE XREF: sub_EF13+11j sub_EF13+20j ...
+NEsub1_divert:				; CODE XREF: NEsub1_18+11j
+					; NEsub1_18+20j ...
 		jmp	Cmp0IGTdwell	; bounces immediately to Cmp0IGTdwell
-; End of function sub_EF13
+; End of function NEsub1_18
 
 
 ; ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ S U B	R O U T	I N E ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ
 
 ; accepts ratio	in AccA
 
-calcIGT_time:				; CODE XREF: sub_EF13+Ep sub_EF13+1Ap
+calcIGT_time:				; CODE XREF: NEsub1_18+Ep
+					; NEsub1_18+1Ap
 		push	a
 		mul	a, threeDeltaNE
 		mov	d, y
@@ -9939,7 +9961,7 @@ IV6:					; DATA XREF: ROM:FFEAo
 		clrb	bit1, IRQLL
 		push	x
 		push	y
-		tbbc	bit6, flags_44,	IV6_1 ;	bit3: rev limiter, bits	543210 will all	cause a	branch past doinjectors
+		tbbc	bit6, flags_44,	IV6_1 ;	bit 1 is igf1 related, bit2 igf2 related
 		clrb	bit6, flags_44
 		jmp	IV6_2
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
@@ -9980,7 +10002,7 @@ IV6_3:					; CODE XREF: IV6+25j
 IV6_4:					; CODE XREF: IV6+1Cj
 		tbbc	bit5, flags_47,	IV6_5 ;	skip a lot of IV6
 		clrb	bit5, flags_47
-		tbs	bit5, flags_41	; b5 indidcates	something about	ram stats during last suspend
+		tbs	bit5, flags_41	; B0 IDL1, b5 indidcates something about ram stats during last suspend
 		beq	IV6_5		; skip a lot of	IV6
 		ld	a, unk_D2
 		clr	b
@@ -10010,14 +10032,14 @@ IV6_6:					; CODE XREF: IV6+1Fj IV6+2Aj ...
 		bne	IV6_8		; clear	bit 6
 
 IV6_7:					; CODE XREF: IV6+54j IV6+58j ...
-		ld	a, unk_77	; clear	bit 0
+		ld	a, flags_77	; clear	bit 0
 		and	a, #0FEh
-		st	a, unk_77	; clear	bit 0
+		st	a, flags_77	; clear	bit 0
 
 IV6_8:					; CODE XREF: IV6+60j
-		ld	a, unk_77	; clear	bit 6
+		ld	a, flags_77	; clear	bit 6
 		and	a, #0BFh
-		st	a, unk_77	; clear	bit 6
+		st	a, flags_77	; clear	bit 6
 		di
 		clr	a
 		ld	b, deltaKS	; Cumulative sum of KS intervals, counted by KS_count, reset in	IV6
@@ -10082,16 +10104,16 @@ IV6_13:					; CODE XREF: IV6+B4j IV6+BBj
 IV6_14:					; CODE XREF: IV6+4Ej
 		shr	a
 		bcs	IV6_21
-		ld	a, unk_77
+		ld	a, flags_77
 		and	a, #7Fh
-		st	a, unk_77
-		ld	a, unk_186
+		st	a, flags_77
+		ld	a, byte_186	; timing related
 		ld	b, unk_102
 		cmpb	b, #80h
 		beq	IV6_16
-		ld	b, unk_187
+		ld	b, unk_187	; timing related
 		cmp	a, b
-		beq	IV6_20
+		beq	IV6_20		; only assignment
 		bgt	IV6_17
 		cmpz	a
 		bne	IV6_19
@@ -10114,16 +10136,16 @@ IV6_17:					; CODE XREF: IV6+DFj
 
 IV6_18:					; CODE XREF: IV6+F2j
 		cmp	a, b
-		bgt	IV6_20
+		bgt	IV6_20		; only assignment
 
 IV6_19:					; CODE XREF: IV6+E2j IV6:IV6_15j
 		mov	b, a
 
 IV6_20:					; CODE XREF: IV6+DDj IV6+F6j
-		st	a, unk_186
+		st	a, byte_186	; only assignment
 
 IV6_21:					; CODE XREF: IV6+C4j IV6+C7j
-		ld	a, flags_44	; bit3:	rev limiter, bits 543210 will all cause	a branch past doinjectors
+		ld	a, flags_44	; bit 1	is igf1	related, bit2 igf2 related
 		and	a, #3Fh
 		beq	IV6_22		; on the right path
 		ld	a, #0FFh
@@ -10176,10 +10198,10 @@ IV6_28:					; either 00 or 02
 		ld	x, #0164h	; choose either	InjectPW1 or InjectPW2
 		add	x, a
 		ld	d, x + 00h
-		jsr	DoInjectors
-		ld	b, unk_77	; going	to clear bit 4
+		jsr	DoInjector
+		ld	b, flags_77	; going	to clear bit 4
 		and	b, #0DFh
-		st	b, unk_77	; clear	bit 4
+		st	b, flags_77	; clear	bit 4
 
 IV6_29:					; CODE XREF: IV6+107j
 		ld	a, byte_110	; 7 to 23, highest at lowest fuel flow
@@ -10227,12 +10249,12 @@ IV6_35:					; CODE XREF: IV6+181j
 		st	a, unk_E3
 
 IV6_36:					; CODE XREF: IV6+18Aj
-		ld	b, flags_44	; bit3:	rev limiter, bits 543210 will all cause	a branch past doinjectors
+		ld	b, flags_44	; bit 1	is igf1	related, bit2 igf2 related
 		and	b, #3Fh
 		bne	IV6_37
-		ld	a, unk_77
+		ld	a, flags_77
 		and	a, #0EFh
-		st	a, unk_77
+		st	a, flags_77
 
 IV6_37:					; CODE XREF: IV6+185j IV6+192j
 		tbbc	bit3, flags_43,	IV6_39 ; bit3: AFM bad bit4: rev limiter
@@ -10266,7 +10288,7 @@ IV6_41:					; CODE XREF: IV6+1ABj IV6+1B2j
 
 IV6_42:					; CODE XREF: IV6+1A0j IV6+1BBj
 		clrb	bit0, flags_4E
-		tbbc	bit0, flags_45,	IV6_43 ; received from serial port apparently
+		tbbc	bit0, flags_45,	IV6_43 ; IC303 input chip: B7 /TE2, B /TE1, B5 /NSW, B4	IGSW,  B3, B2 IDL2, B1 , B0 STA
 		setb	bit4, flags_4C
 
 IV6_43:					; CODE XREF: IV6:IV6_5j IV6+1C5j
@@ -10313,7 +10335,7 @@ InjBits:	.db  10h		; DATA XREF: IV6+13Ao DoAllInjo
 ; ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ S U B	R O U T	I N E ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ
 
 
-DoInjectors:				; CODE XREF: IV6+147p DoAllInj+4p
+DoInjector:				; CODE XREF: IV6+147p DoAllInj+4p
 		di
 		push	d
 		ld	a, LDOUT	; Latch	DOUT
@@ -10324,7 +10346,7 @@ DoInjectors:				; CODE XREF: IV6+147p DoAllInj+4p
 		bra	DoInj6
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
-DoInj_ison:				; CODE XREF: DoInjectors+6j
+DoInj_ison:				; CODE XREF: DoInjector+6j
 		ld	x, y + 18h
 		ld	d, x + 00h	; load compare time (off time)
 		mov	s, x
@@ -10334,19 +10356,19 @@ DoInj_ison:				; CODE XREF: DoInjectors+6j
 		clr	a		; we did exceed	injector off time, and it's not off...
 		clr	b
 
-DoInj3:					; CODE XREF: DoInjectors+17j
+DoInj3:					; CODE XREF: DoInjector+17j
 		add	d, x + 00h	; data was pushed at start of sub, then	stack was copied into x
 		bcs	DoInj4		; on overflow, cap pw to 7FEE
 		cmp	d, #7FEEh
 		ble	DoInj5		; tidy up stack
 
-DoInj4:					; CODE XREF: DoInjectors+1Dj
+DoInj4:					; CODE XREF: DoInjector+1Dj
 		ld	d, #7FEEh
 
-DoInj5:					; CODE XREF: DoInjectors+22j
+DoInj5:					; CODE XREF: DoInjector+22j
 		pull	x		; tidy up stack
 
-DoInj6:					; CODE XREF: DoInjectors+Cj
+DoInj6:					; CODE XREF: DoInjector+Cj
 		add	d, TIMER	; Timer	MSB (bit11~bit18)
 		ld	x, y + 18h	; get address of specific CPR to target
 		st	d, x + 00h	; store	in CPR4	through	CPR7
@@ -10363,7 +10385,7 @@ DoInj6:					; CODE XREF: DoInjectors+Cj
 					; some kind of length at the desired pin. certainly
 					; it's output compare. 4us/bit
 		ret
-; End of function DoInjectors
+; End of function DoInjector
 
 
 ; ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ S U B	R O U T	I N E ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ
@@ -10374,7 +10396,7 @@ DoAllInj:				; CODE XREF: __RESET+5CFp IV6+40p ...
 
 DoAllloop:				; CODE XREF: DoAllInj+Cj
 		push	d
-		bsr	DoInjectors
+		bsr	DoInjector
 		inc	y
 		inc	y
 		pull	d
@@ -10401,7 +10423,7 @@ loc_F1B2:				; CODE XREF: sub_F1A9+4j
 
 loc_F1BB:				; CODE XREF: sub_F1A9+Dj
 		clr	a
-		ld	b, unk_187
+		ld	b, unk_187	; timing related
 		beq	loc_F1C7
 		ld	a, unk_1CC
 		inc	a
@@ -10440,7 +10462,7 @@ loc_F1EE:				; CODE XREF: sub_F1A9+36j sub_F1A9+3Cj
 loc_F1F2:				; CODE XREF: sub_F1A9+43j
 		cmp	#060, RPM	; 3000 RPM
 		bcs	loc_F200
-		tbbc	bit5, flags_46,	loc_F1FE
+		tbbc	bit5, flags_46,	loc_F1FE ; bit 1 flags limp in injection mode
 		or	a, #02h
 		bra	loc_F200
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
@@ -10451,9 +10473,9 @@ loc_F1FE:				; CODE XREF: sub_F1A9+4Ej
 loc_F200:				; CODE XREF: sub_F1A9+47j sub_F1A9+4Cj ...
 		st	a, unk_196
 		clr	b
-		tbbs	bit0, flags_46,	loc_F216
+		tbbs	bit0, flags_46,	loc_F216 ; bit 1 flags limp in injection mode
 		push	a
-		ld	a, flags_4E
+		ld	a, flags_4E	; bit1 is igf1 related,	bit2 igf2 related
 		and	a, #0E0h
 		pull	a
 		bne	loc_F216
@@ -10529,9 +10551,9 @@ loc_F275:				; CODE XREF: sub_F1A9+C9j
 		st	b, unk_19B
 
 loc_F278:				; CODE XREF: sub_F1A9+B6j
-		ld	b, unk_186
+		ld	b, byte_186	; timing related
 		bne	loc_F289
-		ld	b, unk_187
+		ld	b, unk_187	; timing related
 		beq	loc_F28C
 		ld	b, unk_1CC
 		cmp	b, #20h
@@ -10542,7 +10564,7 @@ loc_F289:				; CODE XREF: sub_F1A9+D2j
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_F28C:				; CODE XREF: sub_F1A9+D7j sub_F1A9+DEj
-		tbbs	bit5, flags_45,	loc_F2AA ; received from serial	port apparently
+		tbbs	bit5, flags_45,	loc_F2AA ; IC303 input chip: B7	/TE2, B	/TE1, B5 /NSW, B4 IGSW,	 B3, B2	IDL2, B1 , B0 STA
 		tbbs	bit5, flags_4A,	loc_F2AA
 		ld	y, #009Eh
 		and	a, #02h
@@ -10629,18 +10651,18 @@ loc_F302:				; CODE XREF: sub_F1A9+156j
 		ld	a, unk_199	; output from 3d table c54c
 
 loc_F310:				; CODE XREF: sub_F1A9+162j
-		ld	b, unk_197
+		ld	b, unk_197	; timing related
 		sub	b, #09h
 		bcc	loc_F318
 		clr	b
 
 loc_F318:				; CODE XREF: sub_F1A9+16Cj
 		cmp	a, b
-		bcc	loc_F31C
+		bcc	loc_F31C	; only writ here
 		mov	b, a
 
 loc_F31C:				; CODE XREF: sub_F1A9+170j
-		st	a, unk_197
+		st	a, unk_197	; only writ here
 		ret
 ; End of function sub_F1A9
 
@@ -10654,7 +10676,7 @@ IVc:					; DATA XREF: ROM:FFF6o
 		ld	a, TIMER	; Timer	MSB (bit11~bit18)
 		and	a, #04h		; toggles every	4096ms
 		bne	ivc_04		; bounce if high, every	8ms
-		tbbc	bit7, flags_45,	ivc_04 ; received from serial port apparently
+		tbbc	bit7, flags_45,	ivc_04 ; IC303 input chip: B7 /TE2, B /TE1, B5 /NSW, B4	IGSW,  B3, B2 IDL2, B1 , B0 STA
 		clrb	bit4, PORTB	; clear	pin 23
 		ld	a, unk_7C	; counter
 		bpz	ivc_01
@@ -10686,7 +10708,7 @@ ivc_04:					; CODE XREF: IVc+6j IVc+8j ...
 		cmp	#137, unk_E1
 		bcc	ivc_11
 		tbbs	bit5, flags_4C,	ivc_07 ; bit 7 demands a sampling of the oxygen	sensors
-		ld	b, unk_1AB	; flags_49 bit0	related
+		ld	b, flags_1AB	; flags_1AA related
 		cmpb	b, #40h
 		bne	ivc_09
 		ld	b, unk_19F	; ISC related
@@ -10776,7 +10798,7 @@ ivc_ret1:				; CODE XREF: IVc+9Cj
 ; START	OF FUNCTION CHUNK FOR IV6
 
 IV6_TXadc:				; CODE XREF: IV6+11j
-		ld	b, unk_75	; flags	relating to ADC	tx'ing
+		ld	b, flags_75	; flags	relating to ADC	tx'ing
 		cmpb	b, #01h
 		beq	loc_F3F0
 
@@ -10812,7 +10834,7 @@ loc_F3F0:				; CODE XREF: IV6+46Aj
 		bcc	loc_F3D0
 
 loc_F3F6:				; CODE XREF: IV6+48Aj
-		st	b, unk_75	; flags	relating to ADC	tx'ing
+		st	b, flags_75	; flags	relating to ADC	tx'ing
 		tbbc	bit1, flags_4A,	loc_F408
 		tbbc	bit2, flags_4A,	loc_F408
 		tbs	bit0, PORTA	; Port A Data Register
@@ -10824,7 +10846,7 @@ loc_F404:				; CODE XREF: IV6+49Cj
 		clrb	bit2, flags_4A
 
 loc_F408:				; CODE XREF: IV6+494j IV6+497j
-		ld	b, unk_75	; flags	relating to ADC	tx'ing
+		ld	b, flags_75	; flags	relating to ADC	tx'ing
 		bne	loc_F413
 		ld	#30h, SMRC_SIR	; Serial Master	Register Control
 		ld	a, SSD		; Serial Status	Data Register
@@ -10863,8 +10885,8 @@ loc_F433:				; CODE XREF: IV6+4BDj IV6:loc_F425j
 		ld	a, unk_109
 		ld	b, VTA2_net	; VTA2-VTA2_min
 		inc	b
-		bne	loc_F449
-		and	a, #40h
+		bne	loc_F449	; check	to see if sub throttle is used
+		and	a, #40h		; bit 6
 		bra	loc_F44B
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
@@ -10874,8 +10896,8 @@ loc_F449:				; CODE XREF: IV6+4DFj
 loc_F44B:				; CODE XREF: IV6+4E3j
 		di
 		ld	b, flags_4A	; working with bits 6,5,4
-		and	b, #8Fh
-		add	a, b
+		and	b, #8Fh		; zero 654
+		add	a, b		; take bits 654	from accA
 		st	a, flags_4A
 		ei
 		bra	loc_F478
@@ -10915,10 +10937,10 @@ loc_F478:				; CODE XREF: IV6+4F0j
 		ld	b, #016
 		ld	y, #00A3h
 		jsr	satcount	; increment B bytes of ram by 1	starting from Y, saturates at FF
-		ld	a, word_126
+		ld	a, count_126	; from the plots it looks like it increments while the throttle	is closed
 		inc	a
 		beq	loc_F489
-		st	a, word_126
+		st	a, count_126	; increments here, saturates at	255
 
 loc_F489:				; CODE XREF: IV6+520j
 		clr	a
@@ -10936,7 +10958,7 @@ loc_F496:				; CODE XREF: IV6+52Dj
 		ld	y, #01B8h
 		jsr	satcount	; increment B bytes of ram by 1	starting from Y, saturates at FF
 		ei
-		tbbs	bit7, flags_45,	loc_F4D4 ; received from serial	port apparently
+		tbbs	bit7, flags_45,	loc_F4D4 ; IC303 input chip: B7	/TE2, B	/TE1, B5 /NSW, B4 IGSW,	 B3, B2	IDL2, B1 , B0 STA
 		setb	bit4, PORTB
 		ld	a, TIMER	; Timer	MSB (bit11~bit18)
 		and	a, #0Ch
@@ -11025,16 +11047,16 @@ loc_F516:				; CODE XREF: IV6+5ADj
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_F519:				; CODE XREF: IV6+5B0j
-		ld	a, unk_77
+		ld	a, flags_77
 		and	a, #0F9h
-		st	a, unk_77
+		st	a, flags_77
 		jmp	loc_F666
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_F522:				; CODE XREF: IV6+5AAj
-		ld	a, unk_77
+		ld	a, flags_77
 		and	a, #0F7h
-		st	a, unk_77
+		st	a, flags_77
 		bra	loc_F52E
 ; END OF FUNCTION CHUNK	FOR IV6
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
@@ -11047,7 +11069,7 @@ loc_F522:				; CODE XREF: IV6+5AAj
 
 loc_F52E:				; CODE XREF: IV6+5C4j
 		clr	a
-		ld	b, unk_186
+		ld	b, byte_186	; timing related
 		bne	loc_F53B
 		cmp	#3Dh, count_C5	; increments at	E478
 		bcc	loc_F554
@@ -11064,7 +11086,7 @@ loc_F545:
 		inc	a
 
 loc_F546:				; CODE XREF: IV6+5DFj
-		tbbc	bit1, flags_41,	loc_F54B ; b5 indidcates something about ram stats during last suspend
+		tbbc	bit1, flags_41,	loc_F54B ; B0 IDL1, b5 indidcates something about ram stats during last	suspend
 		add	a, #02h
 
 loc_F54B:				; CODE XREF: IV6:loc_F546j
@@ -11124,7 +11146,7 @@ loc_F594:				; CODE XREF: IV6+627j
 loc_F5A0:				; CODE XREF: IV6+639j
 		st	b, unk_11E
 		tbbc	bit5, RAMST, loc_F5FC ;	Built-in RAM status
-		tbbc	bit4, flags_45,	loc_F5AE ; received from serial	port apparently
+		tbbc	bit4, flags_45,	loc_F5AE ; IC303 input chip: B7	/TE2, B	/TE1, B5 /NSW, B4 IGSW,	 B3, B2	IDL2, B1 , B0 STA
 		cmp	#109, Bvolts	; 8.55V
 		bcs	loc_F5FC
 
@@ -11287,7 +11309,7 @@ intCPR0:				; DATA XREF: ROM:FFF0o
 
 intCPR0_1:				; CODE XREF: intCPR0+2j
 		setb	bit1, flags_4C
-		tbbs	bit0, flags_45,	intCPR0_2 ; received from serial port apparently
+		tbbs	bit0, flags_45,	intCPR0_2 ; IC303 input	chip: B7 /TE2, B /TE1, B5 /NSW,	B4 IGSW,  B3, B2 IDL2, B1 , B0 STA
 		setb	bit2, flags_4C
 
 intCPR0_2:				; CODE XREF: intCPR0+14j
@@ -11295,7 +11317,7 @@ intCPR0_2:				; CODE XREF: intCPR0+14j
 		setc
 
 intCPR0_3:				; CODE XREF: intCPR0+10j
-		bsr	Cmp0IGTdwell
+		bsr	Cmp0IGTdwell	; sets IGt if carry is set
 
 intCPR0_end:				; CODE XREF: intCPR0+Cj
 					; intCPR0:intCPR0_2j
@@ -11305,9 +11327,10 @@ intCPR0_end:				; CODE XREF: intCPR0+Cj
 
 ; ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ S U B	R O U T	I N E ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ
 
+; sets IGt if carry is set
 
-Cmp0IGTdwell:				; CODE XREF: sub_EF13+29p
-					; sub_EF13:NEsub1_divertj ...
+Cmp0IGTdwell:				; CODE XREF: NEsub1_18+29p
+					; NEsub1_18:NEsub1_divertj ...
 		ld	d, IGT_time
 		st	d, CPR0		; Timer	comparison #0 MSB
 		setb	bit0, DOM
@@ -11330,7 +11353,7 @@ IGTdwell2:				; CODE XREF: Cmp0IGTdwell+Bj
 
 
 Cmp0NOW:				; CODE XREF: ROM:EE20p	ROM:EE27p ...
-		ld	d, #0002h
+		ld	d, #00002
 		di
 		add	d, TIMER	; Timer	MSB (bit11~bit18)
 		st	d, CPR0		; Timer	comparison #0 MSB
@@ -11353,8 +11376,8 @@ CPR0_sub:				; CODE XREF: intCPR0+7p
 		div	d, #006
 		ld	x, #01B7h
 		ld	y, #01B9h
-		cmp	a, #003		; a is the modulo from that necounts/6,	24/3 is	8..
-		bcc	CPR0_sub_1
+		cmp	a, #003		; a is (necounts-1)%6 =	0,1,2,3,4,5
+		bcc	CPR0_sub_1	; branch if modulo = 0,1,2
 		clr	a
 		dec	x
 		dec	y
@@ -11414,7 +11437,7 @@ CPR0_sub_8:				; CODE XREF: CPR0_sub+4Cj
 		ld	b, y + 00h
 		cmp	b, #3Fh
 		bcs	CPR0_sub_RET
-		cmp	#3Fh, count_B0	; incremented at F47D
+		cmp	#063, count_B0	; incremented at F47D
 		bcs	CPR0_sub_RET
 		cmpz	a
 		bne	CPR0_sub_9
@@ -11478,7 +11501,7 @@ loc_F747:				; CODE XREF: intASR1+29j intASR1+2Ej
 
 loc_F751:				; CODE XREF: intASR1+Dj intASR1+14j ...
 		tbbs	bit0, flags_4C,	loc_F759 ; skip	here to	NOT store a deltaKS value
-		tbbs	bit3, flags_4E,	loc_F759
+		tbbs	bit3, flags_4E,	loc_F759 ; bit1	is igf1	related, bit2 igf2 related
 		clr	count_B3	; incremented at F55E
 
 loc_F759:				; CODE XREF: intASR1:loc_F751j
@@ -11634,16 +11657,16 @@ sin0_12:				; CODE XREF: intSIN0:sin0_13j
 sin0_13:				; CODE XREF: intSIN0:sin0_11j
 		tbbs	bit6, SSD, sin0_12 ; bounce if RX error
 		ld	a, SIDR_SODR	; Serial Input/Output Data Register
-		xor	a, #0E6h
+		xor	a, #11100110b
 		push	a
 		mov	a, b
-		xor	a, flags_45	; received from	serial port apparently
-		and	a, unk_1A9	; flags_45 related?
-		and	b, flags_45	; received from	serial port apparently
+		xor	a, flags_45	; IC303	input chip: B7 /TE2, B /TE1, B5	/NSW, B4 IGSW,	B3, B2 IDL2, B1	, B0 STA
+		and	a, flags_1A9	; flags_45 related (IC303 inputs)
+		and	b, flags_45	; IC303	input chip: B7 /TE2, B /TE1, B5	/NSW, B4 IGSW,	B3, B2 IDL2, B1	, B0 STA
 		add	a, b
-		st	a, flags_45	; received from	serial port apparently
+		st	a, flags_45	; IC303	input chip: B7 /TE2, B /TE1, B5	/NSW, B4 IGSW,	B3, B2 IDL2, B1	, B0 STA
 		pull	b
-		st	b, unk_1A9	; flags_45 related?
+		st	b, flags_1A9	; flags_45 related (IC303 inputs)
 
 sin0_14:				; CODE XREF: intSIN0+89j
 		clrb	bit1, PORTD_ASRIN
@@ -11665,13 +11688,13 @@ sin0_17:				; CODE XREF: intSIN0:sin0_15j
 		xor	a, #0Fh
 		push	a
 		mov	a, b
-		xor	a, unk_1AB	; flags_49 bit0	related
-		and	a, unk_1AA	; flags_49 bit0	related
-		and	b, unk_1AB	; flags_49 bit0	related
+		xor	a, flags_1AB	; flags_1AA related
+		and	a, flags_1AA	; IC302	input bits B3~0	are NOT	of oxy heater pin voltages
+		and	b, flags_1AB	; flags_1AA related
 		add	a, b
-		st	a, unk_1AB	; flags_49 bit0	related
+		st	a, flags_1AB	; flags_1AA related
 		pull	b
-		st	b, unk_1AA	; flags_49 bit0	related
+		st	b, flags_1AA	; IC302	input bits B3~0	are NOT	of oxy heater pin voltages
 		cmpb	b, #10h
 		beq	sin0_18
 		setb	bit0, flags_49
@@ -11715,15 +11738,15 @@ sin0_25:				; CODE XREF: intSIN0+E8j
 sin0_26:				; CODE XREF: intSIN0:sin0_25j
 		setb	bit1, SSD	; this branch is executed often
 		ld	#0DAh, SIDR_SODR ; transmit DA to ADC
-		ld	a, flags_49	; bits 1-3-4-5 are oxl1-oxr1-oxl2-oxr2
+		ld	a, flags_49	; bits 1-3-4-5 are oxl1-oxr1-oxl2-oxr2 - Oxygen	sensors
 		ld	y, #012Dh
 		jsr	sub_FC0D
-		ld	a, flags_49	; bits 1-3-4-5 are oxl1-oxr1-oxl2-oxr2
+		ld	a, flags_49	; bits 1-3-4-5 are oxl1-oxr1-oxl2-oxr2 - Oxygen	sensors
 		shr	a
 		shr	a
 		ld	y, #0149h
 		jsr	sub_FC0D
-		tbbs	bit0, flags_45,	sin0_27	; received from	serial port apparently
+		tbbs	bit0, flags_45,	sin0_27	; IC303	input chip: B7 /TE2, B /TE1, B5	/NSW, B4 IGSW,	B3, B2 IDL2, B1	, B0 STA
 		cmp	#32h, count_A8	; incremented at F47D
 		ble	sin0_29
 		clrb	bit7, flags_4A
@@ -11736,7 +11759,7 @@ sin0_27:				; CODE XREF: intSIN0+10Dj
 		tbs	bit7, flags_4A
 		bne	sin0_28
 		clr	unk_7F
-		clr	unk_5F
+		clr	count_5F	; counts up to 255 since last start, about 15 counts per second
 		clr	count_A8	; incremented at F47D
 		clr	NEcounts
 		clr	NEcountsIV6	; buffered copy	of NEcounts for	IV6 purposes
@@ -11789,7 +11812,7 @@ txSerDebug:				; CODE XREF: intSIN0+15Ej
 
 retSerIRQ:				; CODE XREF: intSIN0+6Dj intSIN0+152j
 		di
-		ld	#01h, unk_75	; flags	relating to ADC	tx'ing
+		ld	#01h, flags_75	; flags	relating to ADC	tx'ing
 		clrb	bit3, IRQLL
 		ei
 
@@ -11843,7 +11866,7 @@ loc_F935:				; CODE XREF: ROM:F92Dj
 loc_F939:				; CODE XREF: ROM:loc_F91Fj
 		cmp	a, #96h
 		bcc	loc_F946
-		tbbs	bit7, flags_49,	loc_F942 ; bits	1-3-4-5	are oxl1-oxr1-oxl2-oxr2
+		tbbs	bit7, flags_49,	loc_F942 ; bits	1-3-4-5	are oxl1-oxr1-oxl2-oxr2	- Oxygen sensors
 		clrb	bit6, flags_4B
 
 loc_F942:				; CODE XREF: ROM:F93Dj
@@ -11852,7 +11875,7 @@ loc_F942:				; CODE XREF: ROM:F93Dj
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_F946:				; CODE XREF: ROM:F93Bj
-		tbbc	bit7, flags_49,	loc_F94B ; bits	1-3-4-5	are oxl1-oxr1-oxl2-oxr2
+		tbbc	bit7, flags_49,	loc_F94B ; bits	1-3-4-5	are oxl1-oxr1-oxl2-oxr2	- Oxygen sensors
 		setb	bit6, flags_4B
 
 loc_F94B:				; CODE XREF: ROM:loc_F946j
@@ -11883,8 +11906,8 @@ loc_F965:				; CODE XREF: ROM:F961j
 		clr	count_AE	; incremented at F47D
 		cmp	a, #109		; about	8.5V
 		bcs	loc_F97C
-		tbbs	bit3, flags_41,	loc_F97E ; b5 indidcates something about ram stats during last suspend
-		tbbc	bit4, flags_41,	loc_F978 ; b5 indidcates something about ram stats during last suspend
+		tbbs	bit3, flags_41,	loc_F97E ; B0 IDL1, b5 indidcates something about ram stats during last	suspend
+		tbbc	bit4, flags_41,	loc_F978 ; B0 IDL1, b5 indidcates something about ram stats during last	suspend
 		setb	bit5, RAMST
 
 loc_F976:				; CODE XREF: ROM:loc_F965j
@@ -12143,7 +12166,7 @@ loc_FAA5:				; CODE XREF: ROM:FA9Cj	ROM:FAA1j
 		cmp	a, b
 		ble	loc_FAAE
 		tbbs	bit7, flags_4C,	loc_FAAE ; bit 7 demands a sampling of the oxygen sensors
-		tbbc	bit0, flags_41,	loc_FAB0 ; b5 indidcates something about ram stats during last suspend
+		tbbc	bit0, flags_41,	loc_FAB0 ; B0 IDL1, b5 indidcates something about ram stats during last	suspend
 
 loc_FAAE:				; CODE XREF: ROM:FAA6j	ROM:FAA8j
 		clr	unk_69
