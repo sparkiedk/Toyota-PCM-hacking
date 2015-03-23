@@ -1,5 +1,5 @@
 This repo is dedicated to hacking toyota powertrain control modules.The specific focus is
-going to be 4A-GE related PCMs, then perhaps the 1UZ PCM and anything else anyone requests.
+going to be 4A-GE related PCMs and the 1UZ PCM and anything else anyone requests.
 
 
 Hot items: 
@@ -8,6 +8,8 @@ This is a disassebmly of the AE86 Bluetop code, from chip denso d151801-0642
 
 Toyota 1uz pcm/cap *.asm - working disassemblies of the two d151803 microprocessors inside a
 92~94 SC400 PCM. Specific part numbers are d151803-9260 (8243) and d151803-1320 (8568)
+
+Toyota Redtop 4A-GE capture and disassembly, from chip D151802-0442 - USDM AE92 manual corolla PCM
 
 Notes: 
 
@@ -41,6 +43,7 @@ AE86
 Corolla GTS	
 4A-GE	
 Bluetop	
+Redtop
 1.6L twin cam 16 valve
 D151801	
 D151801-0642
@@ -54,3 +57,5 @@ LS400
 D151803
 D151803-9260
 D151803-1320
+D151802
+D151802-0442

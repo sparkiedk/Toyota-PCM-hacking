@@ -2,6 +2,8 @@ IC's are 64 pin Plastic Dual inline package, 0.070" pin pitch, 0.750 row pitch
 
 d151803-1320 (IC501)
 ======================
+TRANSMISSION COMPUTER
+
 closest to d151802-7140 presumed knock sensing microprocessor
 12MHz input clock
 Bus rate is Xin/6
@@ -42,6 +44,9 @@ CCLK is Xin/12
 ****************************************************************************************************************************
 
 d151803-9260 (IC502)
+====================
+FUEL AND SPARK COMPUTER
+
 16MHz input clock
 Bus rate is Xin/6
 CCLK is Xin/16
@@ -55,8 +60,8 @@ Timer word increment rate is 250kHz
 6+7 	clock input, cannot scope
 8 	1MHz sq. wave
 9	low
-10	high
-11	OS	400ns low pulses
+10	high connected to pin 5 of ic301 indirectly - buffered /IDL1 signal
+11	
 12	high to vcc
 13	CLK	1MHz square wave - to 1k then to 9+10 of ADC
 14	output	20us high pulse every 4ms, which occasionally expands in duty cycle. (SIN3), same signal at pin 15 of 1320
@@ -79,10 +84,10 @@ Timer word increment rate is 250kHz
 31		A4 to pin 6 of MP908, short low pulse beginning at next NE trailing edge after g1 trailing edge, ends at subsequent NE trailing edge
 32		GND
 -------
-33
-34
+33		pulled high, not connected
+34		pulled high, not connected
 35
-36	PORTA0	~8ms square wave to mp908 pin 8
+36	PORTA0	~8ms square wave to mp908 pin 8, also drives watchdog chip IC101
 37	PORTD3
 38		/FPU
 39		30us pulse every ~4ms to pin 7 of IC302, NOT of signal to IC 303
@@ -104,9 +109,9 @@ Timer word increment rate is 250kHz
 55		#30 output
 56		#20 output
 57		#10 output
-58
-59
-60
+58	DOUT3
+59	DOUT2
+60	DOUT1
 61	DOUT0	IGT output for all sparks, multiplexed by MP908
 62	/G1
 63	/NE
@@ -196,7 +201,7 @@ ND MP194
 
 19	THG
 20	THA
-21	THW
+21	THW	pulled to 5V through 2.7kohm
 22	OXR2
 23	OXR1
 24	OXL2
@@ -230,19 +235,26 @@ tx to adc	pin value returned
 
 ****************************************************************************************************************************
 
-d151821-0090
-=============
+IC301 d151821-0090 24p shrink dip
+==================
+Communicates with transmission computer
+
 1	+12 vcc
 
-7	/cs ?
+5	buffered version of pin 22
+7	/cs  pin 58 of 1320
 8	+5 vcc
-10	sout
+10	sout pin 17 of 1320
 11	clk
 12	gnd
+14	stop light sw STP
+15	kickdown input KD
+
+22	/IDL1 signal, pulled high in PCM
 
 ****************************************************************************************************************************
 
-IC302 d151821-0090
+IC302 d151821-0090 24p shrink dip
 ==================
 1	+12 vcc
 
@@ -251,7 +263,35 @@ IC302 d151821-0090
 10	sout
 11	clk
 12	gnd
+14		MSB of flags_1AA
+15	fuel pump ecu DI (pin 21)
+16	
+17	
+18	oxy heater right sub PCM pin 53
+19	oxy heater right main PCM pin 72
+20	oxy heater left sub PCM pin 52
+21	oxy heater left main PCM pin 71 LSB of flags_1AA
+22
 22	D37 trac ECU
+
+****************************************************************************************************************************
+
+IC303 d151821-0090 24p shrink dip
+==================
+1	+12vcc
+7	/cs?
+10	data out
+11	clk
+
+13	10th bit
+14	TE2 (MSB of flags_45)
+15	TE1
+16	pin 76 of pcm - NSW start signal - should be high while cranking, pulled high by pcm, pulled low by attached relays
+17	IG2 signal from pin1 of PCM IGSW
+18
+19	/IDL2, pulled high in PCM
+20
+21	pin 77 of PCM - STA signal - should be high while cranking, pulled low inside PCM (LSB of flags_45)
 
 ****************************************************************************************************************************
 
