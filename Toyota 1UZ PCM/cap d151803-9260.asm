@@ -128,17 +128,10 @@ flags_44:	.block 1		; DATA XREF: sub_C64D+59r ROM:CC71r ...
 					; bit 1	is igf1	related, bit2 igf2 related
 flags_45:	.block 1		; DATA XREF: ROM:SUB_C918r
 					; ROM:loc_C952r ...
-<<<<<<< HEAD
 					; IC303	input chip: B7 /TE2, B6	/TE1, B5 /NSW, B4 IGSW,	 B3, B2	IDL2, B1 , B0 STA
 flags_46:	.block 1		; DATA XREF: __RESET:fuel_142r
 					; __RESET+B2Cr	...
 					; bit 1	flags limp in injection	mode, B5 RPM under 5200ish
-=======
-					; IC303	input chip: B7 /TE2, B /TE1, B5	/NSW, B4 IGSW,	B3, B2 IDL2, B1	, B0 STA
-flags_46:	.block 1		; DATA XREF: __RESET:main_142r
-					; __RESET+B2Cr	...
-					; bit 1	flags limp in injection	mode
->>>>>>> origin/master
 flags_47:	.block 1		; DATA XREF: sub_C64D+4Dr sub_C64D+84r ...
 					; bit4:	high when hot (but how hot?)
 flags_48:	.block 1		; DATA XREF: __RESET+A49r
@@ -158,11 +151,7 @@ flags_4E:	.block 1		; DATA XREF: ROM:C928r	ROM:C92Ew ...
 flags_4F:	.block 1		; DATA XREF: ROM:loc_C946r ROM:C94Aw ...
 flags_50:	.block 1		; DATA XREF: orFlags_50+1r
 					; andFlags_50+1r ...
-<<<<<<< HEAD
 					; could	be bits	for 6336 output	chip, B0 probably HTR L+R1, B1 probably	HTR L+R2
-=======
-					; could	be bits	for 6336 output	chip
->>>>>>> origin/master
 temp_51:	.block 1		; DATA XREF: divDbyXw divDbyX+9r ...
 temp_52:	.block 1		; DATA XREF: sub_C64D+10Cw
 					; sub_C64D+15Br ...
@@ -271,11 +260,7 @@ word_9E:	.block 2		; DATA XREF: init_seg0x80+3Fw
 unk_A0:		.block 1		; DATA XREF: init_seg0x80+41w
 		.block 1
 flags_A2:	.block 1		; DATA XREF: sub_C64D+3Cr ROM:C972r ...
-<<<<<<< HEAD
 					; MSN= trouble bit7: VTA_net high, bit4: VTA_net high, lsN is oxy heater "checked" bits
-=======
-					; bit7:	VTA_net	high, bit4: VTA_net high
->>>>>>> origin/master
 count_A3:	.block 1		; DATA XREF: __RESET:main_68r
 					; __RESET+5D8w	...
 					; incremented at F47D
@@ -324,11 +309,7 @@ count_B6:	.block 1		; incremented at F55E
 count_B7:	.block 1		; DATA XREF: ROM:F925w	ROM:F92Ar ...
 					; incremented at F55E
 count_B8:	.block 1		; DATA XREF: __RESET:main_331w
-<<<<<<< HEAD
 					; __RESET:Timing_332r
-=======
-					; __RESET:main_332r
->>>>>>> origin/master
 					; incremented at F55E
 count_B9:	.block 1		; DATA XREF: __RESET+22Ar
 					; __RESET:main_07r ...
@@ -438,15 +419,9 @@ RPM:		.block 2		; DATA XREF: ROM:TwoD_RPMr ThreeD_RPMr ...
 					; MSB is RPM/50, LSB is	fraction of 50
 compLOAD:	.block 2		; DATA XREF: ROM:CAFBr	ROM:CCF7r ...
 					; air temp and Baro compensated	Load (likely in	units of mass)
-<<<<<<< HEAD
 lastVTAnet:	.block 1		; DATA XREF: __RESET+1728w
 					; last VTA_net
 lastVTA1net:	.block 1		; DATA XREF: __RESET+172Dw
-=======
-byte_F4:	.block 1		; DATA XREF: __RESET+1728w
-					; last VTA_net
-byte_F5:	.block 1		; DATA XREF: __RESET+172Dw
->>>>>>> origin/master
 					; last VTA1-Offset
 Bvolts:		.block 1		; DATA XREF: __RESET+406r
 					; __RESET:main_112r ...
@@ -533,11 +508,7 @@ VTA2_flags:	.block 1		; DATA XREF: ROM:FA1Ar
 VTA2_min:	.block 1		; DATA XREF: __RESET+AEw
 					; VTA2 minimum
 VTA2_net:	.block 1		; DATA XREF: sub_D2B9+43r __RESET+B7w	...
-<<<<<<< HEAD
 					; VTA2-VTA2_min, =255 when sub throttle	disabled/not exist
-=======
-					; VTA2-VTA2_min
->>>>>>> origin/master
 unk_12B:	.block 1
 count_12C:	.block 1		; DATA XREF: IV6+529r IV6:loc_F493w
 		.block 1
@@ -616,11 +587,7 @@ word_16E:	.block 2		; DATA XREF: __RESET:main_28r
 word_170:	.block 2		; DATA XREF: sub_C64D+51r ROM:CABFr ...
 					; nonzero and decreasing from cold start
 word_172:	.block 2		; DATA XREF: ROM:CAC2r	__RESET+7D7w ...
-<<<<<<< HEAD
 					; nonzero and rapidly decreasing after start, larger peak from cold start
-=======
-					; inversely temp dependant, additional math elsewhere
->>>>>>> origin/master
 unk_174:	.block 1		; DATA XREF: __RESET:main_109w
 					; __RESET+936r	...
 unk_175:	.block 1		; DATA XREF: sub_C64D+218r sub_C8BB+Fr ...
@@ -648,7 +615,6 @@ flags_183:	.block 1		; DATA XREF: __RESET+4C1r
 unk_185:	.block 1		; DATA XREF: __RESET+1377r
 					; __RESET:main_338w ...
 byte_186:	.block 1		; DATA XREF: __RESET+500r ROM:ED8Fr ...
-<<<<<<< HEAD
 					; subtracted from timing in NEsub
 unk_187:	.block 1		; DATA XREF: __RESET:main_47w
 					; __RESET+503r	...
@@ -661,20 +627,6 @@ byte_18A:	.block 1		; DATA XREF: __RESET+514r __RESET+519r ...
 					; subtracted from timing in NEsub
 unk_18B:	.block 1		; DATA XREF: __RESET+1431r
 					; __RESET:Timing_352w ...
-=======
-					; timing related
-unk_187:	.block 1		; DATA XREF: __RESET:main_47w
-					; __RESET+503r	...
-					; timing related
-unk_188:	.block 1		; DATA XREF: __RESET+148Cw
-					; __RESET+14C5r ...
-					; initial timing calculation?
-unk_189:	.block 1
-byte_18A:	.block 1		; DATA XREF: __RESET+514r __RESET+519r ...
-					; timing related
-unk_18B:	.block 1		; DATA XREF: __RESET+1431r
-					; __RESET:main_352w ...
->>>>>>> origin/master
 byte_18C:	.block 1		; DATA XREF: __RESET:main_333w
 					; __RESET+14BFr
 					; lookup from RPM by LOAD table
@@ -697,11 +649,7 @@ unk_196:	.block 1		; DATA XREF: sub_F1A9:loc_F1D8r
 					; sub_F1A9:loc_F200w
 unk_197:	.block 1		; DATA XREF: __RESET:main_57r
 					; __RESET+510r	...
-<<<<<<< HEAD
 					; subtracted from timing in main loop
-=======
-					; timing related
->>>>>>> origin/master
 unk_198:	.block 1		; DATA XREF: sub_F1A9+70w sub_F1A9+82w ...
 unk_199:	.block 1		; DATA XREF: __RESET:main_35w
 					; sub_F1A9+6Aw	...
@@ -729,7 +677,6 @@ count_1A3:	.block 1		; DATA XREF: __RESET+165Cw
 					; increments at	E480
 lastASR2:	.block 2		; DATA XREF: ROM:EC7Cr	ROM:intASR2_7w	...
 avgCompLoad:	.block 2		; DATA XREF: __RESET+341r __RESET+35Er ...
-<<<<<<< HEAD
 byte_1A8:	.block 1		; DATA XREF: sub_C4DF+14r __RESET+2FBw ...
 					; air temp and baro compensation for load from AFM
 flags_1A9:	.block 1		; DATA XREF: intSIN0+96r intSIN0+9Fw
@@ -738,26 +685,12 @@ flags_1AA:	.block 1		; DATA XREF: ROM:C987r	ROM:C9ABr ...
 					; B6 - DI (FPECU), B3~0	are NOT	of oxy heater pin voltages R2, R1, L2, L1 (IC302)
 flags_1AB:	.block 1		; DATA XREF: __RESET:main_402r	IVc+36r ...
 					; buffers IC302	inputs for debouncing and storing into flags_1AA
-=======
-unk_1A8:	.block 1		; DATA XREF: sub_C4DF+14r __RESET+2FBw ...
-					; looks	like air temp compensation for load
-flags_1A9:	.block 1		; DATA XREF: intSIN0+96r intSIN0+9Fw
-					; flags_45 related (IC303 inputs)
-flags_1AA:	.block 1		; DATA XREF: ROM:C987r	ROM:C9ABr ...
-					; IC302	input bits B3~0	are NOT	of oxy heater pin voltages
-flags_1AB:	.block 1		; DATA XREF: __RESET:main_402r	IVc+36r ...
-					; flags_1AA related
->>>>>>> origin/master
 word_1AC:	.block 2		; DATA XREF: __RESET+266w intASR1+2Br
 					; deltaKS limit	for checking sensor. generated from RPM	lookup table
 KS_count2:	.block 1		; DATA XREF: __RESET+DF7r __RESET+E05w ...
 unk_1AF:	.block 1		; DATA XREF: __RESET:main_246r
 					; __RESET:main_252w
-<<<<<<< HEAD
 unk_1B0:	.block 1		; DATA XREF: __RESET:fuel_106w
-=======
-unk_1B0:	.block 1		; DATA XREF: __RESET:main_106w
->>>>>>> origin/master
 					; IV6+586r
 unk_1B1:	.block 1		; DATA XREF: IV6+57Dr IV6:loc_F4F0w
 unk_1B2:	.block 1		; DATA XREF: IV6+589w IV6+58Fr
@@ -781,20 +714,12 @@ count_1C1:	.block 1		; incremented at F580 (oxy R1?)
 count_1C2:	.block 1		; incremented at F580 (oxy L2?)
 count_1C3:	.block 1		; incremented at F580 (oxy R2?)
 unk_1C4:	.block 1		; DATA XREF: ROM:CE71r	ROM:loc_CE86w ...
-<<<<<<< HEAD
 flags_1C5:	.block 1
 flags_1C6:	.block 1		; DATA XREF: ROM:CF5Br	ROM:loc_CF65w ...
 					; written at end of main loop; B3 /NSW (/STA), b2 , b1 IDL1, b0	STA
 byte_1C7:	.block 1		; last meanKSint MSB *2, saturated at ff
 InjPW_LOres:	.block 1		; injector pulsewidth at 128us/bit
 RPM_HIres:	.block 1		; RPM/25
-=======
-unk_1C5:	.block 1
-unk_1C6:	.block 1		; DATA XREF: ROM:CF5Br	ROM:loc_CF65w ...
-byte_1C7:	.block 1		; last meanKSint MSB *2, saturated at ff
-unk_1C8:	.block 1
-unk_1C9:	.block 1
->>>>>>> origin/master
 unk_1CA:	.block 1
 		.block 1
 count_1CC:	.block 1
@@ -1118,9 +1043,6 @@ word_304:	.block 2
 word_306:	.block 2
 word_308:	.block 2
 ; end of 'badaddress'
-
-
-
 ; File Name   :	C:\Documents and Settings\Sparkie\Desktop\Toyota PCM hacking\Toyota 1UZ PCM\cap d151803-9260.bin
 ; Format      :	Binary file
 ; Base Address:	0000h Range: C000h - 10000h Loaded length: 4000h
@@ -1784,11 +1706,7 @@ locret_C239:				; CODE XREF: InitRAM+1j
 orFlags_50:				; CODE XREF: __RESET+F72p
 					; __RESET+11CDp ...
 		di
-<<<<<<< HEAD
 		or	b, flags_50	; could	be bits	for 6336 output	chip, B0 probably HTR L+R1, B1 probably	HTR L+R2
-=======
-		or	b, flags_50	; could	be bits	for 6336 output	chip
->>>>>>> origin/master
 		bra	retFlags_50
 ; End of function orFlags_50
 
@@ -1803,11 +1721,7 @@ andFlags_50:				; CODE XREF: __RESET+F85p
 		and	b, flags_50	; could	be bits	for 6336 output	chip, B0 probably HTR L+R1, B1 probably	HTR L+R2
 
 retFlags_50:				; CODE XREF: orFlags_50+3j
-<<<<<<< HEAD
 		st	b, flags_50	; could	be bits	for 6336 output	chip, B0 probably HTR L+R1, B1 probably	HTR L+R2
-=======
-		st	b, flags_50	; could	be bits	for 6336 output	chip
->>>>>>> origin/master
 		ei
 		ret
 ; End of function andFlags_50
@@ -1849,11 +1763,7 @@ unk_C246:	.db  03h		; D741 2d lookup for word_78, also DC0D	for 7A
 		.db  68h ; h
 		.db  17h
 		.db 0FFh
-<<<<<<< HEAD
 ScaleFactor:	.dw 0A580h		; DATA XREF: __RESET:fuel_124r
-=======
-ScaleFactor:	.dw 0A580h		; DATA XREF: __RESET:main_124r
->>>>>>> origin/master
 					; value	to scale load to get pulsewidth
 		.dw 0180h		; 3d table TPS vs RPM
 		.db  05h
@@ -2755,11 +2665,7 @@ calcInjPW:				; CODE XREF: __RESET+177p __RESET+851p
 		jsr	sub_C619
 		st	y, temp_53	; result of multiplication
 		ld	y, #0000h
-<<<<<<< HEAD
 		cmp	#020, VTA_net	; WOT check
-=======
-		cmp	#020, VTA_net
->>>>>>> origin/master
 		ble	calcInjPW2	; bounce if VTA_net is lower or	equal to 20
 		ld	y, #0C2EAh
 		jsr	sub_C61C	; enrichment for cold air and cold water
@@ -2954,11 +2860,7 @@ loc_C6EB:				; CODE XREF: sub_C64D+67j
 		cmpb	b, #02h
 		bne	loc_C702
 		or	b, #06h
-<<<<<<< HEAD
 		tbbs	bit0, flags_40,	loc_C6FB ; B3 :	forced timing to 5/10 deg BTDC
-=======
-		tbbs	bit0, flags_40,	loc_C6FB
->>>>>>> origin/master
 		tbbs	bit0, flags_49,	loc_C700 ; bits	1-3-4-5	are oxl1-oxr1-oxl2-oxr2	- Oxygen sensors
 		bra	loc_C6FE
 ; 컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴�
@@ -3413,11 +3315,7 @@ loc_C926:				; CODE XREF: ROM:C920j
 		and	b, #00h
 		st	a, flags_146	; clear	flags_146
 		st	b, flags_162	; clear	flags_162
-<<<<<<< HEAD
 		ld	a, flags_7D	; error	bits: b3 oxy htr R2, b2	oxy htr	R1, b1 oxy htr L2, b0 oxy htr L1
-=======
-		ld	a, flags_7D
->>>>>>> origin/master
 		and	a, #1Fh
 		st	a, flags_7D	; clear	bits 7..5
 
@@ -3446,11 +3344,7 @@ loc_C968:				; CODE XREF: ROM:C963j
 		setb	bit0, flags_4E
 
 loc_C96A:				; CODE XREF: ROM:C95Cj	ROM:C95Ej ...
-<<<<<<< HEAD
 		ld	b, flags_7D	; error	bits: b3 oxy htr R2, b2	oxy htr	R1, b1 oxy htr L2, b0 oxy htr L1
-=======
-		ld	b, flags_7D
->>>>>>> origin/master
 		tbbc	bit6, flags_49,	loc_C981 ; bits	1-3-4-5	are oxl1-oxr1-oxl2-oxr2	- Oxygen sensors
 		ld	#0FFh, count_CA	; incremented at E643
 		ld	a, flags_A2	; MSN= trouble bit7: VTA_net high, bit4: VTA_net high, lsN is oxy heater "checked" bits
@@ -3466,13 +3360,8 @@ loc_C981:				; CODE XREF: ROM:C96Cj
 		ld	a, flags_50	; could	be bits	for 6336 output	chip, B0 probably HTR L+R1, B1 probably	HTR L+R2
 		cmpb	a, #01h
 		bne	loc_C99B
-<<<<<<< HEAD
 		ld	a, flags_1AA	; check	htr L1
 		cmpb	a, #01h		; heater L1 high when not connected or on
-=======
-		ld	a, flags_1AA	; IC302	input bits B3~0	are NOT	of oxy heater pin voltages
-		cmpb	a, #01h
->>>>>>> origin/master
 		bne	loc_C992
 		and	b, #0FEh
 		bra	loc_C99B
@@ -3495,13 +3384,8 @@ loc_C9A5:				; CODE XREF: ROM:C997j
 		ld	a, flags_50	; could	be bits	for 6336 output	chip, B0 probably HTR L+R1, B1 probably	HTR L+R2
 		cmpb	a, #01h
 		bne	loc_C9BF
-<<<<<<< HEAD
 		ld	a, flags_1AA	; check	htr R1
 		cmpb	a, #04h		; heater R1 high when not connected or on
-=======
-		ld	a, flags_1AA	; IC302	input bits B3~0	are NOT	of oxy heater pin voltages
-		cmpb	a, #04h
->>>>>>> origin/master
 		bne	loc_C9B6
 		and	b, #0FBh
 		bra	loc_C9BF
@@ -3521,13 +3405,8 @@ loc_C9BF:				; CODE XREF: ROM:C9A9j	ROM:C9B4j
 		st	a, count_1C1	; incremented at F580 (oxy R1?)
 
 loc_C9C9:				; CODE XREF: ROM:C97Fj	ROM:C9BBj
-<<<<<<< HEAD
 		st	b, flags_7D	; error	bits: b3 oxy htr R2, b2	oxy htr	R1, b1 oxy htr L2, b0 oxy htr L1
 		ld	b, flags_7D	; error	bits: b3 oxy htr R2, b2	oxy htr	R1, b1 oxy htr L2, b0 oxy htr L1
-=======
-		st	b, flags_7D
-		ld	b, flags_7D
->>>>>>> origin/master
 		tbbc	bit6, flags_49,	loc_C9E2 ; bits	1-3-4-5	are oxl1-oxr1-oxl2-oxr2	- Oxygen sensors
 		ld	#0FFh, count_CB	; incremented at E643
 		ld	a, flags_A2	; MSN= trouble bit7: VTA_net high, bit4: VTA_net high, lsN is oxy heater "checked" bits
@@ -3543,13 +3422,8 @@ loc_C9E2:				; CODE XREF: ROM:C9CDj
 		ld	a, flags_50	; could	be bits	for 6336 output	chip, B0 probably HTR L+R1, B1 probably	HTR L+R2
 		cmpb	a, #02h
 		bne	loc_C9FC
-<<<<<<< HEAD
 		ld	a, flags_1AA	; check	htr L2
 		cmpb	a, #02h		; heater L2 high when not connected or on
-=======
-		ld	a, flags_1AA	; IC302	input bits B3~0	are NOT	of oxy heater pin voltages
-		cmpb	a, #02h
->>>>>>> origin/master
 		bne	loc_C9F3
 		and	b, #0FDh
 		bra	loc_C9FC
@@ -3572,13 +3446,8 @@ loc_CA06:				; CODE XREF: ROM:C9F8j
 		ld	a, flags_50	; could	be bits	for 6336 output	chip, B0 probably HTR L+R1, B1 probably	HTR L+R2
 		cmpb	a, #02h
 		bne	loc_CA20
-<<<<<<< HEAD
 		ld	a, flags_1AA	; check	htr R2
 		cmpb	a, #08h		; heater R2 high when not connected or on
-=======
-		ld	a, flags_1AA	; IC302	input bits B3~0	are NOT	of oxy heater pin voltages
-		cmpb	a, #08h
->>>>>>> origin/master
 		bne	loc_CA17
 		and	b, #0F7h
 		bra	loc_CA20
@@ -4157,11 +4026,7 @@ loc_CE13:				; CODE XREF: ROM:CE22j	ROM:CE24j ...
 loc_CE1F:				; CODE XREF: ROM:CE0Bj
 		cmp	#056, RPM	; 2800RPM
 		bcs	loc_CE13
-<<<<<<< HEAD
 		tbbs	bit5, flags_45,	loc_CE13 ; IC303 input chip: B7	/TE2, B6 /TE1, B5 /NSW,	B4 IGSW,  B3, B2 IDL2, B1 , B0 STA
-=======
-		tbbs	bit5, flags_45,	loc_CE13 ; IC303 input chip: B7	/TE2, B	/TE1, B5 /NSW, B4 IGSW,	 B3, B2	IDL2, B1 , B0 STA
->>>>>>> origin/master
 		ld	a, unk_109
 		and	a, #02h
 		bne	loc_CE13
@@ -4188,11 +4053,7 @@ loc_CE48:				; CODE XREF: ROM:CE45j
 		tbbc	bit3, flags_4B,	loc_CE6C
 		tbbc	bit6, flags_45,	loc_CE6C ; bounce if TE2 open
 		tbbs	bit0, flags_45,	loc_CE6C ; bounce if starting
-<<<<<<< HEAD
 		tbbs	bit7, flags_4C,	loc_CE6C ; bounce if not running
-=======
-		tbbs	bit7, flags_4C,	loc_CE6C ; bit 7 demands a sampling of the oxygen sensors
->>>>>>> origin/master
 		cmp	#00h, NEcounts
 		beq	loc_CE6C
 		cmp	a, #2Eh
@@ -4200,13 +4061,8 @@ loc_CE48:				; CODE XREF: ROM:CE45j
 		tbbc	bit0, flags_41,	loc_CE69 ; B0 IDL1, b5 indidcates something about ram stats during last	suspend
 
 loc_CE63:				; CODE XREF: ROM:CE5Ej
-<<<<<<< HEAD
 		tbbs	bit1, flags_45,	loc_CE69 ; IC303 input chip: B7	/TE2, B6 /TE1, B5 /NSW,	B4 IGSW,  B3, B2 IDL2, B1 , B0 STA
 		tbbs	bit5, flags_45,	loc_CE6C ; IC303 input chip: B7	/TE2, B6 /TE1, B5 /NSW,	B4 IGSW,  B3, B2 IDL2, B1 , B0 STA
-=======
-		tbbs	bit1, flags_45,	loc_CE69 ; IC303 input chip: B7	/TE2, B	/TE1, B5 /NSW, B4 IGSW,	 B3, B2	IDL2, B1 , B0 STA
-		tbbs	bit5, flags_45,	loc_CE6C ; IC303 input chip: B7	/TE2, B	/TE1, B5 /NSW, B4 IGSW,	 B3, B2	IDL2, B1 , B0 STA
->>>>>>> origin/master
 
 loc_CE69:				; CODE XREF: ROM:CE60j	ROM:loc_CE63j
 		setb	bit5, flags_4D
@@ -4372,15 +4228,9 @@ loc_CF65:				; CODE XREF: ROM:CF61j
 		st	b, flags_1C6	; written at end of main loop; B3 /NSW (/STA), b2 , b1 IDL1, b0	STA
 		ld	x, #0D2ABh
 		ld	y, #0D2ABh
-<<<<<<< HEAD
 		tbbc	bit6, flags_45,	loc_CF96 ; IC303 input chip: B7	/TE2, B6 /TE1, B5 /NSW,	B4 IGSW,  B3, B2 IDL2, B1 , B0 STA
 		tbbc	bit0, flags_41,	loc_CF88 ; B0 IDL1, b5 indidcates something about ram stats during last	suspend
 		ld	b, flags_1C6	; written at end of main loop; B3 /NSW (/STA), b2 , b1 IDL1, b0	STA
-=======
-		tbbc	bit6, flags_45,	loc_CF96 ; IC303 input chip: B7	/TE2, B	/TE1, B5 /NSW, B4 IGSW,	 B3, B2	IDL2, B1 , B0 STA
-		tbbc	bit0, flags_41,	loc_CF88 ; B0 IDL1, b5 indidcates something about ram stats during last	suspend
-		ld	b, unk_1C6
->>>>>>> origin/master
 		bmi	loc_CFBE
 		ld	b, unk_1C4
 		and	b, #03h
@@ -4449,11 +4299,7 @@ loc_CFD1:				; CODE XREF: ROM:CFCCj
 ; 컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴�
 
 loc_CFD7:				; CODE XREF: ROM:loc_CFD1j
-<<<<<<< HEAD
 		tbbs	bit6, flags_45,	loc_CFDD ; IC303 input chip: B7	/TE2, B6 /TE1, B5 /NSW,	B4 IGSW,  B3, B2 IDL2, B1 , B0 STA
-=======
-		tbbs	bit6, flags_45,	loc_CFDD ; IC303 input chip: B7	/TE2, B	/TE1, B5 /NSW, B4 IGSW,	 B3, B2	IDL2, B1 , B0 STA
->>>>>>> origin/master
 		tbbc	bit0, flags_4B,	loc_D046
 
 loc_CFDD:				; CODE XREF: ROM:loc_CFD7j
@@ -4506,11 +4352,7 @@ loc_D01A:				; CODE XREF: ROM:loc_D015j
 		ld	a, unk_71
 		bne	loc_D040
 		st	a, unk_70
-<<<<<<< HEAD
 		tbbc	bit6, flags_45,	loc_D046 ; IC303 input chip: B7	/TE2, B6 /TE1, B5 /NSW,	B4 IGSW,  B3, B2 IDL2, B1 , B0 STA
-=======
-		tbbc	bit6, flags_45,	loc_D046 ; IC303 input chip: B7	/TE2, B	/TE1, B5 /NSW, B4 IGSW,	 B3, B2	IDL2, B1 , B0 STA
->>>>>>> origin/master
 		setb	bit0, flags_4B
 		ld	a, unk_72
 		bmi	loc_D030
@@ -4880,11 +4722,7 @@ sub_D1BC:				; CODE XREF: ROM:CD87p	ROM:CD96p
 		ld	a, y + 13h
 		and	a, #02h
 		beq	loc_D1E9
-<<<<<<< HEAD
 		tbbs	bit0, flags_40,	loc_D1DF ; B3 :	forced timing to 5/10 deg BTDC
-=======
-		tbbs	bit0, flags_40,	loc_D1DF
->>>>>>> origin/master
 		ld	a, flags_49	; bits 1-3-4-5 are oxl1-oxr1-oxl2-oxr2 - Oxygen	sensors
 		cmpb	a, x + 01h	; check	high bit
 		bne	locret_D1D1
@@ -5004,11 +4842,7 @@ loc_D23D:				; CODE XREF: sub_D222+16j
 
 
 sub_D257:				; CODE XREF: __RESET+1738p
-<<<<<<< HEAD
 		tbbs	bit7, flags_45,	loc_D25F ; IC303 input chip: B7	/TE2, B6 /TE1, B5 /NSW,	B4 IGSW,  B3, B2 IDL2, B1 , B0 STA
-=======
-		tbbs	bit7, flags_45,	loc_D25F ; IC303 input chip: B7	/TE2, B	/TE1, B5 /NSW, B4 IGSW,	 B3, B2	IDL2, B1 , B0 STA
->>>>>>> origin/master
 		ld	#222, unk_7C	; this seems to	be the favoured	execution
 		bra	loc_D289	; clear	1ca and	return
 ; 컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴�
@@ -5135,11 +4969,7 @@ loc_D2D6:				; CODE XREF: sub_D2B9+2Bj
 ; 컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴�
 
 loc_D2E6:				; CODE XREF: sub_D2B9+25j
-<<<<<<< HEAD
 		ld	a, flags_1AA	; signal from fuel pump	ecu (DI)
-=======
-		ld	a, flags_1AA	; IC302	input bits B3~0	are NOT	of oxy heater pin voltages
->>>>>>> origin/master
 		cmpb	a, #40h
 		beq	loc_D2F1	; fuel pressure	down
 		clrb	bit2, PORTD_ASRIN ; fuel pressure up
@@ -5150,22 +4980,13 @@ loc_D2F1:				; CODE XREF: sub_D2B9+32j
 		setb	bit2, PORTD_ASRIN ; fuel pressure down
 
 loc_D2F3:				; CODE XREF: sub_D2B9+36j
-<<<<<<< HEAD
 		tbbc	bit7, flags_45,	loc_D2F9 ; IC303 input chip: B7	/TE2, B6 /TE1, B5 /NSW,	B4 IGSW,  B3, B2 IDL2, B1 , B0 STA
-=======
-		tbbc	bit7, flags_45,	loc_D2F9 ; IC303 input chip: B7	/TE2, B	/TE1, B5 /NSW, B4 IGSW,	 B3, B2	IDL2, B1 , B0 STA
->>>>>>> origin/master
 		jmp	loc_D371
 ; 컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴�
 
 loc_D2F9:				; CODE XREF: sub_D2B9:loc_D2F3j
-<<<<<<< HEAD
 		tbbs	bit2, flags_45,	loc_D347 ; IC303 input chip: B7	/TE2, B6 /TE1, B5 /NSW,	B4 IGSW,  B3, B2 IDL2, B1 , B0 STA
 		ld	a, VTA2_net	; VTA2-VTA2_min, =255 when sub throttle	disabled/not exist
-=======
-		tbbs	bit2, flags_45,	loc_D347 ; IC303 input chip: B7	/TE2, B	/TE1, B5 /NSW, B4 IGSW,	 B3, B2	IDL2, B1 , B0 STA
-		ld	a, VTA2_net	; VTA2-VTA2_min
->>>>>>> origin/master
 		cmp	#80h, THG	; THG lookup table output from exhaust gas temp	sensor ADC reading
 		bcc	ISC1
 		ld	a, flags_49	; bits 1-3-4-5 are oxl1-oxr1-oxl2-oxr2 - Oxygen	sensors
@@ -5185,11 +5006,7 @@ loc_D315:				; CODE XREF: sub_D2B9+89j
 		shl	a
 		shl	a
 		st	a, temp_51
-<<<<<<< HEAD
 		ld	b, flags_1AA	; B6 - DI (FPECU), B3~0	are NOT	of oxy heater pin voltages R2, R1, L2, L1 (IC302)
-=======
-		ld	b, flags_1AA	; IC302	input bits B3~0	are NOT	of oxy heater pin voltages
->>>>>>> origin/master
 		and	b, #0Fh
 		or	b, temp_51
 		st	b, temp_51
@@ -5637,11 +5454,7 @@ res_03:					; CODE XREF: sub_D3D5+17j __RESET+6Bj
 		ld	b, #33h
 		st	b, unk_6C	; sort of a filtered, saturated	VTA_net
 		ld	a, #0A0h
-<<<<<<< HEAD
 		st	a, VTA2_net	; VTA2-VTA2_min, =255 when sub throttle	disabled/not exist
-=======
-		st	a, VTA2_net	; VTA2-VTA2_min
->>>>>>> origin/master
 		ld	a, #0FFh
 		st	a, count_1A0	; increments at	E480
 		st	a, count_1A1	; increments at	E480
@@ -5709,13 +5522,8 @@ res_05:					; CODE XREF: __RESET+111j
 		inc	b
 		cmp	b, #02h
 		bcs	res_05
-<<<<<<< HEAD
 		tbbs	bit6, flags_45,	res_06 ; IC303 input chip: B7 /TE2, B6 /TE1, B5	/NSW, B4 IGSW,	B3, B2 IDL2, B1	, B0 STA
 		tbbc	bit7, flags_45,	res_06 ; IC303 input chip: B7 /TE2, B6 /TE1, B5	/NSW, B4 IGSW,	B3, B2 IDL2, B1	, B0 STA
-=======
-		tbbs	bit6, flags_45,	res_06 ; IC303 input chip: B7 /TE2, B /TE1, B5 /NSW, B4	IGSW,  B3, B2 IDL2, B1 , B0 STA
-		tbbc	bit7, flags_45,	res_06 ; IC303 input chip: B7 /TE2, B /TE1, B5 /NSW, B4	IGSW,  B3, B2 IDL2, B1 , B0 STA
->>>>>>> origin/master
 		setb	bit3, flags_4B
 		setb	bit4, flags_4D
 		setb	bit3, flags_4D
@@ -5759,11 +5567,7 @@ res_07:					; CODE XREF: __RESET+124j __RESET+12Aj ...
 		setb	bit4, flags_48
 
 res_08:					; CODE XREF: __RESET+163j
-<<<<<<< HEAD
 		st	a, unk_DB	; magic	from address 0x80
-=======
-		st	a, unk_DB
->>>>>>> origin/master
 		add	a, #20h
 		st	a, unk_DC
 		jsr	sub_C505
@@ -5898,11 +5702,7 @@ init_seg0x80:				; CODE XREF: __RESET:main_02p
 ; START	OF FUNCTION CHUNK FOR __RESET
 
 main_05:				; CODE XREF: __RESET:main_04j
-<<<<<<< HEAD
 		tbbc	bit0, flags_45,	main_06	; IC303	input chip: B7 /TE2, B6	/TE1, B5 /NSW, B4 IGSW,	 B3, B2	IDL2, B1 , B0 STA
-=======
-		tbbc	bit0, flags_45,	main_06	; IC303	input chip: B7 /TE2, B /TE1, B5	/NSW, B4 IGSW,	B3, B2 IDL2, B1	, B0 STA
->>>>>>> origin/master
 		clrb	bit2, flags_4C
 
 main_06:				; CODE XREF: __RESET:main_05j
@@ -5910,21 +5710,13 @@ main_06:				; CODE XREF: __RESET:main_05j
 		bcs	main_07
 		cmp	#07h, count_B9	; incremented at F55E
 		bcs	main_07
-<<<<<<< HEAD
 		tbbc	bit2, flags_4C,	main_07	; bit 7	set when not running (300 to 400 RPM gap)
-=======
-		tbbc	bit2, flags_4C,	main_07	; bit 7	demands	a sampling of the oxygen sensors
->>>>>>> origin/master
 		setb	bit5, flags_4F
 
 main_07:				; CODE XREF: __RESET+228j __RESET+22Dj ...
 		cmp	#92h, count_B9	; incremented at F55E
 		bcs	main_10
-<<<<<<< HEAD
 		tbbc	bit0, flags_4C,	main_08	; bit 7	set when not running (300 to 400 RPM gap)
-=======
-		tbbc	bit0, flags_4C,	main_08	; bit 7	demands	a sampling of the oxygen sensors
->>>>>>> origin/master
 		setb	bit3, flags_4E
 
 main_08:				; CODE XREF: __RESET+239j
@@ -5941,11 +5733,7 @@ main_10:				; CODE XREF: __RESET+237j
 		cmp	x, #00469	; 7996 RPM
 		bgt	main_11
 		ld	d, #0A000h
-<<<<<<< HEAD
 		bra	main_12		; the only meaningful time this	value is writ
-=======
-		bra	main_12		; the only meaningful time this	alue is	writ
->>>>>>> origin/master
 ; 컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴�
 
 main_11:				; CODE XREF: __RESET+24Dj
@@ -5954,11 +5742,7 @@ main_11:				; CODE XREF: __RESET+24Dj
 		shl	d
 
 main_12:				; CODE XREF: __RESET+252j
-<<<<<<< HEAD
 		st	d, RPM		; the only meaningful time this	value is writ
-=======
-		st	d, RPM		; the only meaningful time this	alue is	writ
->>>>>>> origin/master
 		ld	y, #0C25Bh
 		jsr	TwoDTable	; X value in AccA, integer return in Acca, fraction return in AccB
 		shr	d
@@ -5975,11 +5759,7 @@ main_13:				; CODE XREF: __RESET+246j
 		ei
 		cmpb	b, #40h
 		beq	main_14
-<<<<<<< HEAD
 		jmp	main_36		; bounce if not	running
-=======
-		jmp	main_36
->>>>>>> origin/master
 ; 컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴�
 
 main_14:				; CODE XREF: __RESET+274j
@@ -6083,20 +5863,12 @@ main_19:				; CODE XREF: __RESET+31Aj
 		ei
 		cmpb	b, #01h
 		beq	main_20
-<<<<<<< HEAD
 		jmp	main_36		; bounce if not	running
-=======
-		jmp	main_36
->>>>>>> origin/master
 ; 컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴�
 
 main_20:				; CODE XREF: __RESET+32Aj
 		ld	d, compLOAD	; air temp and Baro compensated	Load (likely in	units of mass)
-<<<<<<< HEAD
 		tbbs	bit7, flags_4C,	main_23	; bounce if not	running
-=======
-		tbbs	bit7, flags_4C,	main_23	; bit 7	demands	a sampling of the oxygen sensors
->>>>>>> origin/master
 		push	a
 		ld	a, flags_44	; bit 1	is igf1	related, bit2 igf2 related
 		cmpb	a, #3Fh
@@ -6140,11 +5912,7 @@ main_23:				; CODE XREF: __RESET+331j __RESET+33Aj ...
 		clr	a
 
 main_24:				; CODE XREF: __RESET+36Dj
-<<<<<<< HEAD
 		cmp	#079, count_5F	; counts up to 255 since last start, about 15 counts per second
-=======
-		cmp	#4Fh, count_5F	; counts up to 255 since last start, about 15 counts per second
->>>>>>> origin/master
 		bcc	main_26
 		ld	a, #80h
 		bra	main_26
@@ -6172,11 +5940,7 @@ main_27:				; CODE XREF: __RESET+388j
 		ld	a, #80h
 		ld	b, ADC_pin16	; adc pin 16 (always 0)
 		and	b, #0Ch
-<<<<<<< HEAD
 		beq	main_28		; will always be true
-=======
-		beq	main_28
->>>>>>> origin/master
 		ld	a, #9Ah
 		and	b, #08h
 		beq	main_28
@@ -6190,11 +5954,7 @@ main_28:				; CODE XREF: __RESET+398j __RESET+39Ej
 		clrb	bit0, flags_40
 
 main_29:				; CODE XREF: __RESET+3E1j
-<<<<<<< HEAD
 		jsr	sub_C8D9	; plays	with word_300, 302
-=======
-		jsr	sub_C8D9
->>>>>>> origin/master
 		cmp	#227, rawTHW	; Contains the NOT of CTS reading from ADC, sensor is tied to ground on	other side
 		rorc	a
 		mul	a, temp_51
@@ -6229,11 +5989,7 @@ main_32:				; CODE XREF: __RESET+3C8j __RESET+3CCj
 		ld	d, #0FFFFh
 
 main_33:				; CODE XREF: __RESET+3D2j
-<<<<<<< HEAD
 		tbs	bit0, flags_40	; B3 : forced timing to	5/10 deg BTDC
-=======
-		tbs	bit0, flags_40
->>>>>>> origin/master
 		bne	main_34
 		st	d, word_16A
 		pull	a
@@ -6248,7 +6004,6 @@ main_34:				; CODE XREF: __RESET+3D9j
 		jsr	DivDby12	; divides D by 12, returns 16b result in unks 53:54
 		ld	d, RPM		; MSB is RPM/50, LSB is	fraction of 50
 		jsr	ThreeDtable	; inputs in D and temp_53:temp_54, output in D
-<<<<<<< HEAD
 		tbbc	bit3, flags_45,	main_35	; store	table output
 		add	a, #043
 
@@ -6257,16 +6012,6 @@ main_35:				; CODE XREF: __RESET+3F3j
 
 main_36:				; CODE XREF: __RESET+276j __RESET+32Cj
 		tbbs	bit7, flags_4C,	main_40	; bounce if not	running
-=======
-		tbbc	bit3, flags_45,	main_35	; IC303	input chip: B7 /TE2, B /TE1, B5	/NSW, B4 IGSW,	B3, B2 IDL2, B1	, B0 STA
-		add	a, #043
-
-main_35:				; CODE XREF: __RESET+3F3j
-		st	a, unk_199	; output from 3d table c54c
-
-main_36:				; CODE XREF: __RESET+276j __RESET+32Cj
-		tbbs	bit7, flags_4C,	main_40	; bit 7	demands	a sampling of the oxygen sensors
->>>>>>> origin/master
 		tbbs	bit0, flags_45,	main_40	; bounce if starting
 		ld	a, compLOAD	; air temp and Baro compensated	Load (likely in	units of mass)
 		ld	y, #0C5DDh	; high voltage table
@@ -6316,20 +6061,12 @@ main_42:				; CODE XREF: __RESET+435j
 main_43:				; CODE XREF: __RESET:main_41j
 					; __RESET+43Dj
 		clr	a
-<<<<<<< HEAD
 		tbbs	bit5, flags_45,	main_44	; IC303	input chip: B7 /TE2, B6	/TE1, B5 /NSW, B4 IGSW,	 B3, B2	IDL2, B1 , B0 STA
-=======
-		tbbs	bit5, flags_45,	main_44	; IC303	input chip: B7 /TE2, B /TE1, B5	/NSW, B4 IGSW,	B3, B2 IDL2, B1	, B0 STA
->>>>>>> origin/master
 		ld	b, flags_44	; bit 1	is igf1	related, bit2 igf2 related
 		and	b, #3Fh
 		bne	main_44
 		ld	b, unk_6C	; sort of a filtered, saturated	VTA_net
-<<<<<<< HEAD
 		cmp	b, #058
-=======
-		cmp	b, #3Ah
->>>>>>> origin/master
 		bcc	main_44
 		cmp	#072, RPM	; 3600 RPM
 		bcc	main_45
@@ -6367,11 +6104,7 @@ main_46:				; CODE XREF: __RESET+47Fj __RESET+486j
 
 main_47:				; CODE XREF: __RESET+46Cj __RESET+48Bj
 		st	a, unk_187	; timing related
-<<<<<<< HEAD
 		ld	b, flags_A2	; MSN= trouble bit7: VTA_net high, bit4: VTA_net high, lsN is oxy heater "checked" bits
-=======
-		ld	b, flags_A2	; bit7:	VTA_net	high, bit4: VTA_net high
->>>>>>> origin/master
 		ld	a, VTA_net
 		cmp	a, #123
 		bcs	main_48		; bounce if VTA_net is less than 123
@@ -6403,11 +6136,7 @@ main_51:				; CODE XREF: __RESET+4B4j
 		or	b, #80h		; set flags_A2 bit7
 
 main_52:				; CODE XREF: __RESET+4BBj
-<<<<<<< HEAD
 		st	b, flags_A2	; MSN= trouble bit7: VTA_net high, bit4: VTA_net high, lsN is oxy heater "checked" bits
-=======
-		st	b, flags_A2	; bit7:	VTA_net	high, bit4: VTA_net high
->>>>>>> origin/master
 		ld	b, flags_183	; bit 0	set oer	1550 RPM, bit 1	set under 1700 RPM
 		cmp	#028, RPM	; 1400 RPM
 		bcc	main_53		; 1550 RPM
@@ -6429,17 +6158,10 @@ main_54:				; CODE XREF: __RESET+4CEj
 main_55:				; CODE XREF: __RESET+4D2j __RESET+4D9j
 		st	b, flags_183	; bit 0	set oer	1550 RPM, bit 1	set under 1700 RPM
 		ld	a, unk_104	; timing related
-<<<<<<< HEAD
 		ld	x, word_170	; nonzero and decreasing from cold start
 		cmp	x, #11ECh
 		bcc	main_56
 		ld	b, flags_A2	; MSN= trouble bit7: VTA_net high, bit4: VTA_net high, lsN is oxy heater "checked" bits
-=======
-		ld	x, word_170	; inversely temp dependant, additional math elsewhere
-		cmp	x, #11ECh
-		bcc	main_56
-		ld	b, flags_A2	; bit7:	VTA_net	high, bit4: VTA_net high
->>>>>>> origin/master
 		cmpb	b, #10h
 		beq	main_56
 		cmp	a, #0Fh
@@ -6451,17 +6173,12 @@ main_56:				; CODE XREF: __RESET+4E9j __RESET+4EFj ...
 		beq	main_61
 		cmp	#210, rawTHW	; Contains the NOT of CTS reading from ADC, sensor is tied to ground on	other side
 		bcs	main_61		; skip all this	extra math if COLD
-<<<<<<< HEAD
 		ld	a, byte_186	; subtracted from timing in NEsub
-=======
-		ld	a, byte_186	; timing related
->>>>>>> origin/master
 		cmp	a, unk_187	; timing related
 		bcc	main_57		; select largest
 		ld	a, unk_187	; timing related
 
 main_57:				; CODE XREF: __RESET+506j
-<<<<<<< HEAD
 		cmp	a, unk_197	; subtracted from timing in main loop
 		bcc	main_58		; select largest
 		ld	a, unk_197	; subtracted from timing in main loop
@@ -6471,17 +6188,6 @@ main_58:				; CODE XREF: __RESET+50Ej
 		cmp	a, byte_18A	; subtracted from timing in NEsub
 		bcc	main_59		; select largest
 		ld	a, byte_18A	; subtracted from timing in NEsub
-=======
-		cmp	a, unk_197	; timing related
-		bcc	main_58		; select largest
-		ld	a, unk_197	; timing related
-
-main_58:				; CODE XREF: __RESET+50Ej
-		shr	a
-		cmp	a, byte_18A	; timing related
-		bcc	main_59		; select largest
-		ld	a, byte_18A	; timing related
->>>>>>> origin/master
 
 main_59:				; CODE XREF: __RESET+517j
 		ld	b, unk_18D	; im thinking it's a net retard, summed from a number of positive vales then negated
@@ -6500,13 +6206,8 @@ main_61:				; CODE XREF: __RESET+4F9j __RESET+4FEj
 		ld	y, #0C336h
 		jsr	TwoD_rawTHW	; lookup Raw Water Temp, integer return	in Acca, fraction return in AccB
 		clrb	bit0, flags_40
-<<<<<<< HEAD
 		tbbc	bit1, flags_45,	main_62	; IC303	input chip: B7 /TE2, B6	/TE1, B5 /NSW, B4 IGSW,	 B3, B2	IDL2, B1 , B0 STA
 		tbbs	bit5, flags_45,	main_62	; IC303	input chip: B7 /TE2, B6	/TE1, B5 /NSW, B4 IGSW,	 B3, B2	IDL2, B1 , B0 STA
-=======
-		tbbc	bit1, flags_45,	main_62	; IC303	input chip: B7 /TE2, B /TE1, B5	/NSW, B4 IGSW,	B3, B2 IDL2, B1	, B0 STA
-		tbbs	bit5, flags_45,	main_62	; IC303	input chip: B7 /TE2, B /TE1, B5	/NSW, B4 IGSW,	B3, B2 IDL2, B1	, B0 STA
->>>>>>> origin/master
 		tbbs	bit7, flags_41,	main_63	; B0 IDL1, b5 indidcates something about ram stats during last suspend
 
 main_62:				; CODE XREF: __RESET+535j __RESET+538j
@@ -6516,21 +6217,13 @@ main_62:				; CODE XREF: __RESET+535j __RESET+538j
 		ld	a, #028
 
 main_63:				; CODE XREF: __RESET+53Bj __RESET+542j
-<<<<<<< HEAD
 		tbbc	bit6, flags_4A,	main_64	; bits 6,5,4 are inherited from	109. 6 seems to	always be low when no sub throttle exists
-=======
-		tbbc	bit6, flags_4A,	main_64
->>>>>>> origin/master
 		add	a, #020		; add 1000 RPM
 
 main_64:				; CODE XREF: __RESET:main_63j
 		st	a, temp_51
 		ld	b, #0Ch
-<<<<<<< HEAD
 		tbbc	bit0, flags_40,	main_65	; B3 : forced timing to	5/10 deg BTDC
-=======
-		tbbc	bit0, flags_40,	main_65
->>>>>>> origin/master
 		ld	b, #08h
 		tbbs	bit6, flags_47,	main_65	; bit4:	high when hot (but how hot?)
 		tbbs	bit7, flags_47,	main_65	; bit4:	high when hot (but how hot?)
@@ -6599,11 +6292,7 @@ main_72:				; CODE XREF: __RESET+5ADj __RESET+5B1j
 		tbbc	bit7, flags_44,	main_73	; bit 1	is igf1	related, bit2 igf2 related
 		cmp	a, #7Ah
 		bcs	main_73
-<<<<<<< HEAD
 		tbbs	bit7, flags_4C,	main_73	; bounce if not	running
-=======
-		tbbs	bit7, flags_4C,	main_73	; bit 7	demands	a sampling of the oxygen sensors
->>>>>>> origin/master
 		cmp	#040, RPM	; 2000 RPM
 		bcc	main_73		; bounce is greater than 2000 RPM
 		ld	a, flags_44	; bit 1	is igf1	related, bit2 igf2 related
@@ -6687,11 +6376,7 @@ main_79:				; CODE XREF: __RESET+618j
 		and	a, unk_15C	; bits 5,0 oxr2	related
 		cmpb	a, #02h
 		beq	main_80
-<<<<<<< HEAD
 		ld	d, word_170	; nonzero and decreasing from cold start
-=======
-		ld	d, word_170	; inversely temp dependant, additional math elsewhere
->>>>>>> origin/master
 		bne	main_80
 		tbbs	bit2, PORTD_ASRIN, main_80 ; Port D Data Register / ASR	Input Data
 		cmp	#0DCh, rawTHW	; Contains the NOT of CTS reading from ADC, sensor is tied to ground on	other side
@@ -6775,11 +6460,7 @@ main_87:				; CODE XREF: __RESET+6A2j
 		neg	b
 
 main_88:				; CODE XREF: __RESET+6B1j __RESET+6B5j
-<<<<<<< HEAD
 		add	b, word_98	; 128 for entire superrun
-=======
-		add	b, word_98
->>>>>>> origin/master
 		mov	b, a
 		ld	b, word_9C
 		sub	b, #0Fh
@@ -6789,11 +6470,7 @@ main_88:				; CODE XREF: __RESET+6B1j __RESET+6B5j
 
 main_89:				; CODE XREF: __RESET+6C0j
 		bsr	sub_DB80
-<<<<<<< HEAD
 		st	d, word_98	; 128 for entire superrun
-=======
-		st	d, word_98
->>>>>>> origin/master
 		jmp	main_99
 ; END OF FUNCTION CHUNK	FOR __RESET
 
@@ -6952,13 +6629,8 @@ main_103:				; CODE XREF: __RESET+782j __RESET+78Bj
 main_104:				; CODE XREF: __RESET+78Fj
 		ei
 		clr	a
-<<<<<<< HEAD
 		tbbs	bit7, flags_4C,	fuel_106 ; bounce if not running
 		tbbs	bit0, flags_41,	fuel_106 ; bounce if IDL1
-=======
-		tbbs	bit7, flags_4C,	main_106 ; bit 7 demands a sampling of the oxygen sensors
-		tbbs	bit0, flags_41,	main_106 ; B0 IDL1, b5 indidcates something about ram stats during last	suspend
->>>>>>> origin/master
 		ld	y, #0C5C3h
 		jsr	TwoD_7A		; Lookup unk_7A, integer return	in Acca, fraction return in AccB
 		st	a, temp_51
@@ -6975,21 +6647,12 @@ main_105:				; CODE XREF: __RESET+7AFj
 		shr	a
 		addc	a, #00h
 
-<<<<<<< HEAD
 fuel_106:				; CODE XREF: __RESET+798j __RESET+79Bj
 		st	a, unk_1B0
 		tbbc	bit7, flags_4C,	main_110 ; bounce if running
 		cmp	#008, RPM	; 400 RPM
 		bcs	main_111
 		clrb	bit7, flags_4C	; clear	bit 7 if >400RPM
-=======
-main_106:				; CODE XREF: __RESET+798j __RESET+79Bj
-		st	a, unk_1B0
-		tbbc	bit7, flags_4C,	main_110 ; 300 RPM
-		cmp	#008, RPM	; 400 RPM
-		bcs	main_111
-		clrb	bit7, flags_4C
->>>>>>> origin/master
 		clrb	bit2, DOUT
 		ld	y, #0C2EFh
 		jsr	TwoD_rawTHW	; lookup Raw Water Temp, integer return	in Acca, fraction return in AccB
@@ -6998,13 +6661,8 @@ main_106:				; CODE XREF: __RESET+798j __RESET+79Bj
 		jsr	TwoD_rawTHW	; bottoms out at 13 when temp is 210
 		shr	d
 		shr	d
-<<<<<<< HEAD
 		st	d, word_172	; nonzero and rapidly decreasing after start, larger peak from cold start
 		cmp	#020, VTA_net	; is this the starting mode WOT	enrichment? it's 50%!!!
-=======
-		st	d, word_172	; inversely temp dependant, additional math elsewhere
-		cmp	#020, VTA_net
->>>>>>> origin/master
 		bcc	main_107
 		mul	a, #80h
 		bra	main_108
@@ -7032,11 +6690,7 @@ main_109:				; CODE XREF: __RESET+7E9j
 main_110:				; CODE XREF: __RESET+7BAj
 		cmp	#006, RPM	; 300 RPM
 		bcc	main_112	; 10V
-<<<<<<< HEAD
 		setb	bit7, flags_4C	; set bit 7 if below 300 RPM
-=======
-		setb	bit7, flags_4C
->>>>>>> origin/master
 
 main_111:				; CODE XREF: __RESET+7C0j
 		clr	count_CD	; incremented at E7A9
@@ -7047,11 +6701,7 @@ main_112:				; CODE XREF: __RESET+800j
 		cmp	#128, Bvolts	; 10V
 		bcs	main_113
 		tbbs	bit0, flags_45,	main_113 ; bounce if starting
-<<<<<<< HEAD
 		tbbc	bit7, flags_4C,	main_114 ; bounce if running
-=======
-		tbbc	bit7, flags_4C,	main_114 ; bit 7 demands a sampling of the oxygen sensors
->>>>>>> origin/master
 
 main_113:				; CODE XREF: __RESET+80Dj __RESET+80Fj
 		setb	bit6, flags_49
@@ -7089,7 +6739,6 @@ main_118:				; CODE XREF: __RESET+83Bj
 		st	a, unk_D3	; multiplied by	16 and used for	injectors
 		clrb	bit0, flags_40
 
-<<<<<<< HEAD
 fuel_119:				; CODE XREF: __RESET+9C3j
 		tbbc	bit7, flags_4C,	fuel_121 ; bounce if running
 		tbbs	bit3, flags_43,	fuel_120 ; bounce if AFM bad
@@ -7098,22 +6747,11 @@ fuel_119:				; CODE XREF: __RESET+9C3j
 
 fuel_120:				; CODE XREF: __RESET+846j __RESET+849j ...
 		setb	bit1, flags_46	; abnormal program path	while DD0F is normal.
-=======
-main_119:				; CODE XREF: __RESET+9C3j
-		tbbc	bit7, flags_4C,	main_121 ; used	here for injection PW calculation
-		tbbs	bit3, flags_43,	main_120 ; is this an abnormal program path while DD0F is normal?
-		tbbc	bit4, flags_47,	main_120 ; is this an abnormal program path while DD0F is normal?
-		tbbc	bit0, flags_45,	main_121 ; bounce if NOT starting
-
-main_120:				; CODE XREF: __RESET+846j __RESET+849j ...
-		setb	bit1, flags_46	; is this an abnormal program path while DD0F is normal?
->>>>>>> origin/master
 		jsr	calcInjPW	; calculate the	pulsewidths
 		clr	count_AB	; incremented at F47D
 		jmp	main_144	; assign pulsewidth
 ; 컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴�
 
-<<<<<<< HEAD
 fuel_121:				; CODE XREF: __RESET:fuel_119j
 					; __RESET+84Cj
 		ld	y, compLOAD	; used here for	injection PW calculation
@@ -7121,35 +6759,18 @@ fuel_121:				; CODE XREF: __RESET:fuel_119j
 		ld	d, VTA_net
 		cmp	d, #04194	; WOT check
 		ble	fuel_122	; Alpha-N injection routine
-=======
-main_121:				; CODE XREF: __RESET:main_119j
-					; __RESET+84Cj
-		ld	y, compLOAD	; used here for	injection PW calculation
-		tbbc	bit3, flags_43,	main_124 ; bounce if AFM is good
-		ld	d, VTA_net
-		cmp	d, #04194
-		ble	main_122	; Alpha-N injection routine
->>>>>>> origin/master
 		add	d, #12583	; is around 4194*3
 		shr	d
 		shr	d
 
-<<<<<<< HEAD
 fuel_122:				; CODE XREF: __RESET+863j
-=======
-main_122:				; CODE XREF: __RESET+863j
->>>>>>> origin/master
 		ld	x, #01049	; Alpha-N injection routine
 		jsr	divDbyX		; divide D by X, does some shifting to return ?? bits
 		st	d, temp_53
 		ld	d, RPM		; MSB is RPM/50, LSB is	fraction of 50
 		ld	y, #0C26Ch
 		jsr	ThreeDtable2	; inputs in D and temp_53:temp_54, output in D
-<<<<<<< HEAD
 		st	d, temp_56	; store	output of TPS vs RPM table (alpha-N table)
-=======
-		st	d, temp_56
->>>>>>> origin/master
 		ld	y, #0C2A8h
 		ld	a, unk_DB	; magic	from address 0x80
 		jsr	TwoDTable	; X value in AccA, integer return in Acca, fraction return in AccB
@@ -7159,7 +6780,6 @@ main_122:				; CODE XREF: __RESET+863j
 		shr	d
 		mov	d, x
 		pull	d
-<<<<<<< HEAD
 		cmp	x, #00256	; 200 RPM, x is	now 200	rpm/bit
 		bcs	fuel_120	; bounce if barely running
 		jsr	divDbyX		; divide D by X, does some shifting to return ?? bits
@@ -7186,38 +6806,9 @@ fuel_126:				; CODE XREF: __RESET+8A0j
 		push	y		; push the load	based pulsewidth
 		ld	x, #0C33Bh
 		tbbc	bit6, flags_4A,	fuel_127 ; branch to compare pw	to 7.2ms - will	always be true it seems
-=======
-		cmp	x, #00256
-		bcs	main_120	; bounce if barely running
-		jsr	divDbyX		; divide D by X, does some shifting to return ?? bits
-		shl	d
-		bcc	main_123
-		ld	d, #0FFFFh
-
-main_123:				; CODE XREF: __RESET+894j
-		mov	d, y
-
-main_124:				; CODE XREF: __RESET+85Bj
-		ld	d, ScaleFactor	; about	65 percent
-		jsr	MulDbyY		; returns upper	16 bits	in Y, lower 16 bits in D
-		tbbc	bit3, flags_43,	main_126 ; bounce if AFM good
-		mov	y, d
-		add	d, temp_56	; add value from TPS/RPM 3d table
-		bcc	main_125
-		ld	d, #0FFFFh
-
-main_125:				; CODE XREF: __RESET+8A6j
-		mov	d, y
-
-main_126:				; CODE XREF: __RESET+8A0j
-		push	y		; push the load	based pulsewidth
-		ld	x, #0C33Bh
-		tbbc	bit6, flags_4A,	main_127 ; branch to limit pw to 7.2ms
->>>>>>> origin/master
 		ld	b, #04h
 		add	x, b		; compare pw to	16ms
 
-<<<<<<< HEAD
 fuel_127:				; CODE XREF: __RESET+8B0j
 		cmp	y, x + 00h
 		bcc	fuel_128
@@ -7246,36 +6837,6 @@ fuel_129:				; CODE XREF: __RESET+8CAj
 		tbbs	bit0, flags_42,	fuel_130
 		cmp	#05h, unk_5E	; could	be last	unk_100, or 0
 		bcs	fuel_130
-=======
-main_127:				; CODE XREF: __RESET+8B0j
-		cmp	y, x + 00h
-		bcc	main_128
-		cmp	#029, RPM	; 1450 RPM
-		bcs	main_128	; branch if RPM	lower
-		cmp	#098, count_AB	; incremented at F47D
-		bcs	main_131
-		setb	bit0, flags_44
-		bra	main_131
-; 컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴�
-
-main_128:				; CODE XREF: __RESET+8B8j __RESET+8BDj
-		cmp	y, x + 02h
-		bcc	main_129
-		cmp	#028, RPM	; 1400 RPM
-		bcc	main_131
-
-main_129:				; CODE XREF: __RESET+8CAj
-		tbbc	bit0, flags_44,	main_130 ; bit 1 is igf1 related, bit2 igf2 related
-		clrb	bit0, flags_44
-		tbbc	bit6, flags_4A,	main_130
-		cmp	y, x + 02h
-		bcs	main_130
-		tbbs	bit3, flags_43,	main_130 ; bit3: AFM bad bit4: rev limiter
-		tbbc	bit4, flags_47,	main_130 ; bit4: high when hot (but how	hot?)
-		tbbs	bit0, flags_42,	main_130
-		cmp	#05h, unk_5E	; could	be last	unk_100, or 0
-		bcs	main_130
->>>>>>> origin/master
 		di
 		setb	bit6, flags_42
 		setb	bit5, flags_42
@@ -7283,19 +6844,11 @@ main_129:				; CODE XREF: __RESET+8CAj
 		st	d, word_193
 		ei
 
-<<<<<<< HEAD
 fuel_130:				; CODE XREF: __RESET:fuel_129j
 					; __RESET+8D6j	...
 		clr	count_AB	; incremented at F47D
 
 fuel_131:				; CODE XREF: __RESET+8C2j __RESET+8C6j ...
-=======
-main_130:				; CODE XREF: __RESET:main_129j
-					; __RESET+8D6j	...
-		clr	count_AB	; incremented at F47D
-
-main_131:				; CODE XREF: __RESET+8C2j __RESET+8C6j ...
->>>>>>> origin/master
 		ld	y, #0C31Ch
 		jsr	TwoD_rawTHW	; bottoms out at thw=234 returning a value of 48, otherwise returns values higher with colder temps
 		push	a
@@ -7310,7 +6863,6 @@ main_131:				; CODE XREF: __RESET+8C2j __RESET+8C6j ...
 		shr	d
 		st	d, temp_51
 		ld	d, word_16A
-<<<<<<< HEAD
 		tbbc	bit0, flags_40,	fuel_132 ; B3 :	forced timing to 5/10 deg BTDC
 		ld	d, word_16C
 
@@ -7328,25 +6880,6 @@ fuel_133:				; CODE XREF: __RESET+920j
 		add	a, #03h
 
 fuel_134:				; CODE XREF: __RESET+92Aj __RESET+92Cj
-=======
-		tbbc	bit0, flags_40,	main_132
-		ld	d, word_16C
-
-main_132:				; CODE XREF: __RESET+918j
-		add	d, temp_51
-		bcc	main_133
-		ld	d, #0FFFFh
-
-main_133:				; CODE XREF: __RESET+920j
-		shr	d
-		st	d, temp_51
-		ld	a, unk_D4	; timing related
-		beq	main_134
-		tbbs	bit0, flags_40,	main_134
-		add	a, #03h
-
-main_134:				; CODE XREF: __RESET+92Aj __RESET+92Cj
->>>>>>> origin/master
 		clr	b
 		shr	d
 		add	d, word_172	; nonzero and rapidly decreasing after start, larger peak from cold start
@@ -7354,28 +6887,18 @@ main_134:				; CODE XREF: __RESET+92Aj __RESET+92Cj
 		rorc	a
 		rorc	b
 		add	d, temp_51
-<<<<<<< HEAD
 		bcc	fuel_135
 		pull	a		; pushed from ddb5
 		bra	fuel_137
 ; 컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴�
 
 fuel_135:				; CODE XREF: __RESET+93Dj
-=======
-		bcc	main_135
-		pull	a		; pushed from ddb5
-		bra	main_137
-; 컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴�
-
-main_135:				; CODE XREF: __RESET+93Dj
->>>>>>> origin/master
 		xch	x, y
 		jsr	MulDbyY		; returns upper	16 bits	in Y, lower 16 bits in D
 		pull	a		; pushed from ddb5
 		st	a, temp_51
 		mov	y, d
 		shl	d
-<<<<<<< HEAD
 		bcs	fuel_136
 		cmp	a, temp_51
 		bcs	fuel_138
@@ -7392,24 +6915,6 @@ fuel_138:				; CODE XREF: __RESET+94Fj
 		ld	d, #00819	; establish minimum
 
 fuel_139:				; CODE XREF: __RESET+957j
-=======
-		bcs	main_136
-		cmp	a, temp_51
-		bcs	main_138
-
-main_136:				; CODE XREF: __RESET+94Bj
-		ld	a, temp_51
-
-main_137:				; CODE XREF: __RESET+940j
-		clr	b
-
-main_138:				; CODE XREF: __RESET+94Fj
-		cmp	d, #0333h
-		bcc	main_139
-		ld	d, #00819	; establish minimum
-
-main_139:				; CODE XREF: __RESET+957j
->>>>>>> origin/master
 		mov	d, y
 		nop
 		nop
@@ -7422,45 +6927,26 @@ main_139:				; CODE XREF: __RESET+957j
 		nop
 		nop
 		nop
-<<<<<<< HEAD
 		ld	d, unk_12E	; closed loop fuel adjustments?
 		tbbc	bit0, flags_40,	fuel_140 ; B3 :	forced timing to 5/10 deg BTDC
 		ld	d, unk_14A	; closed loop fuel adjustments (other bank)?
 
 fuel_140:				; CODE XREF: __RESET+96Bj
 		jsr	sub_C8BB	; feels	like it	acounts	for oxygen sensor correction
-=======
-		ld	d, unk_12E
-		tbbc	bit0, flags_40,	main_140
-		ld	d, unk_14A
-
-main_140:				; CODE XREF: __RESET+96Bj
-		jsr	sub_C8BB
->>>>>>> origin/master
 		jsr	MulDbyY		; returns upper	16 bits	in Y, lower 16 bits in D
 		shl	d
 		mov	y, d
 		rolc	b
-<<<<<<< HEAD
 		rolc	a		; D should now contain ratio to	adjust feed forward pulsewidth by
 		pull	y		; pushed from dd62, this is compLOAD based pulsewidth
 		bcs	fuel_141
 		jsr	MulDbyY		; returns upper	16 bits	in Y, lower 16 bits in D
 
 fuel_141:				; CODE XREF: __RESET+97Cj
-=======
-		rolc	a
-		pull	y		; pushed from dd62, this is compLOAD based pulsewidth
-		bcs	main_141
-		jsr	MulDbyY		; returns upper	16 bits	in Y, lower 16 bits in D
-
-main_141:				; CODE XREF: __RESET+97Cj
->>>>>>> origin/master
 		st	y, temp_51
 		ld	d, threeDeltaNE
 		shl	d
 		shl	d
-<<<<<<< HEAD
 		bcs	fuel_142	; engine running too slow, limit need not be applied
 		shl	d		; 24 delta NE, 1 otto cycle
 		bcs	fuel_142	; engine running too slow, limit need not be applied
@@ -7470,17 +6956,6 @@ main_141:				; CODE XREF: __RESET+97Cj
 
 fuel_142:				; CODE XREF: __RESET+987j __RESET+98Aj ...
 		tbbc	bit1, flags_46,	fuel_145 ; bit 1 flags limp in injection mode, B5 RPM under 5200ish
-=======
-		bcs	main_142	; engine running too slow, limit need not be applied
-		shl	d		; 24 delta NE, 1 otto cycle
-		bcs	main_142	; engine running too slow, limit need not be applied
-		cmp	d, temp_51
-		bcc	main_142
-		st	d, temp_51	; limit	injector pw to 2 crank revolutions
-
-main_142:				; CODE XREF: __RESET+987j __RESET+98Aj ...
-		tbbc	bit1, flags_46,	main_145 ; bit 1 flags limp in injection mode
->>>>>>> origin/master
 		di
 		ld	a, flags_77	; set bit 5, make a decision on	bit 5
 		mov	a, b
@@ -7488,19 +6963,11 @@ main_142:				; CODE XREF: __RESET+987j __RESET+98Aj ...
 		st	a, flags_77	; set bit 5
 		ei
 		cmpb	b, #20h
-<<<<<<< HEAD
 		beq	fuel_143	; weird	90% test, keepin' it rich baby!
 		jmp	fuel_147	; skip applying	newly calulated	value
 ; 컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴�
 
 fuel_143:				; CODE XREF: __RESET+9A0j
-=======
-		beq	main_143	; weird	90% test, keepin' it rich baby!
-		jmp	main_147	; skip applying	newly calulated	value
-; 컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴�
-
-main_143:				; CODE XREF: __RESET+9A0j
->>>>>>> origin/master
 		ld	y, InjectPW1	; pulsewidth for LEFT bank (odd	cyl), 4us/bit
 		ld	a, #230		; fraction of 90% in this case
 		jsr	MulAbyY		; returns upper	16b in AccD
@@ -7511,7 +6978,6 @@ main_143:				; CODE XREF: __RESET+9A0j
 
 main_144:				; CODE XREF: __RESET+856j __RESET+9AFj
 		st	d, InjectPW1	; pulsewidth for LEFT bank (odd	cyl), 4us/bit
-<<<<<<< HEAD
 		bra	fuel_146
 ; 컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴�
 
@@ -7529,25 +6995,6 @@ fuel_146:				; CODE XREF: __RESET+9B8j __RESET+9BEj
 fuel_147:				; CODE XREF: __RESET+9A2j
 		ld	b, #018
 		tbbs	bit7, flags_4C,	main_151 ; bounce if not running
-=======
-		bra	main_146
-; 컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴�
-
-main_145:				; CODE XREF: __RESET:main_142j
-		ld	d, temp_51
-		tbs	bit0, flags_40
-		bne	main_146
-		st	d, InjectPW1	; =unk_51
-		jmp	main_119
-; 컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴�
-
-main_146:				; CODE XREF: __RESET+9B8j __RESET+9BEj
-		st	d, InjectPW2	; pulsewidth for RIGHT bank (even cyl),	4us/bit
-
-main_147:				; CODE XREF: __RESET+9A2j
-		ld	b, #018
-		tbbs	bit7, flags_4C,	main_151 ; bit 7 demands a sampling of the oxygen sensors
->>>>>>> origin/master
 		ld	d, InjDeadtime	; injector deadtime, 4us/bit
 		add	d, #01618	; 6472us
 		add	d, InjectPW1	; pulsewidth for LEFT bank (odd	cyl), 4us/bit
@@ -7586,21 +7033,12 @@ main_152:				; CODE XREF: __RESET+9F4j
 		xor	b, #0FFh
 		cmp	a, b
 		beq	main_153
-<<<<<<< HEAD
 		cmp	a, unk_DB	; magic	from address 0x80
 		beq	main_153
 		mov	b, a
 		cmp	a, unk_DB	; magic	from address 0x80
 		beq	main_153
 		ld	a, unk_DB	; magic	from address 0x80
-=======
-		cmp	a, unk_DB
-		beq	main_153
-		mov	b, a
-		cmp	a, unk_DB
-		beq	main_153
-		ld	a, unk_DB
->>>>>>> origin/master
 		setb	bit3, flags_48
 		setb	bit4, flags_48
 
@@ -7615,11 +7053,7 @@ main_153:				; CODE XREF: __RESET+A04j __RESET+A08j ...
 		setb	bit4, flags_48
 
 main_154:				; CODE XREF: __RESET+A17j
-<<<<<<< HEAD
 		st	a, unk_DB	; magic	from address 0x80
-=======
-		st	a, unk_DB
->>>>>>> origin/master
 		mov	a, b
 		xor	b, #0FFh
 		st	d, word_80
@@ -7655,11 +7089,7 @@ main_157:				; CODE XREF: __RESET+A2Fj
 main_158:				; CODE XREF: __RESET+A49j
 		cmp	#9Dh, unk_DC
 		bgt	main_161
-<<<<<<< HEAD
 		cmp	#7Dh, unk_DB	; magic	from address 0x80
-=======
-		cmp	#7Dh, unk_DB
->>>>>>> origin/master
 		bne	main_159
 		ld	a, ISC_11F	; ISC related
 		cmpb	a, #03h
@@ -7738,11 +7168,7 @@ main_168:				; CODE XREF: __RESET+AB2j __RESET+AB7j
 
 main_169:				; CODE XREF: __RESET:main_166j
 		tbbs	bit1, flags_48,	main_171 ; 300RPM
-<<<<<<< HEAD
 		ld	d, unk_DB	; magic	from address 0x80
-=======
-		ld	d, unk_DB
->>>>>>> origin/master
 		add	a, #20h
 		cmp	a, b
 		bne	main_172
@@ -7774,11 +7200,7 @@ main_172:				; CODE XREF: __RESET:main_162j
 ; 컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴�
 
 main_173:				; CODE XREF: __RESET+AEDj
-<<<<<<< HEAD
 		tbbs	bit1, flags_45,	main_174 ; IC303 input chip: B7	/TE2, B6 /TE1, B5 /NSW,	B4 IGSW,  B3, B2 IDL2, B1 , B0 STA
-=======
-		tbbs	bit1, flags_45,	main_174 ; IC303 input chip: B7	/TE2, B	/TE1, B5 /NSW, B4 IGSW,	 B3, B2	IDL2, B1 , B0 STA
->>>>>>> origin/master
 		tbbc	bit1, flags_42,	main_177
 		clrb	bit1, flags_42
 		ld	#00h, count_BC	; decremented at F566
@@ -7811,11 +7233,7 @@ main_177:				; CODE XREF: __RESET+B00j
 
 main_178:				; CODE XREF: __RESET+B26j
 		ld	a, y + 00h
-<<<<<<< HEAD
 		tbbc	bit2, flags_46,	main_179 ; bit 1 flags limp in injection mode, B5 RPM under 5200ish
-=======
-		tbbc	bit2, flags_46,	main_179 ; bit 1 flags limp in injection mode
->>>>>>> origin/master
 		shr	a
 
 main_179:				; CODE XREF: __RESET+B2Cj
@@ -7828,11 +7246,7 @@ main_180:				; CODE XREF: __RESET:main_179j
 
 main_181:				; CODE XREF: __RESET:main_177j
 					; __RESET+B1Fj
-<<<<<<< HEAD
 		tbbs	bit5, flags_45,	main_182 ; IC303 input chip: B7	/TE2, B6 /TE1, B5 /NSW,	B4 IGSW,  B3, B2 IDL2, B1 , B0 STA
-=======
-		tbbs	bit5, flags_45,	main_182 ; IC303 input chip: B7	/TE2, B	/TE1, B5 /NSW, B4 IGSW,	 B3, B2	IDL2, B1 , B0 STA
->>>>>>> origin/master
 		tbbc	bit0, flags_42,	main_185
 		clrb	bit0, flags_42
 		ld	#00h, count_BB	; decremented at F566
@@ -7869,11 +7283,7 @@ main_185:				; CODE XREF: __RESET+B39j
 
 main_186:				; CODE XREF: __RESET+B67j
 		ld	a, y + 00h
-<<<<<<< HEAD
 		tbbc	bit2, flags_46,	main_187 ; bit 1 flags limp in injection mode, B5 RPM under 5200ish
-=======
-		tbbc	bit2, flags_46,	main_187 ; bit 1 flags limp in injection mode
->>>>>>> origin/master
 		shr	a
 
 main_187:				; CODE XREF: __RESET+B6Dj
@@ -7890,17 +7300,10 @@ main_188:				; CODE XREF: __RESET:main_180j
 
 main_189:				; CODE XREF: __RESET+B54j __RESET+B59j ...
 		tbbc	bit4, flags_44,	main_190 ; bit 1 is igf1 related, bit2 igf2 related
-<<<<<<< HEAD
 		tbbs	bit5, flags_45,	main_190 ; IC303 input chip: B7	/TE2, B6 /TE1, B5 /NSW,	B4 IGSW,  B3, B2 IDL2, B1 , B0 STA
 		cmp	#37h, unk_5E	; could	be last	unk_100, or 0
 		bcs	main_190
 		cmp	#14h, unk_DB	; magic	from address 0x80
-=======
-		tbbs	bit5, flags_45,	main_190 ; IC303 input chip: B7	/TE2, B	/TE1, B5 /NSW, B4 IGSW,	 B3, B2	IDL2, B1 , B0 STA
-		cmp	#37h, unk_5E	; could	be last	unk_100, or 0
-		bcs	main_190
-		cmp	#14h, unk_DB
->>>>>>> origin/master
 		bcs	main_190
 		cmp	#032, RPM	; MSB is RPM/50, LSB is	fraction of 50
 		bcs	main_190
@@ -8050,11 +7453,7 @@ main_205:				; CODE XREF: __RESET+C65j
 		tbbs	bit0, flags_42,	main_206
 		cmp	#1Ah, compLOAD	; air temp and Baro compensated	Load (likely in	units of mass)
 		bcs	main_207
-<<<<<<< HEAD
 		ld	a, flags_7D	; error	bits: b3 oxy htr R2, b2	oxy htr	R1, b1 oxy htr L2, b0 oxy htr L1
-=======
-		ld	a, flags_7D
->>>>>>> origin/master
 		cmpb	a, #10h
 		bne	main_207
 
@@ -8099,11 +7498,7 @@ main_211:				; CODE XREF: __RESET+CA0j
 		ei
 		tbbc	bit4, flags_47,	main_212 ; bit4: high when hot (but how	hot?)
 		tbbc	bit0, flags_41,	main_212 ; B0 IDL1, b5 indidcates something about ram stats during last	suspend
-<<<<<<< HEAD
 		ld	a, flags_7D	; error	bits: b3 oxy htr R2, b2	oxy htr	R1, b1 oxy htr L2, b0 oxy htr L1
-=======
-		ld	a, flags_7D
->>>>>>> origin/master
 		cmpb	a, #10h
 		bne	main_212
 		cmp	#02h, unk_5E	; could	be last	unk_100, or 0
@@ -8170,15 +7565,9 @@ main_220:				; CODE XREF: __RESET+CEFj __RESET+CF3j
 		ld	a, x + 00h
 		ld	x, #0C4B8h
 		add	x, b
-<<<<<<< HEAD
 		ld	b, ADC_pin15	; adc pin 15 (always 0)
 		tbbc	bit1, flags_42,	main_221
 		ld	b, ADC_rq1D	; adc request 1D (probably pin 14, always 0)
-=======
-		ld	b, ADC_pin15	; adc pin 15 (0V)
-		tbbc	bit1, flags_42,	main_221
-		ld	b, ADC_rq1D	; adc request 1D (probably pin 14, 0V)
->>>>>>> origin/master
 
 main_221:				; CODE XREF: __RESET+D0Bj
 		tbbc	bit0, flags_42,	main_222
@@ -8242,11 +7631,7 @@ main_228:				; CODE XREF: __RESET+D20j __RESET+D30j
 		tbbs	bit4, flags_48,	main_233
 		ld	a, temp_51
 		sub	a, #20h
-<<<<<<< HEAD
 		sub	a, unk_DB	; magic	from address 0x80
-=======
-		sub	a, unk_DB
->>>>>>> origin/master
 		beq	main_233
 		bcs	main_230
 
@@ -8332,11 +7717,7 @@ main_240:				; CODE XREF: __RESET+DC3j
 main_241:				; CODE XREF: __RESET+DC8j
 		cmp	#4Ch, count_C6	; increments at	E478
 		bcc	main_242
-<<<<<<< HEAD
 		tbbs	bit0, flags_4C,	main_243 ; bit 7 set when not running (300 to 400 RPM gap)
-=======
-		tbbs	bit0, flags_4C,	main_243 ; bit 7 demands a sampling of the oxygen sensors
->>>>>>> origin/master
 		tbbs	bit3, flags_4E,	main_243 ; bit1	is igf1	related, bit2 igf2 related
 		cmp	#006, RPM	; MSB is RPM/50, LSB is	fraction of 50
 		bcs	main_244
@@ -8383,11 +7764,7 @@ main_245:				; CODE XREF: __RESET+DE4j __RESET+DF5j
 
 main_246:				; CODE XREF: __RESET+E15j
 		ld	a, unk_1AF
-<<<<<<< HEAD
 		tbbs	bit5, flags_45,	main_250 ; IC303 input chip: B7	/TE2, B6 /TE1, B5 /NSW,	B4 IGSW,  B3, B2 IDL2, B1 , B0 STA
-=======
-		tbbs	bit5, flags_45,	main_250 ; IC303 input chip: B7	/TE2, B	/TE1, B5 /NSW, B4 IGSW,	 B3, B2	IDL2, B1 , B0 STA
->>>>>>> origin/master
 		cmp	a, #0FEh
 		bcc	main_247
 		add	a, #02h
@@ -8429,11 +7806,7 @@ main_252:				; CODE XREF: __RESET+E35j __RESET+E39j ...
 		st	a, unk_1AF
 		ld	a, unk_E1
 		shl	a
-<<<<<<< HEAD
 		tbbc	bit4, flags_45,	main_253 ; IC303 input chip: B7	/TE2, B6 /TE1, B5 /NSW,	B4 IGSW,  B3, B2 IDL2, B1 , B0 STA
-=======
-		tbbc	bit4, flags_45,	main_253 ; IC303 input chip: B7	/TE2, B	/TE1, B5 /NSW, B4 IGSW,	 B3, B2	IDL2, B1 , B0 STA
->>>>>>> origin/master
 		clrb	bit0, PORTD_ASRIN
 		bcc	main_255
 		clr	a
@@ -8510,19 +7883,11 @@ main_261:				; CODE XREF: __RESET+EB7j __RESET+EBEj
 		inc	x
 		bmi	main_264
 		tbbs	bit2, PORTD_ASRIN, main_263 ; Port D Data Register / ASR Input Data
-<<<<<<< HEAD
 		tbbs	bit6, flags_45,	main_263 ; IC303 input chip: B7	/TE2, B6 /TE1, B5 /NSW,	B4 IGSW,  B3, B2 IDL2, B1 , B0 STA
 		tbbc	bit4, flags_47,	main_263 ; bit4: high when hot (but how	hot?)
 		cmp	x, #55D5h
 		bgt	main_265
 		tbbc	bit0, flags_40,	main_262 ; B3 :	forced timing to 5/10 deg BTDC
-=======
-		tbbs	bit6, flags_45,	main_263 ; IC303 input chip: B7	/TE2, B	/TE1, B5 /NSW, B4 IGSW,	 B3, B2	IDL2, B1 , B0 STA
-		tbbc	bit4, flags_47,	main_263 ; bit4: high when hot (but how	hot?)
-		cmp	x, #55D5h
-		bgt	main_265
-		tbbc	bit0, flags_40,	main_262
->>>>>>> origin/master
 		st	x, unk_17A
 
 main_262:				; CODE XREF: __RESET+EDFj
@@ -8533,11 +7898,7 @@ main_263:				; CODE XREF: __RESET+EC6j __RESET+ED1j ...
 		ld	x, #0FFFFh
 
 main_264:				; CODE XREF: __RESET+ECFj
-<<<<<<< HEAD
 		tbbc	bit0, flags_40,	main_265 ; B3 :	forced timing to 5/10 deg BTDC
-=======
-		tbbc	bit0, flags_40,	main_265
->>>>>>> origin/master
 		st	x, unk_17A
 
 main_265:				; CODE XREF: __RESET+ECCj __RESET+EDDj ...
@@ -8576,30 +7937,18 @@ main_269:				; CODE XREF: __RESET+F08j
 		pull	x
 		st	x, y + 11h
 		ld	y, #0149h
-<<<<<<< HEAD
 		tbs	bit0, flags_40	; B3 : forced timing to	5/10 deg BTDC
-=======
-		tbs	bit0, flags_40
->>>>>>> origin/master
 		bne	main_270
 		jmp	main_259
 ; 컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴�
 
 main_270:				; CODE XREF: __RESET:main_258j
 					; __RESET+F27j
-<<<<<<< HEAD
 		tbbc	bit1, flags_45,	main_276 ; IC303 input chip: B7	/TE2, B6 /TE1, B5 /NSW,	B4 IGSW,  B3, B2 IDL2, B1 , B0 STA
 		cmp	#92h, count_A4	; incremented at F47D
 		bcs	main_277
 		tbbs	bit5, flags_45,	main_273 ; IC303 input chip: B7	/TE2, B6 /TE1, B5 /NSW,	B4 IGSW,  B3, B2 IDL2, B1 , B0 STA
 		ld	a, flags_A2	; MSN= trouble bit7: VTA_net high, bit4: VTA_net high, lsN is oxy heater "checked" bits
-=======
-		tbbc	bit1, flags_45,	main_276 ; IC303 input chip: B7	/TE2, B	/TE1, B5 /NSW, B4 IGSW,	 B3, B2	IDL2, B1 , B0 STA
-		cmp	#92h, count_A4	; incremented at F47D
-		bcs	main_277
-		tbbs	bit5, flags_45,	main_273 ; IC303 input chip: B7	/TE2, B	/TE1, B5 /NSW, B4 IGSW,	 B3, B2	IDL2, B1 , B0 STA
-		ld	a, flags_A2	; bit7:	VTA_net	high, bit4: VTA_net high
->>>>>>> origin/master
 		cmpb	a, #10h		; bigger throttle bit
 		beq	main_273
 		cmp	#64h, unk_5E	; could	be last	unk_100, or 0
@@ -8659,11 +8008,7 @@ main_279:				; CODE XREF: __RESET+F67j
 main_280:				; CODE XREF: __RESET+F75j
 		ld	a, RPM		; MSB is RPM/50, LSB is	fraction of 50
 		bne	main_281
-<<<<<<< HEAD
 		ld	a, flags_45	; IC303	input chip: B7 /TE2, B6	/TE1, B5 /NSW, B4 IGSW,	 B3, B2	IDL2, B1 , B0 STA
-=======
-		ld	a, flags_45	; IC303	input chip: B7 /TE2, B /TE1, B5	/NSW, B4 IGSW,	B3, B2 IDL2, B1	, B0 STA
->>>>>>> origin/master
 		and	a, #71h
 		cmp	a, #61h
 		bne	main_281
@@ -8739,11 +8084,7 @@ main_287:				; CODE XREF: __RESET+FEEj __RESET+FF2j
 		cmp	#05h, unk_5E	; could	be last	unk_100, or 0
 		bcc	main_288
 		tbbs	bit0, flags_41,	main_288 ; B0 IDL1, b5 indidcates something about ram stats during last	suspend
-<<<<<<< HEAD
 		tbbs	bit5, flags_45,	main_289 ; IC303 input chip: B7	/TE2, B6 /TE1, B5 /NSW,	B4 IGSW,  B3, B2 IDL2, B1 , B0 STA
-=======
-		tbbs	bit5, flags_45,	main_289 ; IC303 input chip: B7	/TE2, B	/TE1, B5 /NSW, B4 IGSW,	 B3, B2	IDL2, B1 , B0 STA
->>>>>>> origin/master
 
 main_288:				; CODE XREF: __RESET+1008j
 					; __RESET+100Dj ...
@@ -8827,17 +8168,10 @@ main_298:				; CODE XREF: __RESET+107Dj
 		ld	b, x + 00h
 		and	b, #03h
 		bne	main_302
-<<<<<<< HEAD
 		ld	b, flags_7D	; error	bits: b3 oxy htr R2, b2	oxy htr	R1, b1 oxy htr L2, b0 oxy htr L1
 		st	b, temp_53
 		ld	b, #03h
 		tbbc	bit0, flags_40,	main_299 ; B3 :	forced timing to 5/10 deg BTDC
-=======
-		ld	b, flags_7D
-		st	b, temp_53
-		ld	b, #03h
-		tbbc	bit0, flags_40,	main_299
->>>>>>> origin/master
 		ld	b, #0Ch
 
 main_299:				; CODE XREF: __RESET+1092j
@@ -8882,11 +8216,7 @@ main_302:				; CODE XREF: __RESET+108Aj
 main_303:				; CODE XREF: __RESET+10ADj
 					; __RESET+10B1j ...
 		ld	b, #02h
-<<<<<<< HEAD
 		tbbc	bit0, flags_40,	main_304 ; B3 :	forced timing to 5/10 deg BTDC
-=======
-		tbbc	bit0, flags_40,	main_304
->>>>>>> origin/master
 		ld	b, #20h
 
 main_304:				; CODE XREF: __RESET+10D1j
@@ -8898,11 +8228,7 @@ main_304:				; CODE XREF: __RESET+10D1j
 
 main_305:				; CODE XREF: __RESET+10CDj
 		ld	x, #0304h
-<<<<<<< HEAD
 		tbbc	bit0, flags_40,	main_306 ; B3 :	forced timing to 5/10 deg BTDC
-=======
-		tbbc	bit0, flags_40,	main_306
->>>>>>> origin/master
 		ld	x, #0306h
 
 main_306:				; CODE XREF: __RESET+10E2j
@@ -8951,11 +8277,7 @@ main_311:				; CODE XREF: __RESET+1112j
 
 main_312:				; CODE XREF: __RESET+10F7j
 		ld	a, unk_179
-<<<<<<< HEAD
 		tbbs	bit0, flags_40,	main_313 ; B3 :	forced timing to 5/10 deg BTDC
-=======
-		tbbs	bit0, flags_40,	main_313
->>>>>>> origin/master
 		and	a, #03h
 		inc	a
 		ld	b, #03h
@@ -9017,11 +8339,7 @@ main_319:				; CODE XREF: __RESET+1167j
 
 main_320:				; CODE XREF: __RESET+10EFj
 		st	b, y + 14h
-<<<<<<< HEAD
 		tbs	bit0, flags_40	; B3 : forced timing to	5/10 deg BTDC
-=======
-		tbs	bit0, flags_40
->>>>>>> origin/master
 		bne	main_321	; set on timer overflow
 		ld	x, #0092h
 		ld	y, #0149h
@@ -9052,11 +8370,7 @@ mainTOF_02:				; CODE XREF: __RESET+1199j
 		st	a, count_1D3	; tof increment	rate
 
 mainTOF_03:				; CODE XREF: __RESET+119Fj
-<<<<<<< HEAD
 		ld	a, flags_A2	; MSN= trouble bit7: VTA_net high, bit4: VTA_net high, lsN is oxy heater "checked" bits
-=======
-		ld	a, flags_A2	; bit7:	VTA_net	high, bit4: VTA_net high
->>>>>>> origin/master
 		and	a, #05h
 		cmp	a, #05h
 		bne	mainTOF_04
@@ -9124,11 +8438,7 @@ mainTOF_11:				; CODE XREF: __RESET+11F5j
 		jsr	orFlags_50	; or b with Flags_50
 
 mainTOF_12:				; CODE XREF: __RESET:mainTOF_09j
-<<<<<<< HEAD
 		st	b, flags_50	; could	be bits	for 6336 output	chip, B0 probably HTR L+R1, B1 probably	HTR L+R2
-=======
-		st	b, flags_50	; could	be bits	for 6336 output	chip
->>>>>>> origin/master
 		ld	a, count_11D	; tof increment	rate
 		inc	a
 		cmp	a, #04h
@@ -9179,11 +8489,7 @@ mainTOF_15:				; CODE XREF: __RESET+1222j
 		ld	a, word_92
 		and	a, #7Bh
 		bne	mainTOF_16
-<<<<<<< HEAD
 		ld	a, flags_7D	; error	bits: b3 oxy htr R2, b2	oxy htr	R1, b1 oxy htr L2, b0 oxy htr L1
-=======
-		ld	a, flags_7D
->>>>>>> origin/master
 		and	a, #00h
 		beq	mainTOF_17
 
@@ -9341,11 +8647,7 @@ main_329:				; CODE XREF: __RESET+12E9j
 		st	b, flags_77	; set bit 7
 		cmpb	a, #80h
 		beq	main_330
-<<<<<<< HEAD
 		jmp	main_369	; timing algorithm is over now
-=======
-		jmp	main_369
->>>>>>> origin/master
 ; 컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴�
 
 main_330:				; CODE XREF: __RESET+134Bj
@@ -9354,25 +8656,15 @@ main_330:				; CODE XREF: __RESET+134Bj
 		ld	b, word_94
 		cmpb	b, #80h
 		bne	main_331
-<<<<<<< HEAD
 		ld	b, flags_50	; could	be bits	for 6336 output	chip, B0 probably HTR L+R1, B1 probably	HTR L+R2
 		cmpb	b, #10h
 		beq	Timing_332
-=======
-		ld	b, flags_50	; could	be bits	for 6336 output	chip
-		cmpb	b, #10h
-		beq	main_332
->>>>>>> origin/master
 
 main_331:				; CODE XREF: __RESET+1351j
 					; __RESET+1358j
 		clr	count_B8	; incremented at F55E
 
-<<<<<<< HEAD
 Timing_332:				; CODE XREF: __RESET+135Ej
-=======
-main_332:				; CODE XREF: __RESET+135Ej
->>>>>>> origin/master
 		cmp	#62h, count_B8	; incremented at F55E
 		ble	main_333
 		ld	y, #0C3FEh
@@ -9396,11 +8688,7 @@ main_334:				; CODE XREF: __RESET+137Dj
 main_335:				; CODE XREF: __RESET+1384j
 		tbbs	bit3, flags_43,	main_336 ; bit3: AFM bad bit4: rev limiter
 		tbbc	bit7, flags_44,	main_337 ; bit 1 is igf1 related, bit2 igf2 related
-<<<<<<< HEAD
 		tbbs	bit5, flags_45,	main_336 ; IC303 input chip: B7	/TE2, B6 /TE1, B5 /NSW,	B4 IGSW,  B3, B2 IDL2, B1 , B0 STA
-=======
-		tbbs	bit5, flags_45,	main_336 ; IC303 input chip: B7	/TE2, B	/TE1, B5 /NSW, B4 IGSW,	 B3, B2	IDL2, B1 , B0 STA
->>>>>>> origin/master
 		ld	b, unk_103
 		cmpb	b, #02h
 		bne	main_337
@@ -9460,11 +8748,7 @@ main_342:				; CODE XREF: __RESET+13C4j
 		mov	b, a
 		st	a, temp_51	; something dependant on temp, other maths could have been done
 		tbbc	bit1, flags_48,	main_344
-<<<<<<< HEAD
 		ld	d, word_172	; nonzero and rapidly decreasing after start, larger peak from cold start
-=======
-		ld	d, word_172	; inversely temp dependant, additional math elsewhere
->>>>>>> origin/master
 		shl	d
 		mul	a, #171
 		cmp	a, #038
@@ -9479,11 +8763,7 @@ main_344:				; CODE XREF: __RESET+13DEj
 		ld	a, unk_109
 		cmpb	a, #002
 		beq	main_345
-<<<<<<< HEAD
 		tbbs	bit5, flags_45,	main_345 ; IC303 input chip: B7	/TE2, B6 /TE1, B5 /NSW,	B4 IGSW,  B3, B2 IDL2, B1 , B0 STA
-=======
-		tbbs	bit5, flags_45,	main_345 ; IC303 input chip: B7	/TE2, B	/TE1, B5 /NSW, B4 IGSW,	 B3, B2	IDL2, B1 , B0 STA
->>>>>>> origin/master
 		ld	a, unk_185
 		and	a, #80h
 		bne	main_345
@@ -9532,26 +8812,17 @@ main_348:				; CODE XREF: __RESET+141Ej
 main_349:				; CODE XREF: __RESET+143Cj
 		cmp	a, b
 		bcs	main_351
-<<<<<<< HEAD
 		bra	Timing_352
-=======
-		bra	main_352
->>>>>>> origin/master
 ; 컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴�
 
 main_350:				; CODE XREF: __RESET+1438j
 		add	a, #001
 		cmp	a, b
-<<<<<<< HEAD
 		bcs	Timing_352
-=======
-		bcs	main_352
->>>>>>> origin/master
 
 main_351:				; CODE XREF: __RESET+1440j
 		mov	b, a
 
-<<<<<<< HEAD
 Timing_352:				; CODE XREF: __RESET+1442j
 					; __RESET+1447j
 		st	a, unk_18B
@@ -9560,21 +8831,10 @@ Timing_352:				; CODE XREF: __RESET+1442j
 		cmpb	a, #128
 		bne	Timing_356	; set TE1 test mode timing to 10 degrees
 		ld	y, #0C34Eh	; This looks like the timing table, compload in	53:54, RPM in D
-=======
-main_352:				; CODE XREF: __RESET+1442j
-					; __RESET+1447j
-		st	a, unk_18B
-		tbbs	bit7, flags_4C,	main_357 ; 35degrees of	offset
-		ld	a, unk_185
-		cmpb	a, #128
-		bne	main_356
-		ld	y, #0C34Eh
->>>>>>> origin/master
 		ld	d, compLOAD	; air temp and Baro compensated	Load (likely in	units of mass)
 		jsr	DivDby12	; divides D by 12, returns 16b result in unks 53:54
 		ld	d, RPM		; MSB is RPM/50, LSB is	fraction of 50
 		jsr	ThreeDtable	; inputs in D and temp_53:temp_54, output in D
-<<<<<<< HEAD
 		ld	b, ADC_pin15	; adc pin 15 (always 0)
 		cmpb	b, #0Ch
 		beq	Timing_355	; this will always branch
@@ -9636,74 +8896,10 @@ Timing_361:				; CODE XREF: __RESET+14A1j
 Timing_362:				; CODE XREF: __RESET+14A4j
 					; __RESET+14A9j
 		tbbc	bit3, flags_43,	Timing_363 ; flag normal timing
-=======
-		ld	b, ADC_pin15	; adc pin 15 (0V)
-		cmpb	b, #0Ch
-		beq	main_355
-		cmpb	b, #08h
-		bne	main_353
-		sub	a, #009
-		bra	main_354
-; 컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴�
-
-main_353:				; CODE XREF: __RESET+146Dj
-		sub	a, #017
-
-main_354:				; CODE XREF: __RESET+1471j
-		bcc	main_355
-		clr	a
-
-main_355:				; CODE XREF: __RESET+1469j
-					; __RESET:main_354j
-		bra	main_363
-; 컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴�
-
-main_356:				; CODE XREF: __RESET+1455j
-		tbbc	bit6, flags_45,	main_359 ; IC303 input chip: B7	/TE2, B	/TE1, B5 /NSW, B4 IGSW,	 B3, B2	IDL2, B1 , B0 STA
-		cmp	#02h, unk_5E	; could	be last	unk_100, or 0
-		bcc	main_359
-		ld	d, #00341	; 40 deg
-		bra	main_358
-; 컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴�
-
-main_357:				; CODE XREF: __RESET+144Dj
-		ld	d, #00299	; 35degrees of offset
-
-main_358:				; CODE XREF: __RESET+1485j
-					; __RESET+14B4j
-		setb	bit3, flags_40
-		st	d, unk_188	; initial timing calculation?
-		clr	a
-		st	a, byte_18A	; set to zero
-		jmp	main_369
-; 컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴�
-
-main_359:				; CODE XREF: __RESET:main_356j
-					; __RESET+1480j
-		ld	d, RPM		; MSB is RPM/50, LSB is	fraction of 50
-		bmi	main_360
-		shl	d		; increased resolution below 6350RPM
-
-main_360:				; CODE XREF: __RESET+1498j
-		ld	y, #0C3F9h
-		jsr	TwoDTable	; X value in AccA, integer return in Acca, fraction return in AccB
-		tbbc	bit5, flags_45,	main_361 ; saturate around 10 deg
-		tbbc	bit1, flags_45,	main_362 ; IC303 input chip: B7	/TE2, B	/TE1, B5 /NSW, B4 IGSW,	 B3, B2	IDL2, B1 , B0 STA
-
-main_361:				; CODE XREF: __RESET+14A1j
-		cmp	a, #085		; saturate around 10 deg
-		bcc	main_362
-		ld	a, #085
-
-main_362:				; CODE XREF: __RESET+14A4j
-					; __RESET+14A9j
-		tbbc	bit3, flags_43,	main_363 ; bit3: AFM bad bit4: rev limiter
->>>>>>> origin/master
 		mov	a, b
 		clr	a
 		shl	d
 		inc	a
-<<<<<<< HEAD
 		bra	main_358	; flag forced timing
 ; 컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴�
 
@@ -9711,22 +8907,12 @@ Timing_363:				; CODE XREF: __RESET:Timing_355j
 					; __RESET:Timing_362j
 		clrb	bit3, flags_40	; flag normal timing
 		mov	a, b		; a had	output from 3d table c34e (scaled 0 to 60 deg)
-=======
-		bra	main_358
-; 컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴�
-
-main_363:				; CODE XREF: __RESET:main_355j
-					; __RESET:main_362j
-		clrb	bit3, flags_40
-		mov	a, b
->>>>>>> origin/master
 		clr	a
 		add	b, unk_18D	; im thinking it's a net retard, summed from a number of positive vales then negated
 		addc	a, #00h
 		add	b, byte_18C	; lookup from RPM by LOAD table
 		addc	a, #00h
 		shl	d
-<<<<<<< HEAD
 		cmp	d, Timing_NE	; represents the number	of NE ticks from TDC to	fire spark ( use formula 30*[(Timing_NE-1)+Timing_frac/256] )
 		ble	Timing_364	; variable timing assignment, used to fire spark in NE_Sub1
 		st	d, temp_51
@@ -9767,58 +8953,12 @@ Timing_367:				; CODE XREF: __RESET+14F7j
 		mov	b, a
 
 Timing_368:				; CODE XREF: __RESET+14F3j
-=======
-		cmp	d, unk_188	; initial timing calculation?
-		ble	main_364	; final	timing assignment?
-		st	d, temp_51
-		ld	d, unk_188	; initial timing calculation?
-		add	d, #0009h
-		cmp	d, temp_51
-		ble	main_364	; final	timing assignment?
-		ld	d, temp_51
-
-main_364:				; CODE XREF: __RESET+14C8j
-					; __RESET+14D4j
-		st	d, unk_188	; final	timing assignment?
-		ld	a, unk_18B
-		cmp	a, unk_18E
-		bcc	main_365
-		ld	a, unk_18E
-
-main_365:				; CODE XREF: __RESET+14E1j
-		tbbc	bit5, flags_4A,	main_366
-		cmp	a, #128
-		bcc	main_366
-		ld	a, #128
-
-main_366:				; CODE XREF: __RESET:main_365j
-					; __RESET+14EBj
-		ld	b, byte_18A	; timing related
-		cmp	a, b
-		bcc	main_368	; useful assignment of timing related
-		sub	b, #04h
-		bcc	main_367
-		clr	a
-		bra	main_368	; useful assignment of timing related
-; 컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴�
-
-main_367:				; CODE XREF: __RESET+14F7j
-		cmp	a, b
-		bcc	main_368	; useful assignment of timing related
-		mov	b, a
-
-main_368:				; CODE XREF: __RESET+14F3j
->>>>>>> origin/master
 					; __RESET+14FAj ...
 		st	a, byte_18A	; useful assignment of timing related
 
 main_369:				; CODE XREF: __RESET+134Dj
 					; __RESET+1493j
-<<<<<<< HEAD
 		di			; timing algorithm is over now
-=======
-		di
->>>>>>> origin/master
 		ld	a, flags_77	; set bit 4, make a decision on	bit 4
 		mov	a, b
 		or	a, #10h
@@ -9846,34 +8986,20 @@ main_371:				; CODE XREF: __RESET+1526j
 		ld	d, temp_51
 
 main_372:				; CODE XREF: __RESET+152Aj
-<<<<<<< HEAD
 		st	d, word_170	; nonzero and decreasing from cold start
 		ld	d, word_172	; nonzero and rapidly decreasing after start, larger peak from cold start
-=======
-		st	d, word_170	; inversely temp dependant, additional math elsewhere
-		ld	d, word_172	; inversely temp dependant, additional math elsewhere
->>>>>>> origin/master
 		sub	d, #00024
 		bcc	main_373
 		clr	a
 		clr	b
 
 main_373:				; CODE XREF: __RESET+1537j
-<<<<<<< HEAD
 		st	d, word_172	; nonzero and rapidly decreasing after start, larger peak from cold start
 		ld	a, unk_174
 		ld	b, #03h
 		cmp	#020, VTA_net	; WOT check
 		ble	main_374
 		cmp	#158, rawTHW	; Contains the NOT of CTS reading from ADC, sensor is tied to ground on	other side
-=======
-		st	d, word_172	; inversely temp dependant, additional math elsewhere
-		ld	a, unk_174
-		ld	b, #03h
-		cmp	#14h, VTA_net
-		ble	main_374
-		cmp	#9Eh, rawTHW	; Contains the NOT of CTS reading from ADC, sensor is tied to ground on	other side
->>>>>>> origin/master
 		bcs	main_374
 		ld	b, #01h
 
@@ -9937,11 +9063,7 @@ main_382:				; CODE XREF: __RESET+1599j
 		or	a, #02h
 
 main_383:				; CODE XREF: __RESET+159Fj
-<<<<<<< HEAD
 		tbbs	bit6, flags_45,	main_385 ; IC303 input chip: B7	/TE2, B6 /TE1, B5 /NSW,	B4 IGSW,  B3, B2 IDL2, B1 , B0 STA
-=======
-		tbbs	bit6, flags_45,	main_385 ; IC303 input chip: B7	/TE2, B	/TE1, B5 /NSW, B4 IGSW,	 B3, B2	IDL2, B1 , B0 STA
->>>>>>> origin/master
 		ld	b, compLOAD	; air temp and Baro compensated	Load (likely in	units of mass)
 		cmp	b, temp_51
 		bcc	main_384
@@ -9962,15 +9084,9 @@ main_386:				; CODE XREF: __RESET+15B0j
 		cmpb	b, #08h
 		beq	main_388
 		tbbs	bit3, flags_43,	main_388 ; bit3: AFM bad bit4: rev limiter
-<<<<<<< HEAD
 		tbbs	bit4, flags_4A,	main_388 ; bits	6,5,4 are inherited from 109. 6	seems to always	be low when no sub throttle exists
 		tbbc	bit5, flags_45,	main_387 ; IC303 input chip: B7	/TE2, B6 /TE1, B5 /NSW,	B4 IGSW,  B3, B2 IDL2, B1 , B0 STA
 		tbbc	bit6, flags_45,	main_388 ; IC303 input chip: B7	/TE2, B6 /TE1, B5 /NSW,	B4 IGSW,  B3, B2 IDL2, B1 , B0 STA
-=======
-		tbbs	bit4, flags_4A,	main_388
-		tbbc	bit5, flags_45,	main_387 ; IC303 input chip: B7	/TE2, B	/TE1, B5 /NSW, B4 IGSW,	 B3, B2	IDL2, B1 , B0 STA
-		tbbc	bit6, flags_45,	main_388 ; IC303 input chip: B7	/TE2, B	/TE1, B5 /NSW, B4 IGSW,	 B3, B2	IDL2, B1 , B0 STA
->>>>>>> origin/master
 
 main_387:				; CODE XREF: __RESET+15C5j
 		cmpb	a, #07h
@@ -9997,11 +9113,7 @@ main_390:				; CODE XREF: __RESET+15E1j
 		cmp	#31h, count_CD	; incremented at E7A9
 		beq	main_392
 		bgt	main_393	; bounce if fuel pressure is up
-<<<<<<< HEAD
 		tbbc	bit0, flags_45,	main_395 ; IC303 input chip: B7	/TE2, B6 /TE1, B5 /NSW,	B4 IGSW,  B3, B2 IDL2, B1 , B0 STA
-=======
-		tbbc	bit0, flags_45,	main_395 ; IC303 input chip: B7	/TE2, B	/TE1, B5 /NSW, B4 IGSW,	 B3, B2	IDL2, B1 , B0 STA
->>>>>>> origin/master
 		ld	b, unk_103
 		cmpb	b, #10h
 		beq	main_395
@@ -10032,15 +9144,9 @@ main_394:				; CODE XREF: __RESET:main_393j
 main_395:				; CODE XREF: __RESET+15F2j
 					; __RESET+15FAj ...
 		clr	a
-<<<<<<< HEAD
 		tbbs	bit7, flags_4C,	main_396 ; bit 7 set when not running (300 to 400 RPM gap)
 		tbbc	bit0, flags_47,	main_396 ; bit4: high when hot (but how	hot?)
 		ld	a, ADC_rq1D	; adc request 1D (probably pin 14, always 0)
-=======
-		tbbs	bit7, flags_4C,	main_396 ; bit 7 demands a sampling of the oxygen sensors
-		tbbc	bit0, flags_47,	main_396 ; bit4: high when hot (but how	hot?)
-		ld	a, ADC_rq1D	; adc request 1D (probably pin 14, 0V)
->>>>>>> origin/master
 		and	a, #04h
 		beq	main_397
 		clr	a
@@ -10082,7 +9188,6 @@ main_401:				; CODE XREF: __RESET+1647j
 		clr	unk_7F
 
 main_402:				; CODE XREF: __RESET+1651j
-<<<<<<< HEAD
 		ld	b, flags_1AB	; buffers IC302	inputs for debouncing and storing into flags_1AA
 		cmpb	b, #40h		; DI signal from FP ECU
 		bne	main_403
@@ -10091,16 +9196,6 @@ main_402:				; CODE XREF: __RESET+1651j
 		cmp	#102, Bvolts	; 8V
 		bcs	main_403
 		tbbc	bit4, flags_45,	main_403 ; IC303 input chip: B7	/TE2, B6 /TE1, B5 /NSW,	B4 IGSW,  B3, B2 IDL2, B1 , B0 STA
-=======
-		ld	b, flags_1AB	; flags_1AA related
-		cmpb	b, #40h
-		bne	main_403
-		st	a, count_1A3	; increments at	E480
-		tbbs	bit0, flags_45,	main_403 ; IC303 input chip: B7	/TE2, B	/TE1, B5 /NSW, B4 IGSW,	 B3, B2	IDL2, B1 , B0 STA
-		cmp	#102, Bvolts	; 8V
-		bcs	main_403
-		tbbc	bit4, flags_45,	main_403 ; IC303 input chip: B7	/TE2, B	/TE1, B5 /NSW, B4 IGSW,	 B3, B2	IDL2, B1 , B0 STA
->>>>>>> origin/master
 		cmp	#02h, unk_7F
 		bcs	main_403
 		ld	a, count_1A2	; increments at	E480
@@ -10124,13 +9219,8 @@ main_405:				; CODE XREF: __RESET+1680j
 		ld	a, count_1A3	; increments at	E480
 		cmp	a, #4Dh
 		bcc	main_406
-<<<<<<< HEAD
 		tbbs	bit7, flags_40,	main_407 ; B3 :	forced timing to 5/10 deg BTDC
 		tbbc	bit5, flags_4C,	main_408 ; bit 7 set when not running (300 to 400 RPM gap)
-=======
-		tbbs	bit7, flags_40,	main_407
-		tbbc	bit5, flags_4C,	main_408 ; bit 7 demands a sampling of the oxygen sensors
->>>>>>> origin/master
 		ld	a, flags_162
 		or	a, #80h
 		st	a, flags_162
@@ -10153,20 +9243,12 @@ main_407:				; CODE XREF: __RESET+168Bj
 main_408:				; CODE XREF: __RESET+168Ej
 					; __RESET+1699j ...
 		clr	a
-<<<<<<< HEAD
 		ld	x, word_172	; nonzero and rapidly decreasing after start, larger peak from cold start
-=======
-		ld	x, word_172	; inversely temp dependant, additional math elsewhere
->>>>>>> origin/master
 		beq	main_409
 		or	a, #01h
 
 main_409:				; CODE XREF: __RESET+16B7j
-<<<<<<< HEAD
 		ld	x, word_170	; nonzero and decreasing from cold start
-=======
-		ld	x, word_170	; inversely temp dependant, additional math elsewhere
->>>>>>> origin/master
 		beq	main_410
 		or	a, #02h
 
@@ -10183,28 +9265,16 @@ main_411:				; CODE XREF: __RESET+16C7j
 		or	a, #80h
 
 main_412:				; CODE XREF: __RESET+16D0j
-<<<<<<< HEAD
 		ld	b, unk_197	; subtracted from timing in main loop
-=======
-		ld	b, unk_197	; timing related
->>>>>>> origin/master
 		beq	main_413
 		or	a, #40h
 
 main_413:				; CODE XREF: __RESET+16D7j
-<<<<<<< HEAD
 		st	a, flags_1C5
-=======
-		st	a, unk_1C5
->>>>>>> origin/master
 		clr	b
 		ld	a, flags_1C6	; written at end of main loop; B3 /NSW (/STA), b2 , b1 IDL1, b0	STA
 		and	a, #80h
-<<<<<<< HEAD
 		tbbc	bit0, flags_45,	main_414 ; IC303 input chip: B7	/TE2, B6 /TE1, B5 /NSW,	B4 IGSW,  B3, B2 IDL2, B1 , B0 STA
-=======
-		tbbc	bit0, flags_45,	main_414 ; IC303 input chip: B7	/TE2, B	/TE1, B5 /NSW, B4 IGSW,	 B3, B2	IDL2, B1 , B0 STA
->>>>>>> origin/master
 		or	a, #01h
 
 main_414:				; CODE XREF: __RESET+16E4j
@@ -10212,19 +9282,11 @@ main_414:				; CODE XREF: __RESET+16E4j
 		or	a, #02h
 
 main_415:				; CODE XREF: __RESET:main_414j
-<<<<<<< HEAD
 		tbbc	bit1, flags_45,	main_416 ; IC303 input chip: B7	/TE2, B6 /TE1, B5 /NSW,	B4 IGSW,  B3, B2 IDL2, B1 , B0 STA
 		or	a, #04h
 
 main_416:				; CODE XREF: __RESET:main_415j
 		tbbc	bit5, flags_45,	main_417 ; IC303 input chip: B7	/TE2, B6 /TE1, B5 /NSW,	B4 IGSW,  B3, B2 IDL2, B1 , B0 STA
-=======
-		tbbc	bit1, flags_45,	main_416 ; IC303 input chip: B7	/TE2, B	/TE1, B5 /NSW, B4 IGSW,	 B3, B2	IDL2, B1 , B0 STA
-		or	a, #04h
-
-main_416:				; CODE XREF: __RESET:main_415j
-		tbbc	bit5, flags_45,	main_417 ; IC303 input chip: B7	/TE2, B	/TE1, B5 /NSW, B4 IGSW,	 B3, B2	IDL2, B1 , B0 STA
->>>>>>> origin/master
 		or	a, #08h
 
 main_417:				; CODE XREF: __RESET:main_416j
@@ -10236,15 +9298,9 @@ main_418:				; CODE XREF: __RESET:main_417j
 		or	a, #20h
 
 main_419:				; CODE XREF: __RESET:main_418j
-<<<<<<< HEAD
 		st	a, flags_1C6	; written at end of main loop; B3 /NSW (/STA), b2 , b1 IDL1, b0	STA
 		ld	b, flags_45	; IC303	input chip: B7 /TE2, B6	/TE1, B5 /NSW, B4 IGSW,	 B3, B2	IDL2, B1 , B0 STA
 		st	b, f45_shadow	; shadows flags_45
-=======
-		st	a, unk_1C6
-		ld	b, flags_45	; IC303	input chip: B7 /TE2, B /TE1, B5	/NSW, B4 IGSW,	B3, B2 IDL2, B1	, B0 STA
-		st	b, unk_F8
->>>>>>> origin/master
 		ld	d, InjectPW1	; pulsewidth for LEFT bank (odd	cyl), 4us/bit
 		jsr	sub_EC27
 		st	b, InjPW_LOres	; injector pulsewidth divided by 32 and	saturated at 8 bits
@@ -10254,11 +9310,7 @@ main_419:				; CODE XREF: __RESET:main_418j
 		ld	a, #0FFh
 
 main_420:				; CODE XREF: __RESET+1715j
-<<<<<<< HEAD
 		st	a, RPM_HIres	; RPM/25
-=======
-		st	a, unk_1C9
->>>>>>> origin/master
 		ld	d, meanKSint	; deltaKS/KS_count, filtered
 		shl	d
 		bcc	main_421
@@ -10267,15 +9319,9 @@ main_420:				; CODE XREF: __RESET+1715j
 main_421:				; CODE XREF: __RESET+171Fj
 		st	a, byte_1C7	; last meanKSint MSB *2, saturated at ff
 		ld	a, VTA_net
-<<<<<<< HEAD
 		st	a, lastVTAnet	; last VTA_net
 		ld	a, VTA1_net	; VTA1 - VTA_min
 		st	a, lastVTA1net	; last VTA1-Offset
-=======
-		st	a, byte_F4	; last VTA_net
-		ld	a, VTA1_net	; VTA1 - VTA_min
-		st	a, byte_F5	; last VTA1-Offset
->>>>>>> origin/master
 		clr	a
 		tbbs	bit0, flags_4D,	main_422
 		ld	a, unk_100
@@ -10438,11 +9484,7 @@ intASR2_12:				; CODE XREF: ROM:ECC8j
 		bcs	intASR2_14
 		cmp	d, #16384	; 229RPM
 		bcc	intASR2_14
-<<<<<<< HEAD
 		tbbs	bit4, flags_46,	intASR2_15 ; bit 1 flags limp in injection mode, B5 RPM	under 5200ish
-=======
-		tbbs	bit4, flags_46,	intASR2_15 ; bit 1 flags limp in injection mode
->>>>>>> origin/master
 		clr	a
 		ld	b, threeDeltaNE
 		div	d, #026		; divide MSB
@@ -10572,11 +9614,7 @@ intASR2_27:				; CODE XREF: ROM:ED78j
 		tbbs	bit3, flags_43,	intASR2_35 ; bit3: AFM bad bit4: rev limiter
 		cmp	#3Ch, compLOAD	; air temp and Baro compensated	Load (likely in	units of mass)
 		bcs	intASR2_35
-<<<<<<< HEAD
 		ld	a, byte_186	; subtracted from timing in NEsub
-=======
-		ld	a, byte_186	; timing related
->>>>>>> origin/master
 		bne	intASR2_35
 		ld	a, unk_103
 		cmpb	a, #40h
@@ -10719,7 +9757,6 @@ NEsub1:					; CODE XREF: ROM:intASR2_43p
 NEsub1_1:				; CODE XREF: NEsub1+2j
 		clr	a
 		clr	b
-<<<<<<< HEAD
 		tbbs	bit3, flags_40,	NEsub1_3 ; B3 :	forced timing to 5/10 deg BTDC
 		ld	b, byte_18A	; subtracted from timing in NEsub
 		shl	d
@@ -10737,25 +9774,6 @@ NEsub1_2:				; CODE XREF: NEsub1+16j
 NEsub1_3:				; CODE XREF: NEsub1+9j	NEsub1+11j ...
 		push	d
 		ld	d, Timing_NE	; represents the number	of NE ticks from TDC to	fire spark ( use formula 30*[(Timing_NE-1)+Timing_frac/256] )
-=======
-		tbbs	bit3, flags_40,	NEsub1_3
-		ld	b, byte_18A	; timing related
-		shl	d
-		cmpz	a
-		bne	NEsub1_3
-		cmp	b, byte_186	; timing related
-		bcc	NEsub1_2	; select highest
-		ld	b, byte_186	; timing related
-
-NEsub1_2:				; CODE XREF: NEsub1+16j
-		cmp	b, unk_197	; timing related
-		bcc	NEsub1_3	; select highest
-		ld	b, unk_197	; timing related
-
-NEsub1_3:				; CODE XREF: NEsub1+9j	NEsub1+11j ...
-		push	d
-		ld	d, unk_188	; initial timing calculation?
->>>>>>> origin/master
 		mov	s, x
 		sub	d, x + 00h	; subtract the largest of 2*18A, 186 or	197
 		bcc	NEsub1_4
@@ -10794,30 +9812,18 @@ NEsub1_7:				; CODE XREF: NEsub1+59j
 		push	d
 		mov	s, x		; stack	now points to limited value
 		ld	d, word_193
-<<<<<<< HEAD
 		tbbs	bit0, flags_42,	NEsub1_9 ; 4 deg
 		cmp	#020, RPM	; 1000 RPM
 		ble	NEsub1_9	; 4 deg
 		tbbs	bit5, flags_42,	NEsub1_8
 		tbbc	bit0, flags_41,	NEsub1_9 ; 4 deg
-=======
-		tbbs	bit0, flags_42,	NEsub1_9
-		cmp	#020, RPM	; 1000 RPM
-		ble	NEsub1_9
-		tbbs	bit5, flags_42,	NEsub1_8
-		tbbc	bit0, flags_41,	NEsub1_9 ; B0 IDL1, b5 indidcates something about ram stats during last	suspend
->>>>>>> origin/master
 		add	d, #00002
 		bra	NEsub1_10
 ; 컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴�
 
 NEsub1_8:				; CODE XREF: NEsub1+6Ej
 		cmp	#036, compLOAD	; air temp and Baro compensated	Load (likely in	units of mass)
-<<<<<<< HEAD
 		bcc	NEsub1_9	; 4 deg
-=======
-		bcc	NEsub1_9
->>>>>>> origin/master
 		add	d, #0002h
 		bra	NEsub1_10
 ; 컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴�
@@ -11106,11 +10112,7 @@ IV6_14:					; CODE XREF: IV6+4Ej
 		ld	a, flags_77
 		and	a, #7Fh
 		st	a, flags_77
-<<<<<<< HEAD
 		ld	a, byte_186	; subtracted from timing in NEsub
-=======
-		ld	a, byte_186	; timing related
->>>>>>> origin/master
 		ld	b, unk_102
 		cmpb	b, #80h
 		beq	IV6_16
@@ -11291,11 +10293,7 @@ IV6_41:					; CODE XREF: IV6+1ABj IV6+1B2j
 
 IV6_42:					; CODE XREF: IV6+1A0j IV6+1BBj
 		clrb	bit0, flags_4E
-<<<<<<< HEAD
 		tbbc	bit0, flags_45,	IV6_43 ; IC303 input chip: B7 /TE2, B6 /TE1, B5	/NSW, B4 IGSW,	B3, B2 IDL2, B1	, B0 STA
-=======
-		tbbc	bit0, flags_45,	IV6_43 ; IC303 input chip: B7 /TE2, B /TE1, B5 /NSW, B4	IGSW,  B3, B2 IDL2, B1 , B0 STA
->>>>>>> origin/master
 		setb	bit4, flags_4C
 
 IV6_43:					; CODE XREF: IV6:IV6_5j IV6+1C5j
@@ -11469,11 +10467,7 @@ loc_F1EE:				; CODE XREF: sub_F1A9+36j sub_F1A9+3Cj
 loc_F1F2:				; CODE XREF: sub_F1A9+43j
 		cmp	#060, RPM	; 3000 RPM
 		bcs	loc_F200
-<<<<<<< HEAD
 		tbbc	bit5, flags_46,	loc_F1FE ; bit 1 flags limp in injection mode, B5 RPM under 5200ish
-=======
-		tbbc	bit5, flags_46,	loc_F1FE ; bit 1 flags limp in injection mode
->>>>>>> origin/master
 		or	a, #02h
 		bra	loc_F200
 ; 컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴�
@@ -11484,11 +10478,7 @@ loc_F1FE:				; CODE XREF: sub_F1A9+4Ej
 loc_F200:				; CODE XREF: sub_F1A9+47j sub_F1A9+4Cj ...
 		st	a, unk_196
 		clr	b
-<<<<<<< HEAD
 		tbbs	bit0, flags_46,	loc_F216 ; bit 1 flags limp in injection mode, B5 RPM under 5200ish
-=======
-		tbbs	bit0, flags_46,	loc_F216 ; bit 1 flags limp in injection mode
->>>>>>> origin/master
 		push	a
 		ld	a, flags_4E	; bit1 is igf1 related,	bit2 igf2 related
 		and	a, #0E0h
@@ -11566,11 +10556,7 @@ loc_F275:				; CODE XREF: sub_F1A9+C9j
 		st	b, unk_19B
 
 loc_F278:				; CODE XREF: sub_F1A9+B6j
-<<<<<<< HEAD
 		ld	b, byte_186	; subtracted from timing in NEsub
-=======
-		ld	b, byte_186	; timing related
->>>>>>> origin/master
 		bne	loc_F289
 		ld	b, unk_187	; timing related
 		beq	loc_F28C
@@ -11583,13 +10569,8 @@ loc_F289:				; CODE XREF: sub_F1A9+D2j
 ; 컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴�
 
 loc_F28C:				; CODE XREF: sub_F1A9+D7j sub_F1A9+DEj
-<<<<<<< HEAD
 		tbbs	bit5, flags_45,	loc_F2AA ; IC303 input chip: B7	/TE2, B6 /TE1, B5 /NSW,	B4 IGSW,  B3, B2 IDL2, B1 , B0 STA
 		tbbs	bit5, flags_4A,	loc_F2AA ; bits	6,5,4 are inherited from 109. 6	seems to always	be low when no sub throttle exists
-=======
-		tbbs	bit5, flags_45,	loc_F2AA ; IC303 input chip: B7	/TE2, B	/TE1, B5 /NSW, B4 IGSW,	 B3, B2	IDL2, B1 , B0 STA
-		tbbs	bit5, flags_4A,	loc_F2AA
->>>>>>> origin/master
 		ld	y, #009Eh
 		and	a, #02h
 		add	y, a
@@ -11675,11 +10656,7 @@ loc_F302:				; CODE XREF: sub_F1A9+156j
 		ld	a, unk_199	; output from 3d table c54c
 
 loc_F310:				; CODE XREF: sub_F1A9+162j
-<<<<<<< HEAD
 		ld	b, unk_197	; subtracted from timing in main loop
-=======
-		ld	b, unk_197	; timing related
->>>>>>> origin/master
 		sub	b, #09h
 		bcc	loc_F318
 		clr	b
@@ -11704,11 +10681,7 @@ IVc:					; DATA XREF: ROM:FFF6o
 		ld	a, TIMER	; Timer	MSB (bit11~bit18)
 		and	a, #04h		; toggles every	4096ms
 		bne	ivc_04		; bounce if high, every	8ms
-<<<<<<< HEAD
 		tbbc	bit7, flags_45,	ivc_04 ; bounce	if TE2 is open
-=======
-		tbbc	bit7, flags_45,	ivc_04 ; IC303 input chip: B7 /TE2, B /TE1, B5 /NSW, B4	IGSW,  B3, B2 IDL2, B1 , B0 STA
->>>>>>> origin/master
 		clrb	bit4, PORTB	; clear	pin 23
 		ld	a, unk_7C	; counter
 		bpz	ivc_01
@@ -11739,13 +10712,8 @@ ivc_04:					; CODE XREF: IVc+6j IVc+8j ...
 		clr	a
 		cmp	#137, unk_E1
 		bcc	ivc_11
-<<<<<<< HEAD
 		tbbs	bit5, flags_4C,	ivc_07 ; bit 7 set when	not running (300 to 400	RPM gap)
 		ld	b, flags_1AB	; buffers IC302	inputs for debouncing and storing into flags_1AA
-=======
-		tbbs	bit5, flags_4C,	ivc_07 ; bit 7 demands a sampling of the oxygen	sensors
-		ld	b, flags_1AB	; flags_1AA related
->>>>>>> origin/master
 		cmpb	b, #40h
 		bne	ivc_09
 		ld	b, unk_19F	; ISC related
@@ -11872,13 +10840,8 @@ loc_F3F0:				; CODE XREF: IV6+46Aj
 
 loc_F3F6:				; CODE XREF: IV6+48Aj
 		st	b, flags_75	; flags	relating to ADC	tx'ing
-<<<<<<< HEAD
 		tbbc	bit1, flags_4A,	loc_F408 ; bits	6,5,4 are inherited from 109. 6	seems to always	be low when no sub throttle exists
 		tbbc	bit2, flags_4A,	loc_F408 ; bits	6,5,4 are inherited from 109. 6	seems to always	be low when no sub throttle exists
-=======
-		tbbc	bit1, flags_4A,	loc_F408
-		tbbc	bit2, flags_4A,	loc_F408
->>>>>>> origin/master
 		tbs	bit0, PORTA	; Port A Data Register
 		beq	loc_F404
 		clrb	bit0, PORTA	; tickle the MP908 spark multiplexer/Gn	detector, watchdog
@@ -11897,13 +10860,8 @@ loc_F408:				; CODE XREF: IV6+494j IV6+497j
 loc_F413:				; CODE XREF: IV6+4A6j
 		ei
 		setb	bit3, PORTD_ASRIN
-<<<<<<< HEAD
 		ld	a, unk_109	; 0 or 128
 		ld	b, unk_76	; 0, 1 or very rarely 2
-=======
-		ld	a, unk_109
-		ld	b, unk_76	; some flags which interact with flags_4A
->>>>>>> origin/master
 		cmpb	a, #80h
 		beq	loc_F425
 		tbs	bit1, flags_47	; bit4:	high when hot (but how hot?)
@@ -11930,40 +10888,23 @@ loc_F433:				; CODE XREF: IV6+4BDj IV6:loc_F425j
 		cmp	a, #021
 		bcc	loc_F456
 		ld	a, unk_109
-<<<<<<< HEAD
 		ld	b, VTA2_net	; VTA2-VTA2_min, =255 when sub throttle	disabled/not exist
 		inc	b
 		bne	loc_F449	; check	to see if sub throttle is used
 		and	a, #40h		; bit 6
 		bra	loc_F44B	; ---------------------------------------Start sensitive code
-=======
-		ld	b, VTA2_net	; VTA2-VTA2_min
-		inc	b
-		bne	loc_F449	; check	to see if sub throttle is used
-		and	a, #40h		; bit 6
-		bra	loc_F44B
->>>>>>> origin/master
 ; 컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴�
 
 loc_F449:				; CODE XREF: IV6+4DFj
 		and	a, #70h
 
 loc_F44B:				; CODE XREF: IV6+4E3j
-<<<<<<< HEAD
 		di			; ---------------------------------------Start sensitive code
 		ld	b, flags_4A	; working with bits 6,5,4
 		and	b, #8Fh		; zero 654
 		add	a, b		; take bits 654	from accA
 		st	a, flags_4A	; bits 6,5,4 are inherited from	109. 6 seems to	always be low when no sub throttle exists
 		ei			; ----------------------------end sensitive code
-=======
-		di
-		ld	b, flags_4A	; working with bits 6,5,4
-		and	b, #8Fh		; zero 654
-		add	a, b		; take bits 654	from accA
-		st	a, flags_4A
-		ei
->>>>>>> origin/master
 		bra	loc_F478
 ; 컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴�
 
@@ -12008,11 +10949,7 @@ loc_F478:				; CODE XREF: IV6+4F0j
 
 loc_F489:				; CODE XREF: IV6+520j
 		clr	a
-<<<<<<< HEAD
 		tbbc	bit2, flags_45,	loc_F493 ; reset counter if not	IDL
-=======
-		tbbc	bit2, flags_45,	loc_F493 ; reset counter if bit	clear
->>>>>>> origin/master
 		ld	a, count_12C
 		inc	a
 		beq	loc_F496
@@ -12026,11 +10963,7 @@ loc_F496:				; CODE XREF: IV6+52Dj
 		ld	y, #01B8h
 		jsr	satcount	; increment B bytes of ram by 1	starting from Y, saturates at FF
 		ei
-<<<<<<< HEAD
 		tbbs	bit7, flags_45,	loc_F4D4 ; bounce if TE2 shorted
-=======
-		tbbs	bit7, flags_45,	loc_F4D4 ; IC303 input chip: B7	/TE2, B	/TE1, B5 /NSW, B4 IGSW,	 B3, B2	IDL2, B1 , B0 STA
->>>>>>> origin/master
 		setb	bit4, PORTB
 		ld	a, TIMER	; Timer	MSB (bit11~bit18)
 		and	a, #0Ch
@@ -12141,11 +11074,7 @@ loc_F522:				; CODE XREF: IV6+5AAj
 
 loc_F52E:				; CODE XREF: IV6+5C4j
 		clr	a
-<<<<<<< HEAD
 		ld	b, byte_186	; subtracted from timing in NEsub
-=======
-		ld	b, byte_186	; timing related
->>>>>>> origin/master
 		bne	loc_F53B
 		cmp	#3Dh, count_C5	; increments at	E478
 		bcc	loc_F554
@@ -12200,11 +11129,7 @@ loc_F572:				; CODE XREF: IV6+609j
 loc_F57B:				; CODE XREF: IV6+612j
 		ld	b, #004
 		ld	y, #01C0h
-<<<<<<< HEAD
 		jsr	satcount	; increment oxy	sensor related counters
-=======
-		jsr	satcount	; increment B bytes of ram by 1	starting from Y, saturates at FF
->>>>>>> origin/master
 		ld	a, ISC_11F	; ISC related
 		ld	b, unk_11E
 		cmp	b, #06h
@@ -12226,11 +11151,7 @@ loc_F594:				; CODE XREF: IV6+627j
 loc_F5A0:				; CODE XREF: IV6+639j
 		st	b, unk_11E
 		tbbc	bit5, RAMST, loc_F5FC ;	Built-in RAM status
-<<<<<<< HEAD
 		tbbc	bit4, flags_45,	loc_F5AE ; IC303 input chip: B7	/TE2, B6 /TE1, B5 /NSW,	B4 IGSW,  B3, B2 IDL2, B1 , B0 STA
-=======
-		tbbc	bit4, flags_45,	loc_F5AE ; IC303 input chip: B7	/TE2, B	/TE1, B5 /NSW, B4 IGSW,	 B3, B2	IDL2, B1 , B0 STA
->>>>>>> origin/master
 		cmp	#109, Bvolts	; 8.55V
 		bcs	loc_F5FC
 
@@ -12344,11 +11265,7 @@ loc_F638:				; CODE XREF: IV6+6B8j IV6+6C6j
 		bne	loc_F649
 		cmp	#78h, unk_DB	; magic	from address 0x80
 		bcs	loc_F649
-<<<<<<< HEAD
 		add	a, #020
-=======
-		add	a, #14h
->>>>>>> origin/master
 		st	a, ISC_11F	; ISC related
 		mov	x, d
 		bra	loc_F65D
@@ -12397,11 +11314,7 @@ intCPR0:				; DATA XREF: ROM:FFF0o
 
 intCPR0_1:				; CODE XREF: intCPR0+2j
 		setb	bit1, flags_4C
-<<<<<<< HEAD
 		tbbs	bit0, flags_45,	intCPR0_2 ; IC303 input	chip: B7 /TE2, B6 /TE1,	B5 /NSW, B4 IGSW,  B3, B2 IDL2,	B1 , B0	STA
-=======
-		tbbs	bit0, flags_45,	intCPR0_2 ; IC303 input	chip: B7 /TE2, B /TE1, B5 /NSW,	B4 IGSW,  B3, B2 IDL2, B1 , B0 STA
->>>>>>> origin/master
 		setb	bit2, flags_4C
 
 intCPR0_2:				; CODE XREF: intCPR0+14j
@@ -12750,7 +11663,6 @@ sin0_13:				; CODE XREF: intSIN0:sin0_11j
 		tbbs	bit6, SSD, sin0_12 ; bounce if RX error
 		ld	a, SIDR_SODR	; Serial Input/Output Data Register
 		xor	a, #11100110b
-<<<<<<< HEAD
 		push	a		; the following	is a 2 cycle debounce routine. flags_1a9 caches	the direct read	from the port, flags_45	only gets the bits which stay high for 2 sucessive reads
 		mov	a, b
 		xor	a, flags_45	; IC303	input chip: B7 /TE2, B6	/TE1, B5 /NSW, B4 IGSW,	 B3, B2	IDL2, B1 , B0 STA
@@ -12760,17 +11672,6 @@ sin0_13:				; CODE XREF: intSIN0:sin0_11j
 		st	a, flags_45	; IC303	input chip: B7 /TE2, B6	/TE1, B5 /NSW, B4 IGSW,	 B3, B2	IDL2, B1 , B0 STA
 		pull	b
 		st	b, flags_1A9	; buffers IC303	inputs for debouncing and storing into flags_45
-=======
-		push	a
-		mov	a, b
-		xor	a, flags_45	; IC303	input chip: B7 /TE2, B /TE1, B5	/NSW, B4 IGSW,	B3, B2 IDL2, B1	, B0 STA
-		and	a, flags_1A9	; flags_45 related (IC303 inputs)
-		and	b, flags_45	; IC303	input chip: B7 /TE2, B /TE1, B5	/NSW, B4 IGSW,	B3, B2 IDL2, B1	, B0 STA
-		add	a, b
-		st	a, flags_45	; IC303	input chip: B7 /TE2, B /TE1, B5	/NSW, B4 IGSW,	B3, B2 IDL2, B1	, B0 STA
-		pull	b
-		st	b, flags_1A9	; flags_45 related (IC303 inputs)
->>>>>>> origin/master
 
 sin0_14:				; CODE XREF: intSIN0+89j
 		clrb	bit1, PORTD_ASRIN
@@ -12792,7 +11693,6 @@ sin0_17:				; CODE XREF: intSIN0:sin0_15j
 		xor	a, #0Fh
 		push	a		; the following	is a 2 cycle debounce routine. flags_1a9 caches	the direct read	from the port, flags_45	only gets the bits which stay high for 2 sucessive reads
 		mov	a, b
-<<<<<<< HEAD
 		xor	a, flags_1AB	; buffers IC302	inputs for debouncing and storing into flags_1AA
 		and	a, flags_1AA	; B6 - DI (FPECU), B3~0	are NOT	of oxy heater pin voltages R2, R1, L2, L1 (IC302)
 		and	b, flags_1AB	; buffers IC302	inputs for debouncing and storing into flags_1AA
@@ -12800,15 +11700,6 @@ sin0_17:				; CODE XREF: intSIN0:sin0_15j
 		st	a, flags_1AB	; buffers IC302	inputs for debouncing and storing into flags_1AA
 		pull	b
 		st	b, flags_1AA	; B6 - DI (FPECU), B3~0	are NOT	of oxy heater pin voltages R2, R1, L2, L1 (IC302)
-=======
-		xor	a, flags_1AB	; flags_1AA related
-		and	a, flags_1AA	; IC302	input bits B3~0	are NOT	of oxy heater pin voltages
-		and	b, flags_1AB	; flags_1AA related
-		add	a, b
-		st	a, flags_1AB	; flags_1AA related
-		pull	b
-		st	b, flags_1AA	; IC302	input bits B3~0	are NOT	of oxy heater pin voltages
->>>>>>> origin/master
 		cmpb	b, #10h
 		beq	sin0_18
 		setb	bit0, flags_49
@@ -12860,11 +11751,7 @@ sin0_26:				; CODE XREF: intSIN0:sin0_25j
 		shr	a
 		ld	y, #0149h
 		jsr	sub_FC0D
-<<<<<<< HEAD
 		tbbs	bit0, flags_45,	sin0_27	; IC303	input chip: B7 /TE2, B6	/TE1, B5 /NSW, B4 IGSW,	 B3, B2	IDL2, B1 , B0 STA
-=======
-		tbbs	bit0, flags_45,	sin0_27	; IC303	input chip: B7 /TE2, B /TE1, B5	/NSW, B4 IGSW,	B3, B2 IDL2, B1	, B0 STA
->>>>>>> origin/master
 		cmp	#32h, count_A8	; incremented at F47D
 		ble	sin0_29
 		clrb	bit7, flags_4A
@@ -12874,11 +11761,7 @@ sin0_26:				; CODE XREF: intSIN0:sin0_25j
 sin0_27:				; CODE XREF: intSIN0+10Dj
 		clr	a
 		st	a, count_1BA	; incremented at F49C
-<<<<<<< HEAD
 		tbs	bit7, flags_4A	; bits 6,5,4 are inherited from	109. 6 seems to	always be low when no sub throttle exists
-=======
-		tbs	bit7, flags_4A
->>>>>>> origin/master
 		bne	sin0_28
 		clr	unk_7F
 		clr	count_5F	; counts up to 255 since last start, about 15 counts per second
@@ -12890,11 +11773,7 @@ sin0_27:				; CODE XREF: intSIN0+10Dj
 		st	a, unk_1B6
 		st	a, unk_1B7
 		clrb	bit1, flags_4C
-<<<<<<< HEAD
 		tbbc	bit7, flags_4C,	sin0_29	; bit 7	set when not running (300 to 400 RPM gap)
-=======
-		tbbc	bit7, flags_4C,	sin0_29	; bit 7	demands	a sampling of the oxygen sensors
->>>>>>> origin/master
 		setb	bit5, flags_47
 		bra	sin0_29
 ; 컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴�
@@ -13188,15 +12067,9 @@ sin0JMP01:				; called from F7FE, VTA1 process
 		or	a, VTA2_flags	; VTA2 flags
 		cmpb	a, #08h
 		bne	loc_FA29
-<<<<<<< HEAD
 		cmp	y, VTA2_net	; VTA2-VTA2_min, =255 when sub throttle	disabled/not exist
 		ble	loc_FA29	; use the smallest throttle angle
 		ld	y, VTA2_net	; VTA2-VTA2_min, =255 when sub throttle	disabled/not exist
-=======
-		cmp	y, VTA2_net	; VTA2-VTA2_min
-		ble	loc_FA29	; use the smallest throttle angle
-		ld	y, VTA2_net	; VTA2-VTA2_min
->>>>>>> origin/master
 
 loc_FA29:				; CODE XREF: ROM:FA1Fj	ROM:FA24j
 		ld	d, VTA_net
@@ -13297,11 +12170,7 @@ loc_FA9E:				; CODE XREF: ROM:FA98j
 loc_FAA5:				; CODE XREF: ROM:FA9Cj	ROM:FAA1j
 		cmp	a, b
 		ble	loc_FAAE
-<<<<<<< HEAD
 		tbbs	bit7, flags_4C,	loc_FAAE ; bit 7 set when not running (300 to 400 RPM gap)
-=======
-		tbbs	bit7, flags_4C,	loc_FAAE ; bit 7 demands a sampling of the oxygen sensors
->>>>>>> origin/master
 		tbbc	bit0, flags_41,	loc_FAB0 ; B0 IDL1, b5 indidcates something about ram stats during last	suspend
 
 loc_FAAE:				; CODE XREF: ROM:FAA6j	ROM:FAA8j

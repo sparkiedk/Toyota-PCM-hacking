@@ -264,13 +264,8 @@ IC302 d151821-0090 24p shrink dip
 11	clk
 12	gnd
 14		MSB of flags_1AA
-<<<<<<< HEAD
 15	fuel pump ecu DI (pin 21)
 16	
-=======
-15
-16
->>>>>>> origin/master
 17	
 18	oxy heater right sub PCM pin 53
 19	oxy heater right main PCM pin 72

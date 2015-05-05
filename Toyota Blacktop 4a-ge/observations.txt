@@ -1,0 +1,103 @@
+D151804-8081 - 68 pin PLCC IC601
+================================
+
+
+
+connections:
+1
+2
+3
+4	high in sleep, hard parallel with 68, 53,13
+5
+6	spends 7 NE half pulses high, 5 ne half pulses low
+7	XTAL
+8	XTAL
+9	1MHz
+----
+10
+11
+12	400ns low pulses
+13	high in sleep, hard parallel with 4,53,68
+14	1MHz
+15
+16
+17
+18
+19	serial data (Rx? shitty edges) 1mbit
+20
+21 	serial (tx?)
+22	125Hz square wave, definitly responsible for maintaining watchdog HW
+23
+24
+25
+26
+----
+27
+28
+29
+30
+31 	/IGF
+32
+33
+34	GND
+35
+36
+37
+38
+39
+40	G2 flag
+41	G1 flag
+42
+43
+----
+45	/RSC
+46
+47
+48
+49
+50
+51
+52
+53	high in sleep, hard parallel with 4, 68,13
+54
+55
+56	/RST
+57
+58	/#4
+59	/#3
+60	/#1
+----
+61	/#2
+62
+63
+64
+65	IGt
+66
+67	/NE (conditioned)
+68	high in sleep, hard parallel with 4,53,13
+
+
+just guessing: 
+4 is /NMI
+13 is /Mode_External
+53 is /TEST
+68 is VCC
+
+58~65 is DOUT
+
+
+ND MP499 IC101
+==============
+24 pin DIP ADC
+
+19	OX
+
+21	THW
+22	THA
+23	VTA
+24	PIM (map signal)
+
+
+ND MG6010 IC701
+===============
+knock control IC
