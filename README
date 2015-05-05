@@ -11,6 +11,9 @@ Toyota 1uz pcm/cap *.asm - working disassemblies of the two d151803 microprocess
 
 Toyota Redtop 4A-GE capture and disassembly, from chip D151802-0442 - USDM AE92 manual corolla PCM
 
+Toyota 4a-GE blacktop 20 valve capture and disassembly, from chip d151804-8081, blacktop 
+manual transmission PCM.
+
 Notes: 
 
 The Bluetop PCM uses a nippondenso specific issue of the hitachi HD6301v1 processor.
@@ -37,14 +40,15 @@ times. apologies that the main disassembly is cap.asm, and not the more appropri
 cap1-151801-0642.asm
 
 Keywords:
-
 Denso	
 AE86	
 Corolla GTS	
 4A-GE	
 Bluetop	
 Redtop
+Blacktop
 1.6L twin cam 16 valve
+1.6L twin cam 20 Valve
 D151801	
 D151801-0642
 D151801-2860
@@ -59,3 +63,5 @@ D151803-9260
 D151803-1320
 D151802
 D151802-0442
+D151804
+D151804-8081
