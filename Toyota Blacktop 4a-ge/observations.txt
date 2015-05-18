@@ -90,12 +90,12 @@ ND MP499 IC101
 ==============
 24 pin DIP ADC
 
-19	OX
-
-21	THW
-22	THA
-23	VTA
-24	PIM (map signal)
+19	OX			5
+20				4
+21	THW			3
+22	THA			2
+23	VTA			1
+24	PIM (map signal)	0
 
 
 ND MG6010 IC701
