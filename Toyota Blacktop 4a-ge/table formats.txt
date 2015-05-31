@@ -4,3 +4,12 @@
 01	first x
 02	first y
 .....
+
+other2d
+==========
+A is multiplier for offset input
+B is input
+
+00	offset to input value
+01	bound to offset input value (ie b-[00] must be less than or equal to [01]
+02..nn	data

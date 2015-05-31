@@ -1,0 +1,3 @@
+cap.* is the msot relevant disassembly
+
+rev limit is around 7400RPM, sort of.
