@@ -1,0 +1,7 @@
+the usart used to exchange data between the engine and trasmission micros has some of the following characteristics:
+====================================================================================================================
+
+data at 0xF0 to 0xFF is fed out portC3 (pin45 on SDIP64) once every ~4ms
+data received on portC5 (pin43 on SDIP64) is placed in 0x100 to 0x10F
+
+Clock for this device is portC4 (pin 44 on SDIP64)
