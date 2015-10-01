@@ -1,4 +1,5 @@
 IC's are 64 pin Plastic Dual inline package, 0.070" pin pitch, 0.750 row pitch
+PCM is USDM 1994? SC400 AT
 
 d151803-1320 (IC501)
 ======================
@@ -52,10 +53,10 @@ Bus rate is Xin/6
 CCLK is Xin/16
 Timer word increment rate is 250kHz
 
-1	/KS (air flow meter signal) (ASR1)
-2	IGF1 (ASR0)
-3	high to vcc
-4	IGF2 (IRP)
+1	ASR1	/KS (air flow meter signal) 
+2	ASR0 	IGF1 
+3		high to vcc
+4	IRP	IGF2
 5	high
 6+7 	clock input, cannot scope
 8 	1MHz sq. wave
@@ -64,8 +65,8 @@ Timer word increment rate is 250kHz
 11	
 12	high to vcc
 13	CLK	1MHz square wave - to 1k then to 9+10 of ADC
-14	output	20us high pulse every 4ms, which occasionally expands in duty cycle. (SIN3), same signal at pin 15 of 1320
-15	input 	20us high pulse every 4ms, which occasionally expands in duty cycle. (SIN2), same signal at pin 14 of 1320
+14	SIN3 	output	20us high pulse every 4ms, which occasionally expands in duty cycle. (SIN3), same signal at pin 15 of 1320
+15	SIN2	input 	20us high pulse every 4ms, which occasionally expands in duty cycle. (SIN2), same signal at pin 14 of 1320
 16	SIN1	serial probably 1MBit
 17	SIN0	serial 1MBit min to 1k then to pin 8 of ADC
 18	SOUT1
