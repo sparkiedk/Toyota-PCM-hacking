@@ -1,0 +1,17 @@
+bison: best instant subjugator of nippondensos - just a sad BUFFALO ripoff really.
+===================================================================================
+
+code loader, tester and debugger for toyota MCU
+
+features:
+human friendly text input
+load code into ram (automatically stick an NMI at the end)
+load data bytes from prompt into ram
+display ram
+run ram
+NMI returns to the monitor
+user stack separate from buffalo stack
+
+unfeatures:
+cannot toy with interupts really - perhaps fixed interrupt handlers? 
+i like that, redirect interrupt to handlers in ram which by default NMI back into the monitor.

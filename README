@@ -1,18 +1,17 @@
 This repo is dedicated to hacking toyota powertrain control modules.The specific focus is
 going to be 4A-GE related PCMs and the 1UZ PCM and anything else anyone requests.
 
+A copy of IDA 4.9 Free will be required to open the .IDB files. 
 
-Hot items: 
-toyota bluetop pcm/cap.asm - a working disassembly of the bluetop code, slowly being understood,
-This is a disassebmly of the AE86 Bluetop code, from chip denso d151801-0642
+BISON is a loader/debugger inspired by the old HC11 tool BUFFALO. Some simple commands are
+available to permit easy loading and testing of code into RAM - much faster than runing 
+test code from a flash or E/EPROM chip. BISON, just like BUFFALO, is an acronym - I will 
+not say here what it stands for as it is lame, just like BUFFALO.
 
-Toyota 1uz pcm/cap *.asm - working disassemblies of the two d151803 microprocessors inside a
-92~94 SC400 PCM. Specific part numbers are d151803-9260 (8243) and d151803-1320 (8568)
+BISON is incomplete, I will complete it before January 2016. BISON was mostly written on 
+an airplane in economy class - that's my excuse for sloppy code or snarky comments.
 
-Toyota Redtop 4A-GE capture and disassembly, from chip D151802-0442 - USDM AE92 manual corolla PCM
-
-Toyota 4a-GE blacktop 20 valve capture and disassembly, from chip d151804-8081, blacktop 
-manual transmission PCM.
+BISON is completly unrelated to the general purpose grammar parser. 
 
 Notes: 
 
