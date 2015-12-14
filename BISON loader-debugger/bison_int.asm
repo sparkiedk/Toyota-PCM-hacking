@@ -4,7 +4,6 @@
 
 int0              ; External interrupt 0
 	jmp	tempint
-
 int1              ; External interrupt 1
 	jmp	tempint
 int2              ; External interrupt 2

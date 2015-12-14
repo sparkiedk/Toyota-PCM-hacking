@@ -100,13 +100,13 @@
 0054   8004 8B 02 9F    	ld	s, #BISSTACK
 0055   8007 2E          	mov	s, x
 0056   8008 0A 02 31    	st	x, userSP	;init user SP to avoid terrible run-without-sp failures.
-0057   800B 01 83 8C    	jsr	init_serial
+0057   800B 01 83 C8    	jsr	init_serial
 0058   800E             	
 0059   800E             	
 0060   800E             
 0061   800E             bison:
-0062   800E 8E 80 A7    	ld	x, #welcome
-0063   8011 01 83 AB    	jsr	putstr
+0062   800E 8E 80 B1    	ld	x, #welcome
+0063   8011 01 83 FC    	jsr	putstr
 0064   8014             
 0065   8014             main:	
 0066   8014 52          	clr	a
@@ -119,15 +119,15 @@
 0073   8020 8E 02 05    	ld	x, #inputstring
 0074   8023             
 0075   8023 CA 0D       	ld	a, #13	;CR
-0076   8025 01 83 93    	jsr	putch
+0076   8025 01 83 CF    	jsr	putch
 0077   8028             
 0078   8028 CA 0A       	ld	a, #10	;LF
-0079   802A 01 83 93    	jsr	putch
+0079   802A 01 83 CF    	jsr	putch
 0080   802D             
 0081   802D CA 3E       	ld	a, #'>'
-0082   802F 01 83 93    	jsr	putch
+0082   802F 01 83 CF    	jsr	putch
 0083   8032             prompt:
-0084   8032 01 83 A2    	jsr	rxch	;get a character from the serial port, return in A
+0084   8032 01 83 DE    	jsr	rxch	;get a character from the serial port, return in A
 0085   8035 A2 00       	st	a, x+0		;store inputted byte. should we check for validity here? maybe
 0086   8037 1C          	inc 	x
 0087   8038             
@@ -135,11 +135,11 @@
 0089   803B 47 D7       	beq	main
 0090   803D             
 0091   803D             	;ld	a, x+0		;test to make sure ram was written correctly.
-0092   803D 01 83 93    	jsr	putch		;echo inputted char
+0092   803D 01 83 CF    	jsr	putch		;echo inputted char
 0093   8040 CC 0D       	cmp	a, #13	
 0094   8042 46 EE       	bne	prompt		;test for CR, return to prompt for more if not.
 0095   8044 CA 0A       	ld	a, #10		;putch a linefeed to improve formatting
-0096   8046 01 83 93    	jsr	putch
+0096   8046 01 83 CF    	jsr	putch
 0097   8049             ;currently not handling LF's. dont use them.
 0098   8049             ;run command against dictionary (include whitespace)
 0099   8049             checkcmd:
@@ -171,698 +171,780 @@
 0125   806A 40 E0       	bra	checknext
 0126   806C             
 0127   806C             cmderr:
-0128   806C 8E 80 BA    	ld	x, #cmderrmsg
-0129   806F 01 83 AB    	jsr	putstr
+0128   806C 8E 80 C4    	ld	x, #cmderrmsg
+0129   806F 01 83 FC    	jsr	putstr
 0130   8072 40 A0       	bra	main
 0131   8074             
 0132   8074             ;dictionary uses fixed record length of 10 bytes for simplicity
 0133   8074             dictionary:
 0134   8074 52 55 4E 20 	.TEXT	"RUN XXXX"		;run starting at addr
 0134   8078 58 58 58 58 
-0135   807C 80 C2       	.dw	run_handler	
+0135   807C 80 CC       	.dw	run_handler	
 0136   807E             
 0137   807E 4C 4F 41 44 	.TEXT	"LOAD XXX"		;load data from addr (use timeout), insert automatic triple NMI at end
 0137   8082 20 58 58 58 
-0138   8086 80 F9       	.dw	load_handler	
+0138   8086 81 03       	.dw	load_handler	
 0139   8088             
 0140   8088 44 49 53 50 	.TEXT	"DISP XXX"		;display data from addr to addr
 0140   808C 20 58 58 58 
-0141   8090 81 0A       	.dw	disp_handler	
+0141   8090 81 2F       	.dw	disp_handler	
 0142   8092             
 0143   8092 53 45 54 20 	.TEXT	"SET XXXX"		;set: preps user core registers. use SET A 55, set X 1234, set CCR 01. no PC 
 0143   8096 58 58 58 58 
-0144   809A 81 56       	.dw	set_handler	
+0144   809A 81 7B       	.dw	set_handler	
 0145   809C             
-0146   809C 54 45 53 54 	.TEXT	"TEST XXX"
-0146   80A0 20 58 58 58 
-0147   80A4 81 D9       	.dw	test_code
+0146   809C 54 57 45 41 	.TEXT	"TWEAK XX"		;tweak allows the user to modify a memory location with human readable hex input
+0146   80A0 4B 20 58 58 
+0147   80A4 81 FE       	.dw	tweak_code		;TWEAK ADDR VALUE
 0148   80A6             
-0149   80A6 00          	.db	0			;null byte in text field signals end of dictionary. yay flexibility.
-0150   80A7             
-0151   80A7             welcome
-0152   80A7 42 49 53 4F 	.text	"BISON Bootloader\r\n"
-0152   80AB 4E 20 42 6F 
-0152   80AF 6F 74 6C 6F 
-0152   80B3 61 64 65 72 
-0152   80B7 0D 0A 
-0153   80B9 00          	.db	0
-0154   80BA             cmderrmsg
-0155   80BA 6E 6F 70 65 	.text	"nope!\r\n"
-0155   80BE 21 0D 0A 
-0156   80C1 00          	.db	0
-0157   80C2             	
-0158   80C2             
-0159   80C2             
-0160   80C2             ;==========================================================================Handlers
-0161   80C2             run_handler:
-0162   80C2 8E 80 E4    	ld	x, #runmsg	
-0163   80C5 01 83 AB    	jsr	putstr
-0164   80C8 8E 02 09    	ld	x, #inputstring+4
-0165   80CB 01 82 33    	jsr	str2int
-0166   80CE              ;prepare the user environment
-0167   80CE BB 02 31    	ld	s, userSP	;danger zone!!
-0168   80D1 B6 02 00    	ld	d, i2sreg	;get PC
-0169   80D4 68          	push 	d
-0170   80D5 B6 02 2A    	ld	d,userD		;get used D whether it's used or not
-0171   80D8 68          	push	d
-0172   80D9 FA 02 30    	ld	a, userCCR	;get CCR ...
-0173   80DC 6C          	push	a
-0174   80DD BE 02 2C    	ld	x, userX
-0175   80E0 BF 02 2E    	ld	y, userY
-0176   80E3             	
-0177   80E3 73          	reti			;reti will pull registers from the stack and execute the PC at the bottom
-0178   80E4             
-0179   80E4             runmsg
-0180   80E4 4F 68 20 6E 	.text	"Oh no, here we go!\r\n"
-0180   80E8 6F 2C 20 68 
-0180   80EC 65 72 65 20 
-0180   80F0 77 65 20 67 
-0180   80F4 6F 21 0D 0A 
-0181   80F8 00          	.db	0
-0182   80F9             
-0183   80F9             load_handler:
-0184   80F9 8E 81 02    	ld	x, #loadmsg	;placeholder for real work
-0185   80FC 01 83 AB    	jsr	putstr
-0186   80FF 03 80 14    	jmp	main
-0187   8102             loadmsg
-0188   8102 6C 6F 61 64 	.text	"load!\r\n"
-0188   8106 21 0D 0A 
-0189   8109 00          	.db	0
-0190   810A             
-0191   810A             
-0192   810A             disp_handler:
-0193   810A 8E 02 0A    	ld	x, #inputstring+5	;first number
-0194   810D 01 82 33    	jsr 	str2int
-0195   8110 B6 02 00    	ld	d, i2sreg
-0196   8113 BA 02 26    	st	d, dispr1	;start pointer
-0197   8116 8E 02 0F    	ld	x, #inputstring+10	;second number
-0198   8119 01 82 33    	jsr 	str2int
-0199   811C B6 02 00    	ld	d, i2sreg
-0200   811F 87 00 01    	add	d, #1
-0201   8122 BA 02 28    	st	d, dispr2
-0202   8125             
-0203   8125             
-0204   8125 BF 02 26    	ld	y, dispr1	;maybe store it here always, instead of reg?
-0205   8128             readout:
-0206   8128 EA 80       	ld	a, y+0
-0207   812A 01 82 05    	jsr	char2str
-0208   812D FA 02 00    	ld	a, i2sreg
-0209   8130 01 83 93    	jsr	putch
-0210   8133 FA 02 01    	ld	a, i2sreg+1
-0211   8136 01 83 93    	jsr	putch
-0212   8139 CA 20       	ld	a, #' '
-0213   813B 01 83 93    	jsr	putch
-0214   813E 1D          	inc	y
-0215   813F 3D          	mov	y, d
-0216   8140 C3 0F       	and 	b, #$0F
-0217   8142 46 0A       	bne 	displimit
-0218   8144 CA 0D       	ld	a, #13
-0219   8146 01 83 93    	jsr	putch
-0220   8149 CA 0A       	ld	a, #10
-0221   814B 01 83 93    	jsr	putch
-0222   814E             displimit:
-0223   814E BD 02 28    	cmp	y, dispr2
-0224   8151 46 D5       	bne	readout
-0225   8153 03 80 14    	jmp	main
-0226   8156             
-0227   8156             
-0228   8156             ;set commands: set d abcd / set x abcd / set y abcd / set s abcd / set c ab
-0229   8156             set_handler:
-0230   8156 8E 02 05    	ld	x, #inputstring
-0231   8159 EA 04       	ld	a, x+4	;location of character after space
-0232   815B CC 44       	cmp	a, #'D'
-0233   815D 47 12       	beq	setd
-0234   815F CC 58       	cmp	a, #'X'
-0235   8161 47 1D       	beq	setx
-0236   8163 CC 59       	cmp	a, #'Y'
-0237   8165 47 28       	beq	sety
-0238   8167 CC 53       	cmp	a, #'S'
-0239   8169 47 33       	beq	setsp
-0240   816B CC 43       	cmp	a, #'C'
-0241   816D 47 3E       	beq	setccr
-0242   816F 40 4B       	bra	seterr
-0243   8171             setd:
-0244   8171 8E 02 0B    	ld	x, #inputstring+6	;address of the number data
-0245   8174 01 82 33    	jsr	str2int
-0246   8177 B6 02 00    	ld	d, i2sreg
-0247   817A BA 02 2A    	st	d, userD
-0248   817D 03 80 14    	jmp	main
-0249   8180             
-0250   8180             setx:
-0251   8180 8E 02 0B    	ld	x, #inputstring+6	;address of the number data
-0252   8183 01 82 33    	jsr	str2int
-0253   8186 B6 02 00    	ld	d, i2sreg
-0254   8189 BA 02 2C    	st	d, userX
-0255   818C 03 80 14    	jmp	main
-0256   818F             sety:
-0257   818F 8E 02 0B    	ld	x, #inputstring+6	;address of the number data
-0258   8192 01 82 33    	jsr	str2int
-0259   8195 B6 02 00    	ld	d, i2sreg
-0260   8198 BA 02 2E    	st	d, userY
-0261   819B 03 80 14    	jmp	main
-0262   819E             setsp:
-0263   819E 8E 02 0B    	ld	x, #inputstring+6	;address of the number data
-0264   81A1 01 82 33    	jsr	str2int
-0265   81A4 B6 02 00    	ld	d, i2sreg
-0266   81A7 BA 02 31    	st	d, userSP
-0267   81AA 03 80 14    	jmp	main
-0268   81AD             setccr:
-0269   81AD 8E 02 0B    	ld	x, #inputstring+6	;address of the number data
-0270   81B0 01 82 54    	jsr	str2char
-0271   81B3 FA 02 00    	ld	a, i2sreg
-0272   81B6 B2 02 30    	st	a, userCCR
-0273   81B9 03 80 14    	jmp	main
-0274   81BC             
-0275   81BC             seterr:
-0276   81BC 8E 81 C5    	ld	x, #setmsg	
-0277   81BF 01 83 AB    	jsr	putstr
-0278   81C2             
-0279   81C2             
-0280   81C2 03 80 14    	jmp	main
-0281   81C5             setmsg
-0282   81C5 0D 0A 69 6E 	.text	"\r\ninvalid command\r\n"
-0282   81C9 76 61 6C 69 
-0282   81CD 64 20 63 6F 
-0282   81D1 6D 6D 61 6E 
-0282   81D5 64 0D 0A 
-0283   81D8 00          	.db	0
-0284   81D9             
-0285   81D9             
-0286   81D9             test_code:
-0287   81D9             
-0288   81D9 86 AB CD    	ld	d, #$0ABCD
-0289   81DC 8E 12 34    	ld	x, #$1234
-0290   81DF 8F 56 78    	ld	Y, #$5678
-0291   81E2 8B 02 9F    	ld	s, #BISSTACK
-0292   81E5 5F          	nmi	
-0293   81E6             
-0294   81E6 03 80 14    	jmp 	main
-0295   81E9             
-0296   81E9             
-0297   81E9             ;======================================================================subs
-0298   81E9             
-0299   81E9             
-0300   81E9             ;=================
-0301   81E9             ;==int to string==
-0302   81E9             ;=================
-0303   81E9             ;returns 16b input integer in D as 4 byte ascii in i2sreg
-0304   81E9             ;char2str returns unsigned char in A as 2 bye ascii in i2sreg
-0305   81E9             
-0306   81E9             int2str:
-0307   81E9 6D          	push 	b
-0308   81EA C3 0F       	and	b, #$0F
-0309   81EC 8E 82 23    	ld	x, #i2sdata
-0310   81EF 0E          	add	x, b
-0311   81F0 EB 00       	ld	b, x+0
-0312   81F2 B3 02 03    	st	b, i2sreg+3	;write LSB-LSN
-0313   81F5             
-0314   81F5 7D          	pull	b
-0315   81F6 11          	shr	b
-0316   81F7 11          	shr	b
-0317   81F8 11          	shr	b
-0318   81F9 11          	shr	b
-0319   81FA C3 0F       	and	b, #$0F
-0320   81FC 8E 82 23    	ld	x, #i2sdata
-0321   81FF 0E          	add	x, b
-0322   8200 EB 00       	ld	b, x+0
-0323   8202 B3 02 02    	st	b, i2sreg+2	;write LSB-MSN
-0324   8205             	
-0325   8205             char2str:
-0326   8205 5B          	mov	a, b		;work with MSB
-0327   8206 6D          	push 	b
-0328   8207 C3 0F       	and	b, #$0F
-0329   8209 8E 82 23    	ld	x, #i2sdata
-0330   820C 0E          	add	x, b
-0331   820D EB 00       	ld	b, x+0
-0332   820F B3 02 01    	st	b, i2sreg+1	;write LSB-LSN
-0333   8212             	
-0334   8212 7D          	pull	b
-0335   8213 11          	shr	b
-0336   8214 11          	shr	b
-0337   8215 11          	shr	b
-0338   8216 11          	shr	b
-0339   8217 C3 0F       	and	b, #$0F
-0340   8219 8E 82 23    	ld	x, #i2sdata
-0341   821C 0E          	add	x, b
-0342   821D EB 00       	ld	b, x+0
-0343   821F B3 02 00    	st	b, i2sreg	;write LSB-MSN
-0344   8222             
-0345   8222             	
-0346   8222 63          	ret			;end of function
-0347   8223             
-0348   8223             
-0349   8223             i2sdata			;start of function data
-0350   8223 30          	.db	'0'
-0351   8224 31          	.db	'1'
-0352   8225 32          	.db	'2'
-0353   8226 33          	.db	'3'
-0354   8227 34          	.db	'4'
-0355   8228 35          	.db	'5'
-0356   8229 36          	.db	'6'
-0357   822A 37          	.db	'7'
-0358   822B 38          	.db	'8'
-0359   822C 39          	.db	'9'
-0360   822D 41          	.db	'A'
-0361   822E 42          	.db	'B'
-0362   822F 43          	.db	'C'
-0363   8230 44          	.db	'D'
-0364   8231 45          	.db	'E'
-0365   8232 46          	.db	'F'	;end of function data
-0366   8233             
-0367   8233             ;===========================================================
-0368   8233             ;str2int accepts 4 byte string in X which is a hex representation of an integer
-0369   8233             ;str2char accepts a 2 byte string in X which is a hex representation of a char.
-0370   8233             
-0371   8233             str2int:
-0372   8233             
-0373   8233 EA 03       	ld	a, x+3
-0374   8235 C4 30       	sub	a, #$30
-0375   8237 CC 09       	cmp	a, #9
-0376   8239 43 02       	ble	getgoodLL
-0377   823B C4 07       	sub	a, #7
-0378   823D             getgoodLL:
-0379   823D B2 02 01    	st	a, i2sreg+1	;write out LSB-LSN
-0380   8240             
-0381   8240 EA 02       	ld	a, x+2	
-0382   8242 C4 30       	sub	a, #$30
-0383   8244 CC 09       	cmp	a, #9
-0384   8246 43 02       	ble	getgoodLH
-0385   8248 C4 07       	sub	a, #7
-0386   824A             getgoodLH:
-0387   824A 12          	shl	a
-0388   824B 12          	shl	a
-0389   824C 12          	shl	a
-0390   824D 12          	shl	a
-0391   824E F0 02 01    	add	a, i2sreg+1	;add LSN
-0392   8251 B2 02 01    	st	a, i2sreg+1	;write out complete LSB
-0393   8254             
-0394   8254             str2char:
-0395   8254 EA 01       	ld	a, x+1
-0396   8256 C4 30       	sub	a, #$30
-0397   8258 CC 09       	cmp	a, #9
-0398   825A 43 02       	ble	getgoodHL
-0399   825C C4 07       	sub	a, #7
-0400   825E             getgoodHL:
-0401   825E B2 02 00    	st	a, i2sreg	;write out MSB-LSN
-0402   8261             
-0403   8261 EA 00       	ld	a, x+0	
-0404   8263 C4 30       	sub	a, #$30
-0405   8265 CC 09       	cmp	a, #9
-0406   8267 43 02       	ble	getgoodHH
-0407   8269 C4 07       	sub	a, #7
-0408   826B             getgoodHH:
-0409   826B 12          	shl	a
-0410   826C 12          	shl	a
-0411   826D 12          	shl	a
-0412   826E 12          	shl	a
-0413   826F F0 02 00    	add	a, i2sreg	;add LSN
-0414   8272 B2 02 00    	st	a, i2sreg	;write out complete MSB
-0415   8275             	
-0416   8275 63          	ret	;most glorious, never omit
-0417   8276             
-0418   8276             
-0419   8276             ;====================================================interrupts
-0420   8276             ;NMI ISR code to capture data
-0421   8276             __NMI:
-0422   8276 0A 02 2C    	st	x, userX
-0423   8279 69          	xch	x,y		;there's no [st y,extended] on this chip
-0424   827A 0A 02 2E    	st	x, userY
-0425   827D             
-0426   827D 7C          	pull	a		;recover users CCR from stack
-0427   827E B2 02 30    	st	a, userCCR
-0428   8281 78          	pull	d		;recover users D from stack
-0429   8282 BA 02 2A    	st	d, userD
-0430   8285 78          	pull	d		;recover users PC from stack
-0431   8286 BA 02 33    	st	d, userPC
-0432   8289             
-0433   8289 2E          	mov	s, x		;stack should now point to where it pointed before NMI was called
-0434   828A 0A 02 31    	st	x, userSP	;store sp. note that this points to last byte ON stack, not next free byte.
-0435   828D             
-0436   828D 8B 02 9F    	ld	s, #BISSTACK	
-0437   8290 53          	clr	b
-0438   8291 B3 02 04    	st	b, i2sreg+4	;null terminator for 4 byte strings
-0439   8294             
-0440   8294             	;warn NMI called, print out data structure and return control to the main bison loop
-0441   8294 8E 83 21    	ld	x, #nmwarn
-0442   8297 01 83 AB    	jsr	putstr
-0443   829A 8E 83 30    	ld	x, #nmuserd
-0444   829D 01 83 AB    	jsr	putstr
-0445   82A0 B6 02 2A    	ld	d, userD
-0446   82A3 01 81 E9    	jsr	int2str
-0447   82A6 8E 02 00    	ld	x, #i2sreg
-0448   82A9 01 83 AB    	jsr	putstr
-0449   82AC             
-0450   82AC 8E 83 37    	ld	x, #nmuserx
-0451   82AF 01 83 AB    	jsr	putstr
-0452   82B2 B6 02 2C    	ld	d, userX
-0453   82B5 01 81 E9    	jsr	int2str
-0454   82B8 8E 02 00    	ld	x, #i2sreg
-0455   82BB 01 83 AB    	jsr	putstr
-0456   82BE             
-0457   82BE 8E 83 3E    	ld	x, #nmusery
-0458   82C1 01 83 AB    	jsr	putstr
-0459   82C4 B6 02 2E    	ld	d, userY
-0460   82C7 01 81 E9    	jsr	int2str
-0461   82CA 8E 02 00    	ld	x, #i2sreg
-0462   82CD 01 83 AB    	jsr	putstr
-0463   82D0             
-0464   82D0 8E 83 53    	ld	x, #nmusersp
-0465   82D3 01 83 AB    	jsr	putstr
-0466   82D6 B6 02 31    	ld	d, userSP
-0467   82D9 01 81 E9    	jsr	int2str
-0468   82DC 8E 02 00    	ld	x, #i2sreg
-0469   82DF 01 83 AB    	jsr	putstr
-0470   82E2             
-0471   82E2 8E 83 4C    	ld	x, #nmuserpc
-0472   82E5 01 83 AB    	jsr	putstr
-0473   82E8 B6 02 33    	ld	d, userPC
-0474   82EB 01 81 E9    	jsr	int2str
-0475   82EE 8E 02 00    	ld	x, #i2sreg
-0476   82F1 01 83 AB    	jsr	putstr
-0477   82F4             
-0478   82F4 8E 83 45    	ld	x, #nmuserccr
-0479   82F7 01 83 AB    	jsr	putstr
-0480   82FA B6 02 30    	ld	d, userCCR
-0481   82FD 01 82 05    	jsr	char2str
-0482   8300 53          	clr	b
-0483   8301 B3 02 02    	st	b, i2sreg+2	;null terminate
-0484   8304 8E 02 00    	ld	x, #i2sreg
-0485   8307 01 83 AB    	jsr	putstr
-0486   830A             
-0487   830A CA 0D       	ld	a, #13	;CR
-0488   830C 01 83 93    	jsr	putch
-0489   830F CA 0A       	ld	a, #10	;LF
-0490   8311 01 83 93    	jsr	putch
-0491   8314 CA 0D       	ld	a, #13	;CR
-0492   8316 01 83 93    	jsr	putch
-0493   8319             
-0494   8319 CA 0A       	ld	a, #10	;LF
-0495   831B 01 83 93    	jsr	putch
-0496   831E             
-0497   831E             
-0498   831E             
-0499   831E             	;service NMI interrupt bit, disable interrupts?
-0500   831E             
-0501   831E 03 80 0E    	jmp	bison		;return control to main loop
-0502   8321             
-0503   8321             nmwarn
-0504   8321 0D 0A 20 42 	.text	"\r\n BISON NMI\r\n"
-0504   8325 49 53 4F 4E 
-0504   8329 20 4E 4D 49 
-0504   832D 0D 0A 
-0505   832F 00          	.db	0
-0506   8330             nmuserd
-0507   8330 0D 0A 20 20 	.text	"\r\n  D:"
-0507   8334 44 3A 
-0508   8336 00          	.db	0
-0509   8337             nmuserx
-0510   8337 0D 0A 20 20 	.text	"\r\n  X:"
-0510   833B 58 3A 
-0511   833D 00          	.db	0
-0512   833E             
-0513   833E             nmusery
-0514   833E 0D 0A 20 20 	.text	"\r\n  Y:"
-0514   8342 59 3A 
-0515   8344 00          	.db	0
-0516   8345             
-0517   8345             nmuserccr
-0518   8345 0D 0A 43 43 	.text	"\r\nCCR:"
-0518   8349 52 3A 
-0519   834B 00          	.db	0
-0520   834C             
-0521   834C             nmuserpc
-0522   834C 0D 0A 20 50 	.text	"\r\n PC:"
-0522   8350 43 3A 
-0523   8352 00          	.db	0
-0524   8353             
-0525   8353             nmusersp
-0526   8353 0D 0A 20 53 	.text	"\r\n SP:"
-0526   8357 50 3A 
-0527   8359 00          	.db	0
-0528   835A             
-0529   835A             .include 	bison_int.asm
-0001+  835A             ;interrupt handlers:
-0002+  835A             ;branch to designated ram to handle interrupt
-0003+  835A             ;ram should be initialized with NMI so enabled+unhandled interrupt returns to BISON
-0004+  835A             
-0005+  835A             int0              ; External interrupt 0
-0006+  835A 03 83 87    	jmp	tempint
-0007+  835D             
-0008+  835D             int1              ; External interrupt 1
-0009+  835D 03 83 87    	jmp	tempint
-0010+  8360             int2              ; External interrupt 2
-0011+  8360 03 83 87    	jmp	tempint
-0012+  8363             int3              ; External interrupt 3
-0013+  8363 03 83 87    	jmp	tempint
-0014+  8366             int4              ; External interrupt 4
-0015+  8366 03 83 87    	jmp	tempint
-0016+  8369             int5              ; External interrupt 5
-0017+  8369 03 83 87    	jmp	tempint
-0018+  836C             int6              ; External interrupt 6
-0019+  836C 03 83 87    	jmp	tempint
-0020+  836F             int7              ; Compare 1
-0021+  836F 03 83 87    	jmp	tempint
-0022+  8372             int8              ; Compare 2
-0023+  8372 03 83 87    	jmp	tempint
-0024+  8375             int9              ; Compare 0
-0025+  8375 03 83 87    	jmp	tempint
-0026+  8378             inta              ; Compare 3
-0027+  8378 03 83 87    	jmp	tempint
-0028+  837B             intb              ; Timer overflow
-0029+  837B 03 83 87    	jmp	tempint
-0030+  837E             intc              ; External interrupt c
-0031+  837E 03 83 87    	jmp	tempint
-0032+  8381             intd              ; External interrupt d
-0033+  8381 03 83 87    	jmp	tempint
-0034+  8384             inte              ; External interrupt e
-0035+  8384 03 83 87    	jmp	tempint
-0036+  8387             
-0037+  8387             tempint
-0038+  8387 72 2C       	clr	_IRQL	;tidy flags
-0039+  8389 72 2D       	clr	_IRQLL	;tidy flags
-0040+  838B 5F          	nmi
-0530   838C             .include	serial.asm
-0001+  838C             ;serial routines for different ports.
-0002+  838C             ;ftdi maintains the watchdog.
-0003+  838C             
-0004+  838C             
-0005+  838C             ;denso serial routines
-0006+  838C             
-0007+  838C             #IFDEF DSERIAL
-0008+  838C             init_serial:
-0009+  838C             
-0010+  838C 33 0F 07    	ld    	#0Fh, _SMRC_SIR	; set SMRC cintrol reg to 0001 0000
-0011+  838F 33 0C 2B    	ld	#0Ch,_SSD
-0012+  8392 63          	ret
-0013+  8393             
-0014+  8393             
-0015+  8393             
-0016+  8393             
-0017+  8393             ;=========================================================================putch
-0018+  8393             ; PUTCH: wait until not full, drop char in A onto the serial port and wait until not full
-0019+  8393             putch	
-0020+  8393 DB 2B       	ld    	b, _SSD		; load serial status data reg into b
-0021+  8395 C3 20       	and   	b, #$20		; mask (bit 5)  0010 0000
-0022+  8397 47 FA       	beq   	putch		; loop until bit 6 set
-0023+  8399 92 06       	st	a,_SIDR_SODR
-0024+  839B DB 2B       pwait	ld    	b, _SSD		; load serial status data reg into b
-0025+  839D C3 20       	and   	b, #$20		; mask (bit 5)  0010 0000
-0026+  839F 47 FA       	beq   	pwait		; loop until bit 6 set
-0027+  83A1 63          	ret
-0028+  83A2             
-0029+  83A2             ;=========================================================================rxch
-0030+  83A2             ; RXCH: wait until a charachter is available on the serial port, then 
-0031+  83A2             ;load the charachter into A
-0032+  83A2             
-0033+  83A2             rxch
-0034+  83A2 DB 2B       	ld	b, _SSD		;check for receive data from serial port
-0035+  83A4 C3 80       	and	b, #080h	;need to handle errors as well.
-0036+  83A6 47 FA       	beq	rxch		;bit is high when empty
-0037+  83A8 DA 06       	ld	a, _SIDR_SODR
-0038+  83AA 63          	ret
-0039+  83AB             
-0040+  83AB             
-0041+  83AB             #ENDIF
-0042+  83AB             
-0043+  83AB             ;\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
-0044+  83AB             
-0045+  83AB             ;FTDI bus to USB routines
-0046+  83AB~            #IFDEF FTSERIAL
-0047+  83AB~            
-0048+  83AB~            init_serial:
-0049+  83AB~            
-0050+  83AB~            	ld	a, #01h		;set A0 output for watchdog
-0051+  83AB~            	st	a, _DDRA	;set A0 output for watchdog
-0052+  83AB~            	ret
-0053+  83AB~            
-0054+  83AB~            ;=========================================================================putch
-0055+  83AB~            ; PUTCH: wait until not full, drop a char onto the serial port and wait until not full
-0056+  83AB~            
-0057+  83AB~            putch	ld    	b, _FTSTAT	; load serial status data reg into b
-0058+  83AB~            	and   	b, #02h		; mask (bit 1)  0000 0020
-0059+  83AB~            	bne   	putch		; loop until bit 2 clear, bit is high when tx buffer is full
-0060+  83AB~            	st	a, _FTDATA
-0061+  83AB~            pwait	ld    	b, _FTSTAT	; load serial status data reg into b
-0062+  83AB~            	and   	b, #02h		; mask (bit 1)  0010 0000
-0063+  83AB~            	bne   	pwait		; loop until bit 2 clear
-0064+  83AB~            	ret
-0065+  83AB~            
-0066+  83AB~            
-0067+  83AB~            ;=========================================================================rxch
-0068+  83AB~            ; RXCH: wait until a charachter is available on the serial port, then load the charachter
-0069+  83AB~            
-0070+  83AB~            rxch	bsr	wchdog
-0071+  83AB~            	ld	a, _FTSTAT
-0072+  83AB~            	and	a, #01h		;mask bit 00000 0001
-0073+  83AB~            	bne	rxch		;bit is high when empty
-0074+  83AB~            	ld	a, _FTDATA
-0075+  83AB~            	ret
-0076+  83AB~            
-0077+  83AB             #ENDIF
-0078+  83AB             
-0079+  83AB             ;GLOBAL SUBS-----------------------------------------------------------------
-0080+  83AB             
-0081+  83AB             ;=========================================================================putstr
-0082+  83AB             ; PUTSTR: put charchters from a string variable until a null (\000) is encountered
-0083+  83AB             ; uses putch
-0084+  83AB             
-0085+  83AB EA 00       putstr 	ld	a, x+0
-0086+  83AD 47 05       	beq	endstr
-0087+  83AF 61 E2       	bsr	putch
-0088+  83B1 1C          	inc	x
-0089+  83B2             
-0090+  83B2~            #IFDEF FTSERIAL
-0091+  83B2~            	bsr	wchdog
-0092+  83B2             #ENDIF
-0093+  83B2             
-0094+  83B2 40 F7       	bra 	putstr
-0095+  83B4 63          endstr	ret
-0096+  83B5             
-0097+  83B5             
-0098+  83B5             ;=========================================================================wchdog
-0099+  83B5 DA 20       wchdog	ld	a, _PORTA	;watchdog
-0100+  83B7 C8 01       	xor	a, #01h
-0101+  83B9 92 20       	st	a, _PORTA	;watchdog
-0102+  83BB 63          	ret
-0103+  83BC             
-0104+  83BC             
-0531   83BC             
-0532   D000             .org 0D000h
-0533   D000             
-0534   D000 8E D0 10    	ld	x, #testprog
-0535   D003 01 83 AB    	jsr	putstr
-0536   D006             	
-0537   D006 5F          	nmi
-0538   D007 67          	setc
-0539   D008 5F          	nmi
-0540   D009 27          	setv
-0541   D00A 5F          	nmi
-0542   D00B CA 80       	ld	a, #128
-0543   D00D 5F          	nmi
-0544   D00E 52          	clr	a
-0545   D00F 5F          	nmi
-0546   D010             
-0547   D010             testprog
-0548   D010 0D 0A 74 65 	.text 	"\r\ntestland!\r\n"
-0548   D014 73 74 6C 61 
-0548   D018 6E 64 21 0D 
-0548   D01C 0A 
-0549   D01D 00          	.db	0
-0550   D01E             
-0551   D01E             ;=============================================================
-0552   FFDE             .org 0ffdeh
-0553   FFDE 83 5A       IV0:            .dw int0              ; External interrupt 0
-0554   FFE0 83 5D       IV1:            .dw int1              ; External interrupt 1
-0555   FFE2 83 60       IV2:            .dw int2              ; External interrupt 2
-0556   FFE4 83 63       IV3:            .dw int3              ; External interrupt 3
-0557   FFE6 83 66       IV4:            .dw int4              ; External interrupt 4
-0558   FFE8 83 69       IV5:            .dw int5              ; External interrupt 5
-0559   FFEA 83 6C       IV6:            .dw int6              ; External interrupt 6
-0560   FFEC 83 6F       IV7:            .dw int7              ;Compare 1
-0561   FFEE 83 72       IV8:            .dw int8              ;Compare 2
-0562   FFF0 83 75       IV9:            .dw int9              ;Compare 0
-0563   FFF2 83 78       IVa:            .dw inta              ;Compare 3
-0564   FFF4 83 7B       IVb:            .dw intb              ;Timer overflow
-0565   FFF6 83 7E       IVc:            .dw intc              ; External interrupt c
-0566   FFF8 83 81       IVd:            .dw intd              ; External interrupt d
-0567   FFFA 83 84       IVe:            .dw inte              ; External interrupt e
-0568   FFFC 82 76       IVf:            .dw __NMI             ; Non-Maskable Interrupt
-0569   FFFE 80 00       RESET:		.dw reset             ; Processor reset
-0570   10000             
-0571   10000             ;==========================
-0572   10000             ;==========================
-0573   10000             ;=======Most Glorious======
-0574   10000             	    .END
-0575   10000             ;========Never Omit========
-0576   10000             ;==========================
-0577   10000             ;==========================
+0149   80A6 54 45 53 54 	.TEXT	"TEST XXX"		;test cell for testing bison development stuff
+0149   80AA 20 58 58 58 
+0150   80AE 82 15       	.dw	test_code
+0151   80B0             
+0152   80B0 00          	.db	0			;null byte in text field signals end of dictionary. yay flexibility.
+0153   80B1             
+0154   80B1             welcome
+0155   80B1 42 49 53 4F 	.text	"BISON Bootloader\r\n"
+0155   80B5 4E 20 42 6F 
+0155   80B9 6F 74 6C 6F 
+0155   80BD 61 64 65 72 
+0155   80C1 0D 0A 
+0156   80C3 00          	.db	0
+0157   80C4             cmderrmsg
+0158   80C4 6E 6F 70 65 	.text	"nope!\r\n"
+0158   80C8 21 0D 0A 
+0159   80CB 00          	.db	0
+0160   80CC             	
+0161   80CC             
+0162   80CC             
+0163   80CC             ;==========================================================================Handlers
+0164   80CC             run_handler:
+0165   80CC 8E 80 EE    	ld	x, #runmsg	
+0166   80CF 01 83 FC    	jsr	putstr
+0167   80D2 8E 02 09    	ld	x, #inputstring+4
+0168   80D5 01 82 6F    	jsr	str2int
+0169   80D8              ;prepare the user environment
+0170   80D8 BB 02 31    	ld	s, userSP	;danger zone!!
+0171   80DB B6 02 00    	ld	d, i2sreg	;get PC
+0172   80DE 68          	push 	d
+0173   80DF B6 02 2A    	ld	d,userD		;get used D whether it's used or not
+0174   80E2 68          	push	d
+0175   80E3 FA 02 30    	ld	a, userCCR	;get CCR ...
+0176   80E6 6C          	push	a
+0177   80E7 BE 02 2C    	ld	x, userX
+0178   80EA BF 02 2E    	ld	y, userY
+0179   80ED             	
+0180   80ED 73          	reti			;reti will pull registers from the stack and execute the PC at the bottom
+0181   80EE             
+0182   80EE             runmsg
+0183   80EE 4F 68 20 6E 	.text	"Oh no, here we go!\r\n"
+0183   80F2 6F 2C 20 68 
+0183   80F6 65 72 65 20 
+0183   80FA 77 65 20 67 
+0183   80FE 6F 21 0D 0A 
+0184   8102 00          	.db	0
+0185   8103             
+0186   8103             load_handler:
+0187   8103 8E 81 27    	ld	x, #loadmsg	;placeholder for real work
+0188   8106 01 83 FC    	jsr	putstr
+0189   8109 8E 02 0A    	ld	x, #inputstring+5	;load first byte address
+0190   810C 01 82 6F    	jsr 	str2int
+0191   810F BF 02 00    	ld	y, i2sreg
+0192   8112             
+0193   8112 01 83 E7    firstb	jsr	rxbyte		;rxbyte will time out many times until the user gets data flowing
+0194   8115 45 FB       	bcs	firstb		;silently eat timeouts until first byte is done
+0195   8117 82          	st	a, [y]		;postincrement only works with y
+0196   8118             
+0197   8118 01 83 E7    restb	jsr	rxbyte
+0198   811B 82          	st	a, [y]
+0199   811C 44 FA       	bcc	restb
+0200   811E             	
+0201   811E 1F          	dec	y	;finally done
+0202   811F CA 5F       	ld	a, #$5F	;nmi
+0203   8121 82          	st	a, [y]
+0204   8122 82          	st	a, [y]
+0205   8123 82          	st	a, [y]	;triple nmi catches most unhappy endings
+0206   8124             
+0207   8124 03 80 14    	jmp	main	;back to prompt
+0208   8127             
+0209   8127             loadmsg
+0210   8127 6C 6F 61 64 	.text	"load!\r\n"
+0210   812B 21 0D 0A 
+0211   812E 00          	.db	0
+0212   812F             
+0213   812F             
+0214   812F             disp_handler:
+0215   812F 8E 02 0A    	ld	x, #inputstring+5	;first number
+0216   8132 01 82 6F    	jsr 	str2int
+0217   8135 B6 02 00    	ld	d, i2sreg
+0218   8138 BA 02 26    	st	d, dispr1	;start pointer
+0219   813B 8E 02 0F    	ld	x, #inputstring+10	;second number
+0220   813E 01 82 6F    	jsr 	str2int
+0221   8141 B6 02 00    	ld	d, i2sreg
+0222   8144 87 00 01    	add	d, #1
+0223   8147 BA 02 28    	st	d, dispr2
+0224   814A             
+0225   814A             
+0226   814A BF 02 26    	ld	y, dispr1	;maybe store it here always, instead of reg?
+0227   814D             readout:
+0228   814D EA 80       	ld	a, y+0
+0229   814F 01 82 41    	jsr	char2str
+0230   8152 FA 02 00    	ld	a, i2sreg
+0231   8155 01 83 CF    	jsr	putch
+0232   8158 FA 02 01    	ld	a, i2sreg+1
+0233   815B 01 83 CF    	jsr	putch
+0234   815E CA 20       	ld	a, #' '
+0235   8160 01 83 CF    	jsr	putch
+0236   8163 1D          	inc	y
+0237   8164 3D          	mov	y, d
+0238   8165 C3 0F       	and 	b, #$0F
+0239   8167 46 0A       	bne 	displimit
+0240   8169 CA 0D       	ld	a, #13
+0241   816B 01 83 CF    	jsr	putch
+0242   816E CA 0A       	ld	a, #10
+0243   8170 01 83 CF    	jsr	putch
+0244   8173             displimit:
+0245   8173 BD 02 28    	cmp	y, dispr2
+0246   8176 46 D5       	bne	readout
+0247   8178 03 80 14    	jmp	main
+0248   817B             
+0249   817B             
+0250   817B             ;set commands: set d abcd / set x abcd / set y abcd / set s abcd / set c ab
+0251   817B             set_handler:
+0252   817B 8E 02 05    	ld	x, #inputstring
+0253   817E EA 04       	ld	a, x+4	;location of character after space
+0254   8180 CC 44       	cmp	a, #'D'
+0255   8182 47 12       	beq	setd
+0256   8184 CC 58       	cmp	a, #'X'
+0257   8186 47 1D       	beq	setx
+0258   8188 CC 59       	cmp	a, #'Y'
+0259   818A 47 28       	beq	sety
+0260   818C CC 53       	cmp	a, #'S'
+0261   818E 47 33       	beq	setsp
+0262   8190 CC 43       	cmp	a, #'C'
+0263   8192 47 3E       	beq	setccr
+0264   8194 40 4B       	bra	seterr
+0265   8196             setd:
+0266   8196 8E 02 0B    	ld	x, #inputstring+6	;address of the number data
+0267   8199 01 82 6F    	jsr	str2int
+0268   819C B6 02 00    	ld	d, i2sreg
+0269   819F BA 02 2A    	st	d, userD
+0270   81A2 03 80 14    	jmp	main
+0271   81A5             
+0272   81A5             setx:
+0273   81A5 8E 02 0B    	ld	x, #inputstring+6	;address of the number data
+0274   81A8 01 82 6F    	jsr	str2int
+0275   81AB B6 02 00    	ld	d, i2sreg
+0276   81AE BA 02 2C    	st	d, userX
+0277   81B1 03 80 14    	jmp	main
+0278   81B4             sety:
+0279   81B4 8E 02 0B    	ld	x, #inputstring+6	;address of the number data
+0280   81B7 01 82 6F    	jsr	str2int
+0281   81BA B6 02 00    	ld	d, i2sreg
+0282   81BD BA 02 2E    	st	d, userY
+0283   81C0 03 80 14    	jmp	main
+0284   81C3             setsp:
+0285   81C3 8E 02 0B    	ld	x, #inputstring+6	;address of the number data
+0286   81C6 01 82 6F    	jsr	str2int
+0287   81C9 B6 02 00    	ld	d, i2sreg
+0288   81CC BA 02 31    	st	d, userSP
+0289   81CF 03 80 14    	jmp	main
+0290   81D2             setccr:
+0291   81D2 8E 02 0B    	ld	x, #inputstring+6	;address of the number data
+0292   81D5 01 82 90    	jsr	str2char
+0293   81D8 FA 02 00    	ld	a, i2sreg
+0294   81DB B2 02 30    	st	a, userCCR
+0295   81DE 03 80 14    	jmp	main
+0296   81E1             
+0297   81E1             seterr:
+0298   81E1 8E 81 EA    	ld	x, #setmsg	
+0299   81E4 01 83 FC    	jsr	putstr
+0300   81E7             
+0301   81E7             
+0302   81E7 03 80 14    	jmp	main
+0303   81EA             setmsg
+0304   81EA 0D 0A 69 6E 	.text	"\r\ninvalid command\r\n"
+0304   81EE 76 61 6C 69 
+0304   81F2 64 20 63 6F 
+0304   81F6 6D 6D 61 6E 
+0304   81FA 64 0D 0A 
+0305   81FD 00          	.db	0
+0306   81FE             
+0307   81FE             
+0308   81FE             ;TWEAK 006F FF
+0309   81FE             tweak_code:
+0310   81FE 8E 02 0B    	ld	x, #inputstring+6	;address of the address data
+0311   8201 01 82 6F    	jsr	str2int
+0312   8204 BF 02 00    	ld	y, i2sreg		;y now holds address to tweak
+0313   8207             
+0314   8207 8E 02 10    	ld	x, #inputstring+11	;address of tweak data
+0315   820A 01 82 90    	jsr	str2char
+0316   820D FA 02 00    	ld	a, i2sreg		;a now hold enw value for tweak address
+0317   8210             
+0318   8210 A2 80       	st	a, y+0			;tweak it!
+0319   8212             
+0320   8212 03 80 14    	jmp main
+0321   8215             
+0322   8215             
+0323   8215             test_code:
+0324   8215             
+0325   8215 86 AB CD    	ld	d, #$0ABCD
+0326   8218 8E 12 34    	ld	x, #$1234
+0327   821B 8F 56 78    	ld	Y, #$5678
+0328   821E 8B 02 9F    	ld	s, #BISSTACK
+0329   8221 5F          	nmi	
+0330   8222             
+0331   8222 03 80 14    	jmp 	main
+0332   8225             
+0333   8225             
+0334   8225             ;======================================================================subs
+0335   8225             
+0336   8225             
+0337   8225             ;=================
+0338   8225             ;==int to string==
+0339   8225             ;=================
+0340   8225             ;returns 16b input integer in D as 4 byte ascii in i2sreg
+0341   8225             ;char2str returns unsigned char in A as 2 bye ascii in i2sreg
+0342   8225             
+0343   8225             int2str:
+0344   8225 6D          	push 	b
+0345   8226 C3 0F       	and	b, #$0F
+0346   8228 8E 82 5F    	ld	x, #i2sdata
+0347   822B 0E          	add	x, b
+0348   822C EB 00       	ld	b, x+0
+0349   822E B3 02 03    	st	b, i2sreg+3	;write LSB-LSN
+0350   8231             
+0351   8231 7D          	pull	b
+0352   8232 11          	shr	b
+0353   8233 11          	shr	b
+0354   8234 11          	shr	b
+0355   8235 11          	shr	b
+0356   8236 C3 0F       	and	b, #$0F
+0357   8238 8E 82 5F    	ld	x, #i2sdata
+0358   823B 0E          	add	x, b
+0359   823C EB 00       	ld	b, x+0
+0360   823E B3 02 02    	st	b, i2sreg+2	;write LSB-MSN
+0361   8241             	
+0362   8241             char2str:
+0363   8241 5B          	mov	a, b		;work with MSB
+0364   8242 6D          	push 	b
+0365   8243 C3 0F       	and	b, #$0F
+0366   8245 8E 82 5F    	ld	x, #i2sdata
+0367   8248 0E          	add	x, b
+0368   8249 EB 00       	ld	b, x+0
+0369   824B B3 02 01    	st	b, i2sreg+1	;write LSB-LSN
+0370   824E             	
+0371   824E 7D          	pull	b
+0372   824F 11          	shr	b
+0373   8250 11          	shr	b
+0374   8251 11          	shr	b
+0375   8252 11          	shr	b
+0376   8253 C3 0F       	and	b, #$0F
+0377   8255 8E 82 5F    	ld	x, #i2sdata
+0378   8258 0E          	add	x, b
+0379   8259 EB 00       	ld	b, x+0
+0380   825B B3 02 00    	st	b, i2sreg	;write LSB-MSN
+0381   825E             
+0382   825E             	
+0383   825E 63          	ret			;end of function
+0384   825F             
+0385   825F             
+0386   825F             i2sdata			;start of function data
+0387   825F 30          	.db	'0'
+0388   8260 31          	.db	'1'
+0389   8261 32          	.db	'2'
+0390   8262 33          	.db	'3'
+0391   8263 34          	.db	'4'
+0392   8264 35          	.db	'5'
+0393   8265 36          	.db	'6'
+0394   8266 37          	.db	'7'
+0395   8267 38          	.db	'8'
+0396   8268 39          	.db	'9'
+0397   8269 41          	.db	'A'
+0398   826A 42          	.db	'B'
+0399   826B 43          	.db	'C'
+0400   826C 44          	.db	'D'
+0401   826D 45          	.db	'E'
+0402   826E 46          	.db	'F'	;end of function data
+0403   826F             
+0404   826F             ;===========================================================
+0405   826F             ;str2int accepts 4 byte string in X which is a hex representation of an integer
+0406   826F             ;str2char accepts a 2 byte string in X which is a hex representation of a char.
+0407   826F             
+0408   826F             str2int:
+0409   826F             
+0410   826F EA 03       	ld	a, x+3
+0411   8271 C4 30       	sub	a, #$30
+0412   8273 CC 09       	cmp	a, #9
+0413   8275 43 02       	ble	getgoodLL
+0414   8277 C4 07       	sub	a, #7
+0415   8279             getgoodLL:
+0416   8279 B2 02 01    	st	a, i2sreg+1	;write out LSB-LSN
+0417   827C             
+0418   827C EA 02       	ld	a, x+2	
+0419   827E C4 30       	sub	a, #$30
+0420   8280 CC 09       	cmp	a, #9
+0421   8282 43 02       	ble	getgoodLH
+0422   8284 C4 07       	sub	a, #7
+0423   8286             getgoodLH:
+0424   8286 12          	shl	a
+0425   8287 12          	shl	a
+0426   8288 12          	shl	a
+0427   8289 12          	shl	a
+0428   828A F0 02 01    	add	a, i2sreg+1	;add LSN
+0429   828D B2 02 01    	st	a, i2sreg+1	;write out complete LSB
+0430   8290             
+0431   8290             str2char:
+0432   8290 EA 01       	ld	a, x+1
+0433   8292 C4 30       	sub	a, #$30
+0434   8294 CC 09       	cmp	a, #9
+0435   8296 43 02       	ble	getgoodHL
+0436   8298 C4 07       	sub	a, #7
+0437   829A             getgoodHL:
+0438   829A B2 02 00    	st	a, i2sreg	;write out MSB-LSN
+0439   829D             
+0440   829D EA 00       	ld	a, x+0	
+0441   829F C4 30       	sub	a, #$30
+0442   82A1 CC 09       	cmp	a, #9
+0443   82A3 43 02       	ble	getgoodHH
+0444   82A5 C4 07       	sub	a, #7
+0445   82A7             getgoodHH:
+0446   82A7 12          	shl	a
+0447   82A8 12          	shl	a
+0448   82A9 12          	shl	a
+0449   82AA 12          	shl	a
+0450   82AB F0 02 00    	add	a, i2sreg	;add LSN
+0451   82AE B2 02 00    	st	a, i2sreg	;write out complete MSB
+0452   82B1             	
+0453   82B1 63          	ret	;most glorious, never omit
+0454   82B2             
+0455   82B2             
+0456   82B2             ;====================================================interrupts
+0457   82B2             ;NMI ISR code to capture data
+0458   82B2             __NMI:
+0459   82B2 0A 02 2C    	st	x, userX
+0460   82B5 69          	xch	x,y		;there's no [st y,extended] on this chip
+0461   82B6 0A 02 2E    	st	x, userY
+0462   82B9             
+0463   82B9 7C          	pull	a		;recover users CCR from stack
+0464   82BA B2 02 30    	st	a, userCCR
+0465   82BD 78          	pull	d		;recover users D from stack
+0466   82BE BA 02 2A    	st	d, userD
+0467   82C1 78          	pull	d		;recover users PC from stack
+0468   82C2 BA 02 33    	st	d, userPC
+0469   82C5             
+0470   82C5 2E          	mov	s, x		;stack should now point to where it pointed before NMI was called
+0471   82C6 0A 02 31    	st	x, userSP	;store sp. note that this points to last byte ON stack, not next free byte.
+0472   82C9             
+0473   82C9 8B 02 9F    	ld	s, #BISSTACK	
+0474   82CC 53          	clr	b
+0475   82CD B3 02 04    	st	b, i2sreg+4	;null terminator for 4 byte strings
+0476   82D0             
+0477   82D0             	;warn NMI called, print out data structure and return control to the main bison loop
+0478   82D0 8E 83 5D    	ld	x, #nmwarn
+0479   82D3 01 83 FC    	jsr	putstr
+0480   82D6 8E 83 6C    	ld	x, #nmuserd
+0481   82D9 01 83 FC    	jsr	putstr
+0482   82DC B6 02 2A    	ld	d, userD
+0483   82DF 01 82 25    	jsr	int2str
+0484   82E2 8E 02 00    	ld	x, #i2sreg
+0485   82E5 01 83 FC    	jsr	putstr
+0486   82E8             
+0487   82E8 8E 83 73    	ld	x, #nmuserx
+0488   82EB 01 83 FC    	jsr	putstr
+0489   82EE B6 02 2C    	ld	d, userX
+0490   82F1 01 82 25    	jsr	int2str
+0491   82F4 8E 02 00    	ld	x, #i2sreg
+0492   82F7 01 83 FC    	jsr	putstr
+0493   82FA             
+0494   82FA 8E 83 7A    	ld	x, #nmusery
+0495   82FD 01 83 FC    	jsr	putstr
+0496   8300 B6 02 2E    	ld	d, userY
+0497   8303 01 82 25    	jsr	int2str
+0498   8306 8E 02 00    	ld	x, #i2sreg
+0499   8309 01 83 FC    	jsr	putstr
+0500   830C             
+0501   830C 8E 83 8F    	ld	x, #nmusersp
+0502   830F 01 83 FC    	jsr	putstr
+0503   8312 B6 02 31    	ld	d, userSP
+0504   8315 01 82 25    	jsr	int2str
+0505   8318 8E 02 00    	ld	x, #i2sreg
+0506   831B 01 83 FC    	jsr	putstr
+0507   831E             
+0508   831E 8E 83 88    	ld	x, #nmuserpc
+0509   8321 01 83 FC    	jsr	putstr
+0510   8324 B6 02 33    	ld	d, userPC
+0511   8327 01 82 25    	jsr	int2str
+0512   832A 8E 02 00    	ld	x, #i2sreg
+0513   832D 01 83 FC    	jsr	putstr
+0514   8330             
+0515   8330 8E 83 81    	ld	x, #nmuserccr
+0516   8333 01 83 FC    	jsr	putstr
+0517   8336 B6 02 30    	ld	d, userCCR
+0518   8339 01 82 41    	jsr	char2str
+0519   833C 53          	clr	b
+0520   833D B3 02 02    	st	b, i2sreg+2	;null terminate
+0521   8340 8E 02 00    	ld	x, #i2sreg
+0522   8343 01 83 FC    	jsr	putstr
+0523   8346             
+0524   8346 CA 0D       	ld	a, #13	;CR
+0525   8348 01 83 CF    	jsr	putch
+0526   834B CA 0A       	ld	a, #10	;LF
+0527   834D 01 83 CF    	jsr	putch
+0528   8350 CA 0D       	ld	a, #13	;CR
+0529   8352 01 83 CF    	jsr	putch
+0530   8355             
+0531   8355 CA 0A       	ld	a, #10	;LF
+0532   8357 01 83 CF    	jsr	putch
+0533   835A             
+0534   835A             
+0535   835A             
+0536   835A             	;service NMI interrupt bit, disable interrupts?
+0537   835A             
+0538   835A 03 80 0E    	jmp	bison		;return control to main loop
+0539   835D             
+0540   835D             nmwarn
+0541   835D 0D 0A 20 42 	.text	"\r\n BISON NMI\r\n"
+0541   8361 49 53 4F 4E 
+0541   8365 20 4E 4D 49 
+0541   8369 0D 0A 
+0542   836B 00          	.db	0
+0543   836C             nmuserd
+0544   836C 0D 0A 20 20 	.text	"\r\n  D:"
+0544   8370 44 3A 
+0545   8372 00          	.db	0
+0546   8373             nmuserx
+0547   8373 0D 0A 20 20 	.text	"\r\n  X:"
+0547   8377 58 3A 
+0548   8379 00          	.db	0
+0549   837A             
+0550   837A             nmusery
+0551   837A 0D 0A 20 20 	.text	"\r\n  Y:"
+0551   837E 59 3A 
+0552   8380 00          	.db	0
+0553   8381             
+0554   8381             nmuserccr
+0555   8381 0D 0A 43 43 	.text	"\r\nCCR:"
+0555   8385 52 3A 
+0556   8387 00          	.db	0
+0557   8388             
+0558   8388             nmuserpc
+0559   8388 0D 0A 20 50 	.text	"\r\n PC:"
+0559   838C 43 3A 
+0560   838E 00          	.db	0
+0561   838F             
+0562   838F             nmusersp
+0563   838F 0D 0A 20 53 	.text	"\r\n SP:"
+0563   8393 50 3A 
+0564   8395 00          	.db	0
+0565   8396             
+0566   8396             .include 	bison_int.asm
+0001+  8396             ;interrupt handlers:
+0002+  8396             ;branch to designated ram to handle interrupt
+0003+  8396             ;ram should be initialized with NMI so enabled+unhandled interrupt returns to BISON
+0004+  8396             
+0005+  8396             int0              ; External interrupt 0
+0006+  8396 03 83 C3    	jmp	tempint
+0007+  8399             int1              ; External interrupt 1
+0008+  8399 03 83 C3    	jmp	tempint
+0009+  839C             int2              ; External interrupt 2
+0010+  839C 03 83 C3    	jmp	tempint
+0011+  839F             int3              ; External interrupt 3
+0012+  839F 03 83 C3    	jmp	tempint
+0013+  83A2             int4              ; External interrupt 4
+0014+  83A2 03 83 C3    	jmp	tempint
+0015+  83A5             int5              ; External interrupt 5
+0016+  83A5 03 83 C3    	jmp	tempint
+0017+  83A8             int6              ; External interrupt 6
+0018+  83A8 03 83 C3    	jmp	tempint
+0019+  83AB             int7              ; Compare 1
+0020+  83AB 03 83 C3    	jmp	tempint
+0021+  83AE             int8              ; Compare 2
+0022+  83AE 03 83 C3    	jmp	tempint
+0023+  83B1             int9              ; Compare 0
+0024+  83B1 03 83 C3    	jmp	tempint
+0025+  83B4             inta              ; Compare 3
+0026+  83B4 03 83 C3    	jmp	tempint
+0027+  83B7             intb              ; Timer overflow
+0028+  83B7 03 83 C3    	jmp	tempint
+0029+  83BA             intc              ; External interrupt c
+0030+  83BA 03 83 C3    	jmp	tempint
+0031+  83BD             intd              ; External interrupt d
+0032+  83BD 03 83 C3    	jmp	tempint
+0033+  83C0             inte              ; External interrupt e
+0034+  83C0 03 83 C3    	jmp	tempint
+0035+  83C3             
+0036+  83C3             tempint
+0037+  83C3 72 2C       	clr	_IRQL	;tidy flags
+0038+  83C5 72 2D       	clr	_IRQLL	;tidy flags
+0039+  83C7 5F          	nmi
+0567   83C8             .include	serial.asm
+0001+  83C8             ;serial routines for different ports.
+0002+  83C8             ;ftdi maintains the watchdog.
+0003+  83C8             
+0004+  83C8             
+0005+  83C8             ;denso serial routines
+0006+  83C8             ;rxtimeout in units of timer MSB counts (at 16MHZ input clock thats 256*4us=1.024ms/bit)
+0007+  83C8             #define 	RXTIMEOUT	200
+0008+  83C8             
+0009+  83C8             #IFDEF DSERIAL
+0010+  83C8             init_serial:
+0011+  83C8             
+0012+  83C8 33 0F 07    	ld    	#0Fh, _SMRC_SIR	; set SMRC cintrol reg to 0001 0000
+0013+  83CB 33 0C 2B    	ld	#0Ch,_SSD
+0014+  83CE 63          	ret
+0015+  83CF             
+0016+  83CF             
+0017+  83CF             
+0018+  83CF             
+0019+  83CF             ;=========================================================================putch
+0020+  83CF             ; PUTCH: wait until not full, drop char in A onto the serial port and wait until not full
+0021+  83CF             putch	
+0022+  83CF DB 2B       	ld    	b, _SSD		; load serial status data reg into b
+0023+  83D1 C3 20       	and   	b, #$20		; mask (bit 5)  0010 0000
+0024+  83D3 47 FA       	beq   	putch		; loop until bit 6 set
+0025+  83D5 92 06       	st	a,_SIDR_SODR
+0026+  83D7 DB 2B       pwait	ld    	b, _SSD		; load serial status data reg into b
+0027+  83D9 C3 20       	and   	b, #$20		; mask (bit 5)  0010 0000
+0028+  83DB 47 FA       	beq   	pwait		; loop until bit 6 set
+0029+  83DD 63          	ret
+0030+  83DE             
+0031+  83DE             ;=========================================================================rxch
+0032+  83DE             ; RXCH: wait until a charachter is available on the serial port, then 
+0033+  83DE             ;load the charachter into A
+0034+  83DE             
+0035+  83DE             rxch
+0036+  83DE DB 2B       	ld	b, _SSD		;check for receive data from serial port
+0037+  83E0 C3 80       	and	b, #080h	;need to handle errors as well.
+0038+  83E2 47 FA       	beq	rxch		;bit is high when empty
+0039+  83E4 DA 06       	ld	a, _SIDR_SODR
+0040+  83E6 63          	ret
+0041+  83E7             
+0042+  83E7             
+0043+  83E7             ;============================
+0044+  83E7             ;rxbyte
+0045+  83E7             ;receive byte from serial port, or timeout trying. returns carry on timeout/no carry on byte
+0046+  83E7             
+0047+  83E7             rxbyte
+0048+  83E7 DB 04       	ld	b, _TIMER
+0049+  83E9 DA 2B       pollser	ld	a, _SSD		;check for receive data from serial port
+0050+  83EB C2 80       	and	a, #080h	;need to handle errors as well.
+0051+  83ED 46 09       	bne	gotbyte		;bit is high when empty
+0052+  83EF DA 04       	ld	a, _TIMER
+0053+  83F1 09          	sub	a, b
+0054+  83F2 CC C8       	cmp	a, #RXTIMEOUT	;check for timeout exceeded
+0055+  83F4 45 F3       	bcs	pollser		;continue if timeout is greater than time differential
+0056+  83F6 67          	setc
+0057+  83F7 63          	ret
+0058+  83F8 DA 06       gotbyte	ld	a, _SIDR_SODR
+0059+  83FA 65          	clrc
+0060+  83FB 63          	ret
+0061+  83FC             
+0062+  83FC             
+0063+  83FC             
+0064+  83FC             #ENDIF
+0065+  83FC             
+0066+  83FC             ;\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+0067+  83FC             
+0068+  83FC             ;FTDI bus to USB routines
+0069+  83FC~            #IFDEF FTSERIAL
+0070+  83FC~            
+0071+  83FC~            init_serial:
+0072+  83FC~            
+0073+  83FC~            	ld	a, #01h		;set A0 output for watchdog
+0074+  83FC~            	st	a, _DDRA	;set A0 output for watchdog
+0075+  83FC~            	ret
+0076+  83FC~            
+0077+  83FC~            ;=========================================================================putch
+0078+  83FC~            ; PUTCH: wait until not full, drop a char onto the serial port and wait until not full
+0079+  83FC~            
+0080+  83FC~            putch	ld    	b, _FTSTAT	; load serial status data reg into b
+0081+  83FC~            	and   	b, #02h		; mask (bit 1)  0000 0020
+0082+  83FC~            	bne   	putch		; loop until bit 2 clear, bit is high when tx buffer is full
+0083+  83FC~            	st	a, _FTDATA
+0084+  83FC~            pwait	ld    	b, _FTSTAT	; load serial status data reg into b
+0085+  83FC~            	and   	b, #02h		; mask (bit 1)  0010 0000
+0086+  83FC~            	bne   	pwait		; loop until bit 2 clear
+0087+  83FC~            	ret
+0088+  83FC~            
+0089+  83FC~            
+0090+  83FC~            ;=========================================================================rxch
+0091+  83FC~            ; RXCH: wait until a charachter is available on the serial port, then load the charachter
+0092+  83FC~            
+0093+  83FC~            rxch	bsr	wchdog
+0094+  83FC~            	ld	a, _FTSTAT
+0095+  83FC~            	and	a, #01h		;mask bit 00000 0001
+0096+  83FC~            	bne	rxch		;bit is high when empty
+0097+  83FC~            	ld	a, _FTDATA
+0098+  83FC~            	ret
+0099+  83FC~            
+0100+  83FC~            ;============================
+0101+  83FC~            ;rxbyte
+0102+  83FC~            ;receive byte from serial port, or timeout trying. returns carry on timeout/no carry on byte
+0103+  83FC~            
+0104+  83FC~            rxbyte
+0105+  83FC~            	ld	b, _TIMER
+0106+  83FC~            pollser	bsr	wchdog
+0107+  83FC~            	ld	a, _FTSTAT
+0108+  83FC~            	and	a, #01h		;mask bit 00000 0001
+0109+  83FC~            	beq	gotbyte		;bit is high when empty
+0110+  83FC~            	ld	a, _TIMER
+0111+  83FC~            	sub	a, b
+0112+  83FC~            	cmp	a, #RXTIMEOUT	;check for timeout exceeded
+0113+  83FC~            	bcs	pollser		;continue if timeout is greater than time differential
+0114+  83FC~            	setc			;flag timeout failure
+0115+  83FC~            	ret
+0116+  83FC~            gotbyte	ld	a, _FTDATA
+0117+  83FC~            	clrc			;guarantee clear carry for received byte valid
+0118+  83FC~            	ret
+0119+  83FC~            
+0120+  83FC~            
+0121+  83FC~            
+0122+  83FC             #ENDIF
+0123+  83FC             
+0124+  83FC             ;GLOBAL SUBS-----------------------------------------------------------------
+0125+  83FC             
+0126+  83FC             ;=========================================================================putstr
+0127+  83FC             ; PUTSTR: put charchters from a string variable until a null (\000) is encountered
+0128+  83FC             ; uses putch
+0129+  83FC             
+0130+  83FC EA 00       putstr 	ld	a, x+0
+0131+  83FE 47 05       	beq	endstr
+0132+  8400 61 CD       	bsr	putch
+0133+  8402 1C          	inc	x
+0134+  8403             
+0135+  8403~            #IFDEF FTSERIAL
+0136+  8403~            	bsr	wchdog
+0137+  8403             #ENDIF
+0138+  8403             
+0139+  8403 40 F7       	bra 	putstr
+0140+  8405 63          endstr	ret
+0141+  8406             
+0142+  8406             
+0143+  8406             ;=========================================================================wchdog
+0144+  8406 DA 20       wchdog	ld	a, _PORTA	;watchdog
+0145+  8408 C8 01       	xor	a, #01h
+0146+  840A 92 20       	st	a, _PORTA	;watchdog
+0147+  840C 63          	ret
+0148+  840D             
+0149+  840D             
+0568   840D             
+0569   D000             .org 0D000h
+0570   D000             
+0571   D000 8E D0 10    	ld	x, #testprog
+0572   D003 01 83 FC    	jsr	putstr
+0573   D006             	
+0574   D006 5F          	nmi
+0575   D007 67          	setc
+0576   D008 5F          	nmi
+0577   D009 27          	setv
+0578   D00A 5F          	nmi
+0579   D00B CA 80       	ld	a, #128
+0580   D00D 5F          	nmi
+0581   D00E 52          	clr	a
+0582   D00F 5F          	nmi
+0583   D010             
+0584   D010             testprog
+0585   D010 0D 0A 74 65 	.text 	"\r\ntestland!\r\n"
+0585   D014 73 74 6C 61 
+0585   D018 6E 64 21 0D 
+0585   D01C 0A 
+0586   D01D 00          	.db	0
+0587   D01E             
+0588   D01E             ;=============================================================
+0589   FFDE             .org 0ffdeh
+0590   FFDE 83 96       IV0:            .dw int0              ; External interrupt 0
+0591   FFE0 83 99       IV1:            .dw int1              ; External interrupt 1
+0592   FFE2 83 9C       IV2:            .dw int2              ; External interrupt 2
+0593   FFE4 83 9F       IV3:            .dw int3              ; External interrupt 3
+0594   FFE6 83 A2       IV4:            .dw int4              ; External interrupt 4
+0595   FFE8 83 A5       IV5:            .dw int5              ; External interrupt 5
+0596   FFEA 83 A8       IV6:            .dw int6              ; External interrupt 6
+0597   FFEC 83 AB       IV7:            .dw int7              ;Compare 1
+0598   FFEE 83 AE       IV8:            .dw int8              ;Compare 2
+0599   FFF0 83 B1       IV9:            .dw int9              ;Compare 0
+0600   FFF2 83 B4       IVa:            .dw inta              ;Compare 3
+0601   FFF4 83 B7       IVb:            .dw intb              ;Timer overflow
+0602   FFF6 83 BA       IVc:            .dw intc              ; External interrupt c
+0603   FFF8 83 BD       IVd:            .dw intd              ; External interrupt d
+0604   FFFA 83 C0       IVe:            .dw inte              ; External interrupt e
+0605   FFFC 82 B2       IVf:            .dw __NMI             ; Non-Maskable Interrupt
+0606   FFFE 80 00       RESET:		.dw reset             ; Processor reset
+0607   10000             
+0608   10000             ;==========================
+0609   10000             ;==========================
+0610   10000             ;=======Most Glorious======
+0611   10000             	    .END
+0612   10000             ;========Never Omit========
+0613   10000             ;==========================
+0614   10000             ;==========================
 ADDR  00 01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F
 -----------------------------------------------------
-8000  33 02 1F 05 8B 02 9F 2E 0A 02 31 01 83 8C 8E 80
-8010  A7 01 83 AB 52 8E 02 05 A2 00 1C 8C 02 25 46 F8
-8020  8E 02 05 CA 0D 01 83 93 CA 0A 01 83 93 CA 3E 01
-8030  83 93 01 83 A2 A2 00 1C 8C 02 26 47 D7 01 83 93
-8040  CC 0D 46 EE CA 0A 01 83 93 8E 80 74 EA 00 47 1C
+8000  33 02 1F 05 8B 02 9F 2E 0A 02 31 01 83 C8 8E 80
+8010  B1 01 83 FC 52 8E 02 05 A2 00 1C 8C 02 25 46 F8
+8020  8E 02 05 CA 0D 01 83 CF CA 0A 01 83 CF CA 3E 01
+8030  83 CF 01 83 DE A2 00 1C 8C 02 26 47 D7 01 83 CF
+8040  CC 0D 46 EE CA 0A 01 83 CF 8E 80 74 EA 00 47 1C
 8050  6E 8F 02 05 EA 00 EB 80 0B 46 0B 1C 1D CC 20 46
-8060  F3 7E AE 08 23 00 7E CB 0A 0E 40 E0 8E 80 BA 01
-8070  83 AB 40 A0 52 55 4E 20 58 58 58 58 80 C2 4C 4F
-8080  41 44 20 58 58 58 80 F9 44 49 53 50 20 58 58 58
-8090  81 0A 53 45 54 20 58 58 58 58 81 56 54 45 53 54
-80A0  20 58 58 58 81 D9 00 42 49 53 4F 4E 20 42 6F 6F
-80B0  74 6C 6F 61 64 65 72 0D 0A 00 6E 6F 70 65 21 0D
-80C0  0A 00 8E 80 E4 01 83 AB 8E 02 09 01 82 33 BB 02
-80D0  31 B6 02 00 68 B6 02 2A 68 FA 02 30 6C BE 02 2C
-80E0  BF 02 2E 73 4F 68 20 6E 6F 2C 20 68 65 72 65 20
-80F0  77 65 20 67 6F 21 0D 0A 00 8E 81 02 01 83 AB 03
-8100  80 14 6C 6F 61 64 21 0D 0A 00 8E 02 0A 01 82 33
-8110  B6 02 00 BA 02 26 8E 02 0F 01 82 33 B6 02 00 87
-8120  00 01 BA 02 28 BF 02 26 EA 80 01 82 05 FA 02 00
-8130  01 83 93 FA 02 01 01 83 93 CA 20 01 83 93 1D 3D
-8140  C3 0F 46 0A CA 0D 01 83 93 CA 0A 01 83 93 BD 02
-8150  28 46 D5 03 80 14 8E 02 05 EA 04 CC 44 47 12 CC
-8160  58 47 1D CC 59 47 28 CC 53 47 33 CC 43 47 3E 40
-8170  4B 8E 02 0B 01 82 33 B6 02 00 BA 02 2A 03 80 14
-8180  8E 02 0B 01 82 33 B6 02 00 BA 02 2C 03 80 14 8E
-8190  02 0B 01 82 33 B6 02 00 BA 02 2E 03 80 14 8E 02
-81A0  0B 01 82 33 B6 02 00 BA 02 31 03 80 14 8E 02 0B
-81B0  01 82 54 FA 02 00 B2 02 30 03 80 14 8E 81 C5 01
-81C0  83 AB 03 80 14 0D 0A 69 6E 76 61 6C 69 64 20 63
-81D0  6F 6D 6D 61 6E 64 0D 0A 00 86 AB CD 8E 12 34 8F
-81E0  56 78 8B 02 9F 5F 03 80 14 6D C3 0F 8E 82 23 0E
-81F0  EB 00 B3 02 03 7D 11 11 11 11 C3 0F 8E 82 23 0E
-8200  EB 00 B3 02 02 5B 6D C3 0F 8E 82 23 0E EB 00 B3
-8210  02 01 7D 11 11 11 11 C3 0F 8E 82 23 0E EB 00 B3
-8220  02 00 63 30 31 32 33 34 35 36 37 38 39 41 42 43
-8230  44 45 46 EA 03 C4 30 CC 09 43 02 C4 07 B2 02 01
-8240  EA 02 C4 30 CC 09 43 02 C4 07 12 12 12 12 F0 02
-8250  01 B2 02 01 EA 01 C4 30 CC 09 43 02 C4 07 B2 02
-8260  00 EA 00 C4 30 CC 09 43 02 C4 07 12 12 12 12 F0
-8270  02 00 B2 02 00 63 0A 02 2C 69 0A 02 2E 7C B2 02
-8280  30 78 BA 02 2A 78 BA 02 33 2E 0A 02 31 8B 02 9F
-8290  53 B3 02 04 8E 83 21 01 83 AB 8E 83 30 01 83 AB
-82A0  B6 02 2A 01 81 E9 8E 02 00 01 83 AB 8E 83 37 01
-82B0  83 AB B6 02 2C 01 81 E9 8E 02 00 01 83 AB 8E 83
-82C0  3E 01 83 AB B6 02 2E 01 81 E9 8E 02 00 01 83 AB
-82D0  8E 83 53 01 83 AB B6 02 31 01 81 E9 8E 02 00 01
-82E0  83 AB 8E 83 4C 01 83 AB B6 02 33 01 81 E9 8E 02
-82F0  00 01 83 AB 8E 83 45 01 83 AB B6 02 30 01 82 05
-8300  53 B3 02 02 8E 02 00 01 83 AB CA 0D 01 83 93 CA
-8310  0A 01 83 93 CA 0D 01 83 93 CA 0A 01 83 93 03 80
-8320  0E 0D 0A 20 42 49 53 4F 4E 20 4E 4D 49 0D 0A 00
-8330  0D 0A 20 20 44 3A 00 0D 0A 20 20 58 3A 00 0D 0A
-8340  20 20 59 3A 00 0D 0A 43 43 52 3A 00 0D 0A 20 50
-8350  43 3A 00 0D 0A 20 53 50 3A 00 03 83 87 03 83 87
-8360  03 83 87 03 83 87 03 83 87 03 83 87 03 83 87 03
-8370  83 87 03 83 87 03 83 87 03 83 87 03 83 87 03 83
-8380  87 03 83 87 03 83 87 72 2C 72 2D 5F 33 0F 07 33
-8390  0C 2B 63 DB 2B C3 20 47 FA 92 06 DB 2B C3 20 47
-83A0  FA 63 DB 2B C3 80 47 FA DA 06 63 EA 00 47 05 61
-83B0  E2 1C 40 F7 63 DA 20 C8 01 92 20 63 FF FF FF FF
-83C0  FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF
-83D0  FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF
-83E0  FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF
-83F0  FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF
-8400  FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF
+8060  F3 7E AE 08 23 00 7E CB 0A 0E 40 E0 8E 80 C4 01
+8070  83 FC 40 A0 52 55 4E 20 58 58 58 58 80 CC 4C 4F
+8080  41 44 20 58 58 58 81 03 44 49 53 50 20 58 58 58
+8090  81 2F 53 45 54 20 58 58 58 58 81 7B 54 57 45 41
+80A0  4B 20 58 58 81 FE 54 45 53 54 20 58 58 58 82 15
+80B0  00 42 49 53 4F 4E 20 42 6F 6F 74 6C 6F 61 64 65
+80C0  72 0D 0A 00 6E 6F 70 65 21 0D 0A 00 8E 80 EE 01
+80D0  83 FC 8E 02 09 01 82 6F BB 02 31 B6 02 00 68 B6
+80E0  02 2A 68 FA 02 30 6C BE 02 2C BF 02 2E 73 4F 68
+80F0  20 6E 6F 2C 20 68 65 72 65 20 77 65 20 67 6F 21
+8100  0D 0A 00 8E 81 27 01 83 FC 8E 02 0A 01 82 6F BF
+8110  02 00 01 83 E7 45 FB 82 01 83 E7 82 44 FA 1F CA
+8120  5F 82 82 82 03 80 14 6C 6F 61 64 21 0D 0A 00 8E
+8130  02 0A 01 82 6F B6 02 00 BA 02 26 8E 02 0F 01 82
+8140  6F B6 02 00 87 00 01 BA 02 28 BF 02 26 EA 80 01
+8150  82 41 FA 02 00 01 83 CF FA 02 01 01 83 CF CA 20
+8160  01 83 CF 1D 3D C3 0F 46 0A CA 0D 01 83 CF CA 0A
+8170  01 83 CF BD 02 28 46 D5 03 80 14 8E 02 05 EA 04
+8180  CC 44 47 12 CC 58 47 1D CC 59 47 28 CC 53 47 33
+8190  CC 43 47 3E 40 4B 8E 02 0B 01 82 6F B6 02 00 BA
+81A0  02 2A 03 80 14 8E 02 0B 01 82 6F B6 02 00 BA 02
+81B0  2C 03 80 14 8E 02 0B 01 82 6F B6 02 00 BA 02 2E
+81C0  03 80 14 8E 02 0B 01 82 6F B6 02 00 BA 02 31 03
+81D0  80 14 8E 02 0B 01 82 90 FA 02 00 B2 02 30 03 80
+81E0  14 8E 81 EA 01 83 FC 03 80 14 0D 0A 69 6E 76 61
+81F0  6C 69 64 20 63 6F 6D 6D 61 6E 64 0D 0A 00 8E 02
+8200  0B 01 82 6F BF 02 00 8E 02 10 01 82 90 FA 02 00
+8210  A2 80 03 80 14 86 AB CD 8E 12 34 8F 56 78 8B 02
+8220  9F 5F 03 80 14 6D C3 0F 8E 82 5F 0E EB 00 B3 02
+8230  03 7D 11 11 11 11 C3 0F 8E 82 5F 0E EB 00 B3 02
+8240  02 5B 6D C3 0F 8E 82 5F 0E EB 00 B3 02 01 7D 11
+8250  11 11 11 C3 0F 8E 82 5F 0E EB 00 B3 02 00 63 30
+8260  31 32 33 34 35 36 37 38 39 41 42 43 44 45 46 EA
+8270  03 C4 30 CC 09 43 02 C4 07 B2 02 01 EA 02 C4 30
+8280  CC 09 43 02 C4 07 12 12 12 12 F0 02 01 B2 02 01
+8290  EA 01 C4 30 CC 09 43 02 C4 07 B2 02 00 EA 00 C4
+82A0  30 CC 09 43 02 C4 07 12 12 12 12 F0 02 00 B2 02
+82B0  00 63 0A 02 2C 69 0A 02 2E 7C B2 02 30 78 BA 02
+82C0  2A 78 BA 02 33 2E 0A 02 31 8B 02 9F 53 B3 02 04
+82D0  8E 83 5D 01 83 FC 8E 83 6C 01 83 FC B6 02 2A 01
+82E0  82 25 8E 02 00 01 83 FC 8E 83 73 01 83 FC B6 02
+82F0  2C 01 82 25 8E 02 00 01 83 FC 8E 83 7A 01 83 FC
+8300  B6 02 2E 01 82 25 8E 02 00 01 83 FC 8E 83 8F 01
+8310  83 FC B6 02 31 01 82 25 8E 02 00 01 83 FC 8E 83
+8320  88 01 83 FC B6 02 33 01 82 25 8E 02 00 01 83 FC
+8330  8E 83 81 01 83 FC B6 02 30 01 82 41 53 B3 02 02
+8340  8E 02 00 01 83 FC CA 0D 01 83 CF CA 0A 01 83 CF
+8350  CA 0D 01 83 CF CA 0A 01 83 CF 03 80 0E 0D 0A 20
+8360  42 49 53 4F 4E 20 4E 4D 49 0D 0A 00 0D 0A 20 20
+8370  44 3A 00 0D 0A 20 20 58 3A 00 0D 0A 20 20 59 3A
+8380  00 0D 0A 43 43 52 3A 00 0D 0A 20 50 43 3A 00 0D
+8390  0A 20 53 50 3A 00 03 83 C3 03 83 C3 03 83 C3 03
+83A0  83 C3 03 83 C3 03 83 C3 03 83 C3 03 83 C3 03 83
+83B0  C3 03 83 C3 03 83 C3 03 83 C3 03 83 C3 03 83 C3
+83C0  03 83 C3 72 2C 72 2D 5F 33 0F 07 33 0C 2B 63 DB
+83D0  2B C3 20 47 FA 92 06 DB 2B C3 20 47 FA 63 DB 2B
+83E0  C3 80 47 FA DA 06 63 DB 04 DA 2B C2 80 46 09 DA
+83F0  04 09 CC C8 45 F3 67 63 DA 06 65 63 EA 00 47 05
+8400  61 CD 1C 40 F7 63 DA 20 C8 01 92 20 63 FF FF FF
 8410  FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF
 8420  FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF
 8430  FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF
@@ -2078,7 +2160,7 @@ CFC0  FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF
 CFD0  FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF
 CFE0  FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF
 CFF0  FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF
-D000  8E D0 10 01 83 AB 5F 67 5F 27 5F CA 80 5F 52 5F
+D000  8E D0 10 01 83 FC 5F 67 5F 27 5F CA 80 5F 52 5F
 D010  0D 0A 74 65 73 74 6C 61 6E 64 21 0D 0A 00 FF FF
 D020  FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF
 D030  FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF
@@ -2843,9 +2925,9 @@ FF90  FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF
 FFA0  FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF
 FFB0  FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF
 FFC0  FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF
-FFD0  FF FF FF FF FF FF FF FF FF FF FF FF FF FF 83 5A
-FFE0  83 5D 83 60 83 63 83 66 83 69 83 6C 83 6F 83 72
-FFF0  83 75 83 78 83 7B 83 7E 83 81 83 84 82 76 80 00
+FFD0  FF FF FF FF FF FF FF FF FF FF FF FF FF FF 83 96
+FFE0  83 99 83 9C 83 9F 83 A2 83 A5 83 A8 83 AB 83 AE
+FFF0  83 B1 83 B4 83 B7 83 BA 83 BD 83 C0 82 B2 80 00
 
 
 tasm: Number of errors = 0

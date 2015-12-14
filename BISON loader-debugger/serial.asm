@@ -3,6 +3,8 @@
 
 
 ;denso serial routines
+;rxtimeout in units of timer MSB counts (at 16MHZ input clock thats 256*4us=1.024ms/bit)
+#define 	RXTIMEOUT	200
 
 #IFDEF DSERIAL
 init_serial:
@@ -36,6 +38,27 @@ rxch
 	beq	rxch		;bit is high when empty
 	ld	a, _SIDR_SODR
 	ret
+
+
+;============================
+;rxbyte
+;receive byte from serial port, or timeout trying. returns carry on timeout/no carry on byte
+
+rxbyte
+	ld	b, _TIMER
+pollser	ld	a, _SSD		;check for receive data from serial port
+	and	a, #080h	;need to handle errors as well.
+	bne	gotbyte		;bit is high when empty
+	ld	a, _TIMER
+	sub	a, b
+	cmp	a, #RXTIMEOUT	;check for timeout exceeded
+	bcs	pollser		;continue if timeout is greater than time differential
+	setc
+	ret
+gotbyte	ld	a, _SIDR_SODR
+	clrc
+	ret
+
 
 
 #ENDIF
@@ -73,6 +96,28 @@ rxch	bsr	wchdog
 	bne	rxch		;bit is high when empty
 	ld	a, _FTDATA
 	ret
+
+;============================
+;rxbyte
+;receive byte from serial port, or timeout trying. returns carry on timeout/no carry on byte
+
+rxbyte
+	ld	b, _TIMER
+pollser	bsr	wchdog
+	ld	a, _FTSTAT
+	and	a, #01h		;mask bit 00000 0001
+	beq	gotbyte		;bit is high when empty
+	ld	a, _TIMER
+	sub	a, b
+	cmp	a, #RXTIMEOUT	;check for timeout exceeded
+	bcs	pollser		;continue if timeout is greater than time differential
+	setc			;flag timeout failure
+	ret
+gotbyte	ld	a, _FTDATA
+	clrc			;guarantee clear carry for received byte valid
+	ret
+
+
 
 #ENDIF
 

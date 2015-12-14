@@ -143,7 +143,10 @@ dictionary:
 	.TEXT	"SET XXXX"		;set: preps user core registers. use SET A 55, set X 1234, set CCR 01. no PC 
 	.dw	set_handler	
 
-	.TEXT	"TEST XXX"
+	.TEXT	"TWEAK XX"		;tweak allows the user to modify a memory location with human readable hex input
+	.dw	tweak_code		;TWEAK ADDR VALUE
+
+	.TEXT	"TEST XXX"		;test cell for testing bison development stuff
 	.dw	test_code
 
 	.db	0			;null byte in text field signals end of dictionary. yay flexibility.
@@ -183,7 +186,26 @@ runmsg
 load_handler:
 	ld	x, #loadmsg	;placeholder for real work
 	jsr	putstr
-	jmp	main
+	ld	x, #inputstring+5	;load first byte address
+	jsr 	str2int
+	ld	y, i2sreg
+
+firstb	jsr	rxbyte		;rxbyte will time out many times until the user gets data flowing
+	bcs	firstb		;silently eat timeouts until first byte is done
+	st	a, [y]		;postincrement only works with y
+
+restb	jsr	rxbyte
+	st	a, [y]
+	bcc	restb
+	
+	dec	y	;finally done
+	ld	a, #$5F	;nmi
+	st	a, [y]
+	st	a, [y]
+	st	a, [y]	;triple nmi catches most unhappy endings
+
+	jmp	main	;back to prompt
+
 loadmsg
 	.text	"load!\r\n"
 	.db	0
@@ -281,6 +303,21 @@ seterr:
 setmsg
 	.text	"\r\ninvalid command\r\n"
 	.db	0
+
+
+;TWEAK 006F FF
+tweak_code:
+	ld	x, #inputstring+6	;address of the address data
+	jsr	str2int
+	ld	y, i2sreg		;y now holds address to tweak
+
+	ld	x, #inputstring+11	;address of tweak data
+	jsr	str2char
+	ld	a, i2sreg		;a now hold enw value for tweak address
+
+	st	a, y+0			;tweak it!
+
+	jmp main
 
 
 test_code:
