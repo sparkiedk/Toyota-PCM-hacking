@@ -69,7 +69,7 @@ Timer word increment rate is 250kHz
 15	SIN2	input 	20us high pulse every 4ms, which occasionally expands in duty cycle. (SIN2), same signal at pin 14 of 1320
 16	SIN1	serial probably 1MBit
 17	SIN0	serial 1MBit min to 1k then to pin 8 of ADC
-18	SOUT1
+18	SOUT1	W signal / Malfunction Indicator Lamp (Check engine light)
 19	SOUT0	serial 1MBit min to 750 ohm then to pin 7 of ADC
 20	PORTB7	high	
 21		high

@@ -6,6 +6,7 @@
 ;choose the serial port to be compiled in serial.asm
 #DEFINE		DSERIAL
 ;#DEFINE	FTSERIAL
+;rx timeout is defined in serial.asm
 
 #DEFINE		BISSTACK	$029f
 
@@ -25,6 +26,8 @@ i2sreg
 	.block	5	;4 bytes for returns from 16b (and 8 bit?) number to text sub
 inputstring
 	.block	32	;many bytes for user input string
+inputlen
+	.block	2
 inputptr
 	.block	1	;pointer for above string
 dispr1
@@ -64,12 +67,13 @@ bison:
 
 main:	
 	clr	a
-	ld	x, #inputstring
-clearinp:
-	st	a, x+0
-	inc	x	;cant get postincrement x to compile.
-	cmp	x, #inputstring+32
+	ld	y, #inputstring
+
+clearinp:				;clear out buffer for next command sanity.
+	st	a, [y]
+	cmp	y, #inputstring+32
 	bne	clearinp
+
 	ld	x, #inputstring
 
 	ld	a, #13	;CR
@@ -82,13 +86,13 @@ clearinp:
 	jsr	putch
 prompt:
 	jsr	rxch	;get a character from the serial port, return in A
+	bvs	prompt	;silenly handle errors. should piss lots of people off.
 	st	a, x+0		;store inputted byte. should we check for validity here? maybe
 	inc 	x
 
 	cmp	x, #inputstring + 33		;check for buffer overflow
 	beq	main
 
-	;ld	a, x+0		;test to make sure ram was written correctly.
 	jsr	putch		;echo inputted char
 	cmp	a, #13	
 	bne	prompt		;test for CR, return to prompt for more if not.
@@ -97,6 +101,9 @@ prompt:
 ;currently not handling LF's. dont use them.
 ;run command against dictionary (include whitespace)
 checkcmd:
+	mov	x, d
+	sub	d, #inputstring	;find length of input
+	st	d, inputlen	;stor in unnecessarily long variable.
 	ld	x, #dictionary
 checknext:
 	ld	a, x+0		;ld can set zero flag
@@ -140,7 +147,7 @@ dictionary:
 	.TEXT	"DISP XXX"		;display data from addr to addr
 	.dw	disp_handler	
 
-	.TEXT	"SET XXXX"		;set: preps user core registers. use SET A 55, set X 1234, set CCR 01. no PC 
+	.TEXT	"SET XXXX"		;set: preps user core registers. use SET A 55, set X 1234, set C 01. no PC 
 	.dw	set_handler	
 
 	.TEXT	"TWEAK XX"		;tweak allows the user to modify a memory location with human readable hex input
@@ -192,11 +199,13 @@ load_handler:
 
 firstb	jsr	rxbyte		;rxbyte will time out many times until the user gets data flowing
 	bcs	firstb		;silently eat timeouts until first byte is done
+	bvs	restb		;if the first character was erroneous this will be a mess.
 	st	a, [y]		;postincrement only works with y
 
 restb	jsr	rxbyte
 	st	a, [y]
 	bcc	restb
+	bvs	restb		;silently eat errors in data.
 	
 	dec	y	;finally done
 	ld	a, #$5F	;nmi
@@ -215,11 +224,18 @@ disp_handler:
 	ld	x, #inputstring+5	;first number
 	jsr 	str2int
 	ld	d, i2sreg
-	st	d, dispr1	;start pointer
+	st	d, dispr1		;start pointer
 	ld	x, #inputstring+10	;second number
+
+	push	b
+	ld	b, inputlen+1
+	cmp	b, #10
+	pull	b
+	ble	nosecnd		;if there was no second number supplied just copy the first.
+
 	jsr 	str2int
 	ld	d, i2sreg
-	add	d, #1
+nosecnd	add	d, #1
 	st	d, dispr2
 
 
