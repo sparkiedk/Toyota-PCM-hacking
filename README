@@ -8,7 +8,7 @@ available to permit easy loading and testing of code into RAM - much faster than
 test code from a flash or E/EPROM chip. BISON, just like BUFFALO, is an acronym - I will 
 not say here what it stands for as it is lame, just like BUFFALO.
 
-BISON is incomplete, I will complete it before January 2016. BISON was mostly written on 
+BISON is beta-complete, no warranties blah blah blah. BISON was mostly written on 
 an airplane in economy class - that's my excuse for sloppy code or snarky comments.
 
 BISON is completly unrelated to the general purpose grammar parser. 

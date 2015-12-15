@@ -9,8 +9,8 @@
 #IFDEF DSERIAL
 init_serial:
 
-	ld    	#0Fh, _SMRC_SIR	; set SMRC cintrol reg to 0001 0000
-	ld	#0Ch,_SSD
+	ld    	#1Fh, _SMRC_SIR	; bit4 makes serial receive of streams not fail, 3 through 0 slow it down to 2050bps@4.2MHz
+	ld	#00h,_SSD	;select SOUT0
 	ret
 
 
@@ -34,11 +34,17 @@ pwait	ld    	b, _SSD		; load serial status data reg into b
 
 rxch
 	ld	b, _SSD		;check for receive data from serial port
-	and	b, #080h	;need to handle errors as well.
-	beq	rxch		;bit is high when empty
+
+	cmpb	b, #0C0h	;bit 7 indicates data present, bit 6 indicates rx error.
+	beq	rxch
 	ld	a, _SIDR_SODR
+	cmpb	b, #040h
+	bne	rxcf	
+	clrv
 	ret
 
+rxcf	setv	;was an error.
+	ret
 
 ;============================
 ;rxbyte
@@ -47,7 +53,7 @@ rxch
 rxbyte
 	ld	b, _TIMER
 pollser	ld	a, _SSD		;check for receive data from serial port
-	and	a, #080h	;need to handle errors as well.
+	cmpb	b, #0C0h	;need to handle errors as well.
 	bne	gotbyte		;bit is high when empty
 	ld	a, _TIMER
 	sub	a, b
@@ -55,8 +61,12 @@ pollser	ld	a, _SSD		;check for receive data from serial port
 	bcs	pollser		;continue if timeout is greater than time differential
 	setc
 	ret
-gotbyte	ld	a, _SIDR_SODR
-	clrc
+gotbyte	clrv			;assume byte is good.
+	ld	a, _SIDR_SODR
+	cmpb	b, #040h
+	beq	rxbok
+	setv			;overflow bit signals serial overflow. how appropriate!
+rxbok	clrc
 	ret
 
 
