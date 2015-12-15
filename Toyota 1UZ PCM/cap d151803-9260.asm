@@ -59,7 +59,7 @@ ASR3L:		.block 1		; ASR3 edge counter value LSB
 unk_1C:		.block 1		; DATA XREF: intSINx+2r
 unk_1D:		.block 1		; DATA XREF: write6336:loc_D489r
 					; __RESET+15r ...
-					; bit3 seems to	be a uart global clock output enable
+					; bit3 seems to	be a uart global clock output enable, bit2 is likely txfull
 SIDR_SODR2:	.block 1		; DATA XREF: write6336+6w
 					; write	data is	tx'd on pin 47, read data is from pin 48
 OMODE:		.block 1		; DATA XREF: __RESETr
@@ -106,10 +106,10 @@ unk_34:		.block 1
 		.block 1
 		.block 1
 unk_37:		.block 1
-CPR4:		.block 2		; Timer	comparison #0 MSB, injectors #10, left bank
-CPR5:		.block 2		; Timer	comparison #1 MSB, injectors #20, right	bank
-CPR6:		.block 2		; Timer	comparison #2 MSB, injectors #30, right	bank
-CPR7:		.block 2		; Timer	comparison #3 MSB, injectors #40, left bank
+CPR4:		.block 2		; Timer	comparison #0 MSB
+CPR5:		.block 2		; Timer	comparison #1 MSB
+CPR6:		.block 2		; Timer	comparison #2 MSB
+CPR7:		.block 2		; Timer	comparison #3 MSB
 ; end of 'FSR'
 
 ; ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
@@ -146,9 +146,11 @@ flags_4B:	.block 1		; DATA XREF: ROM:C91Br	ROM:C95Er ...
 flags_4C:	.block 1		; DATA XREF: sub_C64D+2r ROM:C965r ...
 					; bit 7	set when not running (300 to 400 RPM gap)
 flags_4D:	.block 1		; DATA XREF: ROM:C920r	ROM:C923r ...
+					; superrun all 0
 flags_4E:	.block 1		; DATA XREF: ROM:C928r	ROM:C92Ew ...
-					; bit1 is igf1 related,	bit2 igf2 related
+					; bit1 is igf1 related,	bit2 igf2 related, superrun all	0
 flags_4F:	.block 1		; DATA XREF: ROM:loc_C946r ROM:C94Aw ...
+					; superrun all 0
 flags_50:	.block 1		; DATA XREF: orFlags_50+1r
 					; andFlags_50+1r ...
 					; could	be bits	for 6336 output	chip, B0 probably HTR L+R1, B1 probably	HTR L+R2
@@ -163,7 +165,7 @@ temp_56:	.block 1		; DATA XREF: ROM:CEE8w	ROM:CF2Fr ...
 unk_57:		.block 1		; DATA XREF: ROM:CEFAw	ROM:CF01r ...
 temp_58:	.block 2		; DATA XREF: IV6+49w IV6+4Br ...
 					; temp for IV6
-unk_5A:		.block 1
+unk_5A:		.block 1		; superrun all 0
 ModuloNE:	.block 1		; DATA XREF: ROM:ED46w	ROM:intASR2_39r ...
 					; contains modulo: NEcounts%3, represents 30 degree chunks after 10dBTDC cylinder NEcounts/3
 THG:		.block 1		; DATA XREF: sub_D2B9+46r
@@ -173,7 +175,7 @@ ATM_press:	.block 1		; DATA XREF: ROM:CAB0r	__RESET+2DFr ...
 					; adc pin 17 - PCM atmospheric pressure	sensor,	debiased and scaled
 unk_5E:		.block 1		; DATA XREF: sub_C64D:loc_C826r
 					; ROM:CA72r ...
-					; could	be last	unk_100, or 0
+					; speed	sensor related,	could be last unk_100, or 0, superrun all 0
 count_5F:	.block 1		; DATA XREF: __RESET:main_24r
 					; __RESET+FE8r	...
 					; counts up to 255 since last start, about 15 counts per second
@@ -201,7 +203,9 @@ LOAD:		.block 2		; DATA XREF: __RESET:main_18w
 					; Load,	uncompensated for ThA
 unk_70:		.block 1		; DATA XREF: ROM:CFE2r	ROM:D01Ew ...
 unk_71:		.block 1		; DATA XREF: ROM:CFE7r	ROM:loc_CFFAw ...
+					; superrun all 0
 unk_72:		.block 1		; DATA XREF: ROM:loc_CFDDr ROM:CFFCr ...
+					; superrun = 255
 ADC_count:	.block 1		; DATA XREF: IV6:loc_F3D0r intSIN0+26r ...
 ADC_TXed:	.block 1		; DATA XREF: sub_D45F+2w IV6+480w ...
 					; MSb signifies	next TX	value is 02
@@ -214,14 +218,16 @@ flags_77:	.block 1		; DATA XREF: __RESET+26Ar __RESET+26Fw ...
 					; possibly used	to control code	execution in main loop - functions which dont need continous evaluation	flag completion	and await trigger conditions.
 meanKSint:	.block 2		; DATA XREF: __RESET:main_14r
 					; __RESET+288r	...
-					; deltaKS/KS_count, filtered
-word_7A:	.block 2		; DATA XREF: TwoD_7Ar __RESET+315w ...
-					; meanKSint divided by a air temp/baro comp factor byte_1a8
-unk_7C:		.block 1		; DATA XREF: sub_D257+3r sub_D257+Dr ...
-					; counter
+					; deltatKS/KS_count, filtered. is a time interval
+corrKSint:	.block 2		; DATA XREF: TwoD_corrKSintr
+					; __RESET+315w	...
+					; meanKSint divided by a air temp/baro comp factor byte_1a8 - time divided by correction is 1/(freq*correction)
+count_7C:	.block 1		; DATA XREF: sub_D257+3r sub_D257+Dr ...
+					; counter, superrun = 222
 flags_7D:	.block 1		; DATA XREF: ROM:C940r	ROM:C944w ...
 					; error	bits: b3 oxy htr R2, b2	oxy htr	R1, b1 oxy htr L2, b0 oxy htr L1
 unk_7E:		.block 1		; DATA XREF: ROM:CDC0r	__RESET+132Er ...
+					; superrun all 0
 unk_7F:		.block 1		; DATA XREF: __RESET+1653w
 					; __RESET+166Ar ...
 ; end of 'RAM'
@@ -236,22 +242,32 @@ word_80:	.block 2		; DATA XREF: __RESET:res_07r
 word_82:	.block 2		; DATA XREF: sub_C505r
 					; init_seg0x80+22w ...
 word_84:	.block 2		; DATA XREF: __RESET+127r __RESET+19Dr ...
+					; superrun = 5AA5
 word_86:	.block 2		; DATA XREF: ROM:CA83r	ROM:loc_CCD9r ...
+					; superrun = 00FF
 word_88:	.block 2		; DATA XREF: ROM:CCDFr	ROM:CDA2r
+					; superrun = 00FF
 word_8A:	.block 2		; DATA XREF: ROM:CA37r	ROM:CCE5r ...
+					; superrun = 00FF
 word_8C:	.block 2		; DATA XREF: ROM:CA39r	ROM:CCE7r ...
+					; superrun = 00FF
 word_8E:	.block 2		; DATA XREF: ROM:CC58r	ROM:CCF1r ...
 word_90:	.block 2		; DATA XREF: ROM:CA89r	ROM:CB0Fr ...
+					; bank1, superrun = 00FF
 word_92:	.block 2		; DATA XREF: ROM:CA8Br	ROM:D08Er ...
+					; bank2, superrun = 00FF
 word_94:	.block 2		; DATA XREF: sub_C64D+5Fr ROM:CB05r ...
+					; bank1, superrun = 00FF
 word_96:	.block 2		; DATA XREF: sub_C64D+61r ROM:CCEBr ...
+					; bank2, superrun = 00FF
 word_98:	.block 2		; DATA XREF: sub_C64D+222r sub_C8BBr ...
-					; 128 for entire superrun
+					; superrun = 807F
 word_9A:	.block 2		; DATA XREF: __RESET+6E6r
 					; __RESET:main_92r ...
 word_9C:	.block 2		; DATA XREF: __RESET+6BBr __RESET+6DFr ...
+					; superrun = 807F
 word_9E:	.block 2		; DATA XREF: init_seg0x80+3Fw
-; end of 'notsure'
+; end of 'notsure'                      ; superrun = 00FF
 
 ; ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
 
@@ -259,7 +275,8 @@ word_9E:	.block 2		; DATA XREF: init_seg0x80+3Fw
 		;.segment RAM
 		.org 0A0h
 unk_A0:		.block 1		; DATA XREF: init_seg0x80+41w
-		.block 1
+					; superrun all 0
+		.block 1		; superrun = FF
 flags_A2:	.block 1		; DATA XREF: sub_C64D+3Cr ROM:C972r ...
 					; MSN= trouble bit7: VTA_net high, bit4: VTA_net high, lsN is oxy heater "checked" bits
 count_A3:	.block 1		; DATA XREF: __RESET:main_68r
@@ -280,9 +297,9 @@ count_A8:	.block 1		; DATA XREF: intSIN0+110r intSIN0+125w ...
 					; incremented at F47D
 count_A9:	.block 1		; DATA XREF: sub_C003r
 					; sub_C010:loc_C046r ...
-					; incremented at F47D
+					; incremented at F47D, never seems to count higher than	1, frequently reset
 count_AA:	.block 1		; DATA XREF: sub_C010r	sub_C010+5w ...
-					; incremented at F47D
+					; incremented at F47D, superrun	all 0
 count_AB:	.block 1		; DATA XREF: __RESET+854w __RESET+8BFr ...
 					; incremented at F47D
 count_AC:	.block 1		; DATA XREF: sub_F1A9+ACw
@@ -306,7 +323,7 @@ count_B3:	.block 1		; DATA XREF: __RESET+241w __RESET+DE1r ...
 count_B4:	.block 1		; DATA XREF: IV6+19Dr IV6:IV6_38w ...
 					; incremented at F55E
 count_B5:	.block 1		; incremented at F55E
-count_B6:	.block 1		; incremented at F55E
+count_B6:	.block 1		; incremented at F55E, superrun	= FF
 count_B7:	.block 1		; DATA XREF: ROM:F925w	ROM:F92Ar ...
 					; incremented at F55E
 count_B8:	.block 1		; DATA XREF: __RESET:main_331w
@@ -318,9 +335,9 @@ count_B9:	.block 1		; DATA XREF: __RESET+22Ar
 count_BA:	.block 1		; DATA XREF: __RESET+31Cr __RESET+33Cr
 					; decremented at F566
 count_BB:	.block 1		; DATA XREF: __RESET+B3Er __RESET+B48r ...
-					; decremented at F566
+					; decremented at F566, superrun	all 0
 count_BC:	.block 1		; DATA XREF: __RESET+B05r __RESET+B0Fr ...
-					; decremented at F566
+					; decremented at F566, superrun	all 0
 count_BD:	.block 1		; DATA XREF: __RESET:main_322r
 					; __RESET+12EBr
 					; decremented at F566
@@ -336,9 +353,9 @@ count_C1:	.block 1		; DATA XREF: __RESET+162Ew
 					; __RESET:main_398r
 					; flag for Gx increments at E478
 count_C2:	.block 1		; DATA XREF: ROM:CDC7w	ROM:loc_CDCBr ...
-					; increments at	E478
+					; increments at	E478, superrun all 0
 count_C3:	.block 1		; DATA XREF: ROM:CDDAr	ROM:CDE7w
-					; increments at	E478
+					; increments at	E478, superrun all 0
 count_C4:	.block 1		; DATA XREF: ROM:CD75r	ROM:CD7Aw
 					; increments at	E478
 count_C5:	.block 1		; DATA XREF: IV6+5D0r IV6:loc_F53Bw
@@ -381,14 +398,15 @@ unk_D3:		.block 1		; DATA XREF: __RESET:main_118w
 					; multiplied by	16 and used for	injectors
 unk_D4:		.block 1		; DATA XREF: sub_D1EF+17r
 					; __RESET:main_61w ...
-					; timing related
+					; timing related, superrun all 0
 unk_D5:		.block 1		; DATA XREF: __RESET+463r
 					; __RESET:main_44w ...
+					; superrun all 0
 unk_D6:		.block 1		; DATA XREF: ROM:loc_FA63w ROM:FA70w ...
 unk_D7:		.block 1		; DATA XREF: IV6:IV6_33r IV6+17Bw ...
 unk_D8:		.block 1		; DATA XREF: sub_C64D+E8r
 					; sub_C64D:loc_C755w ...
-unk_D9:		.block 1
+unk_D9:		.block 1		; superrun all 0
 unk_DA:		.block 1		; DATA XREF: sub_C4DF+6r
 					; sub_C505:loc_C512w ...
 unk_DB:		.block 1		; DATA XREF: __RESET:res_08w
@@ -397,6 +415,7 @@ unk_DB:		.block 1		; DATA XREF: __RESET:res_08w
 unk_DC:		.block 1		; DATA XREF: __RESET+16Fw __RESET+A1Fw ...
 					; engine temp related, as well as air temp and baro
 unk_DD:		.block 1		; DATA XREF: __RESET+A47w __RESET+B76r ...
+					; superrun all 0
 unk_DE:		.block 1		; DATA XREF: __RESET+AF3r
 					; __RESET:main_213r ...
 word_DF:	.block 2		; DATA XREF: __RESET+AF8w __RESET+CDFr ...
@@ -407,16 +426,19 @@ unk_E3:		.block 1		; DATA XREF: __RESET+ADDw __RESET+C81r ...
 unk_E4:		.block 1		; DATA XREF: __RESET+D32r __RESET+D71r ...
 unk_E5:		.block 1		; DATA XREF: ROM:ED53r	ROM:intASR2_24w ...
 unk_E6:		.block 1		; DATA XREF: ROM:EDA8r	ROM:EDADw ...
-		.block 1
+					; superrun all 0
+		.block 1		; superrun all 0
 unk_E8:		.block 1		; DATA XREF: ROM:intASR2_32r ROM:EDD8w ...
+					; superrun all 0
 unk_E9:		.block 1		; DATA XREF: IV6+B6r IV6:IV6_13w ...
+					; superrun all 0
 badKScount:	.block 1		; DATA XREF: IV6+1B4r IV6+1B9w ...
 					; Incremented by IV6, cleared by KS interrupt
 unk_EB:		.block 1		; DATA XREF: IV6+1A2r IV6+1C1w ...
-		.block 1
-		.block 1
-		.block 1
-		.block 1
+		.block 1		; superrun all 0
+		.block 1		; superrun all 0
+		.block 1		; superrun all 0
+		.block 1		; superrun all 0
 RPM:		.block 2		; DATA XREF: ROM:TwoD_RPMr ThreeD_RPMr ...
 					; MSB is RPM/50, LSB is	fraction of 50
 compLOAD:	.block 2		; DATA XREF: ROM:CAFBr	ROM:CCF7r ...
@@ -433,33 +455,40 @@ rawTHW:		.block 1		; DATA XREF: TwoD_rawTHWr sub_C634+4r	...
 f45_shadow:	.block 1		; DATA XREF: __RESET+1707w
 					; shadows flags_45
 byte_F9:	.block 1		; DATA XREF: __RESET+488r IV6+5EAr ...
-					; was zero for superrun
+					; superrun all 0
 rawTHA:		.block 1		; DATA XREF: sub_C61C+5r __RESET+2D0r	...
 					; Contains the NOT of air temp reading from ADC, sensor	is tied	to ground on other side
 ADC_pin18:	.block 1		; DATA XREF: ROM:FC08w
 					; 0V NOT'ed, so 255
-		.block 1
-		.block 1
-		.block 1
-unk_FF:		.block 1
+		.block 1		; superrun all 0
+		.block 1		; superrun all 0
+		.block 1		; superrun all 0
+unk_FF:		.block 1		; superrun all 0
 unk_100:	.block 1		; DATA XREF: __RESET+1733r
+					; Read from transmission controller
 unk_101:	.block 1		; DATA XREF: __RESET+481r
+					; Read from transmission controller
 unk_102:	.block 1		; DATA XREF: __RESET+46Fr IV6+D2r
+					; Read from transmission controller,superrun all 0
 unk_103:	.block 1		; DATA XREF: __RESET+47Ar __RESET+BADr ...
+					; Read from transmission controller
 unk_104:	.block 1		; DATA XREF: __RESET+4E0r
-					; timing related
+					; Read from transmission controller,timing related
 		.block 1
 unk_106:	.block 1		; DATA XREF: __RESET+1434r IV6+505w
-		.block 1
+					; Read from transmission controller,superrun all 0
+		.block 1		; superrun all 0
 unk_108:	.block 1		; DATA XREF: __RESET+F5Br
 					; IV6:loc_F4D4r
+					; Read from transmission controller
 unk_109:	.block 1		; DATA XREF: ROM:CE27r	__RESET+458r ...
+					; Read from transmission controller
 		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
-		.block 1
+		.block 1		; superrun all 0
+		.block 1		; superrun all 0
+		.block 1		; superrun all 0
+		.block 1		; superrun all 0
+		.block 1		; superrun all 0
 byte_110:	.block 1		; DATA XREF: ReInitCounters+8w
 					; __RESET:main_152w ...
 					; 7 to 23, highest at lowest fuel flow
@@ -483,39 +512,42 @@ ADC_rq1F:	.block 1		; DATA XREF: __RESET+10FBr
 					; __RESET+12A1r
 					; adc request 1F (probably pin 13, always 0)
 lastASR1N:	.block 2		; DATA XREF: intASR1+2r intASR1+4Aw
-deltaKS:	.block 1		; DATA XREF: IV6+70r IV6+8Cw ...
+deltatKS:	.block 1		; DATA XREF: IV6+70r IV6+8Cw ...
 					; Cumulative sum of KS intervals, counted by KS_count, reset in	IV6
-deltaKSl:	.block 1		; DATA XREF: IV6+78r IV6+8Fw
+deltatKSl:	.block 1		; DATA XREF: IV6+78r IV6+8Fw
 asr0n_shadow:	.block 1		; DATA XREF: sub_C003+7w sub_C010+8r ...
-					; stores configuration information written to asr0n
+					; stores configuration information written to asr0n, superrun =	F4
 count_11D:	.block 1		; DATA XREF: __RESET+120Er
 					; __RESET:mainTOF_13w
 					; tof increment	rate
 unk_11E:	.block 1		; DATA XREF: IV6+622r IV6:loc_F5A0w
+					; superrun all 0
 ISC_11F:	.block 1		; DATA XREF: __RESET+C4w __RESET+A61r	...
 					; ISC related
 ISC_120:	.block 1		; DATA XREF: IVc:ISC_altr IVc+9Fw ...
 					; ISC output bits is lsN
 unk_121:	.block 1		; DATA XREF: __RESET+ACAw __RESET+BEEr ...
+					; superrun all 0
 VTA1_flags:	.block 1		; DATA XREF: ROM:FA17r	ROM:loc_FA4Br
 					; VTA1 Flags
 VTA1_min:	.block 1		; DATA XREF: __RESET+ABw
-					; VTA1 minimum
+					; VTA1 minimum,	superrun = 29
 VTA1_net:	.block 2		; DATA XREF: __RESET+172Ar ROM:FA14r
 					; VTA1 - VTA_min
 count_126:	.block 1		; DATA XREF: __RESET+55Fr __RESET+5D3w ...
 					; from the plots it looks like it increments while the throttle	is closed
-		.block 1
+		.block 1		; superrun all 0
 VTA2_flags:	.block 1		; DATA XREF: ROM:FA1Ar
-					; VTA2 flags
+					; VTA2 flags, superrun all 0
 VTA2_min:	.block 1		; DATA XREF: __RESET+AEw
-					; VTA2 minimum
+					; VTA2 minimum,	superrun = 44
 VTA2_net:	.block 1		; DATA XREF: sub_D2B9+43r __RESET+B7w	...
-					; VTA2-VTA2_min, =255 when sub throttle	disabled/not exist
-unk_12B:	.block 1
+					; VTA2-VTA2_min, =255 when sub throttle	disabled/not exist, superrun = 255
+unk_12B:	.block 1		; superrun = 255
 count_12C:	.block 1		; DATA XREF: IV6+529r IV6:loc_F493w
-		.block 1
+bank1start:	.block 1		; address 12D loaded into Y to get going
 word_12E:	.block 2		; DATA XREF: ROM:CACBr	ROM:CB25r ...
+					; oxy sensor adjustment	1
 unk_130:	.block 1		; DATA XREF: sub_C64D+DCr
 					; ROM:loc_CB1Cr
 unk_131:	.block 1		; DATA XREF: ROM:loc_CF96r __RESET+9Aw
@@ -531,12 +563,12 @@ unk_139:	.block 1
 		.block 1
 		.block 1
 		.block 1
-unk_13E:	.block 1		; DATA XREF: __RESET+E84w
-		.block 1
+word_13E:	.block 2		; DATA XREF: __RESET+E84w
 unk_140:	.block 1		; DATA XREF: ROM:CA97r	ROM:CDCDr ...
 					; bits 5,0 oxl2	related
 unk_141:	.block 1		; DATA XREF: ROM:CAE1r	ROM:CAE6w ...
-unk_142:	.block 1		; DATA XREF: ROM:CA3Fr	ROM:loc_CA5Dr ...
+flags_142:	.block 1		; DATA XREF: ROM:CA3Fr	ROM:loc_CA5Dr ...
+					; superrun all 0
 count_143:	.block 1		; DATA XREF: ROM:CD12r	__RESET+FD5r ...
 					; only counts while warm
 		.block 1
@@ -544,8 +576,9 @@ unk_145:	.block 1		; DATA XREF: ROM:CFC0w	__RESET+C9w
 flags_146:	.block 1		; DATA XREF: ROM:C930r	ROM:C93Aw ...
 flags_147:	.block 1		; DATA XREF: ROM:CBD9r	ROM:CBDEw ...
 		.block 1
-unk_149:	.block 1
+bank2start:	.block 1		; address 149 loaded into Y to get going
 word_14A:	.block 2		; DATA XREF: ROM:CAD5r	ROM:CB28r ...
+					; oxy sensor adjustment	2
 unk_14C:	.block 1		; DATA XREF: sub_C64D+DFr ROM:CB1Fr
 unk_14D:	.block 1		; DATA XREF: ROM:loc_CFA0r __RESET+9Dw
 		.block 1
@@ -560,12 +593,11 @@ unk_155:	.block 1
 		.block 1
 		.block 1
 		.block 1
-unk_15A:	.block 1		; DATA XREF: __RESET+E87w
-		.block 1
+word_15A:	.block 2		; DATA XREF: __RESET+E87w
 unk_15C:	.block 1		; DATA XREF: ROM:CA9Ar	ROM:CDDCr ...
 					; bits 5,0 oxr2	related
 unk_15D:	.block 1		; DATA XREF: ROM:CAE9r	ROM:CAEEw ...
-unk_15E:	.block 1		; DATA XREF: ROM:loc_CA4Er ROM:CA65r ...
+flags_15E:	.block 1		; DATA XREF: ROM:loc_CA4Er ROM:CA65r ...
 count_15F:	.block 1		; DATA XREF: ROM:CD44r
 					; __RESET:main_284r ...
 					; only counts while warm? oxy sensor related?
@@ -573,6 +605,7 @@ count_15F:	.block 1		; DATA XREF: ROM:CD44r
 unk_161:	.block 1		; DATA XREF: ROM:CFC5w	__RESET+CCw
 flags_162:	.block 1		; DATA XREF: ROM:C933r	ROM:C93Dw ...
 flags_163:	.block 1		; DATA XREF: ROM:CBE1r	ROM:CBE6w ...
+					; superrun all 0
 InjectPW1:	.block 2		; DATA XREF: calcInjPW+2Aw __RESET+83w ...
 					; pulsewidth for LEFT bank (odd	cyl), 4us/bit
 InjectPW2:	.block 2		; DATA XREF: calcInjPW+2Dw __RESET+86w ...
@@ -598,13 +631,15 @@ count_178:	.block 1		; DATA XREF: sub_C64D+Dr __RESET+818w	...
 					; tof increment	rate
 unk_179:	.block 1		; DATA XREF: __RESET:main_304r
 					; __RESET:main_312r ...
-unk_17A:	.block 1		; DATA XREF: sub_C64D+1DEr ROM:CAA1r ...
-		.block 1
+					; superrun all 0
+word_17A:	.block 2		; DATA XREF: sub_C64D+1DEr ROM:CAA1r ...
 unk_17C:	.block 1		; DATA XREF: __RESET:main_289r
 					; __RESET:main_292w
 unk_17D:	.block 1		; DATA XREF: __RESET+784r
+					; superrun all 0
 unk_17E:	.block 1		; DATA XREF: __RESET+1000r
 					; __RESET+1048w
+					; superrun all 0
 		.block 1
 unk_180:	.block 1		; DATA XREF: __RESET+6DCw __RESET+72Br
 unk_181:	.block 1		; DATA XREF: __RESET+6E3w __RESET+74Br
@@ -616,7 +651,7 @@ flags_183:	.block 1		; DATA XREF: __RESET+4C1r
 unk_185:	.block 1		; DATA XREF: __RESET+1377r
 					; __RESET:main_338w ...
 byte_186:	.block 1		; DATA XREF: __RESET+500r ROM:ED8Fr ...
-					; subtracted from timing in NEsub
+					; subtracted from timing in NEsub, superrun not	zero while starting
 unk_187:	.block 1		; DATA XREF: __RESET:main_47w
 					; __RESET+503r	...
 					; timing related
@@ -625,15 +660,15 @@ Timing_NE:	.block 1		; DATA XREF: __RESET+148Cw
 					; represents the number	of NE ticks from TDC to	fire spark ( use formula 30*[(Timing_NE-1)+Timing_frac/256] )
 Timing_frac:	.block 1		; represents fraction of TDC tick from TDC to fire spark
 byte_18A:	.block 1		; DATA XREF: __RESET+514r __RESET+519r ...
-					; subtracted from timing in NEsub
+					; subtracted from timing in NEsub, superrun not	zero while starting
 unk_18B:	.block 1		; DATA XREF: __RESET+1431r
 					; __RESET:Timing_352w ...
 byte_18C:	.block 1		; DATA XREF: __RESET:main_333w
 					; __RESET+14BFr
-					; lookup from RPM by LOAD table
+					; lookup from RPM by LOAD table, superrun all 0
 unk_18D:	.block 1		; DATA XREF: __RESET:main_59r
 					; __RESET+142Ew ...
-					; im thinking it's a net retard, summed from a number of positive vales then negated
+					; im thinking it's a net retard, summed from a number of positive vales then negated, idles at 128 while warm
 unk_18E:	.block 1		; DATA XREF: __RESET:main_347w
 					; __RESET+14DEr ...
 unk_18F:	.block 1		; DATA XREF: ROM:EE2Fr
@@ -644,13 +679,14 @@ unk_190:	.block 1		; DATA XREF: NEsub1_18+Br
 IGT_time:	.block 2		; DATA XREF: calcIGT_time+12w
 					; Cmp0IGTdwellr
 word_193:	.block 2		; DATA XREF: __RESET+591w __RESET+8F3w ...
+					; superrun all 0
 final_timing:	.block 1		; DATA XREF: NEsub1+9Aw
 					; final	timing (multiply by 60/256)
 unk_196:	.block 1		; DATA XREF: sub_F1A9:loc_F1D8r
 					; sub_F1A9:loc_F200w
 unk_197:	.block 1		; DATA XREF: __RESET:main_57r
 					; __RESET+510r	...
-					; subtracted from timing in main loop
+					; definitly did	something during WOT blasts in superrun
 unk_198:	.block 1		; DATA XREF: sub_F1A9+70w sub_F1A9+82w ...
 byte_199:	.block 1		; DATA XREF: __RESET:main_35w
 					; sub_F1A9+6Aw	...
@@ -663,13 +699,14 @@ count_19C:	.block 1		; DATA XREF: sub_F1A9r	sub_F1A9+6w ...
 count_19D:	.block 1		; DATA XREF: sub_F1A9:loc_F1B2r
 					; sub_F1A9+Fw ...
 unk_19E:	.block 1		; DATA XREF: ROM:intASR2_30r ROM:EDBDw ...
+					; superrun all 0
 unk_19F:	.block 1		; DATA XREF: IVc+3Dr IVc+51w ...
 					; ISC related
 count_1A0:	.block 1		; DATA XREF: __RESET+BCw __RESET+F42r	...
 					; increments at	E480
 count_1A1:	.block 1		; DATA XREF: __RESET+BFw
 					; __RESET:main_271r ...
-					; increments at	E480
+					; increments at	E480, superrun = 255
 count_1A2:	.block 1		; DATA XREF: __RESET+166Fr
 					; __RESET:main_403w
 					; increments at	E480
@@ -699,6 +736,7 @@ unk_1B3:	.block 1		; DATA XREF: __RESET+D1w
 		.block 1
 unk_1B5:	.block 1		; DATA XREF: ROM:CE14w	ROM:CE2Er ...
 unk_1B6:	.block 1		; DATA XREF: ROM:CEA8w	ReInitNEIGT+21w ...
+					; superrun all 0
 unk_1B7:	.block 1		; DATA XREF: ROM:CEABw	ReInitNEIGT+24w ...
 count_1B8:	.block 1		; incremented at F49C
 count_1B9:	.block 1		; incremented at F49C
@@ -728,16 +766,18 @@ unk_1CD:	.block 1
 unk_1CE:	.block 1		; DATA XREF: ROM:loc_CB0Cw ROM:CB46r ...
 unk_1CF:	.block 1		; DATA XREF: ROM:loc_CB16w ROM:CB4Fr ...
 count_1D0:	.block 1		; DATA XREF: ROM:CC32w
-		.block 1
-		.block 1
+					; bank1
+		.block 1		; bank1, superrun all 0
+byte_1D2:	.block 1		; bank1
 count_1D3:	.block 1		; tof increment	rate
 count_1D4:	.block 1		; DATA XREF: ROM:CC35w
-unk_1D5:	.block 1
-		.block 1
+					; bank2
+		.block 1		; bank2
+byte_1D6:	.block 1		; bank2
 unk_1D7:	.block 1		; DATA XREF: __RESET:mainTOF_17r
 					; __RESET+12BAw ...
 unk_1D8:	.block 1
-unk_1D9:	.block 1
+unk_1D9:	.block 1		; superrun all 0
 		.block 1
 		.block 1
 		.block 1
@@ -757,7 +797,7 @@ unk_1D9:	.block 1
 		.block 1
 		.block 1
 		.block 1
-		.block 1
+		.block 1		; superrun all 0
 		.block 1
 		.block 1
 		.block 1
@@ -12377,10 +12417,10 @@ word_308:	.block 2
 
 
 sub_C003:				; CODE XREF: __RESET+17Dp
-		ld	#0FEh, count_A9	; incremented at F47D
+		ld	#0FEh, count_A9	; incremented at F47D, never seems to count higher than	1, frequently reset
 		ld	a, #34h
 		or	a, #0C0h	; kinbda straightforward, =F4
-		st	a, asr0n_shadow	; stores configuration information written to asr0n
+		st	a, asr0n_shadow	; stores configuration information written to asr0n, superrun =	F4
 		st	a, ASR0N	; ASR0 neg edge	counter	value MSB
 		ret
 ; End of function sub_C003
@@ -12390,13 +12430,13 @@ sub_C003:				; CODE XREF: __RESET+17Dp
 
 
 sub_C010:				; CODE XREF: IV6:loc_F4DEp
-		cmp	#04h, count_AA	; incremented at F47D
+		cmp	#04h, count_AA	; incremented at F47D, superrun	all 0
 		ble	loc_C025
-		clr	count_AA	; incremented at F47D
+		clr	count_AA	; incremented at F47D, superrun	all 0
 		di
-		ld	a, asr0n_shadow	; stores configuration information written to asr0n
+		ld	a, asr0n_shadow	; stores configuration information written to asr0n, superrun =	F4
 		and	a, #0BFh
-		st	a, asr0n_shadow	; stores configuration information written to asr0n
+		st	a, asr0n_shadow	; stores configuration information written to asr0n, superrun =	F4
 		ei
 		st	a, ASR0N	; ASR0 neg edge	counter	value MSB
 		bra	loc_C034
@@ -12409,32 +12449,32 @@ loc_C025:				; CODE XREF: sub_C010+3j
 		beq	loc_C046
 		cmpb	a, #08h
 		bne	loc_C034
-		clr	count_AA	; incremented at F47D
+		clr	count_AA	; incremented at F47D, superrun	all 0
 
 loc_C034:				; CODE XREF: sub_C010+13j sub_C010+20j
-		ld	a, asr0n_shadow	; stores configuration information written to asr0n
+		ld	a, asr0n_shadow	; stores configuration information written to asr0n, superrun =	F4
 		or	a, #40h
-		st	a, asr0n_shadow	; stores configuration information written to asr0n
+		st	a, asr0n_shadow	; stores configuration information written to asr0n, superrun =	F4
 		st	a, ASR0N	; ASR0 neg edge	counter	value MSB
 		ld	d, #38F0h
 		st	d, ASR3		; ASR3 edge counter value MSB
 		ld	#0B7h, TIMER3	; Timer	LSB (bit0~bit2)
 
 loc_C046:				; CODE XREF: sub_C010+1Cj
-		cmp	#04h, count_A9	; incremented at F47D
+		cmp	#04h, count_A9	; incremented at F47D, never seems to count higher than	1, frequently reset
 		ble	locret_C069
-		ld	a, asr0n_shadow	; stores configuration information written to asr0n
+		ld	a, asr0n_shadow	; stores configuration information written to asr0n, superrun =	F4
 		and	a, #7Fh
-		st	a, asr0n_shadow	; stores configuration information written to asr0n
+		st	a, asr0n_shadow	; stores configuration information written to asr0n, superrun =	F4
 		st	a, ASR0N	; ASR0 neg edge	counter	value MSB
-		ld	a, asr0n_shadow	; stores configuration information written to asr0n
+		ld	a, asr0n_shadow	; stores configuration information written to asr0n, superrun =	F4
 		or	a, #80h
-		st	a, asr0n_shadow	; stores configuration information written to asr0n
+		st	a, asr0n_shadow	; stores configuration information written to asr0n, superrun =	F4
 		st	a, ASR0N	; ASR0 neg edge	counter	value MSB
 		ld	d, #3900h
 		st	d, ASR2		; ASR2 edge counter value MSB
 		ld	#4Fh, TIMER3	; Timer	LSB (bit0~bit2)
-		clr	count_A9	; incremented at F47D
+		clr	count_A9	; incremented at F47D, never seems to count higher than	1, frequently reset
 
 locret_C069:				; CODE XREF: sub_C010+39j
 		ret
@@ -12453,7 +12493,7 @@ intSINx:				; DATA XREF: ROM:FFDEo
 		ld	a, TIMER3	; Timer	LSB (bit0~bit2)
 		cmpb	a, #30h
 		bne	iv0part2
-		clr	count_A9	; incremented at F47D
+		clr	count_A9	; incremented at F47D, never seems to count higher than	1, frequently reset
 
 iv0part2:				; CODE XREF: intSINx+Dj
 		ld	d, #3900h
@@ -12649,6 +12689,7 @@ MulAbyY:				; CODE XREF: sub_C634:loc_C63Fp
 
 ; ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ S U B	R O U T	I N E ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ
 
+; saturate A with following limits
 
 SaturateData:				; CODE XREF: sub_C8D9:loc_C8E9p
 					; sub_C907+1p ...
@@ -12705,11 +12746,11 @@ sat16_3:				; CODE XREF: SaturateD16b+Bj
 
 ; ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ S U B	R O U T	I N E ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ
 
-; Lookup unk_7A, integer return	in Acca, fraction return in AccB
+; Lookup corrKSint, integer return in Acca, fraction return in AccB
 
-TwoD_7A:				; CODE XREF: __RESET+75Ap __RESET+7A1p ...
-		ld	d, word_7A	; meanKSint divided by a air temp/baro comp factor byte_1a8
-; End of function TwoD_7A
+TwoD_corrKSint:				; CODE XREF: __RESET+75Ap __RESET+7A1p ...
+		ld	d, corrKSint	; meanKSint divided by a air temp/baro comp factor byte_1a8 - time divided by correction is 1/(freq*correction)
+; End of function TwoD_corrKSint
 
 
 ; ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ S U B	R O U T	I N E ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ
@@ -13746,6 +13787,7 @@ locret_C504:				; CODE XREF: sub_C4DF+21j
 
 ; ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ S U B	R O U T	I N E ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ
 
+; play with 0x82, 0xDA
 
 sub_C505:				; CODE XREF: __RESET+171p
 					; __RESET:main_157p
@@ -14065,7 +14107,7 @@ loc_C64A:				; CODE XREF: sub_C634+12j
 
 ; ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ S U B	R O U T	I N E ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ
 
-; called with either 12D or 149	in Y
+; per bank sub
 
 sub_C64D:				; CODE XREF: __RESET+5FAp __RESET+602p
 
@@ -14128,8 +14170,8 @@ loc_C69D:				; CODE XREF: sub_C64D+46j
 		ld	a, flags_44	; bit 1	is igf1	related, bit2 igf2 related
 		cmpb	a, #3Fh
 		bne	loc_C6B7
-		ld	a, word_94
-		or	a, word_96
+		ld	a, word_94	; bank1, superrun = 00FF
+		or	a, word_96	; bank2, superrun = 00FF
 		cmpb	a, #04h
 		bne	loc_C6B7
 		tbbc	bit3, flags_43,	loc_C6EB ; bit3: AFM bad bit4: rev limiter
@@ -14395,9 +14437,9 @@ loc_C823:				; CODE XREF: sub_C64D+1AFj
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_C826:				; CODE XREF: sub_C64D+19Aj
-		cmp	#0Fh, unk_5E	; could	be last	unk_100, or 0
+		cmp	#0Fh, unk_5E	; speed	sensor related,	could be last unk_100, or 0, superrun all 0
 		bgt	loc_C84E
-		ld	x, unk_17A
+		ld	x, word_17A
 		bmi	loc_C84E
 		cmp	x, #55D5h
 		bcc	loc_C84E
@@ -14447,7 +14489,7 @@ loc_C861:				; CODE XREF: sub_C64D+20Cj
 		add	b, #80h
 		add	b, temp_51
 		addc	a, #00h
-		add	b, word_98	; 128 for entire superrun
+		add	b, word_98	; superrun = 807F
 		addc	a, #00h
 		jsr	SaturateD16b
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
@@ -14510,10 +14552,10 @@ loc_C8A3:				; CODE XREF: sub_C895+8j
 ; feels	like it	acounts	for oxygen sensor correction
 
 sub_C8BB:				; CODE XREF: ROM:CB2Dp	ROM:CB34p ...
-		add	a, word_98	; 128 for entire superrun
+		add	a, word_98	; superrun = 807F
 		rorc	a
-		rorc	b
-		shr	d
+		rorc	b		; average d, 98
+		shr	d		; divide by 2
 		jsr	SaturateD16b
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 		.dw 22938
@@ -14527,7 +14569,7 @@ sub_C8BB:				; CODE XREF: ROM:CB2Dp	ROM:CB34p ...
 		shra	a
 		rorc	b
 		add	d, temp_51
-		add	a, #40h
+		add	a, #064
 		ret
 ; End of function sub_C8BB
 
@@ -14559,7 +14601,7 @@ loc_C8E3:				; CODE XREF: sub_C8D9+4j
 		clr	a
 
 loc_C8E9:				; CODE XREF: sub_C8D6+1j sub_C8D9+Dj
-		jsr	SaturateData
+		jsr	SaturateData	; saturate A with following limits
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 		.db  66h ; f
 		.db  00h
@@ -14595,7 +14637,7 @@ sub_C900:				; CODE XREF: sub_C64D:loc_C67Bp
 
 sub_C907:				; CODE XREF: __RESET:main_306p
 		push	x
-		jsr	SaturateData
+		jsr	SaturateData	; saturate A with following limits
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 		.db 0A4h ; ¤
 		.db  29h ; )
@@ -14619,15 +14661,15 @@ SUB_C918:				; CODE XREF: __RESET+FF7p
 		tbbs	bit7, flags_45,	loc_C952 ; bounce if TE1 shorted to gnd
 		tbbc	bit3, flags_4B,	loc_C946
 		clrb	bit3, flags_4B
-		tbbs	bit6, flags_4D,	loc_C926
-		tbbc	bit7, flags_4D,	loc_C946
+		tbbs	bit6, flags_4D,	loc_C926 ; superrun all	0
+		tbbc	bit7, flags_4D,	loc_C946 ; superrun all	0
 
 loc_C926:				; CODE XREF: ROM:C920j
 		clrb	bit7, flags_4D
-		ld	d, flags_4E	; bit1 is igf1 related,	bit2 igf2 related
+		ld	d, flags_4E	; bit1 is igf1 related,	bit2 igf2 related, superrun all	0
 		and	a, #0EFh	; clear	bit 4 of unk_4e
 		and	b, #60h
-		st	d, flags_4E	; bit1 is igf1 related,	bit2 igf2 related
+		st	d, flags_4E	; bit1 is igf1 related,	bit2 igf2 related, superrun all	0
 		ld	a, flags_146
 		ld	b, flags_162
 		and	a, #00h
@@ -14639,12 +14681,12 @@ loc_C926:				; CODE XREF: ROM:C920j
 		st	a, flags_7D	; clear	bits 7..5
 
 loc_C946:				; CODE XREF: ROM:C91Bj	ROM:C923j
-		ld	a, flags_4F
+		ld	a, flags_4F	; superrun all 0
 		and	a, #7Fh
-		st	a, flags_4F
-		ld	a, flags_4D
+		st	a, flags_4F	; superrun all 0
+		ld	a, flags_4D	; superrun all 0
 		and	a, #81h
-		st	a, flags_4D
+		st	a, flags_4D	; superrun all 0
 
 loc_C952:				; CODE XREF: ROM:SUB_C918j
 		tbbs	bit0, flags_45,	loc_C959 ; bounce if starting
@@ -14792,11 +14834,11 @@ loc_CA2A:				; CODE XREF: ROM:C9E0j	ROM:CA1Cj
 		ble	loc_CA6D
 		clr	b
 		st	b, count_1D3	; tof increment	rate
-		ld	a, word_8A
-		or	a, word_8C
+		ld	a, word_8A	; superrun = 00FF
+		or	a, word_8C	; superrun = 00FF
 		and	a, #7Ch
 		bne	loc_CA5D
-		ld	a, unk_142
+		ld	a, flags_142	; superrun all 0
 		cmpb	a, #40h
 		beq	loc_CA4E
 		ld	a, flags_146
@@ -14804,7 +14846,7 @@ loc_CA2A:				; CODE XREF: ROM:C9E0j	ROM:CA1Cj
 		st	a, flags_146
 
 loc_CA4E:				; CODE XREF: ROM:CA44j
-		ld	a, unk_15E
+		ld	a, flags_15E
 		cmpb	a, #40h
 		beq	loc_CA5D
 		ld	a, flags_162
@@ -14812,31 +14854,31 @@ loc_CA4E:				; CODE XREF: ROM:CA44j
 		st	a, flags_162
 
 loc_CA5D:				; CODE XREF: ROM:CA3Dj	ROM:CA53j
-		ld	a, unk_142
+		ld	a, flags_142	; superrun all 0
 		and	a, #0BFh
-		st	a, unk_142
-		ld	a, unk_15E
+		st	a, flags_142	; superrun all 0
+		ld	a, flags_15E
 		and	a, #0BFh
-		st	a, unk_15E
+		st	a, flags_15E
 
 loc_CA6D:				; CODE XREF: ROM:CA31j
 		clrb	bit5, flags_4B
 		tbbc	bit6, flags_4B,	loc_CAC9
-		cmp	#82h, unk_5E	; could	be last	unk_100, or 0
+		cmp	#82h, unk_5E	; speed	sensor related,	could be last unk_100, or 0, superrun all 0
 		bcc	loc_CAC9
-		ld	a, flags_4E	; bit1 is igf1 related,	bit2 igf2 related
+		ld	a, flags_4E	; bit1 is igf1 related,	bit2 igf2 related, superrun all	0
 		and	a, #06h
 		bne	loc_CAC9
-		ld	a, flags_4F
+		ld	a, flags_4F	; superrun all 0
 
 loc_CA7F:
 		and	a, #07h
 		bne	loc_CAC9
-		ld	a, word_86
+		ld	a, word_86	; superrun = 00FF
 		and	a, #08h
 		bne	loc_CAC9
-		ld	a, word_90
-		or	a, word_92
+		ld	a, word_90	; bank1, superrun = 00FF
+		or	a, word_92	; bank2, superrun = 00FF
 		and	a, #01h
 		bne	loc_CAC9
 		ld	a, flags_7D	; error	bits: b3 oxy htr R2, b2	oxy htr	R1, b1 oxy htr L2, b0 oxy htr L1
@@ -14846,7 +14888,7 @@ loc_CA7F:
 		and	a, unk_15C	; bits 5,0 oxr2	related
 		and	a, #02h
 		beq	loc_CAC9
-		ld	d, unk_17A
+		ld	d, word_17A
 		cmp	d, #55D5h
 		bcs	loc_CAC9
 		ld	b, unk_1D8
@@ -14865,15 +14907,15 @@ loc_CA7F:
 
 loc_CAC9:				; CODE XREF: ROM:CA6Fj	ROM:CA75j ...
 		clrb	bit0, flags_40
-		ld	a, word_12E
-		jsr	SaturateData
+		ld	a, word_12E	; oxy sensor adjustment	1
+		jsr	SaturateData	; saturate A with following limits
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 		.db 0E5h ; å
 		.db  1Ah
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 		bcs	loc_CADF
-		ld	a, word_14A
-		jsr	SaturateData
+		ld	a, word_14A	; oxy sensor adjustment	2
+		jsr	SaturateData	; saturate A with following limits
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 		.db 0E5h ; å
 		.db  1Ah
@@ -14894,20 +14936,20 @@ loc_CAF1:				; CODE XREF: ROM:CADDj
 		and	a, unk_15D
 		and	a, #04h
 		beq	loc_CB03
-		cmp	#18h, compLOAD	; air temp and Baro compensated	Load (likely in	units of mass)
+		cmp	#024, compLOAD	; right	around cruise
 		bcs	loc_CB03
 		tbbs	bit5, flags_4B,	loc_CB1C
 
 loc_CB03:				; CODE XREF: ROM:CAF9j	ROM:CAFEj
 		ld	a, #0FFh
-		ld	b, word_94
+		ld	b, word_94	; bank1, superrun = 00FF
 		cmpb	b, #28h
 		bne	loc_CB0C
 		clr	a
 
 loc_CB0C:				; CODE XREF: ROM:CB09j
 		st	a, unk_1CE
-		ld	b, word_90
+		ld	b, word_90	; bank1, superrun = 00FF
 		cmpb	b, #78h
 		bne	loc_CB16
 		clr	a
@@ -14921,8 +14963,8 @@ loc_CB1C:				; CODE XREF: ROM:CB00j
 		ld	a, unk_130
 		ld	b, unk_14C
 		tbbc	bit0, flags_40,	loc_CB2B ; B3 :	forced timing to 5/10 deg BTDC
-		ld	a, word_12E
-		ld	b, word_14A
+		ld	a, word_12E	; oxy sensor adjustment	1
+		ld	b, word_14A	; oxy sensor adjustment	2
 
 loc_CB2B:				; CODE XREF: ROM:CB22j
 		push	b
@@ -14967,7 +15009,7 @@ loc_CB5A:				; CODE XREF: ROM:CB44j
 
 loc_CB63:				; CODE XREF: ROM:CB5Ej
 		ld	b, unk_1CF
-		ld	a, unk_142
+		ld	a, flags_142	; superrun all 0
 		and	a, #80h
 		beq	loc_CB75
 		setb	bit0, flags_40
@@ -14980,13 +15022,13 @@ loc_CB75:				; CODE XREF: ROM:CB58j	ROM:CB6Bj ...
 		bne	loc_CB9B
 		ld	x, #0D253h
 		ld	y, #012Dh
-		jsr	sub_D222
+		jsr	bankflags	; per bank sub
 		ld	x, #0D253h
 		ld	y, #0149h
-		jsr	sub_D222
-		ld	a, unk_142
+		jsr	bankflags	; per bank sub
+		ld	a, flags_142	; superrun all 0
 		and	a, #7Fh
-		st	a, unk_142
+		st	a, flags_142	; superrun all 0
 		clr	a
 		st	a, unk_1CF
 		jmp	loc_CC1F
@@ -15017,7 +15059,7 @@ loc_CBB4:				; CODE XREF: ROM:CBACj
 		cmp	a, #99h
 		bne	loc_CBEB
 		tbbs	bit3, flags_4B,	loc_CBD7
-		ld	a, unk_142
+		ld	a, flags_142	; superrun all 0
 		and	a, #80h
 		bne	loc_CBEB
 		ld	a, flags_146
@@ -15034,9 +15076,9 @@ loc_CBD7:				; CODE XREF: ROM:CBBBj
 		ld	a, flags_147
 		or	a, #28h
 		st	a, flags_147
-		ld	a, flags_163
+		ld	a, flags_163	; superrun all 0
 		or	a, #28h
-		st	a, flags_163
+		st	a, flags_163	; superrun all 0
 		bra	loc_CBF5
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
@@ -15082,15 +15124,15 @@ loc_CC1F:				; CODE XREF: ROM:CB19j	ROM:CB98j ...
 		clr	a
 		tbbc	bit5, flags_4B,	loc_CC30
 		tbbc	bit0, flags_41,	loc_CC30 ; B0 IDL1, b5 indidcates something about ram stats during last	suspend
-		cmp	#02h, unk_5E	; could	be last	unk_100, or 0
+		cmp	#02h, unk_5E	; speed	sensor related,	could be last unk_100, or 0, superrun all 0
 		bcc	loc_CC30
 		cmp	#019, RPM	; 950RPM
 		bcs	loc_CC3A
 
 loc_CC30:				; CODE XREF: ROM:CC20j	ROM:CC23j ...
 		st	a, count_C7	; increments at	E478
-		st	a, count_1D0
-		st	a, count_1D4
+		st	a, count_1D0	; bank1
+		st	a, count_1D4	; bank2
 		bra	loc_CC53
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
@@ -15100,13 +15142,13 @@ loc_CC3A:				; CODE XREF: ROM:CC2Ej
 		clr	count_C7	; increments at	E478
 		ld	x, #01D0h
 		ld	y, #012Dh
-		jsr	sub_D159
+		jsr	sub_D159	; per bank sub
 		ld	x, #01D4h
 		ld	y, #0149h
-		jsr	sub_D159
+		jsr	sub_D159	; per bank sub
 
 loc_CC53:				; CODE XREF: ROM:CC38j	ROM:CC3Dj
-		cmp	#82h, unk_5E	; could	be last	unk_100, or 0
+		cmp	#130, unk_5E	; speed	sensor related,	could be last unk_100, or 0, superrun all 0
 		bcc	loc_CC7D
 		ld	a, word_8E
 		and	a, #10h
@@ -15114,7 +15156,7 @@ loc_CC53:				; CODE XREF: ROM:CC38j	ROM:CC3Dj
 		cmp	#030, RPM	; 1500RPM
 		bcs	loc_CC7D
 		ld	d, word_170	; nonzero and decreasing from cold start
-		cmp	d, #0CCDh
+		cmp	d, #03277
 		bcc	loc_CC7D
 		ld	a, flags_A2	; MSN= trouble bit7: VTA_net high, bit4: VTA_net high, lsN is oxy heater "checked" bits
 		and	a, #50h		; test flags_A2	bit4 bit6
@@ -15123,7 +15165,7 @@ loc_CC53:				; CODE XREF: ROM:CC38j	ROM:CC3Dj
 		and	a, #3Fh
 		bne	loc_CC7D
 		tbbs	bit3, flags_43,	loc_CC7D ; bit3: AFM bad bit4: rev limiter
-		tbbc	bit3, flags_4E,	loc_CC83 ; bit1	is igf1	related, bit2 igf2 related
+		tbbc	bit3, flags_4E,	loc_CC83 ; bit1	is igf1	related, bit2 igf2 related, superrun all 0
 
 loc_CC7D:				; CODE XREF: ROM:CC56j	ROM:CC5Cj ...
 		clr	count_D0	; incremented at E7A9
@@ -15153,46 +15195,46 @@ loc_CCA0:				; CODE XREF: ROM:loc_CC83j ROM:CC89j ...
 		st	a, flags_162
 		tbbc	bit3, flags_4B,	loc_CCBD
 		setb	bit6, flags_4D
-		ld	a, flags_163
+		ld	a, flags_163	; superrun all 0
 		or	a, #04h
-		st	a, flags_163
+		st	a, flags_163	; superrun all 0
 
 loc_CCBD:				; CODE XREF: ROM:CC81j	ROM:loc_CCA0j ...
 		tbbc	bit0, flags_49,	loc_CCCB ; bits	1-3-4-5	are oxl1-oxr1-oxl2-oxr2	- Oxygen sensors
 		ld	x, #0D252h
 		ld	y, #012Dh
-		jsr	sub_D222
+		jsr	bankflags	; per bank sub
 		clr	count_D0	; incremented at E7A9
 
 loc_CCCB:				; CODE XREF: ROM:loc_CCBDj
 		tbbc	bit2, flags_49,	loc_CCD9 ; bits	1-3-4-5	are oxl1-oxr1-oxl2-oxr2	- Oxygen sensors
 		ld	x, #0D252h
 		ld	y, #0149h
-		jsr	sub_D222
+		jsr	bankflags	; per bank sub
 		clr	count_D1	; incremented at E7A9
 
 loc_CCD9:				; CODE XREF: ROM:loc_CCCBj
-		ld	a, word_86
+		ld	a, word_86	; superrun = 00FF
 		and	a, #08h
 		bne	loc_CD09
-		ld	a, word_88
+		ld	a, word_88	; superrun = 00FF
 		and	a, #01h
 		bne	loc_CD09
-		ld	a, word_8A
-		or	a, word_8C
-		or	a, word_94
-		or	a, word_96
+		ld	a, word_8A	; superrun = 00FF
+		or	a, word_8C	; superrun = 00FF
+		or	a, word_94	; bank1, superrun = 00FF
+		or	a, word_96	; bank2, superrun = 00FF
 		and	a, #7Ch
 		bne	loc_CD09
 		ld	a, word_8E
 		and	a, #10h
 		bne	loc_CD09
-		cmp	#036, compLOAD	; air temp and Baro compensated	Load (likely in	units of mass)
+		cmp	#036, compLOAD	; higher than cruise
 		bcs	loc_CD09	; bounce if low	load
 		tbbc	bit2, flags_4B,	loc_CD09
 		cmp	#030, RPM	; 1500RPM
 		bcs	loc_CD09	; bounce if low	rpm
-		cmp	#64h, unk_5E	; could	be last	unk_100, or 0
+		cmp	#64h, unk_5E	; speed	sensor related,	could be last unk_100, or 0, superrun all 0
 		bcs	loc_CD0F
 
 loc_CD09:				; CODE XREF: ROM:CCDDj	ROM:CCE3j ...
@@ -15243,9 +15285,9 @@ loc_CD3E:				; CODE XREF: ROM:CD26j
 		st	a, flags_162
 		tbbc	bit3, flags_4B,	loc_CD6F ; clear and store
 		setb	bit6, flags_4D
-		ld	a, flags_163
+		ld	a, flags_163	; superrun all 0
 		or	a, #01h
-		st	a, flags_163
+		st	a, flags_163	; superrun all 0
 
 loc_CD6F:				; CODE XREF: ROM:CD0Dj	ROM:CD41j ...
 		clr	a		; clear	and store
@@ -15269,46 +15311,46 @@ loc_CD7E:				; CODE XREF: ROM:CD78j
 		ld	y, #0149h
 		jsr	sub_D1BC
 		st	b, unk_1BF
-		ld	b, word_86
+		ld	b, word_86	; superrun = 00FF
 		and	b, #08h
 		bne	loc_CDC5
-		ld	b, word_88
+		ld	b, word_88	; superrun = 00FF
 		and	b, #01h
 		bne	loc_CDC5
-		ld	b, word_8A
-		or	b, word_8C
+		ld	b, word_8A	; superrun = 00FF
+		or	b, word_8C	; superrun = 00FF
 		and	b, #7Dh
 		bne	loc_CDC5
 		ld	b, word_8E
 		and	b, #1Fh
 		bne	loc_CDC5
 		ld	b, flags_147
-		or	b, flags_163
+		or	b, flags_163	; superrun all 0
 		and	b, #7Dh
 		bne	loc_CDC5
-		cmp	#78h, unk_7E
+		cmp	#78h, unk_7E	; superrun all 0
 		bcc	loc_CDCB
 
 loc_CDC5:				; CODE XREF: ROM:CDA0j	ROM:CDA6j ...
 		clr	a
 		clr	b
-		st	d, count_C2	; increments at	E478
+		st	d, count_C2	; increments at	E478, superrun all 0
 		bra	loc_CDE9
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_CDCB:				; CODE XREF: ROM:CDC3j
-		ld	a, count_C2	; increments at	E478
+		ld	a, count_C2	; increments at	E478, superrun all 0
 		ld	b, unk_140	; bits 5,0 oxl2	related
 		ld	y, #012Dh
 		clrb	bit0, flags_40
-		jsr	sub_D1EF
-		st	a, count_C2	; increments at	E478
-		ld	a, count_C3	; increments at	E478
+		jsr	sub_D1EF	; per bank sub
+		st	a, count_C2	; increments at	E478, superrun all 0
+		ld	a, count_C3	; increments at	E478, superrun all 0
 		ld	b, unk_15C	; bits 5,0 oxr2	related
 		ld	y, #0149h
 		setb	bit0, flags_40
-		jsr	sub_D1EF
-		st	a, count_C3	; increments at	E478
+		jsr	sub_D1EF	; per bank sub
+		st	a, count_C3	; increments at	E478, superrun all 0
 
 loc_CDE9:				; CODE XREF: ROM:CDC9j
 		ld	a, unk_140	; bits 5,0 oxl2	related
@@ -15316,7 +15358,7 @@ loc_CDE9:				; CODE XREF: ROM:CDC9j
 		beq	loc_CDF9
 		ld	x, #0D251h
 		ld	y, #012Dh
-		jsr	sub_D222
+		jsr	bankflags	; per bank sub
 
 loc_CDF9:				; CODE XREF: ROM:CDEEj
 		ld	a, unk_15C	; bits 5,0 oxr2	related
@@ -15324,10 +15366,10 @@ loc_CDF9:				; CODE XREF: ROM:CDEEj
 		beq	loc_CE09
 		ld	x, #0D251h
 		ld	y, #0149h
-		jsr	sub_D222
+		jsr	bankflags	; per bank sub
 
 loc_CE09:				; CODE XREF: ROM:CDFEj
-		ld	b, unk_5E	; could	be last	unk_100, or 0
+		ld	b, unk_5E	; speed	sensor related,	could be last unk_100, or 0, superrun all 0
 		beq	loc_CE1F	; 2800RPM
 		ld	a, flags_7D	; error	bits: b3 oxy htr R2, b2	oxy htr	R1, b1 oxy htr L2, b0 oxy htr L1
 		and	a, #0EFh
@@ -15346,7 +15388,7 @@ loc_CE1F:				; CODE XREF: ROM:CE0Bj
 		cmp	#056, RPM	; 2800RPM
 		bcs	loc_CE13
 		tbbs	bit5, flags_45,	loc_CE13 ; IC303 input chip: B7	/TE2, B6 /TE1, B5 /NSW,	B4 IGSW,  B3, B2 IDL2, B1 , B0 STA
-		ld	a, unk_109
+		ld	a, unk_109	; Read from transmission controller
 		and	a, #02h
 		bne	loc_CE13
 		ld	a, unk_1B5
@@ -15408,9 +15450,9 @@ loc_CE86:				; CODE XREF: ROM:CE82j
 		st	a, unk_1C4
 
 loc_CE89:				; CODE XREF: ROM:CE6Ej
-		ld	a, flags_4D
+		ld	a, flags_4D	; superrun all 0
 		push	a
-		ld	d, flags_4E	; bit1 is igf1 related,	bit2 igf2 related
+		ld	d, flags_4E	; bit1 is igf1 related,	bit2 igf2 related, superrun all	0
 		tbbc	bit5, RAMST, loc_CEA7 ;	Built-in RAM status
 		cmp	#122, count_AE	; incremented at F47D
 		ble	loc_CEA7
@@ -15425,7 +15467,7 @@ loc_CE89:				; CODE XREF: ROM:CE6Ej
 
 loc_CEA7:				; CODE XREF: ROM:CE8Ej	ROM:CE94j ...
 		clr	a
-		st	a, unk_1B6
+		st	a, unk_1B6	; superrun all 0
 		st	a, unk_1B7
 		clrb	bit1, flags_4C
 		clrb	bit1, flags_44
@@ -15450,11 +15492,11 @@ loc_CEC3:				; CODE XREF: ROM:CEA5j	ROM:CEB6j
 		st	a, flags_162
 		st	a, flags_7D	; error	bits: b3 oxy htr R2, b2	oxy htr	R1, b1 oxy htr L2, b0 oxy htr L1
 		pull	a
-		st	d, flags_4E	; bit1 is igf1 related,	bit2 igf2 related
+		st	d, flags_4E	; bit1 is igf1 related,	bit2 igf2 related, superrun all	0
 		mov	s, x
 		xch	a, x + 00h
 		and	a, #18h
-		st	a, flags_4D
+		st	a, flags_4D	; superrun all 0
 		xch	a, x + 00h
 
 loc_CEDA:				; CODE XREF: ROM:CEBFj
@@ -15473,7 +15515,7 @@ loc_CEDA:				; CODE XREF: ROM:CEBFj
 
 loc_CEF3:				; CODE XREF: ROM:CEEFj
 		ld	b, temp_55
-		and	b, flags_163
+		and	b, flags_163	; superrun all 0
 		and	b, #0FFh
 		st	b, unk_57
 		ld	x, #008Ch
@@ -15523,7 +15565,8 @@ sub_CF4C:				; CODE XREF: ROM:CEFFp	ROM:CF06p ...
 ; ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ S U B	R O U T	I N E ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ
 
 
-sub_CF4E:				; CODE XREF: sub_D222+1Fp sub_D222+2Ap ...
+sub_CF4E:				; CODE XREF: bankflags+1Fp
+					; bankflags+2Ap ...
 		ld	a, x + 00h
 		sub	a, b
 		add	a, x + 01h
@@ -15622,13 +15665,13 @@ loc_CFD7:				; CODE XREF: ROM:loc_CFD1j
 		tbbc	bit0, flags_4B,	loc_D046
 
 loc_CFDD:				; CODE XREF: ROM:loc_CFD7j
-		ld	a, unk_72
+		ld	a, unk_72	; superrun = 255
 		inc	a
 		beq	loc_D007
 		ld	b, unk_70
 		inc	b
 		bne	loc_D015
-		ld	a, unk_71
+		ld	a, unk_71	; superrun all 0
 		beq	loc_D007
 		dec	a
 		beq	loc_CFFA
@@ -15641,8 +15684,8 @@ loc_CFDD:				; CODE XREF: ROM:loc_CFD7j
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_CFFA:				; CODE XREF: ROM:CFECj
-		st	a, unk_71
-		ld	a, unk_72
+		st	a, unk_71	; superrun all 0
+		ld	a, unk_72	; superrun = 255
 		jsr	sub_D0B3
 		beq	loc_D010
 		ld	b, #5Ah
@@ -15668,12 +15711,12 @@ loc_D015:				; CODE XREF: ROM:CFE5j
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_D01A:				; CODE XREF: ROM:loc_D015j
-		ld	a, unk_71
+		ld	a, unk_71	; superrun all 0
 		bne	loc_D040
 		st	a, unk_70
 		tbbc	bit6, flags_45,	loc_D046 ; IC303 input chip: B7	/TE2, B6 /TE1, B5 /NSW,	B4 IGSW,  B3, B2 IDL2, B1 , B0 STA
 		setb	bit0, flags_4B
-		ld	a, unk_72
+		ld	a, unk_72	; superrun = 255
 		bmi	loc_D030
 		bne	loc_D038
 		jsr	sub_D0B3
@@ -15686,12 +15729,12 @@ loc_D032:				; CODE XREF: ROM:D00Ej
 		ld	a, #80h
 
 loc_D034:				; CODE XREF: ROM:D005j	ROM:D013j
-		st	a, unk_72
+		st	a, unk_72	; superrun = 255
 		bra	loc_D0A7
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_D038:				; CODE XREF: ROM:D029j	ROM:D02Ej
-		st	a, unk_72
+		st	a, unk_72	; superrun = 255
 		ld	y, #0D0DAh
 		add	y, a
 		ld	a, y + 02h
@@ -15700,7 +15743,7 @@ loc_D040:				; CODE XREF: ROM:D01Cj
 		ld	b, #0F8h
 
 loc_D042:				; CODE XREF: ROM:CFF2j	ROM:CFF8j
-		st	a, unk_71
+		st	a, unk_71	; superrun all 0
 		bra	loc_D0A7
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
@@ -15736,7 +15779,7 @@ loc_D064:				; CODE XREF: ROM:D05Dj
 loc_D066:				; CODE XREF: ROM:loc_D046j ROM:D049j
 		tbbc	bit3, flags_4B,	loc_D06E
 		ld	b, #0FEh
-		tbbs	bit7, flags_4D,	loc_D0A0
+		tbbs	bit7, flags_4D,	loc_D0A0 ; superrun all	0
 
 loc_D06E:				; CODE XREF: ROM:loc_D066j
 		ld	b, #0B4h
@@ -15752,10 +15795,10 @@ loc_D06E:				; CODE XREF: ROM:loc_D066j
 		ld	a, temp_56
 		and	a, #0Fh
 		bne	loc_D0A0
-		ld	a, word_90
+		ld	a, word_90	; bank1, superrun = 00FF
 		and	a, #0FFh
 		bne	loc_D0A0
-		ld	a, word_92
+		ld	a, word_92	; bank2, superrun = 00FF
 		and	a, #7Fh
 		bne	loc_D0A0
 		ld	b, unk_70
@@ -15770,19 +15813,19 @@ loc_D09B:				; CODE XREF: ROM:CFD4j	ROM:D097j
 
 loc_D0A0:				; CODE XREF: ROM:CFCEj	ROM:loc_D064j ...
 		clrb	bit0, flags_4B
-		ld	#0FFh, unk_72
-		clr	unk_71
+		ld	#0FFh, unk_72	; superrun = 255
+		clr	unk_71		; superrun all 0
 
 loc_D0A7:				; CODE XREF: ROM:D017j	ROM:D036j ...
 		st	b, unk_70
-		bpz	loc_D0AE	; select SOUT1
-		clrb	bit2, SSD	; select SOUT0
+		bpz	loc_D0AE	; W output high
+		clrb	bit2, SSD	; W output low
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 		.db  8Ch ; Œ		; cmpx,	effectly three byte NOP	when falling through
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_D0AE:				; CODE XREF: ROM:D0A9j
-		setb	bit2, SSD	; select SOUT1
+		setb	bit2, SSD	; W output high
 		jmp	locret_D158
 
 ; ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ S U B	R O U T	I N E ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ
@@ -15953,6 +15996,7 @@ locret_D158:				; CODE XREF: ROM:D0B0j
 
 ; ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ S U B	R O U T	I N E ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ
 
+; per bank sub
 
 sub_D159:				; CODE XREF: ROM:CC47p	ROM:CC50p
 		ld	d, x + 00h
@@ -16001,8 +16045,8 @@ loc_D190:				; CODE XREF: sub_D159+Dj
 loc_D192:				; CODE XREF: sub_D159+4j
 		cmp	a, #06h
 		bgt	loc_D1B6
-		ld	a, y + 01h
-		cmp	a, #19h
+		ld	a, y + 01h	; 12E or 14A
+		cmp	a, #025		; 6400 to 6655 word value
 		beq	loc_D1B6
 		cmp	a, #0E6h
 		beq	loc_D1B6
@@ -16012,7 +16056,7 @@ loc_D192:				; CODE XREF: sub_D159+4j
 		bcs	loc_D1B1
 		push	x
 		ld	x, #0D254h
-		jsr	sub_D222
+		jsr	bankflags	; per bank sub
 		pull	x
 		clr	a
 		clr	b
@@ -16039,7 +16083,7 @@ loc_D1B9:				; CODE XREF: sub_D159+5Bj
 
 sub_D1BC:				; CODE XREF: ROM:CD87p	ROM:CD96p
 		ld	a, y + 13h
-		and	a, #02h
+		and	a, #02h		; 140 or 15C
 		beq	loc_D1E9
 		tbbs	bit0, flags_40,	loc_D1DF ; B3 :	forced timing to 5/10 deg BTDC
 		ld	a, flags_49	; bits 1-3-4-5 are oxl1-oxr1-oxl2-oxr2 - Oxygen	sensors
@@ -16069,7 +16113,7 @@ loc_D1DF:				; CODE XREF: sub_D1BC+6j
 		cmp	b, #20h
 		bcs	loc_D1E9
 		ld	x, #0D250h	; negative masks for bits 0..3
-		jsr	sub_D222
+		jsr	bankflags	; per bank sub
 
 loc_D1E9:				; CODE XREF: sub_D1BC+4j sub_D1BC+25j
 		clr	b
@@ -16084,11 +16128,12 @@ loc_D1E9:				; CODE XREF: sub_D1BC+4j sub_D1BC+25j
 
 ; ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ S U B	R O U T	I N E ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ
 
+; per bank sub
 
 sub_D1EF:				; CODE XREF: ROM:CDD5p	ROM:CDE4p
 		cmpb	b, #80h
 		beq	loc_D220
-		cmp	#64h, unk_5E	; could	be last	unk_100, or 0
+		cmp	#64h, unk_5E	; speed	sensor related,	could be last unk_100, or 0, superrun all 0
 		bcc	loc_D220
 		cmp	#030, RPM	; 1500 RPM
 		bcs	loc_D220
@@ -16096,18 +16141,18 @@ sub_D1EF:				; CODE XREF: ROM:CDD5p	ROM:CDE4p
 		bcs	loc_D220
 		cmpb	b, #01h
 		bne	loc_D220
-		cmp	#019, unk_D4	; timing related
+		cmp	#019, unk_D4	; timing related, superrun all 0
 		bcs	loc_D220
 		cmp	a, #20h
 		bcs	locret_D221
 		ld	b, y + 19h
 		or	b, #02h
-		st	b, y + 19h
+		st	b, y + 19h	; 146 or 162
 		tbbc	bit3, flags_4B,	loc_D220
 		setb	bit6, flags_4D
 		ld	b, y + 1Ah
 		or	b, #02h
-		st	b, y + 1Ah
+		st	b, y + 1Ah	; 147 or 163
 
 loc_D220:				; CODE XREF: sub_D1EF+2j sub_D1EF+7j ...
 		clr	a
@@ -16119,14 +16164,15 @@ locret_D221:				; CODE XREF: sub_D1EF+1Ej
 
 ; ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ S U B	R O U T	I N E ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ
 
+; per bank sub
 
-sub_D222:				; CODE XREF: ROM:CB80p	ROM:CB89p ...
+bankflags:				; CODE XREF: ROM:CB80p	ROM:CB89p ...
 		ld	a, y + 19h
 		and	a, x + 00h
-		st	a, y + 19h	; offset 25
-		ld	a, y + 1Ah	; offset 26
+		st	a, y + 19h	; flags_146 or flags_162
+		ld	a, y + 1Ah
 		and	a, x + 00h
-		st	a, y + 1Ah
+		st	a, y + 1Ah	; flags_147 or flags_163
 		ld	a, x + 00h
 		st	a, temp_56
 		ld	x, #0090h
@@ -16134,7 +16180,7 @@ sub_D222:				; CODE XREF: ROM:CB80p	ROM:CB89p ...
 		beq	loc_D23D
 		ld	x, #0092h
 
-loc_D23D:				; CODE XREF: sub_D222+16j
+loc_D23D:				; CODE XREF: bankflags+16j
 		ld	b, x + 00h
 		and	b, temp_56
 		jsr	sub_CF4E
@@ -16146,7 +16192,7 @@ loc_D23D:				; CODE XREF: sub_D222+16j
 		and	b, temp_56
 		jsr	sub_CF4E
 		ret
-; End of function sub_D222
+; End of function bankflags
 
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 		.db 0FEh ; ş
@@ -16162,14 +16208,14 @@ loc_D23D:				; CODE XREF: sub_D222+16j
 
 sub_D257:				; CODE XREF: __RESET+1738p
 		tbbs	bit7, flags_45,	loc_D25F ; IC303 input chip: B7	/TE2, B6 /TE1, B5 /NSW,	B4 IGSW,  B3, B2 IDL2, B1 , B0 STA
-		ld	#222, unk_7C	; this seems to	be the favoured	execution
+		ld	#222, count_7C	; this seems to	be the favoured	execution
 		bra	loc_D289	; clear	1ca and	return
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_D25F:				; CODE XREF: sub_D257j
 		ld	x, unk_1CA
 		bne	locret_D268
-		ld	b, unk_7C	; counter
+		ld	b, count_7C	; counter, superrun = 222
 		bpz	loc_D269
 
 locret_D268:				; CODE XREF: sub_D257+Bj
@@ -16180,7 +16226,7 @@ loc_D269:				; CODE XREF: sub_D257+Fj
 		ld	y, #0D28Fh
 		add	y, b
 		add	b, #02h
-		st	b, unk_7C	; counter
+		st	b, count_7C	; counter, superrun = 222
 		cmp	b, #02h
 		bgt	loc_D27B
 		ld	d, y + 00h
@@ -16200,7 +16246,7 @@ loc_D283:				; CODE XREF: sub_D257+22j
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_D286:				; CODE XREF: sub_D257+26j
-		ld	#240, unk_7C	; counter
+		ld	#240, count_7C	; counter, superrun = 222
 
 loc_D289:				; CODE XREF: sub_D257+6j
 		clr	a		; clear	1ca and	return
@@ -16279,7 +16325,7 @@ loc_D2C8:				; CODE XREF: sub_D2B9+B5j
 
 loc_D2D6:				; CODE XREF: sub_D2B9+2Bj
 		ld	a, y + 00h
-		jsr	sub_D45F	; blast	out a byte, read SIDR and SSD for 300 iterations
+		jsr	sub_D45F	; ensure SOUT0
 		cmp	y, #0F774h
 		bcc	loc_D2E6	; end adc burst
 		inc	y
@@ -16305,7 +16351,7 @@ loc_D2F3:				; CODE XREF: sub_D2B9+36j
 
 loc_D2F9:				; CODE XREF: sub_D2B9:loc_D2F3j
 		tbbs	bit2, flags_45,	loc_D347 ; IC303 input chip: B7	/TE2, B6 /TE1, B5 /NSW,	B4 IGSW,  B3, B2 IDL2, B1 , B0 STA
-		ld	a, VTA2_net	; VTA2-VTA2_min, =255 when sub throttle	disabled/not exist
+		ld	a, VTA2_net	; VTA2-VTA2_min, =255 when sub throttle	disabled/not exist, superrun = 255
 		cmp	#80h, THG	; THG lookup table output from exhaust gas temp	sensor ADC reading
 		bcc	ISC1
 		ld	a, flags_49	; bits 1-3-4-5 are oxl1-oxr1-oxl2-oxr2 - Oxygen	sensors
@@ -16333,13 +16379,13 @@ loc_D315:				; CODE XREF: sub_D2B9+89j
 		and	a, #11000000b
 		or	a, temp_51
 		cmp	a, temp_52
-		beq	loc_D339	; SOUT0
-		setb	bit2, SSD	; SOUT1
+		beq	loc_D339	; W output low
+		setb	bit2, SSD	; W output high
 		bra	loc_D36B
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_D339:				; CODE XREF: sub_D2B9+7Aj
-		clrb	bit2, SSD	; SOUT0
+		clrb	bit2, SSD	; W output low
 		bra	loc_D36B
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
@@ -16358,7 +16404,7 @@ loc_D347:				; CODE XREF: sub_D2B9:loc_D2F9j
 		tbbc	bit0, PORTC, loc_D344 ;	Port C Data Register
 		tbbs	bit7, PORTB, loc_D344 ;	Port B Data Register
 		tbbc	bit6, PORTB, loc_D344 ;	Port B Data Register
-		setb	bit2, SSD	; SOUT1
+		setb	bit2, SSD	; W output high
 		ld	b, #0AAh
 		ld	a, #32h
 		jmp	loc_D3C1
@@ -16429,7 +16475,7 @@ calcChecksum2:				; CODE XREF: sub_D2B9+E6j
 		cmp	d, #0AA55h
 		bne	loc_D3B4	; checksum fail	follows	this branch
 		shl	b
-		setb	bit2, SSD	; SOUT1
+		setb	bit2, SSD	; W output high
 		ld	a, #19h
 		bra	loc_D3C1
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
@@ -16441,7 +16487,7 @@ loc_D3B5:				; CODE XREF: sub_D2B9:loc_D344j
 					; sub_D2B9+115j
 		tbs	bit2, SSD	; Serial Status	Data Register
 		beq	loc_D3BB
-		clrb	bit2, SSD	; SOUT0
+		clrb	bit2, SSD	; W output low
 
 loc_D3BB:				; CODE XREF: sub_D2B9+FEj
 		ld	a, #7Dh
@@ -16460,7 +16506,7 @@ loc_D3C4:				; CODE XREF: sub_D2B9+10Cj
 		bne	loc_D3C1
 		cmp	b, #0AAh
 		bne	loc_D3B5
-		clrb	bit2, SSD
+		clrb	bit2, SSD	; W output low
 		jmp	loc_D2C8
 ; End of function sub_D2B9
 
@@ -16600,7 +16646,7 @@ ReInitCNT_1:				; CODE XREF: ReInitCounters+Fj
 
 ; ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ S U B	R O U T	I N E ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ
 
-; blast	out a byte, read SIDR and SSD for 300 iterations
+; ensure SOUT0
 
 sub_D45F:				; CODE XREF: sub_D2B9+1Fp __RESET+10Bp
 		clrb	bit3, SSD
@@ -16614,7 +16660,7 @@ loc_D46C:				; CODE XREF: sub_D45F+1Dj
 		inc	x
 		cmp	x, #0003h
 		bne	loc_D479
-		ld	#30h, SMRC_SIR	; Serial Master	Register Control
+		ld	#30h, SMRC_SIR	; enable 9 bit transmit, 8 bit receive?
 		ld	a, SSD		; Serial Status	Data Register
 		ld	a, SIDR_SODR	; Serial Input/Output Data Register
 
@@ -16636,8 +16682,8 @@ write6336:				; CODE XREF: sub_D2B9+5Ep __RESET+75p	...
 		ld	a, #005
 
 loc_D489:				; CODE XREF: write6336+11j
-		ld	b, unk_1D	; bit3 seems to	be a uart global clock output enable
-		and	b, #04h		; probably "txempty" bit
+		ld	b, unk_1D	; bit3 seems to	be a uart global clock output enable, bit2 is likely txfull
+		and	b, #04h		; probably /txempty bit
 		bne	loc_D494	; set pin 22 - latch data from rx hold buffer into output buffer of 6336
 		dec	a
 		bne	loc_D489
@@ -16669,7 +16715,7 @@ loc_D4A1:				; CODE XREF: sub_D499+4j
 		setb	bit4, flags_47	; warmness bit
 
 loc_D4A7:				; CODE XREF: sub_D499+Aj
-		ld	a, unk_5E	; could	be last	unk_100, or 0
+		ld	a, unk_5E	; speed	sensor related,	could be last unk_100, or 0, superrun all 0
 		cmp	a, #045
 		bgt	loc_D4AF	; bounce if greater than 45
 		clrb	bit7, flags_41
@@ -16688,7 +16734,8 @@ locret_D4B5:				; CODE XREF: sub_D499+18j
 
 
 		; public __RESET
-__RESET:				; DATA XREF: __NMI+3o ROM:FFFEo
+__RESET:				; CODE XREF: ROM:FFC4j
+					; DATA XREF: __NMI+3o ...
 
 ; FUNCTION CHUNK AT D6D6 SIZE 000003FE BYTES
 ; FUNCTION CHUNK AT DAEC SIZE 00000094 BYTES
@@ -16702,7 +16749,7 @@ __RESET:				; DATA XREF: __NMI+3o ROM:FFFEo
 		ld	#3Fh, DDRB	; Port B i/o config
 		clr	PBCS		; Port B Control Register
 		ld	#1Eh, ASR0P	; ASR0 pos edge	counter	value MSB
-		ld	#08h, unk_1D	; bit3 seems to	be a uart global clock output enable
+		ld	#08h, unk_1D	; bit3 seems to	be a uart global clock output enable, bit2 is likely txfull
 		ld	#30h, ASR0NL	; ASR0 neg edge	counter	value LSB
 		ld	#34h, ASR0N	; ASR0 neg edge	counter	value MSB
 		ld	d, #3900h
@@ -16718,7 +16765,7 @@ __RESET:				; DATA XREF: __NMI+3o ROM:FFFEo
 		ld	#00h, DOUT	; turn off all
 		ld	#00h, DOM	; DOUT Control Register
 		ld	#30h, SMRC_SIR	; Serial Master	Register Control
-		ld	#04h, SSD	; select SOUT1
+		ld	#04h, SSD	; SOUT0, W ON
 		clrb	bit1, PORTD_ASRIN
 		ld	a, SSD		; Serial Status	Data Register
 		ld	a, SIDR_SODR	; Serial Input/Output Data Register
@@ -16764,19 +16811,19 @@ res_03:					; CODE XREF: sub_D3D5+17j __RESET+6Bj
 		ld	a, #80h
 		st	a, unk_131
 		st	a, unk_14D
-		st	d, word_12E
-		st	d, word_14A
+		st	d, word_12E	; oxy sensor adjustment	1
+		st	d, word_14A	; oxy sensor adjustment	2
 		st	a, unk_176
 		ld	a, #2Ch
-		st	a, VTA1_min	; VTA1 minimum
-		st	a, VTA2_min	; VTA2 minimum
+		st	a, VTA1_min	; VTA1 minimum,	superrun = 29
+		st	a, VTA2_min	; VTA2 minimum,	superrun = 44
 		ld	b, #33h
 		st	b, unk_6C	; sort of a filtered, saturated	VTA_net
 		ld	a, #0A0h
-		st	a, VTA2_net	; VTA2-VTA2_min, =255 when sub throttle	disabled/not exist
+		st	a, VTA2_net	; VTA2-VTA2_min, =255 when sub throttle	disabled/not exist, superrun = 255
 		ld	a, #0FFh
 		st	a, count_1A0	; increments at	E480
-		st	a, count_1A1	; increments at	E480
+		st	a, count_1A1	; increments at	E480, superrun = 255
 		ld	a, #08h
 		st	a, ISC_11F	; ISC related
 		ld	a, #10h
@@ -16837,7 +16884,7 @@ res_04:					; CODE XREF: __RESET+D4j
 
 res_05:					; CODE XREF: __RESET+111j
 		ld	a, byte_F767
-		jsr	sub_D45F	; blast	out a byte, read SIDR and SSD for 300 iterations
+		jsr	sub_D45F	; ensure SOUT0
 		inc	b
 		cmp	b, #02h
 		bcs	res_05
@@ -16851,26 +16898,26 @@ res_06:					; CODE XREF: __RESET+113j __RESET+116j
 		ld	a, #03h
 		st	a, unk_1C4
 		tbbc	bit7, RAMST, res_07 ; Built-in RAM status
-		cmp	#5Ah, word_84
+		cmp	#5Ah, word_84	; superrun = 5AA5
 		bne	res_07
 		jsr	sub_D667
 		bcs	res_07
-		ld	a, word_94
+		ld	a, word_94	; bank1, superrun = 00FF
 		and	a, #0FFh
 		st	a, flags_147
-		ld	a, word_96
+		ld	a, word_96	; bank2, superrun = 00FF
 		and	a, #0FFh
-		st	a, flags_163
-		ld	a, word_94
-		or	a, word_96
+		st	a, flags_163	; superrun all 0
+		ld	a, word_94	; bank1, superrun = 00FF
+		or	a, word_96	; bank2, superrun = 00FF
 		and	a, #28h
 		beq	res_07
 		ld	b, #80h
-		st	b, unk_142
+		st	b, flags_142	; superrun all 0
 		ld	b, #0FFh
 		st	b, unk_1CE
-		ld	a, word_90
-		or	a, word_92
+		ld	a, word_90	; bank1, superrun = 00FF
+		or	a, word_92	; bank2, superrun = 00FF
 		and	a, #28h
 		beq	res_07
 		ld	b, #0FFh
@@ -16889,7 +16936,7 @@ res_08:					; CODE XREF: __RESET+163j
 		st	a, unk_DB	; engine temp related, as well as air temp and baro
 		add	a, #20h
 		st	a, unk_DC	; engine temp related, as well as air temp and baro
-		jsr	sub_C505
+		jsr	sub_C505	; play with 0x82, 0xDA
 		jsr	sub_D499
 		jsr	calcInjPW	; do an	initial	calculation
 		jsr	sub_C634
@@ -16912,7 +16959,7 @@ main_01:				; CODE XREF: __RESET+191j
 		tbbc	bit5, RAMST, main_04 ; Built-in	RAM status
 		tbs	bit7, RAMST	; Built-in RAM status
 		beq	main_02
-		cmp	#5Ah, word_84
+		cmp	#5Ah, word_84	; superrun = 5AA5
 		bne	main_02
 		jsr	sub_D667
 		bcc	main_03
@@ -16975,7 +17022,7 @@ locret_D687:				; CODE XREF: sub_D667+1Dj
 ; plays	with lots of the undefined regions of memory
 
 init_seg0x80:				; CODE XREF: __RESET:main_02p
-		ld	a, flags_4D
+		ld	a, flags_4D	; superrun all 0
 		and	a, #18h
 		st	a, flags_4D	; clear	all but	bits 4 and 3
 		clr	a
@@ -17008,11 +17055,11 @@ init_seg0x80:				; CODE XREF: __RESET:main_02p
 		ld	d, #00FFh
 		st	d, word_300
 		st	d, word_302
-		st	d, word_9E
-		st	d, unk_A0
+		st	d, word_9E	; superrun = 00FF
+		st	d, unk_A0	; superrun all 0
 		st	d, word_308
 		ld	d, #5AA5h
-		st	d, word_84
+		st	d, word_84	; superrun = 5AA5
 		clrb	bit1, flags_4B
 		ret
 ; End of function init_seg0x80
@@ -17039,7 +17086,7 @@ main_07:				; CODE XREF: __RESET+228j __RESET+22Dj ...
 		setb	bit3, flags_4E
 
 main_08:				; CODE XREF: __RESET+239j
-		tbbs	bit3, flags_4E,	main_09	; bit1 is igf1 related,	bit2 igf2 related
+		tbbs	bit3, flags_4E,	main_09	; bit1 is igf1 related,	bit2 igf2 related, superrun all	0
 		clr	count_B3	; incremented at F55E
 
 main_09:				; CODE XREF: __RESET:main_08j
@@ -17082,14 +17129,14 @@ main_13:				; CODE XREF: __RESET+246j
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 main_14:				; CODE XREF: __RESET+274j
-		ld	d, meanKSint	; deltaKS/KS_count, filtered
+		ld	d, meanKSint	; deltatKS/KS_count, filtered. is a time interval
 		shr	d
 		ld	y, RPM		; MSB is RPM/50, LSB is	fraction of 50
 		jsr	MulDbyY		; returns upper	16 bits	in Y, lower 16 bits in D
 		cmp	y, #00075	; Y:D now holds	meanKSint*RPM/2. this value decreases with increasing load
 		ble	main_15		; bounce if Y is less or equal to 75, which skips taking the scaled reciprocal of word_51
 		st	y, temp_51	; this is the desirable	program	path
-		ld	d, meanKSint	; deltaKS/KS_count, filtered
+		ld	d, meanKSint	; deltatKS/KS_count, filtered. is a time interval
 		shr	d
 		ld	y, #0C246h	; this could be	a compensation for AFM nonlinearities
 		jsr	TwoD_AccD	; lookup AccD/64, integer return in Acca, fraction return in AccB
@@ -17108,8 +17155,8 @@ main_16:				; CODE XREF: __RESET+29Fj
 		st	d, temp_51	; temp_51 now holds load.
 		ld	y, #0C2B8h	; load limiting	table
 		jsr	TwoD_RPM	; lookup RPM, integer return in	Acca, fraction return in AccB
-		cmp	d, temp_51
-		ble	main_17		; choose smallest.
+		cmp	d, temp_51	; d-51
+		ble	main_17		; choose largest
 		ld	d, temp_51
 
 main_17:				; CODE XREF: __RESET+2AEj
@@ -17118,7 +17165,7 @@ main_17:				; CODE XREF: __RESET+2AEj
 		cmp	#030, RPM	; 1500RPM
 		bcc	main_18		; only time this is writ
 		ld	a, VTA_net
-		cmp	a, #082		; 82 seems high... perhaps too high?
+		cmp	a, #082		; 82 seems high, WOT values in acca are	about 155,156
 		bcs	main_18		; bounce if VTA_net is less than 82
 		cmp	#025, count_A7	; saturates rapidly when IDL1 is not set, incremented by F47D
 		bcs	main_18		; only time this is writ
@@ -17166,9 +17213,9 @@ main_18:				; CODE XREF: __RESET+2B3j __RESET+2B9j ...
 		shr	d
 		shr	d
 		mov	d, x
-		ld	d, meanKSint	; deltaKS/KS_count, filtered
+		ld	d, meanKSint	; deltatKS/KS_count, filtered. is a time interval
 		jsr	divDbyX		; divide D by X, does some shifting to return ?? bits
-		st	d, word_7A	; meanKSint divided by a air temp/baro comp factor byte_1a8
+		st	d, corrKSint	; meanKSint divided by a air temp/baro comp factor byte_1a8 - time divided by correction is 1/(freq*correction)
 		cmp	d, #00468
 		bcs	main_19
 		ld	#7Ah, count_BA	; decremented at F566
@@ -17243,7 +17290,7 @@ main_25:				; CODE XREF: __RESET+369j
 		ld	a, #0FFh
 
 main_26:				; CODE XREF: __RESET+373j __RESET+377j ...
-		jsr	SaturateData
+		jsr	SaturateData	; saturate A with following limits
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 		.db 0E8h ; è
 		.db  30h ; 0
@@ -17389,33 +17436,33 @@ main_43:				; CODE XREF: __RESET:main_41j
 		bcc	main_44
 		cmp	#072, RPM	; 3600 RPM
 		bcc	main_45
-		ld	a, unk_109
+		ld	a, unk_109	; Read from transmission controller
 		cmpb	a, #08h
 		beq	main_45
 		cmp	b, #2Dh
 		bgt	main_45
-		ld	a, unk_D5
+		ld	a, unk_D5	; superrun all 0
 		bne	main_45
 		ld	a, #1Ah
 
 main_44:				; CODE XREF: __RESET+444j __RESET+44Bj ...
-		st	a, unk_D5
+		st	a, unk_D5	; superrun all 0
 
 main_45:				; CODE XREF: __RESET+456j __RESET+45Dj ...
 		clr	a
-		tbbs	bit0, flags_4D,	main_47
-		ld	a, unk_102
+		tbbs	bit0, flags_4D,	main_47	; superrun all 0
+		ld	a, unk_102	; Read from transmission controller,superrun all 0
 		and	a, #07h
 		ld	x, #0C479h
 		add	x, a
 		ld	a, x + 00h
-		ld	b, unk_103
+		ld	b, unk_103	; Read from transmission controller
 		cmp	b, #0C0h
 		bcs	main_46
-		ld	b, unk_101
+		ld	b, unk_101	; Read from transmission controller
 		cmp	b, #03h
 		bcs	main_46
-		cmp	#0FAh, byte_F9	; was zero for superrun
+		cmp	#0FAh, byte_F9	; superrun all 0
 		bcs	main_47
 
 main_46:				; CODE XREF: __RESET+47Fj __RESET+486j
@@ -17476,40 +17523,40 @@ main_54:				; CODE XREF: __RESET+4CEj
 
 main_55:				; CODE XREF: __RESET+4D2j __RESET+4D9j
 		st	b, flags_183	; bit 0	set oer	1550 RPM, bit 1	set under 1700 RPM
-		ld	a, unk_104	; timing related
+		ld	a, unk_104	; Read from transmission controller,timing related
 		ld	x, word_170	; nonzero and decreasing from cold start
-		cmp	x, #11ECh
+		cmp	x, #04588
 		bcc	main_56
 		ld	b, flags_A2	; MSN= trouble bit7: VTA_net high, bit4: VTA_net high, lsN is oxy heater "checked" bits
 		cmpb	b, #10h
 		beq	main_56
-		cmp	a, #0Fh
+		cmp	a, #015
 		bcc	main_56
-		ld	a, #0Fh		; saturate a
+		ld	a, #015		; saturate a
 
 main_56:				; CODE XREF: __RESET+4E9j __RESET+4EFj ...
 		st	a, temp_51
 		beq	main_61
 		cmp	#210, rawTHW	; Contains the NOT of CTS reading from ADC, sensor is tied to ground on	other side
 		bcs	main_61		; skip all this	extra math if COLD
-		ld	a, byte_186	; subtracted from timing in NEsub
+		ld	a, byte_186	; subtracted from timing in NEsub, superrun not	zero while starting
 		cmp	a, unk_187	; timing related
 		bcc	main_57		; select largest
 		ld	a, unk_187	; timing related
 
 main_57:				; CODE XREF: __RESET+506j
-		cmp	a, unk_197	; subtracted from timing in main loop
+		cmp	a, unk_197	; definitly did	something during WOT blasts in superrun
 		bcc	main_58		; select largest
-		ld	a, unk_197	; subtracted from timing in main loop
+		ld	a, unk_197	; definitly did	something during WOT blasts in superrun
 
 main_58:				; CODE XREF: __RESET+50Ej
 		shr	a
-		cmp	a, byte_18A	; subtracted from timing in NEsub
+		cmp	a, byte_18A	; subtracted from timing in NEsub, superrun not	zero while starting
 		bcc	main_59		; select largest
-		ld	a, byte_18A	; subtracted from timing in NEsub
+		ld	a, byte_18A	; subtracted from timing in NEsub, superrun not	zero while starting
 
 main_59:				; CODE XREF: __RESET+517j
-		ld	b, unk_18D	; im thinking it's a net retard, summed from a number of positive vales then negated
+		ld	b, unk_18D	; im thinking it's a net retard, summed from a number of positive vales then negated, idles at 128 while warm
 		sub	b, #128		; 15 degrees
 		bcc	main_60		; 54%
 		neg	b
@@ -17521,7 +17568,7 @@ main_60:				; CODE XREF: __RESET+521j
 		add	a, temp_51	; saturated unk_104 (maximum 0x0f)
 
 main_61:				; CODE XREF: __RESET+4F9j __RESET+4FEj
-		st	a, unk_D4	; timing related
+		st	a, unk_D4	; timing related, superrun all 0
 		ld	y, #0C336h
 		jsr	TwoD_rawTHW	; lookup Raw Water Temp, integer return	in Acca, fraction return in AccB
 		clrb	bit0, flags_40
@@ -17568,13 +17615,13 @@ main_66:				; CODE XREF: __RESET+56Bj
 		tbbc	bit4, flags_47,	main_76	; bit4:	high when hot (but how hot?)
 		tbbc	bit1, flags_42,	main_76
 		tbbs	bit0, flags_42,	main_76
-		cmp	#05h, unk_5E	; could	be last	unk_100, or 0
+		cmp	#05h, unk_5E	; speed	sensor related,	could be last unk_100, or 0, superrun all 0
 		bcs	main_76
 		di
 		setb	bit6, flags_42
 		clrb	bit5, flags_42
 		ld	d, #00FEh
-		st	d, word_193
+		st	d, word_193	; superrun all 0
 		ei
 		bra	main_76
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
@@ -17632,12 +17679,12 @@ main_73:				; CODE XREF: __RESET+5B7j __RESET+5BCj ...
 
 main_74:				; CODE XREF: __RESET+5DFj
 		ld	d, #0FF49h
-		cmp	#19h, unk_5E	; could	be last	unk_100, or 0
+		cmp	#19h, unk_5E	; speed	sensor related,	could be last unk_100, or 0, superrun all 0
 		bcs	main_75
 		ld	d, #0F545h
 
 main_75:				; CODE XREF: __RESET+5E9j
-		st	d, unk_17A
+		st	d, word_17A
 
 main_76:				; CODE XREF: __RESET+578j __RESET+57Bj ...
 		clr	count_A3	; incremented at F47D
@@ -17646,10 +17693,10 @@ main_76:				; CODE XREF: __RESET+578j __RESET+57Bj ...
 main_77:				; CODE XREF: __RESET+5A2j __RESET+5A6j
 		clrb	bit0, flags_40
 		ld	y, #012Dh
-		jsr	sub_C64D	; called with either 12D or 149	in Y
+		jsr	sub_C64D	; per bank sub
 		setb	bit0, flags_40
 		ld	y, #0149h
-		jsr	sub_C64D	; called with either 12D or 149	in Y
+		jsr	sub_C64D	; per bank sub
 		ld	y, #0098h	; not sure block
 		bsr	subrDAD4
 		bne	main_78
@@ -17671,10 +17718,10 @@ subrDAD4:				; CODE XREF: __RESET+608p __RESET+60Fp ...
 		xor	b, #0FFh
 		cmp	a, b
 		bne	sub2DAD4
-		jsr	SaturateData
+		jsr	SaturateData	; saturate A with following limits
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
-		.db 0B3h ; ³
-		.db  66h ; f
+		.db 179
+		.db 102
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 		bcc	retDAD4
 
@@ -17718,22 +17765,22 @@ main_82:				; CODE XREF: __RESET+693j
 main_83:				; CODE XREF: __RESET+650j
 		setb	bit2, flags_4B
 		ld	a, unk_D8
-		ld	x, word_7A	; meanKSint divided by a air temp/baro comp factor byte_1a8
+		ld	x, corrKSint	; meanKSint divided by a air temp/baro comp factor byte_1a8 - time divided by correction is 1/(freq*correction)
 		tbbc	bit7, flags_44,	main_84	; bit 1	is igf1	related, bit2 igf2 related
-		cmp	#02h, unk_5E	; could	be last	unk_100, or 0
+		cmp	#02h, unk_5E	; speed	sensor related,	could be last unk_100, or 0, superrun all 0
 		bcc	main_81
-		cmp	x, #1C19h
+		cmp	x, #07193
 		bcs	main_81
 		ld	#40h, temp_51
 		bra	main_85
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 main_84:				; CODE XREF: __RESET+662j
-		cmp	#02h, unk_5E	; could	be last	unk_100, or 0
+		cmp	#02h, unk_5E	; speed	sensor related,	could be last unk_100, or 0, superrun all 0
 		bcs	main_81
-		cmp	x, #0A76h
+		cmp	x, #02678
 		bgt	main_81
-		cmp	x, #056Eh
+		cmp	x, #01390
 		bcs	main_81
 		ld	#80h, temp_51
 
@@ -17767,7 +17814,7 @@ main_87:				; CODE XREF: __RESET+6A2j
 		st	a, unk_176
 		mov	b, a
 		clr	b
-		jsr	SaturateData
+		jsr	SaturateData	; saturate A with following limits
 		st	d, [y]
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 		.db  76h ; v
@@ -17779,26 +17826,27 @@ main_87:				; CODE XREF: __RESET+6A2j
 		neg	b
 
 main_88:				; CODE XREF: __RESET+6B1j __RESET+6B5j
-		add	b, word_98	; 128 for entire superrun
+		add	b, word_98	; superrun = 807F
 		mov	b, a
-		ld	b, word_9C
+		ld	b, word_9C	; superrun = 807F
 		sub	b, #0Fh
 		cmp	a, b
 		bcc	main_89
 		mov	b, a
 
 main_89:				; CODE XREF: __RESET+6C0j
-		bsr	sub_DB80
-		st	d, word_98	; 128 for entire superrun
+		bsr	sub_DB80	; preps	data for magic memory
+		st	d, word_98	; superrun = 807F
 		jmp	main_99
 ; END OF FUNCTION CHUNK	FOR __RESET
 
 ; ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ S U B	R O U T	I N E ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ
 
+; preps	data for magic memory
 
 sub_DB80:				; CODE XREF: __RESET:main_89p
 					; __RESET:main_93p ...
-		jsr	SaturateData
+		jsr	SaturateData	; saturate A with following limits
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 		.db 179
 		.db 102
@@ -17815,10 +17863,10 @@ main_90:				; CODE XREF: __RESET+69Dj
 		tbs	bit2, flags_42
 		bne	main_91
 		mov	d, y
-		ld	a, word_98	; 128 for entire superrun
+		ld	a, word_98	; superrun = 807F
 		sub	a, #0Fh
 		st	a, unk_180
-		ld	a, word_9C
+		ld	a, word_9C	; superrun = 807F
 		sub	a, #0Fh
 		st	a, unk_181
 		ld	a, word_9A
@@ -17835,10 +17883,10 @@ main_91:				; CODE XREF: __RESET+6D5j
 		bgt	main_94
 		mov	b, a
 		clr	b
-		jsr	SaturateData
+		jsr	SaturateData	; saturate A with following limits
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
-		.db  8Ah ; Š
-		.db  76h ; v
+		.db 138
+		.db 118
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 		bcc	main_92
 		ld	b, #04h
@@ -17850,11 +17898,11 @@ main_92:				; CODE XREF: __RESET+702j __RESET+707j
 		add	b, word_9A
 		ld	a, unk_182
 		cmp	a, b
-		bcc	main_93
+		bcc	main_93		; choose largest
 		mov	b, a
 
 main_93:				; CODE XREF: __RESET+710j
-		bsr	sub_DB80
+		bsr	sub_DB80	; preps	data for magic memory
 		st	d, word_9A
 		bra	main_99
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
@@ -17866,7 +17914,7 @@ main_94:				; CODE XREF: __RESET+6F3j __RESET+6F9j
 		add	a, temp_51
 		st	a, unk_176
 		neg	temp_51
-		ld	a, word_98	; 128 for entire superrun
+		ld	a, word_98	; superrun = 807F
 		add	a, temp_51
 		ld	b, unk_180
 		cmp	a, b
@@ -17874,24 +17922,24 @@ main_94:				; CODE XREF: __RESET+6F3j __RESET+6F9j
 		mov	b, a
 
 main_95:				; CODE XREF: __RESET+72Fj
-		bsr	sub_DB80
-		st	d, word_98	; 128 for entire superrun
+		bsr	sub_DB80	; preps	data for magic memory
+		st	d, word_98	; superrun = 807F
 		mov	a, b
 		shl	temp_51
 		bcs	main_96
-		sub	b, word_9C
+		sub	b, word_9C	; superrun = 807F
 		bcs	main_99
 		bra	main_97
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 main_96:				; CODE XREF: __RESET+739j
-		sub	b, word_9C
+		sub	b, word_9C	; superrun = 807F
 		bcc	main_99
 
 main_97:				; CODE XREF: __RESET+73Fj
-		add	a, word_9C
+		add	a, word_9C	; superrun = 807F
 		rorc	a
-		add	a, word_9C
+		add	a, word_9C	; superrun = 807F
 		rorc	a
 		ld	b, unk_181
 		cmp	a, b
@@ -17899,17 +17947,17 @@ main_97:				; CODE XREF: __RESET+73Fj
 		mov	b, a
 
 main_98:				; CODE XREF: __RESET+74Fj
-		jsr	sub_DB80
-		st	d, word_9C
+		jsr	sub_DB80	; preps	data for magic memory
+		st	d, word_9C	; superrun = 807F
 
 main_99:				; CODE XREF: __RESET+659j __RESET+6C7j ...
 		ld	y, #0C246h
-		jsr	TwoD_7A		; Lookup unk_7A, integer return	in Acca, fraction return in AccB
+		jsr	TwoD_corrKSint	; Lookup corrKSint, integer return in Acca, fraction return in AccB
 		setc
 		rorc	a
-		mul	a, #29h
+		mul	a, #041
 		st	a, temp_51
-		ld	d, word_7A	; meanKSint divided by a air temp/baro comp factor byte_1a8
+		ld	d, corrKSint	; meanKSint divided by a air temp/baro comp factor byte_1a8 - time divided by correction is 1/(freq*correction)
 		div	d, temp_51
 		bcc	main_100
 		ld	b, #0FFh
@@ -17929,7 +17977,7 @@ main_101:				; CODE XREF: __RESET+61Bj
 		ld	x, threeDeltaNE
 		cmp	x, #00568	; rev limit
 		bcs	main_103	; inhibit injection, rev limiter style
-		ld	b, unk_17D
+		ld	b, unk_17D	; superrun all 0
 		bpz	main_102
 		cmp	a, #050		; 2500 RPM
 		bcc	main_103	; inhibit injection, rev limiter style
@@ -17951,7 +17999,7 @@ main_104:				; CODE XREF: __RESET+78Fj
 		tbbs	bit7, flags_4C,	fuel_106 ; bounce if not running
 		tbbs	bit0, flags_41,	fuel_106 ; bounce if IDL1
 		ld	y, #0C5C3h
-		jsr	TwoD_7A		; Lookup unk_7A, integer return	in Acca, fraction return in AccB
+		jsr	TwoD_corrKSint	; Lookup corrKSint, integer return in Acca, fraction return in AccB
 		st	a, temp_51
 		ld	y, #0C5D2h
 		jsr	TwoD_rawTHW	; lookup Raw Water Temp, integer return	in Acca, fraction return in AccB
@@ -18154,13 +18202,13 @@ fuel_129:				; CODE XREF: __RESET+8CAj
 		tbbs	bit3, flags_43,	fuel_130 ; bit3: AFM bad bit4: rev limiter
 		tbbc	bit4, flags_47,	fuel_130 ; bit4: high when hot (but how	hot?)
 		tbbs	bit0, flags_42,	fuel_130
-		cmp	#05h, unk_5E	; could	be last	unk_100, or 0
+		cmp	#05h, unk_5E	; speed	sensor related,	could be last unk_100, or 0, superrun all 0
 		bcs	fuel_130
 		di
 		setb	bit6, flags_42
 		setb	bit5, flags_42
 		ld	d, #00D3h
-		st	d, word_193
+		st	d, word_193	; superrun all 0
 		ei
 
 fuel_130:				; CODE XREF: __RESET:fuel_129j
@@ -18362,7 +18410,7 @@ main_152:				; CODE XREF: __RESET+9F4j
 		setb	bit4, flags_48
 
 main_153:				; CODE XREF: __RESET+A04j __RESET+A08j ...
-		cmp	a, #7Dh
+		cmp	a, #125
 		ble	main_154
 		jsr	sub_C4DA	; return in A not exceeding 125
 		mov	a, b
@@ -18381,7 +18429,7 @@ main_154:				; CODE XREF: __RESET+A17j
 		beq	main_157
 
 main_155:				; CODE XREF: __RESET+9FBj
-		cmp	#0BFh, unk_E1
+		cmp	#191, unk_E1
 		bcs	main_156
 		setb	bit0, PORTD_ASRIN
 
@@ -18390,13 +18438,13 @@ main_156:				; CODE XREF: __RESET+A34j
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 main_157:				; CODE XREF: __RESET+A2Fj
-		jsr	sub_C505
+		jsr	sub_C505	; play with 0x82, 0xDA
 		mov	a, b
 		xor	b, #0FFh
 		st	d, word_82
 		cmp	#3Dh, count_B9	; incremented at F55E
 		bcs	main_163
-		clr	unk_DD
+		clr	unk_DD		; superrun all 0
 		tbbc	bit2, flags_48,	main_158
 		clrb	bit2, flags_48
 		clrb	bit1, flags_48
@@ -18479,7 +18527,7 @@ main_167:				; CODE XREF: __RESET+AA3j
 		st	d, unk_DC	; engine temp related, as well as air temp and baro
 		setb	bit0, flags_42
 		clr	a
-		st	a, unk_121
+		st	a, unk_121	; superrun all 0
 
 main_168:				; CODE XREF: __RESET+AB2j __RESET+AB7j
 		bra	main_172
@@ -18522,14 +18570,14 @@ main_173:				; CODE XREF: __RESET+AEDj
 		tbbs	bit1, flags_45,	main_174 ; IC303 input chip: B7	/TE2, B6 /TE1, B5 /NSW,	B4 IGSW,  B3, B2 IDL2, B1 , B0 STA
 		tbbc	bit1, flags_42,	main_177
 		clrb	bit1, flags_42
-		ld	#00h, count_BC	; decremented at F566
+		ld	#00h, count_BC	; decremented at F566, superrun	all 0
 		bra	main_175
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 main_174:				; CODE XREF: __RESET:main_173j
 		tbbs	bit1, flags_42,	main_177
 		setb	bit1, flags_42
-		ld	#25h, count_BC	; decremented at F566
+		ld	#25h, count_BC	; decremented at F566, superrun	all 0
 
 main_175:				; CODE XREF: __RESET+B08j
 		tbs	bit1, flags_43	; bit3:	AFM bad	bit4: rev limiter
@@ -18543,7 +18591,7 @@ main_176:				; CODE XREF: __RESET+B14j
 main_177:				; CODE XREF: __RESET+B00j
 					; __RESET:main_174j
 		tbbc	bit1, flags_43,	main_181 ; bit3: AFM bad bit4: rev limiter
-		ld	a, count_BC	; decremented at F566
+		ld	a, count_BC	; decremented at F566, superrun	all 0
 		bne	main_181
 		clrb	bit1, flags_43
 		ld	y, #0C4D6h
@@ -18568,14 +18616,14 @@ main_181:				; CODE XREF: __RESET:main_177j
 		tbbs	bit5, flags_45,	main_182 ; IC303 input chip: B7	/TE2, B6 /TE1, B5 /NSW,	B4 IGSW,  B3, B2 IDL2, B1 , B0 STA
 		tbbc	bit0, flags_42,	main_185
 		clrb	bit0, flags_42
-		ld	#00h, count_BB	; decremented at F566
+		ld	#00h, count_BB	; decremented at F566, superrun	all 0
 		bra	main_183
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 main_182:				; CODE XREF: __RESET:main_181j
 		tbbs	bit0, flags_42,	main_185
 		setb	bit0, flags_42
-		ld	#06h, count_BB	; decremented at F566
+		ld	#06h, count_BB	; decremented at F566, superrun	all 0
 
 main_183:				; CODE XREF: __RESET+B41j
 		tbs	bit0, flags_43	; bit3:	AFM bad	bit4: rev limiter
@@ -18593,7 +18641,7 @@ main_184:				; CODE XREF: __RESET:main_176j
 main_185:				; CODE XREF: __RESET+B39j
 					; __RESET:main_182j
 		tbbc	bit0, flags_43,	main_189 ; bit3: AFM bad bit4: rev limiter
-		ld	a, count_BB	; decremented at F566
+		ld	a, count_BB	; decremented at F566, superrun	all 0
 		bne	main_189
 		clrb	bit0, flags_43
 		ld	y, #0C4D8h
@@ -18612,15 +18660,15 @@ main_187:				; CODE XREF: __RESET+B6Dj
 main_188:				; CODE XREF: __RESET:main_180j
 					; __RESET:main_187j
 		di
-		add	a, unk_DD
-		st	a, unk_DD
+		add	a, unk_DD	; superrun all 0
+		st	a, unk_DD	; superrun all 0
 		ei
 		setb	bit5, flags_48
 
 main_189:				; CODE XREF: __RESET+B54j __RESET+B59j ...
 		tbbc	bit4, flags_44,	main_190 ; bit 1 is igf1 related, bit2 igf2 related
 		tbbs	bit5, flags_45,	main_190 ; IC303 input chip: B7	/TE2, B6 /TE1, B5 /NSW,	B4 IGSW,  B3, B2 IDL2, B1 , B0 STA
-		cmp	#37h, unk_5E	; could	be last	unk_100, or 0
+		cmp	#37h, unk_5E	; speed	sensor related,	could be last unk_100, or 0, superrun all 0
 		bcs	main_190
 		cmp	#14h, unk_DB	; engine temp related, as well as air temp and baro
 		bcs	main_190
@@ -18644,7 +18692,7 @@ main_191:				; CODE XREF: __RESET+B95j
 		tbbs	bit3, flags_43,	main_198 ; bit3: AFM bad bit4: rev limiter
 		tbbc	bit4, flags_47,	main_198 ; bit4: high when hot (but how	hot?)
 		tbbs	bit0, flags_42,	main_198
-		ld	a, unk_103
+		ld	a, unk_103	; Read from transmission controller
 		and	a, #01h
 		beq	main_198
 		tbbc	bit1, flags_42,	main_192
@@ -18656,7 +18704,7 @@ main_192:				; CODE XREF: __RESET+BB4j
 		ld	y, #0C4CCh
 
 main_193:				; CODE XREF: __RESET+BBAj
-		ld	a, unk_5E	; could	be last	unk_100, or 0
+		ld	a, unk_5E	; speed	sensor related,	could be last unk_100, or 0, superrun all 0
 		jsr	TwoDTable	; X value in AccA, integer return in Acca, fraction return in AccB
 		st	a, temp_51
 		tbbc	bit1, flags_42,	main_195
@@ -18687,21 +18735,21 @@ main_196:				; CODE XREF: __RESET:main_194j
 
 main_197:				; CODE XREF: __RESET+BE9j
 		mov	a, b
-		sub	a, unk_121
+		sub	a, unk_121	; superrun all 0
 		neg	a
-		st	b, unk_121
+		st	b, unk_121	; superrun all 0
 		bra	main_199
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 main_198:				; CODE XREF: __RESET+BA4j __RESET+BA7j ...
-		ld	a, unk_121
+		ld	a, unk_121	; superrun all 0
 		clr	b
-		st	b, unk_121
+		st	b, unk_121	; superrun all 0
 
 main_199:				; CODE XREF: __RESET+BF5j
 		di
-		add	a, unk_DD
-		st	a, unk_DD
+		add	a, unk_DD	; superrun all 0
+		st	a, unk_DD	; superrun all 0
 		ei
 		ld	a, byte_1A8	; air temp and baro compensation for load from AFM
 		ld	y, #0C498h
@@ -18733,7 +18781,7 @@ main_200:				; CODE XREF: __RESET+C23j __RESET+C29j
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 main_201:				; CODE XREF: __RESET+C30j
-		cmp	#02h, unk_5E	; could	be last	unk_100, or 0
+		cmp	#02h, unk_5E	; speed	sensor related,	could be last unk_100, or 0, superrun all 0
 		bcc	main_207
 		ld	#03h, count_C8	; decrements at	E488
 		ld	y, #0C4A6h
@@ -18770,7 +18818,7 @@ main_204:				; CODE XREF: __RESET+C57j
 
 main_205:				; CODE XREF: __RESET+C65j
 		tbbs	bit0, flags_42,	main_206
-		cmp	#1Ah, compLOAD	; air temp and Baro compensated	Load (likely in	units of mass)
+		cmp	#026, compLOAD	; right	around cruise
 		bcs	main_207
 		ld	a, flags_7D	; error	bits: b3 oxy htr R2, b2	oxy htr	R1, b1 oxy htr L2, b0 oxy htr L1
 		cmpb	a, #10h
@@ -18820,7 +18868,7 @@ main_211:				; CODE XREF: __RESET+CA0j
 		ld	a, flags_7D	; error	bits: b3 oxy htr R2, b2	oxy htr	R1, b1 oxy htr L2, b0 oxy htr L1
 		cmpb	a, #10h
 		bne	main_212
-		cmp	#02h, unk_5E	; could	be last	unk_100, or 0
+		cmp	#02h, unk_5E	; speed	sensor related,	could be last unk_100, or 0, superrun all 0
 		bcs	main_213
 
 main_212:				; CODE XREF: __RESET+CABj __RESET+CAEj ...
@@ -19015,7 +19063,7 @@ main_238:				; CODE XREF: __RESET+DAEj
 		ei
 		di
 		ld	a, unk_DC	; engine temp related, as well as air temp and baro
-		jsr	SaturateData
+		jsr	SaturateData	; saturate A with following limits
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 		.db 0A1h ; ¡
 		.db  02h
@@ -19037,7 +19085,7 @@ main_241:				; CODE XREF: __RESET+DC8j
 		cmp	#4Ch, count_C6	; increments at	E478
 		bcc	main_242
 		tbbs	bit0, flags_4C,	main_243 ; bit 7 set when not running (300 to 400 RPM gap)
-		tbbs	bit3, flags_4E,	main_243 ; bit1	is igf1	related, bit2 igf2 related
+		tbbs	bit3, flags_4E,	main_243 ; bit1	is igf1	related, bit2 igf2 related, superrun all 0
 		cmp	#006, RPM	; MSB is RPM/50, LSB is	fraction of 50
 		bcs	main_244
 		cmp	#077, Bvolts	; 6V
@@ -19045,7 +19093,7 @@ main_241:				; CODE XREF: __RESET+DC8j
 		cmp	#9Fh, count_B3	; incremented at F55E
 		bcs	main_245
 		setb	bit0, flags_4C
-		ld	a, word_86
+		ld	a, word_86	; superrun = 00FF
 		and	a, #08h
 		beq	main_244
 
@@ -19089,7 +19137,7 @@ main_246:				; CODE XREF: __RESET+E15j
 		add	a, #02h
 
 main_247:				; CODE XREF: __RESET+E22j
-		ld	b, unk_109
+		ld	b, unk_109	; Read from transmission controller
 		cmpb	b, #01h
 		beq	main_251
 		cmp	#040, RPM	; MSB is RPM/50, LSB is	fraction of 50
@@ -19133,14 +19181,14 @@ main_252:				; CODE XREF: __RESET+E35j __RESET+E39j ...
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 main_253:				; CODE XREF: __RESET+E58j
-		bcs	main_254
-		setb	bit2, SSD
+		bcs	main_254	; W output high
+		setb	bit2, SSD	; W output high
 		ld	a, #80h
 		bra	main_256
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 main_254:				; CODE XREF: __RESET:main_253j
-		setb	bit2, SSD
+		setb	bit2, SSD	; W output high
 
 main_255:				; CODE XREF: __RESET+E5Dj
 		inc	a
@@ -19154,18 +19202,18 @@ main_256:				; CODE XREF: __RESET+E60j __RESET+E68j
 main_257:				; CODE XREF: __RESET+E6Ej
 		ld	y, #012Dh
 		clrb	bit0, flags_40
-		ld	a, unk_140	; bits 5,0 oxl2	related
+		ld	a, unk_140	; offset 13h
 		and	a, unk_15C	; bits 5,0 oxr2	related
 		cmpb	a, #02h
 		bne	main_259
 		clr	a
 		clr	b
-		st	d, unk_13E
-		st	d, unk_15A
-		ld	a, unk_17A
+		st	d, word_13E	; offset 11h
+		st	d, word_15A
+		ld	a, word_17A
 		bmi	main_258
 		ld	d, #0FFFFh
-		st	d, unk_17A
+		st	d, word_17A
 
 main_258:				; CODE XREF: __RESET+E8Dj
 		jmp	main_270
@@ -19173,13 +19221,13 @@ main_258:				; CODE XREF: __RESET+E8Dj
 
 main_259:				; CODE XREF: __RESET+E80j __RESET+F29j
 		push	y
-		ld	y, #0C328h
-		cmp	#0B3h, rawTHW	; Contains the NOT of CTS reading from ADC, sensor is tied to ground on	other side
+		ld	y, #0C328h	; hot table
+		cmp	#179, rawTHW	; Contains the NOT of CTS reading from ADC, sensor is tied to ground on	other side
 		bcc	main_260
-		ld	y, #0C32Fh
+		ld	y, #0C32Fh	; cold table
 
 main_260:				; CODE XREF: __RESET+E9Fj
-		jsr	TwoD_7A		; Lookup unk_7A, integer return	in Acca, fraction return in AccB
+		jsr	TwoD_corrKSint	; Lookup corrKSint, integer return in Acca, fraction return in AccB
 		pull	y
 		mov	a, b
 		clr	a
@@ -19187,7 +19235,7 @@ main_260:				; CODE XREF: __RESET+E9Fj
 		ld	x, #0000h
 		ld	d, y + 13h
 		tbbc	bit0, flags_41,	main_267 ; B0 IDL1, b5 indidcates something about ram stats during last	suspend
-		cmp	#05h, unk_5E	; could	be last	unk_100, or 0
+		cmp	#05h, unk_5E	; speed	sensor related,	could be last unk_100, or 0, superrun all 0
 		bgt	main_261
 		ld	#2Bh, temp_52
 		cmpb	a, #04h
@@ -19195,9 +19243,9 @@ main_260:				; CODE XREF: __RESET+E9Fj
 		ld	#15h, temp_52
 
 main_261:				; CODE XREF: __RESET+EB7j __RESET+EBEj
-		ld	x, unk_17A
+		ld	x, word_17A
 		tbbc	bit4, flags_42,	main_263
-		cmp	#0Fh, unk_5E	; could	be last	unk_100, or 0
+		cmp	#0Fh, unk_5E	; speed	sensor related,	could be last unk_100, or 0, superrun all 0
 		bcc	main_265
 		inc	x
 		bmi	main_264
@@ -19207,7 +19255,7 @@ main_261:				; CODE XREF: __RESET+EB7j __RESET+EBEj
 		cmp	x, #55D5h
 		bgt	main_265
 		tbbc	bit0, flags_40,	main_262 ; B3 :	forced timing to 5/10 deg BTDC
-		st	x, unk_17A
+		st	x, word_17A
 
 main_262:				; CODE XREF: __RESET+EDFj
 		bra	main_266
@@ -19218,7 +19266,7 @@ main_263:				; CODE XREF: __RESET+EC6j __RESET+ED1j ...
 
 main_264:				; CODE XREF: __RESET+ECFj
 		tbbc	bit0, flags_40,	main_265 ; B3 :	forced timing to 5/10 deg BTDC
-		st	x, unk_17A
+		st	x, word_17A
 
 main_265:				; CODE XREF: __RESET+ECCj __RESET+EDDj ...
 		ld	x, #0000h
@@ -19270,7 +19318,7 @@ main_270:				; CODE XREF: __RESET:main_258j
 		ld	a, flags_A2	; MSN= trouble bit7: VTA_net high, bit4: VTA_net high, lsN is oxy heater "checked" bits
 		cmpb	a, #10h		; bigger throttle bit
 		beq	main_273
-		cmp	#64h, unk_5E	; could	be last	unk_100, or 0
+		cmp	#64h, unk_5E	; speed	sensor related,	could be last unk_100, or 0, superrun all 0
 		bgt	main_273
 		ld	a, count_1A0	; increments at	E480
 		cmp	a, #0FFh
@@ -19280,13 +19328,13 @@ main_270:				; CODE XREF: __RESET:main_258j
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 main_271:				; CODE XREF: __RESET+F47j
-		ld	a, count_1A1	; increments at	E480
+		ld	a, count_1A1	; increments at	E480, superrun = 255
 		cmp	a, #0FFh
 		bcs	main_274
 		cmp	#49h, count_A5	; incremented at F47D
 		bcs	main_275
 		ld	a, #94h
-		ld	b, unk_108
+		ld	b, unk_108	; Read from transmission controller
 		cmpb	b, #10h
 		beq	main_272
 		add	a, #3Dh
@@ -19318,7 +19366,7 @@ main_277:				; CODE XREF: __RESET+F32j
 		clr	count_A5	; incremented at F47D
 
 main_278:				; CODE XREF: __RESET+F4Bj
-		st	a, count_1A1	; increments at	E480
+		st	a, count_1A1	; increments at	E480, superrun = 255
 
 main_279:				; CODE XREF: __RESET+F67j
 		ld	b, #0FBh
@@ -19395,12 +19443,12 @@ main_287:				; CODE XREF: __RESET+FEEj __RESET+FF2j
 		jsr	SUB_C918	; bounce if TE1	shorted	to gnd
 		ld	y, #0C343h
 		jsr	TwoD_RPM	; lookup RPM, integer return in	Acca, fraction return in AccB
-		ld	x, unk_17E
+		ld	x, unk_17E	; superrun all 0
 		add	x, a
 		ld	a, word_8E
 		cmpb	a, #10h
 		bne	main_288
-		cmp	#05h, unk_5E	; could	be last	unk_100, or 0
+		cmp	#05h, unk_5E	; speed	sensor related,	could be last unk_100, or 0, superrun all 0
 		bcc	main_288
 		tbbs	bit0, flags_41,	main_288 ; B0 IDL1, b5 indidcates something about ram stats during last	suspend
 		tbbs	bit5, flags_45,	main_289 ; IC303 input chip: B7	/TE2, B6 /TE1, B5 /NSW,	B4 IGSW,  B3, B2 IDL2, B1 , B0 STA
@@ -19445,7 +19493,7 @@ main_291:				; CODE XREF: __RESET+1021j
 main_292:				; CODE XREF: __RESET+101Aj
 					; __RESET+103Ej
 		st	d, unk_17C
-		st	x, unk_17E
+		st	x, unk_17E	; superrun all 0
 		jsr	sub_D499
 
 main_293:				; CODE XREF: __RESET+FBAj
@@ -19479,7 +19527,7 @@ main_297:				; CODE XREF: __RESET+117Dj
 		ld	a, flags_44	; bit 1	is igf1	related, bit2 igf2 related
 		cmpb	a, #3Fh
 		beq	main_298
-		ld	#2Eh, count_C9	; decrements at	E488
+		ld	#046, count_C9	; decrements at	E488
 
 main_298:				; CODE XREF: __RESET+107Dj
 		ld	d, y + 13h
@@ -19498,18 +19546,18 @@ main_299:				; CODE XREF: __RESET+1092j
 		bne	main_302
 		cmpb	a, #20h
 		bne	main_300
-		cmp	#1Eh, count_CF	; incremented at E7A9
+		cmp	#030, count_CF	; incremented at E7A9
 		bcs	main_301
 
 main_300:				; CODE XREF: __RESET+109Dj
-		ld	b, unk_103
+		ld	b, unk_103	; Read from transmission controller
 		cmpb	b, #40h
 		beq	main_301
 		cmpb	a, #02h
 		beq	main_303
 		ld	d, temp_51
 		tbbs	bit0, flags_41,	main_303 ; B0 IDL1, b5 indidcates something about ram stats during last	suspend
-		cmp	#14h, compLOAD	; air temp and Baro compensated	Load (likely in	units of mass)
+		cmp	#020, compLOAD	; below	cruise
 		bcs	main_303
 		cmp	#00h, count_C9	; decrements at	E488
 		beq	main_308
@@ -19539,7 +19587,7 @@ main_303:				; CODE XREF: __RESET+10ADj
 		ld	b, #20h
 
 main_304:				; CODE XREF: __RESET+10D1j
-		and	b, unk_179
+		and	b, unk_179	; superrun all 0
 		beq	main_307
 		ld	d, y + 0Fh
 		add	a, b
@@ -19595,7 +19643,7 @@ main_311:				; CODE XREF: __RESET+1112j
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 main_312:				; CODE XREF: __RESET+10F7j
-		ld	a, unk_179
+		ld	a, unk_179	; superrun all 0
 		tbbs	bit0, flags_40,	main_313 ; B3 :	forced timing to 5/10 deg BTDC
 		and	a, #03h
 		inc	a
@@ -19614,8 +19662,8 @@ main_314:				; CODE XREF: __RESET+1129j
 		mov	b, a
 
 main_315:				; CODE XREF: __RESET+1132j
-		or	a, unk_179
-		st	a, unk_179
+		or	a, unk_179	; superrun all 0
+		st	a, unk_179	; superrun all 0
 		ld	d, temp_51
 		cmpb	a, #01h
 		bne	main_316
@@ -19677,8 +19725,8 @@ mainTOF_01:				; CODE XREF: __RESET:main_321j
 		ld	y, #00CAh
 		jsr	satcount	; increment B bytes of ram by 1	starting from Y, saturates at FF
 		clr	a
-		ld	b, unk_142
-		or	b, unk_15E
+		ld	b, flags_142	; superrun all 0
+		or	b, flags_15E
 		and	b, #40h
 		beq	mainTOF_02
 		ld	a, count_1D3	; tof increment	rate
@@ -19695,12 +19743,12 @@ mainTOF_03:				; CODE XREF: __RESET+119Fj
 		bne	mainTOF_04
 		cmp	#147, Bvolts	; 11.5V
 		bcs	mainTOF_04
-		cmp	#6Bh, rawTHW	; Contains the NOT of CTS reading from ADC, sensor is tied to ground on	other side
+		cmp	#107, rawTHW	; Contains the NOT of CTS reading from ADC, sensor is tied to ground on	other side
 		bcs	mainTOF_04
-		ld	d, word_7A	; meanKSint divided by a air temp/baro comp factor byte_1a8
-		cmp	d, #084Dh
+		ld	d, corrKSint	; meanKSint divided by a air temp/baro comp factor byte_1a8 - time divided by correction is 1/(freq*correction)
+		cmp	d, #02125
 		bcc	mainTOF_05
-		cmp	#2Eh, count_CA	; incremented at E643
+		cmp	#046, count_CA	; incremented at E643
 		bcs	mainTOF_06
 
 mainTOF_04:				; CODE XREF: __RESET+11AAj
@@ -19731,17 +19779,17 @@ mainTOF_07:				; CODE XREF: __RESET+11C7j
 		bcs	mainTOF_08	; bounce if low	voltage
 		cmp	#179, rawTHW	; Contains the NOT of CTS reading from ADC, sensor is tied to ground on	other side
 		bcs	mainTOF_08	; bounce if too	cold
-		ld	d, word_7A	; meanKSint divided by a air temp/baro comp factor byte_1a8
+		ld	d, corrKSint	; meanKSint divided by a air temp/baro comp factor byte_1a8 - time divided by correction is 1/(freq*correction)
 		cmp	d, #084Dh
 		bcc	mainTOF_10
-		cmp	#2Eh, count_CB	; incremented at E643
+		cmp	#046, count_CB	; incremented at E643
 		bcs	mainTOF_11
 
 mainTOF_08:				; CODE XREF: __RESET+11DFj
 					; __RESET+11E4j ...
 		ld	b, #0FDh
 		jsr	andFlags_50	; and b	with Flags_50
-		cmp	#1Eh, count_CF	; incremented at E7A9
+		cmp	#030, count_CF	; incremented at E7A9
 		bcc	mainTOF_09
 		clr	count_CF	; incremented at E7A9
 
@@ -19760,7 +19808,7 @@ mainTOF_12:				; CODE XREF: __RESET:mainTOF_09j
 		st	b, flags_50	; could	be bits	for 6336 output	chip, B0 probably HTR L+R1, B1 probably	HTR L+R2
 		ld	a, count_11D	; tof increment	rate
 		inc	a
-		cmp	a, #04h
+		cmp	a, #004
 		bcs	mainTOF_13
 		clr	a
 
@@ -19771,41 +19819,41 @@ mainTOF_13:				; CODE XREF: __RESET+1214j
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 mainTOF_14:				; CODE XREF: __RESET+121Aj
-		cmp	#0Ah, THG	; THG lookup table output from exhaust gas temp	sensor ADC reading
+		cmp	#010, THG	; THG lookup table output from exhaust gas temp	sensor ADC reading
 		bcc	mainTOF_15
 		clr	count_CE	; incremented at E7A9
 
 mainTOF_15:				; CODE XREF: __RESET+1222j
 		tbbc	bit6, flags_4B,	mainTOF_16
-		cmp	#0F0h, rawTHW	; Contains the NOT of CTS reading from ADC, sensor is tied to ground on	other side
+		cmp	#240, rawTHW	; Contains the NOT of CTS reading from ADC, sensor is tied to ground on	other side
 		bcc	mainTOF_16
-		cmp	#38h, rawTHA	; Contains the NOT of air temp reading from ADC, sensor	is tied	to ground on other side
+		cmp	#056, rawTHA	; Contains the NOT of air temp reading from ADC, sensor	is tied	to ground on other side
 		bcs	mainTOF_16
-		cmp	#5Ah, ATM_press	; adc pin 17 - PCM atmospheric pressure	sensor,	debiased and scaled
+		cmp	#090, ATM_press	; adc pin 17 - PCM atmospheric pressure	sensor,	debiased and scaled
 		bcs	mainTOF_16
-		ld	a, word_12E
-		jsr	SaturateData
+		ld	a, word_12E	; oxy sensor adjustment	1
+		jsr	SaturateData	; saturate A with following limits
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
-		.db 0E5h
-		.db 1Ah
-; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
-		bcs	mainTOF_16
-		ld	a, word_14A
-		jsr	SaturateData
-; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
-		.db 0E5h ; å
-		.db  1Ah
+		.db 229
+		.db 026
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 		bcs	mainTOF_16
-		cmp	#58h, count_CE	; incremented at E7A9
+		ld	a, word_14A	; oxy sensor adjustment	2
+		jsr	SaturateData	; saturate A with following limits
+; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+		.db 229
+		.db 026
+; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 		bcs	mainTOF_16
-		tbbs	bit0, flags_4F,	mainTOF_16
-		tbbs	bit1, flags_4F,	mainTOF_16
-		tbbs	bit2, flags_4F,	mainTOF_16
-		ld	a, word_90
+		cmp	#088, count_CE	; incremented at E7A9
+		bcs	mainTOF_16
+		tbbs	bit0, flags_4F,	mainTOF_16 ; superrun all 0
+		tbbs	bit1, flags_4F,	mainTOF_16 ; superrun all 0
+		tbbs	bit2, flags_4F,	mainTOF_16 ; superrun all 0
+		ld	a, word_90	; bank1, superrun = 00FF
 		and	a, #7Bh
 		bne	mainTOF_16
-		ld	a, word_92
+		ld	a, word_92	; bank2, superrun = 00FF
 		and	a, #7Bh
 		bne	mainTOF_16
 		ld	a, flags_7D	; error	bits: b3 oxy htr R2, b2	oxy htr	R1, b1 oxy htr L2, b0 oxy htr L1
@@ -19823,7 +19871,7 @@ mainTOF_17:				; CODE XREF: __RESET+126Aj
 		ld	b, flags_50	; could	be bits	for 6336 output	chip, B0 probably HTR L+R1, B1 probably	HTR L+R2
 		and	b, #10h
 		bne	mainTOF_19
-		ld	x, meanKSint	; deltaKS/KS_count, filtered
+		ld	x, meanKSint	; deltatKS/KS_count, filtered. is a time interval
 		cmp	x, #05250
 		bgt	mainTOF_19
 		cmp	#60h, LOAD	; 24576	word value
@@ -19896,7 +19944,7 @@ mainTOF_25:				; CODE XREF: __RESET+12CFj
 mainTOF_26:				; CODE XREF: __RESET+12C5j
 		ld	x, #0D255h
 		ld	y, #012Dh
-		jsr	sub_D222
+		jsr	bankflags	; per bank sub
 
 main_322:				; CODE XREF: __RESET+1183j
 					; __RESET+121Cj ...
@@ -19936,26 +19984,26 @@ main_326:				; CODE XREF: __RESET+1312j
 		cmp	#3Bh, count_CD	; incremented at E7A9
 		ble	main_328
 		inc	b
-		ld	y, meanKSint	; deltaKS/KS_count, filtered
+		ld	y, meanKSint	; deltatKS/KS_count, filtered. is a time interval
 		cmp	y, #07550
 		bcs	main_327
 		cmp	y, #10700
 		bcs	main_329
-		ld	b, unk_7E
+		ld	b, unk_7E	; superrun all 0
 		beq	main_329
-		dec	unk_7E
+		dec	unk_7E		; superrun all 0
 		bra	main_329
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 main_327:				; CODE XREF: __RESET+1327j
-		add	b, unk_7E
+		add	b, unk_7E	; superrun all 0
 		cmp	b, #0DCh
 		ble	main_328
 		ld	b, #0DCh
 
 main_328:				; CODE XREF: __RESET+131Fj
 					; __RESET+133Aj
-		st	b, unk_7E
+		st	b, unk_7E	; superrun all 0
 
 main_329:				; CODE XREF: __RESET+12E9j
 					; __RESET+132Cj ...
@@ -19972,7 +20020,7 @@ main_329:				; CODE XREF: __RESET+12E9j
 main_330:				; CODE XREF: __RESET+134Bj
 		clr	a
 		tbbs	bit0, flags_41,	main_331 ; B0 IDL1, b5 indidcates something about ram stats during last	suspend
-		ld	b, word_94
+		ld	b, word_94	; bank1, superrun = 00FF
 		cmpb	b, #80h
 		bne	main_331
 		ld	b, flags_50	; could	be bits	for 6336 output	chip, B0 probably HTR L+R1, B1 probably	HTR L+R2
@@ -19984,7 +20032,7 @@ main_331:				; CODE XREF: __RESET+1351j
 		clr	count_B8	; incremented at F55E
 
 Timing_332:				; CODE XREF: __RESET+135Ej
-		cmp	#62h, count_B8	; incremented at F55E
+		cmp	#098, count_B8	; incremented at F55E
 		ble	main_333
 		ld	y, #0C3FEh
 		ld	d, LOAD		; Load,	uncompensated for ThA
@@ -19993,7 +20041,7 @@ Timing_332:				; CODE XREF: __RESET+135Ej
 		jsr	ThreeD_RPM	; returns 8b value from	3d table lookup	in AccA
 
 main_333:				; CODE XREF: __RESET+1365j
-		st	a, byte_18C	; lookup from RPM by LOAD table
+		st	a, byte_18C	; lookup from RPM by LOAD table, superrun all 0
 		ld	a, unk_185
 		cmp	#104, RPM	; 5200RPM
 		bcs	main_334	; 5000 RPM
@@ -20008,7 +20056,7 @@ main_335:				; CODE XREF: __RESET+1384j
 		tbbs	bit3, flags_43,	main_336 ; bit3: AFM bad bit4: rev limiter
 		tbbc	bit7, flags_44,	main_337 ; bit 1 is igf1 related, bit2 igf2 related
 		tbbs	bit5, flags_45,	main_336 ; IC303 input chip: B7	/TE2, B6 /TE1, B5 /NSW,	B4 IGSW,  B3, B2 IDL2, B1 , B0 STA
-		ld	b, unk_103
+		ld	b, unk_103	; Read from transmission controller
 		cmpb	b, #02h
 		bne	main_337
 
@@ -20079,7 +20127,7 @@ main_343:				; CODE XREF: __RESET+13E9j
 		st	a, temp_51
 
 main_344:				; CODE XREF: __RESET+13DEj
-		ld	a, unk_109
+		ld	a, unk_109	; Read from transmission controller
 		cmpb	a, #002
 		beq	main_345
 		tbbs	bit5, flags_45,	main_345 ; IC303 input chip: B7	/TE2, B6 /TE1, B5 /NSW,	B4 IGSW,  B3, B2 IDL2, B1 , B0 STA
@@ -20110,7 +20158,7 @@ main_347:				; CODE XREF: __RESET+1411j
 		clr	a
 		cmp	#100, RPM	; 5000RPM
 		bcs	main_348
-		cmp	#040, compLOAD	; air temp and Baro compensated	Load (likely in	units of mass)
+		cmp	#040, compLOAD	; more than cruise
 		bcs	main_348
 		ld	y, #0C474h
 		jsr	TwoD_rawTHW	; lookup Raw Water Temp, integer return	in Acca, fraction return in AccB
@@ -20119,9 +20167,9 @@ main_348:				; CODE XREF: __RESET+141Ej
 					; __RESET+1423j
 		sub	a, temp_51
 		neg	a
-		st	a, unk_18D	; im thinking it's a net retard, summed from a number of positive vales then negated
+		st	a, unk_18D	; im thinking it's a net retard, summed from a number of positive vales then negated, idles at 128 while warm
 		ld	a, unk_18B
-		ld	b, unk_106
+		ld	b, unk_106	; Read from transmission controller,superrun all 0
 		cmp	a, b
 		bcs	main_350
 		sub	a, #001
@@ -20177,7 +20225,7 @@ Timing_355:				; CODE XREF: __RESET+1469j
 
 Timing_356:				; CODE XREF: __RESET+1455j
 		tbbc	bit6, flags_45,	Timing_359 ; set TE1 test mode timing to 10 degrees
-		cmp	#02h, unk_5E	; could	be last	unk_100, or 0
+		cmp	#02h, unk_5E	; speed	sensor related,	could be last unk_100, or 0, superrun all 0
 		bcc	Timing_359
 		ld	d, #00341	; 10 deg
 		bra	main_358	; flag forced timing
@@ -20227,9 +20275,9 @@ Timing_363:				; CODE XREF: __RESET:Timing_355j
 		clrb	bit3, flags_40	; flag normal timing
 		mov	a, b		; a had	output from 3d table c34e (scaled 0 to 60 deg)
 		clr	a
-		add	b, unk_18D	; im thinking it's a net retard, summed from a number of positive vales then negated
+		add	b, unk_18D	; im thinking it's a net retard, summed from a number of positive vales then negated, idles at 128 while warm
 		addc	a, #00h
-		add	b, byte_18C	; lookup from RPM by LOAD table
+		add	b, byte_18C	; lookup from RPM by LOAD table, superrun all 0
 		addc	a, #00h
 		shl	d
 		cmp	d, Timing_NE	; represents the number	of NE ticks from TDC to	fire spark ( use formula 30*[(Timing_NE-1)+Timing_frac/256] )
@@ -20257,7 +20305,7 @@ Timing_365:				; CODE XREF: __RESET+14E1j
 
 Timing_366:				; CODE XREF: __RESET:Timing_365j
 					; __RESET+14EBj
-		ld	b, byte_18A	; subtracted from timing in NEsub
+		ld	b, byte_18A	; subtracted from timing in NEsub, superrun not	zero while starting
 		cmp	a, b
 		bcc	Timing_368	; useful assignment of timing related
 		sub	b, #04h
@@ -20330,13 +20378,13 @@ main_374:				; CODE XREF: __RESET+1546j
 
 main_375:				; CODE XREF: __RESET+1550j
 		st	a, unk_174
-		ld	a, unk_D5
+		ld	a, unk_D5	; superrun all 0
 		sub	a, #01h
 		bcc	main_376
 		clr	a
 
 main_376:				; CODE XREF: __RESET+155Aj
-		st	a, unk_D5
+		st	a, unk_D5	; superrun all 0
 		ld	d, word_16E	; inversely temp dependant, additional math elsewhere
 		sub	d, #000Dh
 		bcc	main_377
@@ -20399,7 +20447,7 @@ main_385:				; CODE XREF: __RESET:main_383j
 
 main_386:				; CODE XREF: __RESET+15B0j
 					; __RESET+15B4j
-		ld	b, unk_103
+		ld	b, unk_103	; Read from transmission controller
 		cmpb	b, #08h
 		beq	main_388
 		tbbs	bit3, flags_43,	main_388 ; bit3: AFM bad bit4: rev limiter
@@ -20422,7 +20470,7 @@ main_388:				; CODE XREF: __RESET+15BDj
 
 main_389:				; CODE XREF: __RESET+15D4j
 		st	a, unk_1CD
-		cmp	#64h, unk_5E	; could	be last	unk_100, or 0
+		cmp	#64h, unk_5E	; speed	sensor related,	could be last unk_100, or 0, superrun all 0
 		bcs	main_390
 		ld	x, #0308h
 		ld	b, #01h
@@ -20433,7 +20481,7 @@ main_390:				; CODE XREF: __RESET+15E1j
 		beq	main_392
 		bgt	main_393	; bounce if fuel pressure is up
 		tbbc	bit0, flags_45,	main_395 ; IC303 input chip: B7	/TE2, B6 /TE1, B5 /NSW,	B4 IGSW,  B3, B2 IDL2, B1 , B0 STA
-		ld	b, unk_103
+		ld	b, unk_103	; Read from transmission controller
 		cmpb	b, #10h
 		beq	main_395
 		cmpb	b, #20h
@@ -20545,9 +20593,9 @@ main_405:				; CODE XREF: __RESET+1680j
 		st	a, flags_162
 		tbbc	bit3, flags_4B,	main_408
 		setb	bit6, flags_4D
-		ld	a, flags_163
+		ld	a, flags_163	; superrun all 0
 		or	a, #80h
-		st	a, flags_163
+		st	a, flags_163	; superrun all 0
 		bra	main_408
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
@@ -20557,7 +20605,7 @@ main_406:				; CODE XREF: __RESET+1689j
 main_407:				; CODE XREF: __RESET+168Bj
 		ld	x, #0D256h
 		ld	y, #0149h
-		jsr	sub_D222
+		jsr	bankflags	; per bank sub
 
 main_408:				; CODE XREF: __RESET+168Ej
 					; __RESET+1699j ...
@@ -20584,7 +20632,7 @@ main_411:				; CODE XREF: __RESET+16C7j
 		or	a, #80h
 
 main_412:				; CODE XREF: __RESET+16D0j
-		ld	b, unk_197	; subtracted from timing in main loop
+		ld	b, unk_197	; definitly did	something during WOT blasts in superrun
 		beq	main_413
 		or	a, #40h
 
@@ -20630,7 +20678,7 @@ main_419:				; CODE XREF: __RESET:main_418j
 
 main_420:				; CODE XREF: __RESET+1715j
 		st	a, RPM_HIres	; RPM/25
-		ld	d, meanKSint	; deltaKS/KS_count, filtered
+		ld	d, meanKSint	; deltatKS/KS_count, filtered. is a time interval
 		shl	d
 		bcc	main_421
 		ld	a, #0FFh
@@ -20642,11 +20690,11 @@ main_421:				; CODE XREF: __RESET+171Fj
 		ld	a, VTA1_net	; VTA1 - VTA_min
 		st	a, lastVTA1net	; last VTA1-Offset
 		clr	a
-		tbbs	bit0, flags_4D,	main_422
-		ld	a, unk_100
+		tbbs	bit0, flags_4D,	main_422 ; superrun all	0
+		ld	a, unk_100	; Read from transmission controller
 
 main_422:				; CODE XREF: __RESET+1730j
-		st	a, unk_5E	; could	be last	unk_100, or 0
+		st	a, unk_5E	; speed	sensor related,	could be last unk_100, or 0, superrun all 0
 		jsr	sub_D257
 		nop			; please insert	user subroutine	here in	the form of "jsr beepboop"
 		nop
@@ -20658,16 +20706,16 @@ main_422:				; CODE XREF: __RESET+1730j
 		ld	#0Fh, ASR0PL	; ASR0 pos edge	counter	value LSB
 		ld	#0FDh, ASR1P	; ASR1 pos edge	counter	value MSB
 		ld	#30h, ASR0NL	; ASR0 neg edge	counter	value LSB
-		ld	#08h, unk_1D	; bit3 seems to	be a uart global clock output enable
+		ld	#08h, unk_1D	; bit3 seems to	be a uart global clock output enable, bit2 is likely txfull
 		ld	#30h, SMRC_SIR	; Serial Master	Register Control
-		clrb	bit3, SSD
+		clrb	bit3, SSD	; ensure SOUT0
 		clrb	bit2, DOM
 		clrb	bit3, DOM
 		di
-		ld	a, asr0n_shadow	; stores configuration information written to asr0n
+		ld	a, asr0n_shadow	; stores configuration information written to asr0n, superrun =	F4
 		and	a, #0C0h
 		add	a, #34h
-		st	a, asr0n_shadow	; stores configuration information written to asr0n
+		st	a, asr0n_shadow	; stores configuration information written to asr0n, superrun =	F4
 		ei
 		ld	s, #02DFh
 
@@ -20931,11 +20979,11 @@ intASR2_27:				; CODE XREF: ROM:ED78j
 		bvc	intASR2_32
 		bcs	intASR2_34
 		tbbs	bit3, flags_43,	intASR2_35 ; bit3: AFM bad bit4: rev limiter
-		cmp	#3Ch, compLOAD	; air temp and Baro compensated	Load (likely in	units of mass)
+		cmp	#060, compLOAD	; high load
 		bcs	intASR2_35
-		ld	a, byte_186	; subtracted from timing in NEsub
+		ld	a, byte_186	; subtracted from timing in NEsub, superrun not	zero while starting
 		bne	intASR2_35
-		ld	a, unk_103
+		ld	a, unk_103	; Read from transmission controller
 		cmpb	a, #40h
 		beq	intASR2_35
 		tbbs	bit5, flags_4A,	intASR2_35 ; bits 6,5,4	are inherited from 109.	6 seems	to always be low when no sub throttle exists
@@ -20943,9 +20991,9 @@ intASR2_27:				; CODE XREF: ROM:ED78j
 		bcs	intASR2_35
 		cmp	#104, RPM	; MSB is RPM/50, LSB is	fraction of 50
 		bcc	intASR2_35
-		cmp	#011, unk_E6
+		cmp	#011, unk_E6	; superrun all 0
 		bcc	intASR2_29
-		inc	unk_E6
+		inc	unk_E6		; superrun all 0
 		bra	intASR2_36
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
@@ -20959,9 +21007,9 @@ intASR2_29:				; CODE XREF: ROM:EDABj
 		ld	b, #0F0h
 
 intASR2_30:				; CODE XREF: ROM:EDB5j
-		ld	a, unk_19E
-		st	b, unk_19E
-		cmp	a, unk_19E
+		ld	a, unk_19E	; superrun all 0
+		st	b, unk_19E	; superrun all 0
+		cmp	a, unk_19E	; superrun all 0
 		bne	intASR2_36
 		cmp	a, #0Fh
 		beq	intASR2_31
@@ -20977,10 +21025,10 @@ intASR2_31:				; CODE XREF: ROM:EDC7j
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 intASR2_32:				; CODE XREF: ROM:ED83j
-		ld	b, unk_E8
+		ld	b, unk_E8	; superrun all 0
 		beq	intASR2_33
 		ld	b, #0Bh
-		st	b, unk_E8
+		st	b, unk_E8	; superrun all 0
 
 intASR2_33:				; CODE XREF: ROM:EDD4j
 		cmp	#013, RPM	; MSB is RPM/50, LSB is	fraction of 50
@@ -20995,18 +21043,18 @@ intASR2_33:				; CODE XREF: ROM:EDD4j
 		beq	intASR2_37
 		setb	bit6, flags_4E
 		ld	a, #0Bh
-		st	a, unk_E8
+		st	a, unk_E8	; superrun all 0
 		bra	intASR2_37
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 intASR2_34:				; CODE XREF: ROM:ED85j
-		clr	unk_E8
+		clr	unk_E8		; superrun all 0
 		clrb	bit6, flags_4E
 
 intASR2_35:				; CODE XREF: ROM:ED87j	ROM:ED8Dj ...
-		cmp	#0Bh, unk_E6
+		cmp	#0Bh, unk_E6	; superrun all 0
 		bcc	intASR2_36
-		clr	unk_E6
+		clr	unk_E6		; superrun all 0
 
 intASR2_36:				; CODE XREF: ROM:EDAFj	ROM:EDC3j ...
 		clrb	bit2, flags_41
@@ -21077,18 +21125,18 @@ NEsub1_1:				; CODE XREF: NEsub1+2j
 		clr	a
 		clr	b
 		tbbs	bit3, flags_40,	NEsub1_3 ; B3 :	forced timing to 5/10 deg BTDC
-		ld	b, byte_18A	; subtracted from timing in NEsub
+		ld	b, byte_18A	; subtracted from timing in NEsub, superrun not	zero while starting
 		shl	d
 		cmpz	a
 		bne	NEsub1_3
 		cmp	b, byte_186	; was 0	mostly in superrun
 		bcc	NEsub1_2	; select highest
-		ld	b, byte_186	; subtracted from timing in NEsub
+		ld	b, byte_186	; subtracted from timing in NEsub, superrun not	zero while starting
 
 NEsub1_2:				; CODE XREF: NEsub1+16j
-		cmp	b, unk_197	; subtracted from timing in main loop
+		cmp	b, unk_197	; definitly did	something during WOT blasts in superrun
 		bcc	NEsub1_3	; select highest
-		ld	b, unk_197	; subtracted from timing in main loop
+		ld	b, unk_197	; definitly did	something during WOT blasts in superrun
 
 NEsub1_3:				; CODE XREF: NEsub1+9j	NEsub1+11j ...
 		push	d
@@ -21112,7 +21160,7 @@ NEsub1_4:				; CODE XREF: NEsub1+2Aj
 		ld	a, unk_185
 		cmpb	a, #01h		; looking for lsb
 		pull	a
-		beq	NEsub1_5	; lsb low prevents addition below
+		beq	NEsub1_5	; lsb low prevents addition below, and bit flag. during	superrun lsb was very rarely high
 		add	d, #00026	; add 3	deg
 		setb	bit4, flags_40
 
@@ -21130,18 +21178,18 @@ NEsub1_7:				; CODE XREF: NEsub1+59j
 		tbbc	bit6, flags_42,	NEsub1_12 ; skip the word_193 stuff
 		push	d
 		mov	s, x		; stack	now points to limited value
-		ld	d, word_193
+		ld	d, word_193	; superrun all 0
 		tbbs	bit0, flags_42,	NEsub1_9 ; 4 deg
 		cmp	#020, RPM	; 1000 RPM
 		ble	NEsub1_9	; 4 deg
-		tbbs	bit5, flags_42,	NEsub1_8
+		tbbs	bit5, flags_42,	NEsub1_8 ; 36 is just a	bit higher than	cruise throttle	from run14
 		tbbc	bit0, flags_41,	NEsub1_9 ; 4 deg
 		add	d, #00002
 		bra	NEsub1_10
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 NEsub1_8:				; CODE XREF: NEsub1+6Ej
-		cmp	#036, compLOAD	; air temp and Baro compensated	Load (likely in	units of mass)
+		cmp	#036, compLOAD	; 36 is	just a bit higher than cruise throttle from run14
 		bcc	NEsub1_9	; 4 deg
 		add	d, #0002h
 		bra	NEsub1_10
@@ -21158,11 +21206,11 @@ NEsub1_10:				; CODE XREF: NEsub1+77j NEsub1+81j
 		clrb	bit5, flags_42
 
 NEsub1_11:				; CODE XREF: NEsub1+88j
-		st	d, word_193
+		st	d, word_193	; superrun all 0
 		pull	x		; tidy stack
 
 NEsub1_12:				; CODE XREF: NEsub1:NEsub1_7j
-		tbbs	bit4, flags_40,	NEsub1_13 ; this is where the magic begins, 43 counts/768*90=5 degrees
+		tbbs	bit4, flags_40,	NEsub1_13 ; superrun this bit was never	set
 		mov	d, x
 		shr	d
 		shr	d
@@ -21366,11 +21414,11 @@ IV6_8:					; CODE XREF: IV6+60j
 		st	a, flags_77	; clear	bit 6
 		di
 		clr	a
-		ld	b, deltaKS	; Cumulative sum of KS intervals, counted by KS_count, reset in	IV6
+		ld	b, deltatKS	; Cumulative sum of KS intervals, counted by KS_count, reset in	IV6
 		div	d, KS_count	; counts KS interrupts,	reset in IV6
 		bcs	IV6_12
 		push	b		; push the fraction
-		ld	b, deltaKSl
+		ld	b, deltatKSl
 		div	d, KS_count	; counts KS interrupts,	reset in IV6
 		ld	a, KS_count2
 		add	a, KS_count	; counts KS interrupts,	reset in IV6
@@ -21381,11 +21429,11 @@ IV6_9:					; CODE XREF: IV6+82j
 		st	a, KS_count2
 		clr	a
 		st	a, KS_count	; clear	it
-		st	a, deltaKS	; clear	it
-		st	a, deltaKSl	; clear	it
+		st	a, deltatKS	; clear	it
+		st	a, deltatKSl	; clear	it
 		ei
 		pull	a		; d now	has deltaKS/KS_count
-		add	d, meanKSint	; deltaKS/KS_count, filtered
+		add	d, meanKSint	; deltatKS/KS_count, filtered. is a time interval
 		rorc	a
 		rorc	b
 		cmp	#10h, unk_69	; choose filtering process
@@ -21395,32 +21443,32 @@ IV6_9:					; CODE XREF: IV6+82j
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 IV6_10:					; CODE XREF: IV6+9Bj
-		add	d, meanKSint	; deltaKS/KS_count, filtered
+		add	d, meanKSint	; deltatKS/KS_count, filtered. is a time interval
 		rorc	a
 		rorc	b
-		add	d, meanKSint	; deltaKS/KS_count, filtered
+		add	d, meanKSint	; deltatKS/KS_count, filtered. is a time interval
 		rorc	a
 		rorc	b
-		add	d, meanKSint	; deltaKS/KS_count, filtered
+		add	d, meanKSint	; deltatKS/KS_count, filtered. is a time interval
 		rorc	a
 		rorc	b
 
 IV6_11:					; CODE XREF: IV6+9Fj
-		st	d, meanKSint	; deltaKS/KS_count, filtered
+		st	d, meanKSint	; deltatKS/KS_count, filtered. is a time interval
 
 IV6_12:					; CODE XREF: IV6+75j
 		ei
 		clr	a
 		cmp	#082, VTA_net	; should always	be less	from superrun
 		bcs	IV6_13
-		ld	a, unk_E9
+		ld	a, unk_E9	; superrun all 0
 		inc	a
 		cmp	a, #08h
 		bcs	IV6_13
 		ld	a, #80h
 
 IV6_13:					; CODE XREF: IV6+B4j IV6+BBj
-		st	a, unk_E9
+		st	a, unk_E9	; superrun all 0
 		jsr	sub_F1A9
 		bra	IV6_21
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
@@ -21431,8 +21479,8 @@ IV6_14:					; CODE XREF: IV6+4Ej
 		ld	a, flags_77	; clear	bit 7
 		and	a, #7Fh
 		st	a, flags_77	; clear	bit 7
-		ld	a, byte_186	; subtracted from timing in NEsub
-		ld	b, unk_102
+		ld	a, byte_186	; subtracted from timing in NEsub, superrun not	zero while starting
+		ld	b, unk_102	; Read from transmission controller,superrun all 0
 		cmpb	b, #80h
 		beq	IV6_16
 		ld	b, unk_187	; timing related
@@ -21772,7 +21820,7 @@ loc_F1D8:				; CODE XREF: sub_F1A9+2Bj
 		shl	a
 		and	a, #0Ch
 		tbbs	bit3, flags_43,	loc_F1EE ; bit3: AFM bad bit4: rev limiter
-		cmp	#18h, compLOAD	; air temp and Baro compensated	Load (likely in	units of mass)
+		cmp	#024, compLOAD	; right	around cruise
 		bcs	loc_F1EE
 		or	a, #80h
 		cmp	#013, RPM	; 650 RPM
@@ -21799,7 +21847,7 @@ loc_F200:				; CODE XREF: sub_F1A9+47j sub_F1A9+4Cj ...
 		clr	b
 		tbbs	bit0, flags_46,	loc_F216 ; bit 1 flags limp in injection mode, B5 RPM under 5200ish
 		push	a
-		ld	a, flags_4E	; bit1 is igf1 related,	bit2 igf2 related
+		ld	a, flags_4E	; bit1 is igf1 related,	bit2 igf2 related, superrun all	0
 		and	a, #0E0h
 		pull	a
 		bne	loc_F216
@@ -21814,7 +21862,7 @@ loc_F216:				; CODE XREF: sub_F1A9+5Bj sub_F1A9+64j
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_F21E:				; CODE XREF: sub_F1A9+68j
-		ld	b, unk_103
+		ld	b, unk_103	; Read from transmission controller
 		and	b, #40h
 		bne	loc_F231
 		ld	a, #0CDh
@@ -21875,7 +21923,7 @@ loc_F275:				; CODE XREF: sub_F1A9+C9j
 		st	b, unk_19B
 
 loc_F278:				; CODE XREF: sub_F1A9+B6j
-		ld	b, byte_186	; subtracted from timing in NEsub
+		ld	b, byte_186	; subtracted from timing in NEsub, superrun not	zero while starting
 		bne	loc_F289
 		ld	b, unk_187	; timing related
 		beq	loc_F28C
@@ -21975,7 +22023,7 @@ loc_F302:				; CODE XREF: sub_F1A9+156j
 		ld	a, byte_199	; output from 3d table c54c, less with RPM, more with load
 
 loc_F310:				; CODE XREF: sub_F1A9+162j
-		ld	b, unk_197	; subtracted from timing in main loop
+		ld	b, unk_197	; definitly did	something during WOT blasts in superrun
 		sub	b, #09h
 		bcc	loc_F318
 		clr	b
@@ -22002,10 +22050,10 @@ IVc:					; DATA XREF: ROM:FFF6o
 		bne	ivc_04		; bounce if high, every	8ms
 		tbbc	bit7, flags_45,	ivc_04 ; bounce	if TE2 is open
 		clrb	bit4, PORTB	; clear	pin 23
-		ld	a, unk_7C	; counter
+		ld	a, count_7C	; counter, superrun = 222
 		bpz	ivc_01
 		inc	a
-		st	a, unk_7C	; counter
+		st	a, count_7C	; counter, superrun = 222
 		cmp	a, #240
 		blea	ivc_02		; set pin 29
 		bra	ivc_03		; clear	pin 29
@@ -22206,8 +22254,8 @@ loc_F433:				; CODE XREF: IV6+4BDj IV6:loc_F425j
 		and	a, #1Fh
 		cmp	a, #021
 		bcc	loc_F456
-		ld	a, unk_109
-		ld	b, VTA2_net	; VTA2-VTA2_min, =255 when sub throttle	disabled/not exist
+		ld	a, unk_109	; Read from transmission controller
+		ld	b, VTA2_net	; VTA2-VTA2_min, =255 when sub throttle	disabled/not exist, superrun = 255
 		inc	b
 		bne	loc_F449	; check	to see if sub throttle is used
 		and	a, #40h		; bit 6
@@ -22244,7 +22292,7 @@ loc_F460:				; CODE XREF: IV6+4F6j
 loc_F466:				; CODE XREF: IV6+4FAj IV6+4FEj
 		setb	bit0, flags_4D
 		clr	a
-		st	a, unk_106
+		st	a, unk_106	; Read from transmission controller,superrun all 0
 		di
 		ld	a, flags_4A	; bits 6,5,4 are inherited from	109. 6 seems to	always be low when no sub throttle exists
 		and	a, #8Fh
@@ -22324,7 +22372,7 @@ loc_F4CB:				; CODE XREF: IV6+560j
 		bcs	loc_F4AF
 
 loc_F4D4:				; CODE XREF: IV6+53Cj
-		ld	a, unk_108
+		ld	a, unk_108	; Read from transmission controller
 		and	a, #80h
 		beq	loc_F4DE
 		ld	#18h, unk_E4
@@ -22393,7 +22441,7 @@ loc_F522:				; CODE XREF: IV6+5AAj
 
 loc_F52E:				; CODE XREF: IV6+5C4j
 		clr	a
-		ld	b, byte_186	; subtracted from timing in NEsub
+		ld	b, byte_186	; subtracted from timing in NEsub, superrun not	zero while starting
 		bne	loc_F53B
 		cmp	#3Dh, count_C5	; increments at	E478
 		bcc	loc_F554
@@ -22416,12 +22464,12 @@ loc_F546:				; CODE XREF: IV6+5DFj
 loc_F54B:				; CODE XREF: IV6:loc_F546j
 		add	x, a
 		ld	a, x + 00h
-		add	a, byte_F9	; was zero for superrun
+		add	a, byte_F9	; superrun all 0
 		bcc	loc_F554
 		ld	a, #0FFh
 
 loc_F554:				; CODE XREF: IV6+5D3j IV6+5ECj
-		st	a, byte_F9	; was zero for superrun
+		st	a, byte_F9	; superrun all 0
 
 loc_F556:				; CODE XREF: IV6+5D5j
 		jmp	loc_F666
@@ -22450,7 +22498,7 @@ loc_F57B:				; CODE XREF: IV6+612j
 		ld	y, #01C0h
 		jsr	satcount	; increment oxy	sensor related counters
 		ld	a, ISC_11F	; ISC related
-		ld	b, unk_11E
+		ld	b, unk_11E	; superrun all 0
 		cmp	b, #06h
 		bcs	loc_F594
 		and	a, #03h
@@ -22468,7 +22516,7 @@ loc_F594:				; CODE XREF: IV6+627j
 		clr	b
 
 loc_F5A0:				; CODE XREF: IV6+639j
-		st	b, unk_11E
+		st	b, unk_11E	; superrun all 0
 		tbbc	bit5, RAMST, loc_F5FC ;	Built-in RAM status
 		tbbc	bit4, flags_45,	loc_F5AE ; IC303 input chip: B7	/TE2, B6 /TE1, B5 /NSW,	B4 IGSW,  B3, B2 IDL2, B1 , B0 STA
 		cmp	#109, Bvolts	; 8.55V
@@ -22811,21 +22859,21 @@ loc_F730:				; CODE XREF: intASR1+18j
 		inc	unk_EB
 
 loc_F73B:				; CODE XREF: intASR1+22j
-		cmp	#80h, unk_E9
+		cmp	#80h, unk_E9	; superrun all 0
 		bcs	loc_F747
 		cmp	d, word_1AC	; deltaKS limit	for checking sensor. generated from RPM	lookup table
 		bcs	loc_F747
 		inc	KS_count	; counts KS interrupts,	reset in IV6
 
 loc_F747:				; CODE XREF: intASR1+29j intASR1+2Ej
-		add	d, deltaKS	; Cumulative sum of KS intervals, counted by KS_count, reset in	IV6
+		add	d, deltatKS	; Cumulative sum of KS intervals, counted by KS_count, reset in	IV6
 		bcs	loc_F751	; skip here to NOT store a deltaKS value
-		st	d, deltaKS	; Cumulative sum of KS intervals, counted by KS_count, reset in	IV6
+		st	d, deltatKS	; Cumulative sum of KS intervals, counted by KS_count, reset in	IV6
 		inc	KS_count	; counts KS interrupts,	reset in IV6
 
 loc_F751:				; CODE XREF: intASR1+Dj intASR1+14j ...
 		tbbs	bit0, flags_4C,	loc_F759 ; skip	here to	NOT store a deltaKS value
-		tbbs	bit3, flags_4E,	loc_F759 ; bit1	is igf1	related, bit2 igf2 related
+		tbbs	bit3, flags_4E,	loc_F759 ; bit1	is igf1	related, bit2 igf2 related, superrun all 0
 		clr	count_B3	; incremented at F55E
 
 loc_F759:				; CODE XREF: intASR1:loc_F751j
@@ -23064,12 +23112,12 @@ sin0_26:				; CODE XREF: intSIN0:sin0_25j
 		ld	#0DAh, SIDR_SODR ; transmit DA to ADC
 		ld	a, flags_49	; bits 1-3-4-5 are oxl1-oxr1-oxl2-oxr2 - Oxygen	sensors
 		ld	y, #012Dh
-		jsr	sub_FC0D
+		jsr	sub_FC0D	; per bank sub
 		ld	a, flags_49	; bits 1-3-4-5 are oxl1-oxr1-oxl2-oxr2 - Oxygen	sensors
 		shr	a
 		shr	a
 		ld	y, #0149h
-		jsr	sub_FC0D
+		jsr	sub_FC0D	; per bank sub
 		tbbs	bit0, flags_45,	sin0_27	; IC303	input chip: B7 /TE2, B6	/TE1, B5 /NSW, B4 IGSW,	 B3, B2	IDL2, B1 , B0 STA
 		cmp	#32h, count_A8	; incremented at F47D
 		ble	sin0_29
@@ -23089,7 +23137,7 @@ sin0_27:				; CODE XREF: intSIN0+10Dj
 		clr	NEcountsIV6	; buffered copy	of NEcounts for	IV6 purposes
 		clr	count_B0	; incremented at F47D
 		clr	a
-		st	a, unk_1B6
+		st	a, unk_1B6	; superrun all 0
 		st	a, unk_1B7
 		clrb	bit1, flags_4C
 		tbbc	bit7, flags_4C,	sin0_29	; bit 7	set when not running (300 to 400 RPM gap)
@@ -23206,7 +23254,7 @@ loc_F94B:				; CODE XREF: ROM:loc_F946j
 		setb	bit7, flags_49
 
 loc_F94D:				; CODE XREF: ROM:F944j
-		jsr	SaturateData
+		jsr	SaturateData	; saturate A with following limits
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 		.db 0D7h ; ×
 		.db  71h ; q
@@ -23383,12 +23431,12 @@ sin0JMP01:				; called from F7FE, VTA1 process
 		jsr	VTAchecksub	; throttle processing sub. accepts an address in Y, AccA is ADC	VTA, B is ADCtx, returns offset	VTA in AccA, plus some crap in B
 		ld	y, VTA1_net	; VTA1 - VTA_min
 		ld	a, VTA1_flags	; VTA1 Flags
-		or	a, VTA2_flags	; VTA2 flags
+		or	a, VTA2_flags	; VTA2 flags, superrun all 0
 		cmpb	a, #08h
 		bne	loc_FA29
-		cmp	y, VTA2_net	; VTA2-VTA2_min, =255 when sub throttle	disabled/not exist
+		cmp	y, VTA2_net	; VTA2-VTA2_min, =255 when sub throttle	disabled/not exist, superrun = 255
 		ble	loc_FA29	; use the smallest throttle angle
-		ld	y, VTA2_net	; VTA2-VTA2_min, =255 when sub throttle	disabled/not exist
+		ld	y, VTA2_net	; VTA2-VTA2_min, =255 when sub throttle	disabled/not exist, superrun = 255
 
 loc_FA29:				; CODE XREF: ROM:FA1Fj	ROM:FA24j
 		ld	d, VTA_net
@@ -23572,12 +23620,12 @@ loc_FB08:				; CODE XREF: ROM:FAE9j
 loc_FB12:				; CODE XREF: ROM:FAE2j
 		and	a, #0FDh
 		tbbs	bit1, flags_40,	loc_FB1C ; B3 :	forced timing to 5/10 deg BTDC
-		tbbs	bit3, flags_4F,	loc_FB27
+		tbbs	bit3, flags_4F,	loc_FB27 ; superrun all	0
 		bra	loc_FB1F
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
 loc_FB1C:				; CODE XREF: ROM:FB14j
-		tbbs	bit4, flags_4F,	loc_FB27
+		tbbs	bit4, flags_4F,	loc_FB27 ; superrun all	0
 
 loc_FB1F:				; CODE XREF: ROM:FB1Aj
 		cmpb	a, #04h
@@ -23735,7 +23783,7 @@ loc_FBCD:				; CODE XREF: ROM:FBBEj	ROM:FBC3j ...
 
 sin0JMP04:				; called from F7FE, OXL1, oxygen sensor	left primary sampling
 		setb	bit1, flags_49
-		jsr	SaturateData
+		jsr	SaturateData	; saturate A with following limits
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 		.db 24h			; .70V
 		.db 12h			; .35V
@@ -23747,7 +23795,7 @@ sin0JMP04:				; called from F7FE, OXL1, oxygen sensor	left primary sampling
 
 sin0JMP06:				; called from F7FE, OXR1
 		setb	bit3, flags_49
-		jsr	SaturateData
+		jsr	SaturateData	; saturate A with following limits
 ; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 		.db 24h
 		.db 12h
@@ -23784,6 +23832,7 @@ sin0JMP11:				; called from F7FE, pin	18 of ADC (0V)
 
 ; ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ S U B	R O U T	I N E ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ
 
+; per bank sub
 
 sub_FC0D:				; CODE XREF: intSIN0+100p intSIN0+10Ap
 		push	a
@@ -24726,9 +24775,8 @@ unk_FF49:	.db  5Fh ; _
 		.db  5Fh ; _
 		.db  5Fh ; _
 		.db  5Fh ; _
-		.db  03h
-		.db 0D4h ; Ô
-		.db 0B6h ; ¶
+; ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+		jmp	__RESET
 
 ; ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ S U B	R O U T	I N E ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ
 
