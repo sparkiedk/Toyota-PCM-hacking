@@ -1,0 +1,29 @@
+Because past sparkie is still a lazy dick
+=======================================
+
+
+
+micro remains powered and in reset while the car is off
+
+FT245 is powered from PCM, stays in reset (bus highZ) while not connected to usb
+
+may need additional 10V 100uf cap to extend leads and fold down c507 on pcm logic board to make daughtercard fit.
+
+cant get ASL part in 1504, only 1508. added power down input, not implemented in cupl, may be fitter option.
+	-i seem to recall powerdown didnt work well, switch to high efficiency version of chip which uses no real current while static.
+
+PBCS functionality may need to be emulated as well.
+
+from testing
+=============
+need resistor on usb power feed to avoid backdriving ftdi when unpowered (makes mucho heat!)
+
+Capcitor for filtering FTDI reset line so short jiggles dont reset FTDI
+
+pull xx resistors for FTDI status lines
+
+forgot to string power along to flash pullups
+
+test points, attachments for serial ports on micro
+
+pin 10 is /IDL, plumb it out to cpld and update cpld layout to fit.

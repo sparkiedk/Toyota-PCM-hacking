@@ -1,0 +1,176 @@
+Name     superportemulator ;
+PartNo   00 ;
+Date     12/16/2013 ;
+Revision 01 ;
+Designer xxx ;
+Company  xxx ;
+Assembly None ;
+Location here ;
+Device   f1504isptqfp100;
+
+PROPERTY ATMEL {pd1 = on};
+property atmel {security = off};
+property atmel {JTAG = on};
+property atmel {preassign = keep};
+
+
+
+
+/* Target application is tqfp100 on final 1uz product using f1508isptqfp100; */
+
+/* *** Address/Data bus *** */
+pin 54 = bus0;
+pin 57 = bus1;
+pin 60 = bus2;  /*60*/
+pin 63 = bus3;
+pin 65 = bus4;
+pin 68 = bus5;
+pin 71 = bus6;
+pin 76 = bus7;
+
+pin 37 = add8;
+pin 35 = add9;
+pin 32 = add10;
+pin 30 = add11;
+pin 41 = add12;
+pin 44 = add13;
+pin 46 = add14;
+pin 48 = add15;
+
+
+
+/* *** Address ouput bus *** */
+pin 92 = add0;
+pin 93 = add1;
+pin 94 = add2;    /* was 94*/
+pin 96 = add3;
+pin 100 = add4;
+pin 99 = add5;
+pin 98 = add6;
+pin 97 = add7;
+
+//*bus control*/
+pin 89 = as;		/*address strobe input*/
+pin 87 = WD;		/*write data - low for CPU to bus writes*/
+pin 88 = !RD;		/*read data - low for CPU reading from bus*/
+
+pin 84 = ReadWrite;
+
+pin 81 = !ramCS;
+pin 83 = !ramOE;
+pin 80 = !flashCS;
+pin 79 = !flashOE;
+pin 23 = !ftdiRD;
+pin 25 = ftdiWR;
+
+
+/* *** ports *** */
+pin 36 = pa0; /* port A */
+pin 33 = pa1;
+pin 31 = pa2;
+pin 29 = pa3;
+pin 40 = pa4;
+pin 42 = pa5;
+pin 45 = pa6;
+pin 47 = pa7;
+
+pin 52 = pb0; /* port B */
+pin 56 = pb1;
+pin 58 = pb2;
+pin 61 = pb3;
+pin 64 = pb4;
+pin 67 = pb5;
+pin 69 = pb6;
+pin 75 = pb7;
+
+pin 21 = phi0; /* high when RX buffer is empty */
+pin 20 = phi1; /* high when TX buffer is full */
+
+pin 17 = pbcs4; /* low when throttle 1 is closed (/IDL1 signal)*/
+
+/* *** Data Direction Registers (buried) *** */
+node paddr0;
+node paddr1;
+node paddr2;
+node paddr3;
+node paddr4;
+node paddr5;
+node paddr6;
+node paddr7;
+
+node pbddr0;
+node pbddr1;
+node pbddr2;
+node pbddr3;
+node pbddr4;
+node pbddr5;
+node pbddr6;
+node pbddr7;
+
+/* misc internal */
+
+pin 8 = portaccess; /* assigning this pin external helped make everything fit. */
+pin 6 = pthiaccess;
+
+/* *** fielding *** */
+field databus=[bus0..7];
+field port_a=[pa0..7];
+field port_b=[pb0..7];
+field port_a_ddr=[paddr0..7];
+field port_b_ddr=[pbddr0..7];
+field port_b_cs=[pb0..3, pbcs4, pb5..7];
+field address=[add0..7];
+field port_hi=[phi0..1, pa2..7];
+
+/* *** the project *** */
+
+/*bus control*/
+
+flashCS=add15;			/*flash occupies upper 32k of memory space (0x8000 to 0xFFFF)*/
+flashOE=flashCS&RD;			/*only oe on bus reads */
+ramCS=!add15&(add14#add13#add12);	/*ram between flash and 0x1000 - 28kB*/
+ramOE=ramCS&RD;			/*only oe on bus reads */
+
+ReadWrite=WD;
+
+/* address decoder for ports A and B related SFRs */
+portaccess=!(add15#add14#add13#add12#add11#add10#add9#add8#add7#add6#add4#add3#add2)&((!add5&!add1)#add5);
+/* create a new address decoder for 0FF0 to 0FFF */
+pthiaccess=!(add15#add14#add13#add12)&add11&add10&add9&add8&add7&add6&add5&add4;
+
+databus.oe = (portaccess#(pthiaccess&add0))&RD;	/*enable outputs*/
+/* port reads */
+databus = portaccess&(port_a.io&add5&!add1&!add0 # 
+	port_b.io&add5&add1&!add0 #
+	port_b_cs.io&add5&add1&add0) #
+	pthiaccess&(port_hi.io&!add3&!add2&!add1&add0);
+
+/*Internal address latch to decode port addresses*/
+address.ck=!as;
+address.d=databus.io;
+
+/*port A DDR address 00*/
+port_a_ddr.d=databus.io;
+port_a_ddr.le=!WD&portaccess&!add5&!add1&!add0; /*made transparent*/
+
+/*port B DDR address 01*/
+port_b_ddr.d=databus.io;
+port_b_ddr.le=!WD&portaccess&!add5&!add1&add0;	/*made transparent*/
+
+/*port A address 10 000x*/
+port_a.oe=port_a_ddr.io;
+port_a.le=!WD&portaccess&add5&!add1; /* 0 is direct address, 1 is latch address*/
+port_a.d=databus.io;
+
+/*port B address 10 0010*/
+port_b.oe=port_b_ddr.io;
+port_b.le=!WD&portaccess&add5&add1&!add0;		/*made transparent*/
+port_b.d=databus.io;
+
+/*portHi address 0000*/
+ftdiRD=RD&pthiaccess&!(add3#add2#add1#add0);
+ftdiWR=!WD&pthiaccess&!(add3#add2#add1#add0);
+
+/*portHi address 0001*/
+
+/*PBCS address 0010 0011*/

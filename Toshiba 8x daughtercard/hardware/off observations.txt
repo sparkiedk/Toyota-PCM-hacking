@@ -1,0 +1,8 @@
+9260
+==========
+3	4.74	short high
+6	2.5
+7	4.74
+12	4.74	short high
+49	4.74	short high
+64	4.74	vcc
